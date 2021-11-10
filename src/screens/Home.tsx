@@ -65,7 +65,10 @@ export const Home = ({navigation}) => {
             </View>
             <View styles={styles.section}>
                 <View style={styles.testButtonContainer}>
-                    <TouchableOpacity style={styles.testButton}>
+                    <TouchableOpacity
+                        style={styles.testButton}
+                        onPress={() => navigation.navigate('Diagnostic')}
+                    >
                         <Text style={styles.testButtonText}>Begin a Test</Text>
                     </TouchableOpacity>
                 </View>

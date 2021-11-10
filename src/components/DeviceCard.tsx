@@ -29,7 +29,7 @@ const DeviceCard = ({device}: DeviceCardProps) => {
             <Text>{`Name : ${device.name}`}</Text>
             <Text>{`Is connected : ${isConnected}`}</Text>
             <Text>{`RSSI : ${device.rssi}`}</Text>
-            {/* Decode the ble device manufacturer which is encoded with the base64 algorythme */}
+            {/* Decode the ble device manufacturer which is encoded with the base64 algorithm */}
             <Text>{`Manufacturer : ${Base64.decode(
                 device.manufacturerData?.replace(/[=]/g, ''),
             )}`}</Text>
