@@ -12,7 +12,7 @@ export const Home = ({navigation}) => {
                     <Text style={styles.headingText}>Device Connection</Text>
                     <Text style={{textAlign: 'right'}}>
                         <Icon onPress={() => navigation.navigate('Bluetooth', {device: Device})} name="plus" size={24}
-                              color="#222"/>
+                              color="#fff"/>
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>
@@ -24,7 +24,7 @@ export const Home = ({navigation}) => {
                     <Text style={styles.headingText}>Patients</Text>
                     <Text style={{textAlign: 'right'}}>
                         <Icon onPress={() => navigation.navigate('NewPatient', {device: Device})} name="plus" size={24}
-                              color="#222"/>
+                              color="#fff"/>
                     </Text>
                 </View>
                 <TouchableOpacity
@@ -46,21 +46,15 @@ export const Home = ({navigation}) => {
                 </View>
                 <TouchableOpacity
                     style={styles.navButton}
-                    onPress={() => navigation.navigate('AllTestResults')}
+                    onPress={() => navigation.navigate('AllResults')}
                 >
-                    <Text style={styles.navButtonText}>Select a patient to view</Text>
+                    <Text style={styles.navButtonText}>View by patient</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.navButton}
-                    onPress={() => navigation.navigate('AllTestResults')}
+                    onPress={() => navigation.navigate('AllResults')}
                 >
                     <Text style={styles.navButtonText}>View recent tests</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate('AllTestResults')}
-                >
-                    <Text style={styles.navButtonText}>View all tests</Text>
                 </TouchableOpacity>
             </View>
             <View styles={styles.section}>
@@ -79,7 +73,7 @@ export const Home = ({navigation}) => {
 
 const styles = StyleSheet.create({
     page: {
-        backgroundColor: '#eee',
+        backgroundColor: '#222',
         flex: 1,
         justifyContent: 'space-between'
     },
@@ -87,6 +81,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     headingContainer: {
+        backgroundColor: '#333',
         paddingTop: 20,
         paddingBottom: 20,
         paddingLeft: 24,
@@ -95,12 +90,13 @@ const styles = StyleSheet.create({
     },
     headingText: {
         fontSize: 18,
-        color: '#222',
+        color: '#fff',
         flex: 1,
         textAlign: 'left',
+        fontWeight: 'bold'
     },
     subheadingContainer: {
-        paddingTop: 0,
+        paddingTop: 10,
         paddingBottom: 12,
         paddingLeft: 24,
         paddingRight: 24,
@@ -108,7 +104,7 @@ const styles = StyleSheet.create({
     },
     subheadingText: {
         fontSize: 14,
-        color: '#222',
+        color: '#fff',
         flex: 1,
         textAlign: 'left',
     },
@@ -120,11 +116,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     navButton: {
-        backgroundColor: '#4287f5',
-        padding: 15,
+        backgroundColor: '#444',
+        padding: 20,
         alignSelf: 'stretch',
-        borderBottomWidth: 4,
-        borderBottomColor: '#326dc9',
+        borderBottomWidth: 2,
+        borderBottomColor: '#666',
     },
     navButtonText: {
         fontSize: 14,
@@ -136,8 +132,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     testButton: {
-        backgroundColor: '#2cd46a',
-        padding: 25,
+        backgroundColor: '#3cba3c',
+        padding: 40,
         alignSelf: 'stretch'
     },
     testButtonText: {

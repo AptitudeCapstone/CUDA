@@ -25,7 +25,7 @@ export const RootNavigator = () => (
             <Stack.Screen name='Device' component={DeviceScreen} />
             <Stack.Screen name='Patients' component={Patients} options={{ title: 'All Patients' }}/>
             <Stack.Screen name='Diagnostic' component={Diagnostic} options={{ title: 'Run a Test' }}/>
-            <Stack.Screen name='Results' component={Results} options={{ title: 'Test Results' }}/>
+            <Stack.Screen name='Results' component={AllResults} options={{ title: 'Test Results' }}/>
             <Stack.Screen name='AllResults' component={AllResults} options={{ title: 'Test Results' }}/>
         </Stack.Navigator>
     </NavigationContainer>
