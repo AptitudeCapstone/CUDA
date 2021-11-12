@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Keyboard, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 import TextInputField from '../components/TextInputField';
 import SubmitButton from '../components/SubmitButton';
 import {openDatabase} from 'react-native-sqlite-storage';
@@ -32,123 +32,74 @@ export const Diagnostic = ({navigation}) => {
     }
 
     return (
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <TouchableOpacity
-                style={styles.navButton}
-            >
-                <Text style={styles.navButtonText}>Begin test for a new patient</Text>
-            </TouchableOpacity>
-            <TextInputField
-                placeholder='Enter patient ID'
-                onChangeText={
-                    (patientId) => setPatientId(patientId)
-                }
-                maxLength={10}
-                keyboardType="numeric"
-                style={{padding: 25}}
-            />
-            <TextInputField
-                placeholder='Enter test ID (0 or 1)'
-                onChangeText={
-                    (testType) => setTestType(testType)
-                }
-                maxLength={10}
-                keyboardType="numeric"
-                style={{padding: 25}}
-            />
-            <TextInputField
-                placeholder='Enter result'
-                onChangeText={
-                    (testResult) => setTestResult(testResult)
-                }
-                maxLength={10}
-                keyboardType="numeric"
-                style={{padding: 25}}
-            />
-            <View style={{marginTop: 45}}>
-                <SubmitButton title='Log Test Result' customClick={add_test_result}/>
-            </View>
-            <TouchableOpacity
-                style={styles.navButton}
-            >
-                <Text style={styles.navButtonText}>Begin test for an existing patient</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.navButton}
-            >
-                <Text style={styles.navButtonText}>Begin test without patient ID</Text>
-            </TouchableOpacity>
-        </View>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}
+                                      style={{flex: 1}}>
+                <View style={styles.page}>
+                    <View style={styles.section}>
+                        <TextInputField
+                            placeholder='Enter patient ID'
+                            onChangeText={
+                                (patientId) => setPatientId(patientId)
+                            }
+                            maxLength={10}
+                            keyboardType="numeric"
+                            style={{padding: 25}}
+                        />
+                        <TextInputField
+                            placeholder='Enter test ID (0 or 1)'
+                            onChangeText={
+                                (testType) => setTestType(testType)
+                            }
+                            maxLength={10}
+                            keyboardType="numeric"
+                            style={{padding: 25}}
+                        />
+                        <TextInputField
+                            placeholder='Enter result'
+                            onChangeText={
+                                (testResult) => setTestResult(testResult)
+                            }
+                            maxLength={10}
+                            keyboardType="numeric"
+                            style={{padding: 25}}
+                        />
+                        <View style={{marginTop: 45}}>
+                            <SubmitButton title='Log Test Result' customClick={add_test_result}/>
+                        </View>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     page: {
-        backgroundColor: '#eee',
+        backgroundColor: '#222',
         flex: 1,
         justifyContent: 'space-between'
     },
     section: {
-        flexDirection: 'row',
-    },
-    headingContainer: {
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingLeft: 24,
-        paddingRight: 24,
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     headingText: {
+        margin: 40,
         fontSize: 18,
-        color: '#222',
-        flex: 1,
-        textAlign: 'left',
-    },
-    subheadingContainer: {
-        paddingTop: 0,
-        paddingBottom: 12,
-        paddingLeft: 24,
-        paddingRight: 24,
-        flexDirection: 'row',
-    },
-    subheadingText: {
-        fontSize: 14,
-        color: '#222',
-        flex: 1,
-        textAlign: 'left',
-    },
-    statusText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#222',
-        flex: 1,
+        color: '#fff',
         textAlign: 'center',
+        fontWeight: 'bold'
     },
     navButton: {
-        backgroundColor: '#4287f5',
-        padding: 15,
+        backgroundColor: '#444',
+        padding: 20,
         alignSelf: 'stretch',
-        borderBottomWidth: 4,
-        borderBottomColor: '#326dc9',
+        borderBottomWidth: 2,
+        borderBottomColor: '#666',
     },
     navButtonText: {
         fontSize: 14,
         color: '#eee',
         textAlign: 'left',
-    },
-    testButtonContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    testButton: {
-        backgroundColor: '#2cd46a',
-        padding: 25,
-        alignSelf: 'stretch'
-    },
-    testButtonText: {
-        fontSize: 20,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
+    }
 });

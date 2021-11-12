@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
@@ -78,10 +78,10 @@ export const Results = ({navigation}) => {
                     <View
                         key={item.test_id}
                         style={{backgroundColor: 'white', padding: 20}}>
-                        <Text>Test ID: {item.test_id}</Text>
-                        <Text>Patient ID: {item.patient_id}</Text>
-                        <Text>Test Type: {item.test_type}</Text>
-                        <Text>Result: {item.test_result}</Text>
+                        <Text style={styles.text}>Test ID: {item.test_id}</Text>
+                        <Text style={styles.text}>Patient ID: {item.patient_id}</Text>
+                        <Text style={styles.text}>Test Type: {item.test_type}</Text>
+                        <Text style={styles.text}>Result: {item.test_result}</Text>
                     </View>
                 </Animated.View>
             </Swipeable>
@@ -101,3 +101,20 @@ export const Results = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    page: {
+        backgroundColor: '#222',
+        flex: 1,
+        justifyContent: 'space-between'
+    },
+    section: {
+        flexDirection: 'row',
+    },
+    text: {
+        fontSize: 14,
+        color: '#fff',
+        flex: 1,
+        textAlign: 'left',
+    }
+});

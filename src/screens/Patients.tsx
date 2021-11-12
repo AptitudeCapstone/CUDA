@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
@@ -74,14 +74,14 @@ export const Patients = ({navigation}) => {
 
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white'}}>
+                <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
                     <View
                         key={item.patient_id}
-                        style={{backgroundColor: 'white', padding: 20}}>
-                        <Text>Id: {item.patient_id}</Text>
-                        <Text>Name: {item.patient_name}</Text>
-                        <Text>Contact: {item.patient_contact}</Text>
-                        <Text>Address: {item.patient_address}</Text>
+                        style={{backgroundColor: '#333', padding: 20}}>
+                        <Text style={styles.text}>Id: {item.patient_id}</Text>
+                        <Text style={styles.text}>Name: {item.patient_name}</Text>
+                        <Text style={styles.text}>Contact: {item.patient_contact}</Text>
+                        <Text style={styles.text}>Address: {item.patient_address}</Text>
                     </View>
                 </Animated.View>
             </Swipeable>
@@ -89,8 +89,8 @@ export const Patients = ({navigation}) => {
     };
 
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1, backgroundColor: 'white'}}>
+        <SafeAreaView style={styles.page}>
+            <View style={{flex: 1, backgroundColor: '#222'}}>
                 <FlatList
                     data={flatListItems}
                     ItemSeparatorComponent={listViewItemSeparator}
@@ -101,3 +101,20 @@ export const Patients = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    page: {
+        backgroundColor: '#222',
+        flex: 1,
+        justifyContent: 'space-between'
+    },
+    section: {
+        flexDirection: 'row',
+    },
+    text: {
+        fontSize: 14,
+        color: '#fff',
+        flex: 1,
+        textAlign: 'left',
+    }
+});
