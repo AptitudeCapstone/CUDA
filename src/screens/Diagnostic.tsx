@@ -2,9 +2,12 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import TextInputField from '../components/TextInputField';
 import SubmitButton from '../components/SubmitButton';
-import { openDatabase } from 'react-native-sqlite-storage';
+import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({ name: 'PatientDatabase.db' }, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const Diagnostic = ({navigation}) => {
     let [patientId, setPatientId] = useState('');
@@ -42,7 +45,7 @@ export const Diagnostic = ({navigation}) => {
                 }
                 maxLength={10}
                 keyboardType="numeric"
-                style={{ padding: 25 }}
+                style={{padding: 25}}
             />
             <TextInputField
                 placeholder='Enter test ID (0 or 1)'
@@ -51,7 +54,7 @@ export const Diagnostic = ({navigation}) => {
                 }
                 maxLength={10}
                 keyboardType="numeric"
-                style={{ padding: 25 }}
+                style={{padding: 25}}
             />
             <TextInputField
                 placeholder='Enter result'
@@ -60,10 +63,10 @@ export const Diagnostic = ({navigation}) => {
                 }
                 maxLength={10}
                 keyboardType="numeric"
-                style={{ padding: 25 }}
+                style={{padding: 25}}
             />
             <View style={{marginTop: 45}}>
-                <SubmitButton title='Log Test Result' customClick={add_test_result} />
+                <SubmitButton title='Log Test Result' customClick={add_test_result}/>
             </View>
             <TouchableOpacity
                 style={styles.navButton}

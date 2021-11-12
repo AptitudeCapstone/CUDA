@@ -1,17 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Device} from 'react-native-ble-plx';
-import {RootStackParamList} from '../navigation';
-import {Base64} from '../lib/base64';
+import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconAD from 'react-native-vector-icons/AntDesign';
 
 type DeviceCardProps = {
+    navigation: any;
     device: Device;
 };
 
-const DeviceCard = ({device}: DeviceCardProps) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+const DeviceCard = ({navigation, device}: DeviceCardProps) => {
 
     const [isConnected, setIsConnected] = useState(false);
 
@@ -20,35 +18,52 @@ const DeviceCard = ({device}: DeviceCardProps) => {
         device.isConnected().then(setIsConnected);
     }, [device]);
 
+    let iconName = '';
+    if (device.rssi >= -50) {
+        iconName = 'signal-cellular-3';
+    } else if (device.rssi >= -75) {
+        iconName = 'signal-cellular-2';
+    } else if (device.rssi >= -85) {
+        iconName = 'signal-cellular-1';
+    }
+
     return (
         <TouchableOpacity
-            style={styles.container}
-            // navigate to the Device Screen
-            onPress={() => navigation.navigate('Device', {device})}>
-            <Text>{`Id : ${device.id}`}</Text>
-            <Text>{`Name : ${device.name}`}</Text>
-            <Text>{`Is connected : ${isConnected}`}</Text>
-            <Text>{`RSSI : ${device.rssi}`}</Text>
-            {/* Decode the ble device manufacturer which is encoded with the base64 algorithm */}
-            <Text>{`Manufacturer : ${Base64.decode(
-                device.manufacturerData?.replace(/[=]/g, ''),
-            )}`}</Text>
-            <Text>{`ServiceData : ${device.serviceData}`}</Text>
-            <Text>{`UUIDS : ${device.serviceUUIDs}`}</Text>
+            style={styles.navButton}
+            onPress={() => navigation.navigate('Device', {navigation, device})}
+        >
+            {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
+            {isConnected ? (
+                <Text style={styles.navButtonText} numberOfLines={1} ellipsizeMode='middle'>
+                    {device.id}
+                    <View style={{paddingLeft: 25}}><IconMCI style={{textAlign: 'right'}} name={iconName} size={24}
+                                                             color="#fff"/></View>
+                    <View style={{paddingLeft: 25}}><IconAD style={{textAlign: 'right'}} name='checkcircle' size={24}
+                                                            color="#fff"/></View>
+                </Text>
+            ) : (
+                <Text>
+                    <IconAD name='plus' size={24} color="#fff"/>
+                </Text>
+            )}
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
-        marginBottom: 12,
-        borderRadius: 16,
-        shadowColor: 'rgba(60,64,67,0.3)',
-        shadowOpacity: 0.4,
-        shadowRadius: 10,
-        elevation: 4,
-        padding: 12,
+    navButton: {
+        backgroundColor: '#444',
+        padding: 20,
+        alignSelf: 'stretch',
+        borderBottomWidth: 2,
+        borderBottomColor: '#666',
+        alignItems: 'center'
+    },
+    navButtonText: {
+        fontSize: 14,
+        color: '#eee',
+        textAlign: 'left',
+        alignItems: 'center'
     },
 });
 

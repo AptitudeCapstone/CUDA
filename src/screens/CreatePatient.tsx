@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
-import { View,
-    Text,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    KeyboardAvoidingView,
-    Alert,
-    Keyboard,
-    TouchableWithoutFeedback
-} from 'react-native';
+import React, {useState} from 'react';
+import {Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
 import SubmitButton from '../components/SubmitButton';
 import TextInputField from '../components/TextInputField';
-import { openDatabase } from 'react-native-sqlite-storage';
+import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({ name: 'PatientDatabase.db' }, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const CreatePatient = ({navigation}) => {
     let [patientName, setPatientName] = useState('');
@@ -54,9 +48,9 @@ export const CreatePatient = ({navigation}) => {
 
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={{alignItems: 'center'}}>
+            <View style={{alignItems: 'center'}}>
 
-            {/* QR code recognition */}
+                {/* QR code recognition */}
 
                 <View>
                     <Text style={styles.headingText}>Name</Text>
@@ -65,7 +59,7 @@ export const CreatePatient = ({navigation}) => {
                         onChangeText={
                             (patientName) => setPatientName(patientName)
                         }
-                        style={{ padding: 25 }}
+                        style={{padding: 25}}
                     />
                     <Text style={styles.headingText}>Phone Number</Text>
                     <TextInputField
@@ -75,7 +69,7 @@ export const CreatePatient = ({navigation}) => {
                         }
                         maxLength={10}
                         keyboardType="numeric"
-                        style={{ padding: 25 }}
+                        style={{padding: 25}}
                     />
                     <Text style={styles.headingText}>Email address</Text>
                     <TextInputField
@@ -83,15 +77,15 @@ export const CreatePatient = ({navigation}) => {
                         onChangeText={
                             (patientEmail) => setPatientEmail(patientEmail)
                         }
-                        style={{ padding: 25 }}
+                        style={{padding: 25}}
                     />
                     <View style={{marginTop: 45}}>
-                        <SubmitButton title='Create Patient' customClick={register_user} />
+                        <SubmitButton title='Create Patient' customClick={register_user}/>
                     </View>
 
                 </View>
 
-        </View>
+            </View>
         </TouchableWithoutFeedback>
     );
 }

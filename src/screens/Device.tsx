@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, ScrollView, StyleSheet, Text, View, LogBox} from 'react-native';
+import {Button, LogBox, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Service} from 'react-native-ble-plx';
 import {ServiceCard} from '../components/ServiceCard';
 
@@ -37,7 +37,7 @@ export const DeviceScreen = ({route, navigation}) => {
         getDeviceInformation();
 
         device.onDisconnected(() => {
-            navigation.navigate('Bluetooth');
+            navigation.navigate('Home');
         });
 
         // give a callback to the useEffect to disconnect the device when we will leave the device screen
@@ -60,7 +60,7 @@ export const DeviceScreen = ({route, navigation}) => {
                 </View>
                 {/* Display a list of all services */}
                 {services &&
-                services.map((service) => <ServiceCard service={service}/>)}
+                services.map((service) => <ServiceCard service={service} navigation={navigation}/>)}
             </View>
         </ScrollView>
     );
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        backgroundColor: 'teal',
+        backgroundColor: 'white',
         marginBottom: 12,
         borderRadius: 16,
         shadowColor: 'rgba(60,64,67,0.3)',
