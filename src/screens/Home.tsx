@@ -163,13 +163,13 @@ export const Home = ({navigation}) => {
                     style={styles.navButton}
                     onPress={() => navigation.navigate('Patients')}
                 >
-                    <Text style={styles.navButtonText}>View all patients</Text>
+                    <Text style={styles.navButtonText}>View patients</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.navButton}
-                    onPress={() => navigation.navigate('Patients')}
+                    onPress={() => navigation.navigate('QRCodes')}
                 >
-                    <Text style={styles.navButtonText}>View recently tested patients</Text>
+                    <Text style={styles.navButtonText}>QR codes</Text>
                 </TouchableOpacity>
             </View>
             <View styles={styles.section}>
