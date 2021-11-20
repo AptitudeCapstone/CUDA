@@ -155,8 +155,8 @@ export const Home = ({navigation}) => {
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Patients</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('NewPatient', {device: Device})} name="plus" size={24}
-                              color="#fff"/>
+                        <Icon onPress={() => navigation.navigate('NewPatient', {device: Device})} name='plus' size={24}
+                              color='#fff'/>
                     </Text>
                 </View>
                 <TouchableOpacity

@@ -61,7 +61,7 @@ export const CreatePatient = ({navigation}) => {
                             onChangeText={
                                 (patientName) => setPatientName(patientName)
                             }
-                            style={{padding: 25}}
+                            style={{padding: 25, color: '#fff'}}
                         />
                     </View>
                     <View style={styles.section}>
@@ -73,7 +73,7 @@ export const CreatePatient = ({navigation}) => {
                             }
                             maxLength={10}
                             keyboardType="numeric"
-                            style={{padding: 25}}
+                            style={{padding: 25, color: '#fff'}}
                         />
                     </View>
                     <View style={styles.section}>
@@ -83,7 +83,7 @@ export const CreatePatient = ({navigation}) => {
                             onChangeText={
                                 (patientEmail) => setPatientEmail(patientEmail)
                             }
-                            style={{padding: 25}}
+                            style={{padding: 25, color: '#fff'}}
                         />
                     </View>
                     <View style={styles.section}>

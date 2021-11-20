@@ -71,18 +71,24 @@ export const Patients = ({navigation}) => {
             }).start(() => setFlatListItems(prevState => prevState.filter(e => e.patient_id !== item.patient_id)))
         }
 
+        let patient_id = item.patient_id;
+        let patient_name = item.patient_name;
+        let patient_phone = item.patient_contact;
+        let patient_address = item.patient_address;
 
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
                 <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
-                    <View
-                        key={item.patient_id}
-                        style={{backgroundColor: '#333', padding: 20}}>
-                        <Text style={styles.text}>Id: {item.patient_id}</Text>
-                        <Text style={styles.text}>Name: {item.patient_name}</Text>
-                        <Text style={styles.text}>Contact: {item.patient_contact}</Text>
-                        <Text style={styles.text}>Address: {item.patient_address}</Text>
-                    </View>
+                    <TouchableOpacity onPress={() => navigation.navigate('Patient', {navigation, patient_id, patient_name, patient_phone, patient_address})}>
+                        <View
+                            key={item.patient_id}
+                            style={{backgroundColor: '#333', padding: 20}}>
+                            {/*<Text style={styles.text}>Id: {item.patient_id}</Text>*/}
+                            <Text style={styles.nameText}>{item.patient_name}</Text>
+                            <Text style={styles.text}>{item.patient_contact}</Text>
+                            <Text style={styles.text}>{item.patient_address}</Text>
+                        </View>
+                    </TouchableOpacity>
                 </Animated.View>
             </Swipeable>
         );
@@ -112,7 +118,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     text: {
-        fontSize: 14,
+        fontSize: 18,
+        color: '#eee',
+        flex: 1,
+        textAlign: 'left',
+        paddingTop: 4,
+        paddingBottom: 4,
+    },
+    nameText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        paddingTop: 4,
+        paddingBottom: 14,
         color: '#fff',
         flex: 1,
         textAlign: 'left',
