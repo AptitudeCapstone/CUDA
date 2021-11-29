@@ -13,11 +13,6 @@ export const SelectPatient = ({route, navigation}) => {
         navigation.navigate('Diagnostic', {navigation, patientID})
     }
 
-    useEffect(() => {
-        // start to scan when page is open
-        console.log(patientIDs);
-    }, []);
-
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
             <View style={styles.page}>
@@ -25,10 +20,14 @@ export const SelectPatient = ({route, navigation}) => {
                     <View style={styles.headingContainer}>
                         <Text style={styles.headingText}>By name</Text>
                     </View>
-                    <View style={{
-                        backgroundColor: '#333', alignItems: 'center',
-                        paddingTop: 30, height: 180
-                    }}>
+                    <View
+                        style={{
+                        alignItems: 'center',
+                        height: 180,
+                        paddingBottom: 30,
+                        marginBottom: 30,
+                        }}
+                    >
                         <ScrollPicker
                             currentValue={patientID}
                             extraData={patientID}
@@ -38,8 +37,6 @@ export const SelectPatient = ({route, navigation}) => {
                             separatorColor='#aaa'
                             selectedColor='#fff'
                         />
-                    </View>
-                    <View>
                         <SubmitButton title='Select patient' customClick={add_test_result}/>
                     </View>
                 </View>
@@ -49,21 +46,26 @@ export const SelectPatient = ({route, navigation}) => {
                     </View>
                 </View>
                 <View styles={styles.section}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('ScanQR')}
-                    >
+                    <TouchableOpacity onPress={() => navigation.navigate('ScanQR')}>
                         <View style={styles.navButton}>
                             <Text style={styles.headingText}>Scan QR</Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => navigation.navigate('ScanQR')} name='camera' size={30}
-                                      color='#fff'/>
+                                <Icon
+                                    onPress={() => navigation.navigate('ScanQR')}
+                                    name='camera'
+                                    size={30}
+                                    color='#fff'
+                                />
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.section}>
                     <View>
-                        <AltSubmitButton title='Skip this step' customClick={() => navigation.navigate('Diagnostic')}/>
+                        <AltSubmitButton
+                            title='Skip this step'
+                            customClick={() => navigation.navigate('Diagnostic')}
+                        />
                     </View>
                 </View>
             </View>
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
     page: {
         backgroundColor: '#222',
         flex: 1,
-        justifyContent: 'space-between'
+        justifyContent: 'space-around'
     },
     section: {
         flexDirection: 'column',

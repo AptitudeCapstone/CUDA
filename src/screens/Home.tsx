@@ -239,10 +239,14 @@ export const Home = ({navigation}) => {
                         onPress={start_test}
                     >
                         <Text style={styles.testButtonText}>Begin a Test</Text>
+                        <Text style={{textAlign: 'right'}}>
+                            <Icon name='arrowright' size={30} color='#fff'/>
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
+
     );
 }
 
@@ -307,14 +311,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     testButton: {
-        backgroundColor: '#3cba3c',
-        padding: 40,
-        alignSelf: 'stretch'
+        backgroundColor: '#2cd46a',
+        padding: 25,
+        alignSelf: 'stretch',
+        flexDirection: 'row',
     },
     testButtonText: {
-        fontSize: 20,
+        flex: 1,
+        fontSize: 24,
         color: '#fff',
         textAlign: 'center',
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
 });

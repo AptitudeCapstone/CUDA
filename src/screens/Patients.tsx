@@ -78,24 +78,26 @@ export const Patients = ({navigation}) => {
 
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Patient', {
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Patient', {
                         navigation,
                         patient_id,
                         patient_name,
                         patient_phone,
                         patient_address
-                    })}>
+                        })
+                    }
+                >
+                <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
                         <View
                             key={item.patient_id}
                             style={{backgroundColor: '#333', padding: 20}}>
-                            {/*<Text style={styles.text}>Id: {item.patient_id}</Text>*/}
                             <Text style={styles.nameText}>{item.patient_name}</Text>
                             <Text style={styles.text}>{item.patient_contact}</Text>
                             <Text style={styles.text}>{item.patient_address}</Text>
                         </View>
-                    </TouchableOpacity>
                 </Animated.View>
+                </TouchableOpacity>
             </Swipeable>
         );
     };

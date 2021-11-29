@@ -50,8 +50,10 @@ export const Fibrinogen = ({route, navigation}) => {
         return (
             <View
                 style={{
+                    marginLeft: '5%',
+                    marginRight: '5%',
                     height: 1,
-                    width: '100%',
+                    width: '90%',
                     backgroundColor: '#ccc'
                 }}
             />
@@ -90,24 +92,13 @@ export const Fibrinogen = ({route, navigation}) => {
             }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
         }
 
-        /*
-        for (const row of fibVals) {
-            console.log(row);
-        }
-        for (const row of fibTimes) {
-            console.log(row);
-        }
-         */
-
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                <Animated.View style={{flex: 1, backgroundColor: '#444'}}>
+                <Animated.View style={{flex: 1}}>
                     <View
                         key={item.test_id}
-                        style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
-                        {/*<Text style={styles.text}>Test ID: {item.test_id}</Text>*/}
+                        style={{flexDirection: 'row', flex: 1}}>
                         <View style={styles.result}>
-                            {/*<Text style={styles.text}>Test Type: {item.test_type}</Text>*/}
                             <Text style={styles.fibResultText}>{item.test_result} mg/mL
                             </Text>
                         </View>
@@ -123,7 +114,7 @@ export const Fibrinogen = ({route, navigation}) => {
 
     let FibListHeader = () => {
         return (
-            <View style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
+            <View style={{flexDirection: 'row', flex: 1}}>
                 <View style={{flex: 0.4, justifyContent: 'center'}}>
                     <Text style={styles.rowHeaderText}>Result</Text>
                 </View>
@@ -140,7 +131,7 @@ export const Fibrinogen = ({route, navigation}) => {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
         backgroundGradientTo: "#08130D",
-        backgroundGradientToOpacity: 0.5,
+        backgroundGradientToOpacity: 0.2,
         color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     };
 
@@ -204,7 +195,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     patientID: {
-        backgroundColor: '#555',
+
         flex: 0.25,
         textAlign: 'center',
         justifyContent: 'center'
@@ -216,7 +207,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     result: {
-        backgroundColor: '#666',
+
         flex: 0.4,
         textAlign: 'center',
         justifyContent: 'center'
@@ -234,7 +225,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     time: {
-        backgroundColor: '#555',
+
         flex: 0.6,
         textAlign: 'center',
         justifyContent: 'center'
@@ -252,7 +243,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     headingContainer: {
-        backgroundColor: '#333',
+
         paddingTop: 24,
         paddingBottom: 24,
         paddingLeft: 24,
