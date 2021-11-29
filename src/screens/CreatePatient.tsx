@@ -32,10 +32,6 @@ export const CreatePatient = ({navigation}) => {
 
         db.transaction(function (tx) {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_patients(patient_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_name VARCHAR(30), patient_contact INT(15), patient_address VARCHAR(255))',
-                []
-            );
-            tx.executeSql(
                 'INSERT INTO table_patients (patient_name, patient_contact, patient_address) VALUES (?,?,?)',
                 [patientName, patientPhone, patientEmail],
                 (tx, results) => {

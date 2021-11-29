@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -30,14 +30,14 @@ export const Patient = ({route, navigation}) => {
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + (patient_id - 1),
+                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + (patient_id),
                 [],
                 (tx, results) => {
                     setCovidTests(results.rows.length);
                 }
             );
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id - 1),
+                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id),
                 [],
                 (tx, results) => {
                     setFibTests(results.rows.length);
@@ -46,13 +46,19 @@ export const Patient = ({route, navigation}) => {
         });
     }, []);
 
-    return(
+    return (
         <SafeAreaView style={styles.page}>
             <View styles={styles.section}>
                 <View style={styles.nameContainer}>
                     <Text style={styles.nameText}>{patient_name}</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('EditPatient', {navigation, patient_id, patient_name, patient_phone, patient_address})} name='edit' size={36}
+                        <Icon onPress={() => navigation.navigate('EditPatient', {
+                            navigation,
+                            patient_id,
+                            patient_name,
+                            patient_phone,
+                            patient_address
+                        })} name='edit' size={36}
                               color='#fff'/>
                     </Text>
                 </View>
@@ -61,8 +67,9 @@ export const Patient = ({route, navigation}) => {
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>COVID Tests</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('COVID', {navigation, patient_id})} name='arrowright' size={24}
-                            color='#fff'/>
+                        <Icon onPress={() => navigation.navigate('COVID', {navigation, patient_id})} name='arrowright'
+                              size={24}
+                              color='#fff'/>
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>
@@ -76,7 +83,8 @@ export const Patient = ({route, navigation}) => {
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Fibrinogen Tests</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('Fibrinogen', {navigation, patient_id})} name='arrowright' size={24}
+                        <Icon onPress={() => navigation.navigate('Fibrinogen', {navigation, patient_id})}
+                              name='arrowright' size={24}
                               color='#fff'/>
                     </Text>
                 </View>

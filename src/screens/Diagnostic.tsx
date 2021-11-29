@@ -9,20 +9,16 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
     console.log('ERROR: ' + error)
 });
 
-export const Diagnostic = ({navigation}) => {
-    let [patientId, setPatientId] = useState('');
+export const Diagnostic = ({route, navigation}) => {
+    const {patientID} = route.params;
     let [testType, setTestType] = useState('');
     let [testResult, setTestResult] = useState('');
 
     let add_test_result = () => {
         db.transaction(function (tx) {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_tests(test_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, test_type INT(8), test_result VARCHAR(255), test_time TEXT)',
-                []
-            );
-            tx.executeSql(
                 'INSERT INTO table_tests (patient_id, test_type, test_result, test_time) VALUES (?,?,?,datetime("now"))',
-                [patientId, testType, testResult],
+                [patientID, testType, testResult],
                 (tx, results) => {
                     console.log('Results', results.rowsAffected);
                     navigation.navigate('AllResults')
@@ -37,15 +33,6 @@ export const Diagnostic = ({navigation}) => {
                                       style={{flex: 1}}>
                 <View style={styles.page}>
                     <View style={styles.section}>
-                        <TextInputField
-                            placeholder='Enter patient ID'
-                            onChangeText={
-                                (patientId) => setPatientId(patientId)
-                            }
-                            maxLength={10}
-                            keyboardType="numeric"
-                            style={{padding: 25}}
-                        />
                         <TextInputField
                             placeholder='Enter test ID (0 or 1)'
                             onChangeText={

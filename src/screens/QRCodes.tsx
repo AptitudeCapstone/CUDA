@@ -3,7 +3,6 @@ import {Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View
 import SubmitButton from '../components/SubmitButton';
 import TextInputField from '../components/TextInputField';
 import {openDatabase} from 'react-native-sqlite-storage';
-import QRCode from 'react-native-qrcode-svg';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {

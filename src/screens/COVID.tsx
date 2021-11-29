@@ -82,7 +82,7 @@ export const COVID = ({route, navigation}) => {
                         style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
                         {/*<Text style={styles.text}>Test ID: {item.test_id}</Text>*/}
                         <View style={styles.patientID}>
-                            <Text style={styles.patientIDText}>{item.patient_id + 1}</Text>
+                            <Text style={styles.patientIDText}>{item.patient_id}</Text>
                         </View>
                         <View style={styles.result}>
                             {/*<Text style={styles.text}>Test Type: {item.test_type}</Text>*/}
@@ -141,7 +141,7 @@ export const COVID = ({route, navigation}) => {
                         style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
                         {/*<Text style={styles.text}>Test ID: {item.test_id}</Text>*/}
                         <View style={styles.patientID}>
-                            <Text style={styles.patientIDText}>{item.patient_id + 1}</Text>
+                            <Text style={styles.patientIDText}>{item.patient_id}</Text>
                         </View>
                         <View style={styles.result}>
                             {/*<Text style={styles.text}>Test Type: {item.test_type}</Text>*/}

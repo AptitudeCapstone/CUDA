@@ -79,7 +79,13 @@ export const Patients = ({navigation}) => {
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
                 <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Patient', {navigation, patient_id, patient_name, patient_phone, patient_address})}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Patient', {
+                        navigation,
+                        patient_id,
+                        patient_name,
+                        patient_phone,
+                        patient_address
+                    })}>
                         <View
                             key={item.patient_id}
                             style={{backgroundColor: '#333', padding: 20}}>

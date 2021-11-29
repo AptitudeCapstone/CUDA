@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import {LineChart} from "react-native-chart-kit";
 import {format, parseISO} from 'date-fns';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
@@ -19,7 +20,7 @@ export const Fibrinogen = ({route, navigation}) => {
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id - 1),
+                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id),
                 [],
                 (tx, results) => {
                     var temp = [];
@@ -32,8 +33,8 @@ export const Fibrinogen = ({route, navigation}) => {
                     setFibTests(temp);
 
                     for (const row of temp) {
-                        console.log(row);
-                        temp2.push(row['test_result']);
+                        //console.log(row);
+                        temp2.push(parseInt((row['test_result'])));
                         temp3.push(row['test_time']);
                     }
 
@@ -89,23 +90,22 @@ export const Fibrinogen = ({route, navigation}) => {
             }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
         }
 
+        /*
         for (const row of fibVals) {
             console.log(row);
         }
         for (const row of fibTimes) {
             console.log(row);
         }
+         */
 
-        return(
+        return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
                 <Animated.View style={{flex: 1, backgroundColor: '#444'}}>
                     <View
                         key={item.test_id}
                         style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
                         {/*<Text style={styles.text}>Test ID: {item.test_id}</Text>*/}
-                        <View style={styles.patientID}>
-                            <Text style={styles.patientIDText}>{item.patient_id + 1}</Text>
-                        </View>
                         <View style={styles.result}>
                             {/*<Text style={styles.text}>Test Type: {item.test_type}</Text>*/}
                             <Text style={styles.fibResultText}>{item.test_result} mg/mL
@@ -124,32 +124,62 @@ export const Fibrinogen = ({route, navigation}) => {
     let FibListHeader = () => {
         return (
             <View style={{backgroundColor: '#444', flexDirection: 'row', flex: 1}}>
-                <View style={{flex: 0.25, justifyContent: 'center'}}>
-                    <Text style={styles.rowHeaderText}>Patient ID</Text>
-                </View>
-                <View style={{flex: 0.25, justifyContent: 'center'}}>
+                <View style={{flex: 0.4, justifyContent: 'center'}}>
                     <Text style={styles.rowHeaderText}>Result</Text>
                 </View>
-                <View style={{flex: 0.5, justifyContent: 'center'}}>
+                <View style={{flex: 0.6, justifyContent: 'center'}}>
                     <Text style={styles.rowHeaderText}>Timestamp</Text>
                 </View>
             </View>
         )
     }
 
+    const screenWidth = Dimensions.get('window').width;
+
+    const chartConfig = {
+        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientTo: "#08130D",
+        backgroundGradientToOpacity: 0.5,
+        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    };
+
+    const data = {
+        labels: fibTimes,
+        datasets: [{
+            data: fibVals
+        }]
+    };
+
+    const dataEmpty = {
+        labels: ['0'],
+        datasets: [{
+            data: [0]
+        }]
+    };
+
+    console.log(fibVals);
+    console.log(fibTimes);
+
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{flex: 1, backgroundColor: '#222', justifyContent: 'space-between'}}>
-                <View style={{flex: 1}}>
-                    <View style={styles.headingContainer}>
-                        <Text style={styles.headingText}>Fibrinogen Tests</Text>
-                    </View>
+                <View style={{flex: 0.4}}>
                     <FlatList
                         data={fibTests}
                         ListHeaderComponent={FibListHeader}
                         ItemSeparatorComponent={listViewItemSeparator}
                         keyExtractor={(item, index) => item.test_id}
                         renderItem={({item}) => fibListItemView(item)}
+                    />
+                </View>
+                <View style={{flex: 0.6, padding: 15}}>
+                    <LineChart
+                        data={(fibVals.length == 0) ? dataEmpty : data}
+                        width={screenWidth} // from react-native
+                        height={400}
+                        chartConfig={chartConfig}
+                        bezier
                     />
                 </View>
             </View>
@@ -187,7 +217,7 @@ const styles = StyleSheet.create({
     },
     result: {
         backgroundColor: '#666',
-        flex: 0.25,
+        flex: 0.4,
         textAlign: 'center',
         justifyContent: 'center'
     },
@@ -205,7 +235,7 @@ const styles = StyleSheet.create({
     },
     time: {
         backgroundColor: '#555',
-        flex: 0.5,
+        flex: 0.6,
         textAlign: 'center',
         justifyContent: 'center'
     },

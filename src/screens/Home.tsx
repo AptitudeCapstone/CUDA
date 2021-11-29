@@ -4,12 +4,16 @@ import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAre
 import Icon from 'react-native-vector-icons/AntDesign';
 import {BleManager, Device} from "react-native-ble-plx";
 import {DeviceCard} from "../components/DeviceCard";
+import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
 
 const manager = new BleManager();
 
-// Reducer to add only the devices which have not been added yet
-// When the bleManager search for devices, each time it detect a ble device, it returns the ble device even if this one has already been returned
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
+
 const reducer = (
     state: Device[],
     action: { type: 'ADD_DEVICE'; payload: Device } | { type: 'CLEAR' },
@@ -31,9 +35,7 @@ const reducer = (
 };
 
 const decodeBleString = (value: string | undefined | null): string => {
-    if (!value) {
-        return '';
-    }
+    if (!value) return '';
     return Base64.decode(value).charCodeAt(0);
 };
 
@@ -48,9 +50,9 @@ export const Home = ({navigation}) => {
 
         // scan devices
         manager.startDeviceScan(null, null, (error, scannedDevice) => {
-            if (error) {
+            if (error)
                 console.warn(error);
-            }
+
 
             // scan for devices with name 'raspberrypi'
             if (scannedDevice.name == 'raspberrypi') {
@@ -81,8 +83,7 @@ export const Home = ({navigation}) => {
                         return scannedDevice.discoverAllServicesAndCharacteristics();
                     })
                     .then(async (deviceObject) => {
-                        console.log('deviceObject');
-                        console.log(deviceObject);
+                        console.log('deviceObject: ' + deviceObject);
                         // subscribe for the readable service
                         scannedDevice.monitorCharacteristicForService(
                             '00000001-710e-4a5b-8d75-3e5b444bc3cf',
@@ -119,14 +120,48 @@ export const Home = ({navigation}) => {
     );
 
     useEffect(() => {
+        // start to scan when page is open
+        scanDevices();
+
+        // if this is the first run of the app, create the database tables
+        db.transaction(function (tx) {
+            tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS table_patients(patient_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_name VARCHAR(30), patient_contact INT(15), patient_address VARCHAR(255))',
+                []
+            );
+            tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS table_tests(test_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, test_type INT(8), test_result VARCHAR(255), test_time TEXT)',
+                []
+            );
+        });
+
+        // destroy manager when done
         return () => {
             manager.destroy();
         };
     }, []);
 
-    useEffect(() => {
-        scanDevices();
-    }, [])
+    let start_test = () => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM table_patients',
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    var temp2 = [];
+                    for (let i = 0; i < results.rows.length; ++i) {
+                        temp.push(results.rows.item(i));
+                        temp2.push({
+                            value: results.rows.item(i).patient_id,
+                            label: results.rows.item(i).patient_name.toString()
+                        });
+                    }
+
+                    navigation.navigate('SelectPatient', {navigation, patients: temp, patientIDs: temp2});
+                }
+            );
+        });
+    }
 
     return (
         <SafeAreaView style={styles.page}>
@@ -143,13 +178,19 @@ export const Home = ({navigation}) => {
                         </Text>
                     )}
                 </View>
-                <FlatList
-                    keyExtractor={(item) => item.id}
-                    data={scannedDevices}
-                    renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                    ListHeaderComponent={ListHeaderComponent}
-                    contentContainerStyle={styles.content}
-                />
+                {scannedDevices.length == 0 ? (
+                    <View style={styles.navButton}>
+                        <Text style={styles.navButtonText}>No devices found</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        keyExtractor={(item) => item.id}
+                        data={scannedDevices}
+                        renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
+                        ListHeaderComponent={ListHeaderComponent}
+                        contentContainerStyle={styles.content}
+                    />
+                )}
             </View>
             <View styles={styles.section}>
                 <View style={styles.headingContainer}>
@@ -172,6 +213,7 @@ export const Home = ({navigation}) => {
                     <Text style={styles.navButtonText}>QR codes</Text>
                 </TouchableOpacity>
             </View>
+            {/*
             <View styles={styles.section}>
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Test Results</Text>
@@ -189,11 +231,12 @@ export const Home = ({navigation}) => {
                     <Text style={styles.navButtonText}>View recent tests</Text>
                 </TouchableOpacity>
             </View>
+            */}
             <View styles={styles.section}>
                 <View style={styles.testButtonContainer}>
                     <TouchableOpacity
                         style={styles.testButton}
-                        onPress={() => navigation.navigate('Diagnostic')}
+                        onPress={start_test}
                     >
                         <Text style={styles.testButtonText}>Begin a Test</Text>
                     </TouchableOpacity>
