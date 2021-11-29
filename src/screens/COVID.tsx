@@ -76,8 +76,21 @@ export const COVID = ({route, navigation}) => {
             )
         }
 
+        let sqlDelete = () => {
+            db.transaction(function (tx) {
+                tx.executeSql(
+                    'DELETE FROM table_tests WHERE patient_id=' + item.patient_id + ' AND test_id=' + item.test_id,
+                    [],
+                    (tx, results) => {
+                        console.log('Results', results.rowsAffected);
+                    }
+                );
+            });
+        };
+
         const animatedDelete = () => {
-            const height = new Animated.Value(70)
+            sqlDelete();
+            const height = new Animated.Value(70);
             Animated.timing(height, {
                 toValue: 0,
                 duration: 350,

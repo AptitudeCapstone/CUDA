@@ -53,9 +53,8 @@ export const Home = ({navigation}) => {
             if (error)
                 console.warn(error);
 
-
             // scan for devices with name 'raspberrypi'
-            if (scannedDevice.name == 'raspberrypi') {
+            if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
                 // stop scanning
                 manager.stopDeviceScan();
 

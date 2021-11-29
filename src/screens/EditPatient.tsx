@@ -33,7 +33,7 @@ export const EditPatient = ({route, navigation}) => {
             );
         });
 
-        navigation.popToTop();
+        navigation.pop();
     };
 
     return (

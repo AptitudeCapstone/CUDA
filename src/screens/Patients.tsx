@@ -62,8 +62,29 @@ export const Patients = ({navigation}) => {
             )
         }
 
+        let sqlDelete = () => {
+            db.transaction(function (tx) {
+                tx.executeSql(
+                    'DELETE FROM table_patients WHERE patient_id=' + patient_id,
+                    [],
+                    (tx, results) => {
+                        console.log('Results', results.rowsAffected);
+                    }
+                );
+                tx.executeSql(
+                    'DELETE FROM table_tests WHERE patient_id=' + patient_id,
+                    [],
+                    (tx, results) => {
+                        console.log('Results', results.rowsAffected);
+                        navigation.navigate('Home');
+                    }
+                );
+            });
+        };
+
         const animatedDelete = () => {
-            const height = new Animated.Value(70)
+            sqlDelete();
+            const height = new Animated.Value(70);
             Animated.timing(height, {
                 toValue: 0,
                 duration: 350,

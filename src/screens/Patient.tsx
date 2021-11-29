@@ -3,17 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {openDatabase} from 'react-native-sqlite-storage';
+import { useIsFocused } from '@react-navigation/native';
 
-// display patient info
-
-// section 1: allow editing patient data
-// tapping pencil opens edit patient screen
-
-// section 2: covid
-// - most recent test result / number of days ago (or hours if < 1 day)
-
-// section 3: fibrinogen
-// - most recent test result / number of days ago (or hours if < 1 day)
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -22,42 +13,66 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 
 export const Patient = ({route, navigation}) => {
 
-    const {patient_id, patient_name, patient_phone, patient_address} = route.params;
+    let {patient_id, patient_name, patient_phone, patient_address} = route.params;
 
-    let [covidTests, setCovidTests] = useState([]);
-    let [fibTests, setFibTests] = useState([]);
+    let [patientName, setPatientName] = useState(patient_name);
+    let [patientPhone, setPatientPhone] = useState(patient_phone);
+    let [patientAddress, setPatientAddress] = useState(patient_address);
+    let [covidTests, setCovidTests] = useState(0);
+    let [fibTests, setFibTests] = useState(0);
+
+    // this is run once each time screen is opened
+
+    const isFocused = useIsFocused();
 
     useEffect(() => {
+
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + (patient_id),
+                'SELECT * FROM table_patients WHERE patient_id=' + patient_id,
                 [],
                 (tx, results) => {
-                    setCovidTests(results.rows.length);
+                    let patient = results.rows.item(0);
+                    setPatientName(patient.patient_name);
+                    setPatientPhone(patient.patient_phone);
+                    setPatientAddress(patient.patient_address);
                 }
             );
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id),
+                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + patient_id,
                 [],
                 (tx, results) => {
-                    setFibTests(results.rows.length);
+                    var temp = [];
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push(results.rows.item(i));
+                    setCovidTests(temp);
+                }
+            );
+            tx.executeSql(
+                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + patient_id,
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push(results.rows.item(i));
+                    setFibTests(temp);
                 }
             );
         });
-    }, []);
+    },[isFocused]);
 
     return (
         <SafeAreaView style={styles.page}>
             <View styles={styles.section}>
                 <View style={styles.nameContainer}>
-                    <Text style={styles.nameText}>{patient_name}</Text>
+                    <Text style={styles.nameText}>{patientName}</Text>
                     <Text style={{textAlign: 'right'}}>
                         <Icon onPress={() => navigation.navigate('EditPatient', {
                             navigation,
                             patient_id,
-                            patient_name,
-                            patient_phone,
-                            patient_address
+                            patientName,
+                            patientPhone,
+                            patientAddress
                         })} name='edit' size={36}
                               color='#fff'/>
                     </Text>
@@ -73,7 +88,7 @@ export const Patient = ({route, navigation}) => {
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>
-                    <Text style={styles.infoText}>{covidTests} recorded COVID tests</Text>
+                    <Text style={styles.infoText}>{covidTests.length} recorded COVID tests</Text>
                 </View>
                 <View style={styles.subheadingContainer}>
                     <Text style={styles.infoText}>Last test was 1 day ago</Text>
@@ -89,7 +104,7 @@ export const Patient = ({route, navigation}) => {
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>
-                    <Text style={styles.infoText}>{fibTests} recorded fibrinogen tests</Text>
+                    <Text style={styles.infoText}>{fibTests.length} recorded fibrinogen tests</Text>
                 </View>
                 <View style={styles.subheadingContainer}>
                     <Text style={styles.infoText}>Last test was 4 days ago</Text>
