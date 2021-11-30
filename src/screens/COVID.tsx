@@ -82,7 +82,7 @@ export const COVID = ({route, navigation}) => {
                     'DELETE FROM table_tests WHERE patient_id=' + item.patient_id + ' AND test_id=' + item.test_id,
                     [],
                     (tx, results) => {
-                        console.log('Results', results.rowsAffected);
+                        console.log('Deleted ' + results.rowsAffected.length + ' user');
                     }
                 );
             });

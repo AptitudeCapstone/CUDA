@@ -15,18 +15,12 @@ export const Patient = ({route, navigation}) => {
 
     let {patient_id, patient_name, patient_phone, patient_address} = route.params;
 
-    let [patientName, setPatientName] = useState(patient_name);
-    let [patientPhone, setPatientPhone] = useState(patient_phone);
-    let [patientAddress, setPatientAddress] = useState(patient_address);
     let [covidTests, setCovidTests] = useState(0);
     let [fibTests, setFibTests] = useState(0);
 
     // this is run once each time screen is opened
-
     const isFocused = useIsFocused();
-
     useEffect(() => {
-
         db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM table_patients WHERE patient_id=' + patient_id,
@@ -38,6 +32,7 @@ export const Patient = ({route, navigation}) => {
                     setPatientAddress(patient.patient_address);
                 }
             );
+
             tx.executeSql(
                 'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + patient_id,
                 [],
@@ -48,6 +43,7 @@ export const Patient = ({route, navigation}) => {
                     setCovidTests(temp);
                 }
             );
+
             tx.executeSql(
                 'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + patient_id,
                 [],
@@ -65,16 +61,17 @@ export const Patient = ({route, navigation}) => {
         <SafeAreaView style={styles.page}>
             <View styles={styles.section}>
                 <View style={styles.nameContainer}>
-                    <Text style={styles.nameText}>{patientName}</Text>
+                    <Text style={styles.nameText}>{patient_name}</Text>
                     <Text style={{textAlign: 'right'}}>
                         <Icon onPress={() => navigation.navigate('EditPatient', {
-                            navigation,
-                            patient_id,
-                            patientName,
-                            patientPhone,
-                            patientAddress
-                        })} name='edit' size={36}
-                              color='#fff'/>
+                                navigation,
+                                patient_id,
+                                patient_name,
+                                patient_phone,
+                                patient_address
+                            })} name='edit' size={36}
+                              color='#fff'
+                        />
                     </Text>
                 </View>
             </View>
