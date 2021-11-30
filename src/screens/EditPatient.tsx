@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -6,10 +6,11 @@ import {
     TextInput,
     View,
     Modal,
-    TouchableOpacity
+    TouchableOpacity, KeyboardAvoidingView
 } from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {useIsFocused} from "@react-navigation/native";
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -20,6 +21,10 @@ export const EditPatient = ({route, navigation}) => {
 
     const {patient_id, patient_name, patient_phone, patient_address} = route.params;
 
+    let [patientName, setPatientName] = useState(patient_name);
+    let [patientPhone, setPatientPhone] = useState(patient_phone);
+    let [patientAddress, setPatientAddress] = useState(patient_address);
+
     let [nameModalValue, setNameModalValue] = useState(patient_name);
     let [phoneModalValue, setPhoneModalValue] = useState(patient_phone);
     let [addressModalValue, setAddressModalValue] = useState(patient_address);
@@ -27,6 +32,14 @@ export const EditPatient = ({route, navigation}) => {
     const [nameModalVisible, setNameModalVisible] = useState(false);
     const [phoneModalVisible, setPhoneModalVisible] = useState(false);
     const [addressModalVisible, setAddressModalVisible] = useState(false);
+
+    // this is run once each time screen is opened
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        setPatientName(nameModalValue);
+        setPatientPhone(phoneModalValue);
+        setPatientAddress(addressModalValue);
+    },[isFocused]);
 
     let update_name = () => {
         db.transaction((tx) => {
@@ -162,6 +175,7 @@ export const EditPatient = ({route, navigation}) => {
                     </View>
                 </View>
             </Modal>
+            <KeyboardAvoidingView style={styles.page}>
                 <View style={styles.page}>
                     <View styles={styles.section}>
                         <View style={styles.nameContainer}>
@@ -200,6 +214,7 @@ export const EditPatient = ({route, navigation}) => {
                         </View>
                     </View>
                 </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }

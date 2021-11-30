@@ -107,17 +107,6 @@ export const Home = ({navigation}) => {
         });
     };
 
-    const ListHeaderComponent = () => (
-        <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-                {/*<Button
-                    title="Clear devices"
-                    onPress={() => dispatch({type: 'CLEAR'})}
-                />*/}
-            </View>
-        </View>
-    );
-
     useEffect(() => {
         // start to scan when page is open
         scanDevices();
@@ -186,7 +175,6 @@ export const Home = ({navigation}) => {
                         keyExtractor={(item) => item.id}
                         data={scannedDevices}
                         renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                        ListHeaderComponent={ListHeaderComponent}
                         contentContainerStyle={styles.content}
                     />
                 )}

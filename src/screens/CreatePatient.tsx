@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
 import SubmitButton from '../components/SubmitButton';
 import TextInputField from '../components/TextInputField';
 import {openDatabase} from 'react-native-sqlite-storage';
@@ -44,12 +44,10 @@ export const CreatePatient = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
-            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}
-                                      style={styles.page}>
-                <View style={{alignItems: 'center', backgroundColor: '#222'}}>
 
-                    {/* QR code recognition */}
 
+                <View style={{alignItems: 'center', backgroundColor: '#222', flex: 0.5}}>
+                    <ScrollView style={{flex:1}}>
                     <View style={styles.section}>
                         <Text style={styles.headingText}>Name</Text>
                         <TextInputField
@@ -82,13 +80,13 @@ export const CreatePatient = ({navigation}) => {
                             style={{padding: 25, color: '#fff'}}
                         />
                     </View>
+                    </ScrollView>
                     <View style={styles.section}>
                         <View style={{marginTop: 45}}>
                             <SubmitButton title='Create Patient' customClick={register_user}/>
                         </View>
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
         </SafeAreaView>
     );
 }

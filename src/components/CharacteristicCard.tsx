@@ -58,21 +58,21 @@ const CharacteristicCard = ({char}: CharacteristicCardProps) => {
             onPress={writeCharacteristic}>
             <Text style={styles.measure}>{measure}</Text>
             <Text style={styles.descriptor}>{descriptor}</Text>
-            <Text>{`isIndicatable : ${char.isIndicatable}`}</Text>
-            <Text>{`isNotifiable : ${char.isNotifiable}`}</Text>
-            <Text>{`isNotifying : ${char.isNotifying}`}</Text>
-            <Text>{`isReadable : ${char.isReadable}`}</Text>
+            <Text style={{color: '#fff'}}>{'isIndicatable: ' + char.isIndicatable}</Text>
+            <Text style={{color: '#fff'}}>{'isNotifiable: ' + char.isNotifiable}</Text>
+            <Text style={{color: '#fff'}}>{'isNotifying: ' + char.isNotifying}</Text>
+            <Text style={{color: '#fff'}}>{'isReadable: ' + char.isReadable}</Text>
             <TouchableOpacity>
-                <Text>{`isWritableWithResponse : ${char.isWritableWithResponse}`}</Text>
+                <Text style={{color: '#fff'}}>{'isWritableWithResponse: ' + char.isWritableWithResponse}</Text>
             </TouchableOpacity>
-            <Text>{`isWritableWithoutResponse : ${char.isWritableWithoutResponse}`}</Text>
+            <Text style={{color: '#fff'}}>{'isWritableWithoutResponse: ' + char.isWritableWithoutResponse}</Text>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        backgroundColor: '#333',
         marginVertical: 12,
         borderRadius: 16,
         shadowColor: 'rgba(60,64,67,0.3)',

@@ -4,12 +4,7 @@ import {Device} from 'react-native-ble-plx';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconAD from 'react-native-vector-icons/AntDesign';
 
-type DeviceCardProps = {
-    navigation: any;
-    device: Device;
-};
-
-const DeviceCard = ({navigation, device}: DeviceCardProps) => {
+const DeviceCard = ({navigation, device}) => {
 
     const [isConnected, setIsConnected] = useState(false);
 
@@ -30,7 +25,7 @@ const DeviceCard = ({navigation, device}: DeviceCardProps) => {
     return (
         <TouchableOpacity
             style={styles.navButton}
-            onPress={() => navigation.navigate('Device', {navigation, device})}
+            onPress={() => navigation.navigate('Device', {navigation: navigation, device: device})}
         >
             {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
             {isConnected ? (

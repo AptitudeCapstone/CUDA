@@ -14,7 +14,7 @@ export const DeviceScreen = ({route, navigation}) => {
 
     // handle the device disconnection
     const disconnectDevice = useCallback(async () => {
-        navigation.goBack();
+        //navigation.goBack();
         const isDeviceConnected = await device.isConnected();
         if (isDeviceConnected) {
             await device.cancelConnection();
@@ -37,30 +37,33 @@ export const DeviceScreen = ({route, navigation}) => {
         getDeviceInformation();
 
         device.onDisconnected(() => {
-            navigation.navigate('Home');
+            if(navigation.canGoBack()) {
+                navigation.goBack();
+            }
         });
 
         // give a callback to the useEffect to disconnect the device when we will leave the device screen
         return () => {
             disconnectDevice();
         };
-    }, [device, disconnectDevice, navigation]);
+    }, [device, disconnectDevice]);
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Button title="Disconnect" onPress={disconnectDevice}/>
             <View>
                 <View style={styles.header}>
-                    <Text>{`Id : ${device.id}`}</Text>
-                    <Text>{`Name : ${device.name}`}</Text>
-                    <Text>{`Is connected : ${isConnected}`}</Text>
-                    <Text>{`RSSI : ${device.rssi}`}</Text>
-                    <Text>{`ServiceData : ${device.serviceData}`}</Text>
-                    <Text>{`UUIDS : ${device.serviceUUIDs}`}</Text>
+                    <Text style={{color: '#fff'}}>{'Id: ' + device.id}</Text>
+                    <Text style={{color: '#fff'}}>{'Name: ' + device.name}</Text>
+                    <Text style={{color: '#fff'}}>{'Is connected: ' + isConnected}</Text>
+                    <Text style={{color: '#fff'}}>{'RSSI: ' + device.rssi}</Text>
+                    <Text style={{color: '#fff'}}>{'ServiceData: ' + device.serviceData}</Text>
+                    <Text style={{color: '#fff'}}>{'UUIDS : ' + device.serviceUUIDs}</Text>
                 </View>
                 {/* Display a list of all services */}
                 {services &&
-                services.map((service) => <ServiceCard service={service} navigation={navigation}/>)}
+                    services.map((service) => <ServiceCard service={service} navigation={navigation}/>)
+                }
             </View>
         </ScrollView>
     );
@@ -72,7 +75,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        backgroundColor: 'white',
+        backgroundColor: '#222',
         marginBottom: 12,
         borderRadius: 16,
         shadowColor: 'rgba(60,64,67,0.3)',
