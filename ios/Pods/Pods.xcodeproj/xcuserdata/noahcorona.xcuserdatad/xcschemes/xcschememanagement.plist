@@ -279,7 +279,22 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>react-native-blob-util.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>react-native-camera.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-html-to-pdf.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-pdf.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
