@@ -32,7 +32,7 @@ export const Patients = ({navigation}) => {
                 style={{
                     height: 1,
                     width: '100%',
-                    backgroundColor: '#cccccc'
+                    backgroundColor: '#444'
                 }}
             />
         );
@@ -51,6 +51,7 @@ export const Patients = ({navigation}) => {
                                   onPress={animatedDelete}>
                     <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
                         <Animated.Text style={{
+                            color: '#fff',
                             marginLeft: 25,
                             marginRight: 25,
                             fontSize: 15,
@@ -106,18 +107,36 @@ export const Patients = ({navigation}) => {
                         patient_name,
                         patient_phone,
                         patient_address
-                        })
-                    }
+                    })}
                 >
-                <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#333'}}>
+                    <Animated.View style={{
+                        flex: 1,
+                        margin: 15,
+                        borderRadius: 15,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: '#333',
+                    }}>
                         <View
                             key={item.patient_id}
-                            style={{backgroundColor: '#333', padding: 20}}>
-                            <Text style={styles.nameText}>{item.patient_name}</Text>
-                            <Text style={styles.text}>{item.patient_contact}</Text>
-                            <Text style={styles.text}>{item.patient_address}</Text>
+                            style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
+                        >
+                            <View style={{
+                                backgroundColor: '#353535',
+                                padding: 20,
+                                paddingBottom: 10,
+                                flex: 1,
+                                borderTopLeftRadius: 15,
+                                borderTopRightRadius: 15
+                            }}>
+                                <Text style={styles.nameText}>{item.patient_name}</Text>
+                            </View>
+                            <View style={{padding: 20}}>
+                                <Text style={styles.text}>{item.patient_contact}</Text>
+                                <Text style={styles.text}>{item.patient_address}</Text>
+                            </View>
                         </View>
-                </Animated.View>
+                    </Animated.View>
                 </TouchableOpacity>
             </Swipeable>
         );
@@ -128,7 +147,6 @@ export const Patients = ({navigation}) => {
             <View style={{flex: 1, backgroundColor: '#222'}}>
                 <FlatList
                     data={flatListItems}
-                    ItemSeparatorComponent={listViewItemSeparator}
                     keyExtractor={(item, index) => item.patient_id}
                     renderItem={({item}) => listItemView(item)}
                 />

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import SubmitButton from '../components/SubmitButton';
 import TextInputField from '../components/TextInputField';
 import {openDatabase} from 'react-native-sqlite-storage';
@@ -46,8 +46,8 @@ export const CreatePatient = ({navigation}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
 
 
-                <View style={{alignItems: 'center', backgroundColor: '#222', flex: 0.5}}>
-                    <ScrollView style={{flex:1}}>
+            <View style={{alignItems: 'center', backgroundColor: '#222', flex: 0.5}}>
+                <ScrollView style={{flex: 1}}>
                     <View style={styles.section}>
                         <Text style={styles.headingText}>Name</Text>
                         <TextInputField
@@ -80,13 +80,13 @@ export const CreatePatient = ({navigation}) => {
                             style={{padding: 25, color: '#fff'}}
                         />
                     </View>
-                    </ScrollView>
-                    <View style={styles.section}>
-                        <View style={{marginTop: 45}}>
-                            <SubmitButton title='Create Patient' customClick={register_user}/>
-                        </View>
+                </ScrollView>
+                <View style={styles.section}>
+                    <View style={{marginTop: 45}}>
+                        <SubmitButton title='Create Patient' customClick={register_user}/>
                     </View>
                 </View>
+            </View>
         </SafeAreaView>
     );
 }

@@ -1,11 +1,15 @@
 import React, {useEffect, useReducer, useState} from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
-import Icon from 'react-native-vector-icons/AntDesign';
+import IconAD from 'react-native-vector-icons/AntDesign';
+import IconF from 'react-native-vector-icons/Feather';
+import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
 import {BleManager, Device} from "react-native-ble-plx";
 import {DeviceCard} from "../components/DeviceCard";
 import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import {RNCamera} from 'react-native-camera';
 
 const manager = new BleManager();
 
@@ -43,6 +47,7 @@ export const Home = ({navigation}) => {
     // reducer to store discovered ble devices
     const [scannedDevices, dispatch] = useReducer(reducer, []);
     const [isScanning, setIsScanning] = useState(false);
+    const [patientSelection, setPatientSelection] = useState(0);
 
     const scanDevices = () => {
         // toggle activity indicator on
@@ -129,7 +134,34 @@ export const Home = ({navigation}) => {
         };
     }, []);
 
-    let start_test = () => {
+    // set patient ID via QR code
+    let setPatientID = e => {
+        //console.log('QR scanned, patientID = ' + e.data);
+        if (e.data == null) {
+            navigation.navigate('Home');
+            Alert.alert('No QR code found.');
+        } else
+            navigation.navigate('Diagnostic', {navigation, patientID: e.data});
+    }
+
+    // for test section to select method of patient selection
+    const patient_selection_change = (selection) => {
+        setPatientSelection(selection);
+
+        switch (selection) {
+            case 1: // if select from list
+                break;
+            case 2: // if select by scanning qr
+                break;
+            case 3: // if no select
+                break;
+            default: // if none selected
+                break;
+        }
+    }
+
+    // for test section to start test
+    const start_test = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM table_patients',
@@ -152,87 +184,123 @@ export const Home = ({navigation}) => {
     }
 
     return (
-        <SafeAreaView style={styles.page}>
-            <View styles={styles.section}>
-                <View style={styles.headingContainer}>
-                    <Text style={styles.headingText}>CUDA Devices</Text>
-                    {isScanning ? (
-                        <Text style={{textAlign: 'right'}}>
-                            <ActivityIndicator color={'white'} size={25}/>
-                        </Text>
-                    ) : (
-                        <Text style={{textAlign: 'right'}}>
-                            <Icon onPress={scanDevices} name='plus' size={24} color='#fff'/>
-                        </Text>
-                    )}
-                </View>
-                {scannedDevices.length == 0 ? (
-                    <View style={styles.navButton}>
-                        <Text style={styles.navButtonText}>No devices found</Text>
-                    </View>
-                ) : (
-                    <FlatList
-                        keyExtractor={(item) => item.id}
-                        data={scannedDevices}
-                        renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                        contentContainerStyle={styles.content}
-                    />
-                )}
-            </View>
+        <ScrollView style={styles.page}>
             <View styles={styles.section}>
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Patients</Text>
-                    <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('NewPatient', {device: Device})} name='plus' size={24}
-                              color='#fff'/>
-                    </Text>
                 </View>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate('Patients')}
-                >
-                    <Text style={styles.navButtonText}>View patients</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate('QRCodes')}
-                >
-                    <Text style={styles.navButtonText}>QR codes</Text>
-                </TouchableOpacity>
-            </View>
-            {/*
-            <View styles={styles.section}>
-                <View style={styles.headingContainer}>
-                    <Text style={styles.headingText}>Test Results</Text>
-                </View>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate('AllResults')}
-                >
-                    <Text style={styles.navButtonText}>View by patient</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate('AllResults')}
-                >
-                    <Text style={styles.navButtonText}>View recent tests</Text>
-                </TouchableOpacity>
-            </View>
-            */}
-            <View styles={styles.section}>
-                <View style={styles.testButtonContainer}>
+                <View style={styles.navButtonContainer}>
                     <TouchableOpacity
-                        style={styles.testButton}
-                        onPress={start_test}
+                        style={styles.navButton}
+                        onPress={() => navigation.navigate('NewPatient', {device: Device})}
                     >
-                        <Text style={styles.testButtonText}>Begin a Test</Text>
-                        <Text style={{textAlign: 'right'}}>
-                            <Icon name='arrowright' size={30} color='#fff'/>
-                        </Text>
+                        <View style={styles.navIcon}>
+                            <IconF name='user-plus' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Create Patient</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.navButton}
+                        onPress={() => navigation.navigate('Patients')}
+                    >
+                        <View style={styles.navIcon}>
+                            <IconF name='user' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>View patients</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.navButton}
+                        onPress={() => navigation.navigate('QRCodes')}
+                    >
+                        <View style={styles.navIcon}>
+                            <IconMCA name='qrcode' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Create QR Codes</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        </SafeAreaView>
+            <View styles={styles.section}>
+                <View style={styles.testButtonContainer}>
+                    <View style={styles.headingContainer}>
+                        <Text style={styles.headingText}>Start a Test</Text>
+                        {isScanning ? (
+                            <Text style={{textAlign: 'right'}}>
+                                <ActivityIndicator color={'white'} size={25}/>
+                            </Text>
+                        ) : (
+                            <Text style={{textAlign: 'right'}}>
+                                <IconAD onPress={scanDevices} name='plus' size={24} color='#fff'/>
+                            </Text>
+                        )}
+                    </View>
+
+                    {scannedDevices.length == 0 ? (
+                        <View style={styles.navButtonContainer}>
+                        <View style={styles.navButton}>
+                            <Text style={styles.navButtonText}>No devices found</Text>
+                        </View>
+                        </View>
+                    ) : (
+                        <FlatList
+                            keyExtractor={(item) => item.id}
+                            data={scannedDevices}
+                            renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
+                            contentContainerStyle={styles.content}
+                        />
+                    )}
+                    <View style={styles.navButtonContainer}>
+                        <TouchableOpacity
+                            style={styles.navButton}
+                            onPress={() => patient_selection_change(1)}
+                        >
+                            <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
+                                <IconF name='user' size={30} color='#fff'/>
+                            </View>
+                            <Text style={styles.navButtonText}>Using Name or ID</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.navButton}
+                            onPress={() => patient_selection_change(2)}
+                        >
+                            <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
+                                <IconMCA name='qrcode-scan' size={30} color='#fff'/>
+                            </View>
+                            <Text style={styles.navButtonText}>Using a QR Code</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.navButton}
+                            onPress={() => patient_selection_change(3)}
+                        >
+                            <View style={(patientSelection == 3 ? styles.navIconSelected : styles.navIcon)}>
+                                <IconF name='user-x' size={30} color='#fff'/>
+                            </View>
+                            <Text style={styles.navButtonText}>As a Guest</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {patientSelection == 0 ? (
+                        <TouchableOpacity
+                        style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
+                        onPress={start_test}
+                        >
+                        <Text style={styles.testButtonText}>Begin</Text>
+                        <Text style={{textAlign: 'right'}}>
+                        <IconAD name='arrowright' size={30} color='#fff'/>
+                        </Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View></View>
+                    )}
+                    {patientSelection == 2 ? (
+                        <QRCodeScanner
+                            onRead={setPatientID}
+                            flashMode={RNCamera.Constants.FlashMode.auto}
+                        />
+                    ) : (
+                        <View></View>
+                    )}
+                </View>
+            </View>
+        </ScrollView>
 
     );
 }
@@ -241,13 +309,13 @@ const styles = StyleSheet.create({
     page: {
         backgroundColor: '#222',
         flex: 1,
-        justifyContent: 'space-between'
+        paddingTop: 40,
+        paddingBottom: 40,
     },
     section: {
         flexDirection: 'row',
     },
     headingContainer: {
-        backgroundColor: '#333',
         paddingTop: 20,
         paddingBottom: 20,
         paddingLeft: 24,
@@ -255,10 +323,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     headingText: {
-        fontSize: 18,
+        fontSize: 24,
         color: '#fff',
         flex: 1,
-        textAlign: 'left',
+        textAlign: 'center',
         fontWeight: 'bold'
     },
     subheadingContainer: {
@@ -281,32 +349,68 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center',
     },
+    navButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
     navButton: {
-        backgroundColor: '#444',
+        margin: 15,
+        flex: 0.3,
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    navIcon: {
+        backgroundColor: '#333',
         padding: 20,
-        alignSelf: 'stretch',
-        borderBottomWidth: 2,
-        borderBottomColor: '#666',
+        borderWidth: 1,
+        borderColor: '#555',
+        borderRadius: 5000,
+        marginBottom: 10
+    },
+    navIconSelected: {
+        backgroundColor: '#555',
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#888',
+        borderRadius: 5000,
+        marginBottom: 10
     },
     navButtonText: {
         fontSize: 14,
         color: '#eee',
-        textAlign: 'left',
+        textAlign: 'center',
     },
     testButtonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#282828',
     },
     testButton: {
-        backgroundColor: '#2cd46a',
-        padding: 25,
-        alignSelf: 'stretch',
+        backgroundColor: '#2cab5c',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
         flexDirection: 'row',
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    testButtonGrayed: {
+        backgroundColor: 'rgb(222,167,91)',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        flexDirection: 'row',
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
     },
     testButtonText: {
-        flex: 1,
         fontSize: 24,
         color: '#fff',
+        paddingRight: 24,
         textAlign: 'center',
         fontWeight: 'bold'
     },

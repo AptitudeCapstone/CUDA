@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
+    KeyboardAvoidingView,
+    Modal,
     SafeAreaView,
     StyleSheet,
     Text,
     TextInput,
-    View,
-    Modal,
-    TouchableOpacity, KeyboardAvoidingView
+    TouchableOpacity,
+    View
 } from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -39,7 +40,7 @@ export const EditPatient = ({route, navigation}) => {
         setPatientName(nameModalValue);
         setPatientPhone(phoneModalValue);
         setPatientAddress(addressModalValue);
-    },[isFocused]);
+    }, [isFocused]);
 
     let update_name = () => {
         db.transaction((tx) => {
@@ -95,7 +96,7 @@ export const EditPatient = ({route, navigation}) => {
             <Modal
                 visible={nameModalVisible}
                 transparent={true}
-                style={{justifyContent:'center'}}
+                style={{justifyContent: 'center'}}
             >
                 <View
                     style={{
@@ -116,13 +117,17 @@ export const EditPatient = ({route, navigation}) => {
                         autoComplete='off'
                         autoCorrect={false}
                     />
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}} onPress={() => setNameModalVisible(!nameModalVisible)}><Text style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}} onPress={update_name}><Text style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                    <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
+                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                                          onPress={() => setNameModalVisible(!nameModalVisible)}><Text
+                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                                          onPress={update_name}><Text
+                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-            <Modal visible={phoneModalVisible} transparent={true} style={{justifyContent:'center'}}>
+            <Modal visible={phoneModalVisible} transparent={true} style={{justifyContent: 'center'}}>
                 <View
                     style={{
                         marginTop: 100,
@@ -142,13 +147,17 @@ export const EditPatient = ({route, navigation}) => {
                         keyboardType="numeric"
                         style={{backgroundColor: '#fff', padding: 15, margin: 10}}
                     />
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}} onPress={() => setPhoneModalVisible(!phoneModalVisible)}><Text style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}} onPress={update_phone}><Text style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                    <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
+                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                                          onPress={() => setPhoneModalVisible(!phoneModalVisible)}><Text
+                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                                          onPress={update_phone}><Text
+                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-            <Modal visible={addressModalVisible} transparent={true} style={{justifyContent:'center'}}>
+            <Modal visible={addressModalVisible} transparent={true} style={{justifyContent: 'center'}}>
                 <View
                     style={{
                         marginTop: 100,
@@ -169,9 +178,13 @@ export const EditPatient = ({route, navigation}) => {
                         autoComplete='off'
                         autoCorrect={false}
                     />
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}} onPress={() => setAddressModalVisible(!addressModalVisible)}><Text style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}} onPress={update_address}><Text style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                    <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
+                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                                          onPress={() => setAddressModalVisible(!addressModalVisible)}><Text
+                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                                          onPress={update_address}><Text
+                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
                     </View>
                 </View>
             </Modal>

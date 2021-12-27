@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {openDatabase} from 'react-native-sqlite-storage';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
@@ -55,7 +55,7 @@ export const Patient = ({route, navigation}) => {
                 }
             );
         });
-    },[isFocused]);
+    }, [isFocused]);
 
     return (
         <SafeAreaView style={styles.page}>
@@ -64,12 +64,12 @@ export const Patient = ({route, navigation}) => {
                     <Text style={styles.nameText}>{patient_name}</Text>
                     <Text style={{textAlign: 'right'}}>
                         <Icon onPress={() => navigation.navigate('EditPatient', {
-                                navigation,
-                                patient_id,
-                                patient_name,
-                                patient_phone,
-                                patient_address
-                            })} name='edit' size={36}
+                            navigation,
+                            patient_id,
+                            patient_name,
+                            patient_phone,
+                            patient_address
+                        })} name='edit' size={36}
                               color='#fff'
                         />
                     </Text>

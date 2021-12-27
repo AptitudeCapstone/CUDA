@@ -10,10 +10,8 @@ export const SubmitButton = (props) => {
             <Text style={styles.submitButtonText}>
                 {props.title}
             </Text>
-            <Text style={{textAlign: 'right'}}>
-                <Icon name='arrowright' size={30}
-                      color='#fff'/>
-            </Text>
+            <Icon name='arrowright' size={30}
+                  color='#fff'/>
         </TouchableOpacity>
     );
 };
@@ -26,10 +24,8 @@ export const AltSubmitButton = (props) => {
             <Text style={styles.submitButtonText}>
                 {props.title}
             </Text>
-            <Text style={{textAlign: 'right'}}>
-                <Icon name='arrowright' size={30}
-                      color='#fff'/>
-            </Text>
+            <Icon name='arrowright' size={30}
+                  color='#fff'/>
         </TouchableOpacity>
     );
 };
@@ -37,20 +33,26 @@ export const AltSubmitButton = (props) => {
 const styles = StyleSheet.create({
     altSubmitButton: {
         backgroundColor: '#d6be38',
-        padding: 25,
-        alignSelf: 'stretch',
-        flexDirection: 'row'
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        flexDirection: 'row',
+        borderRadius: 50,
     },
     submitButton: {
         backgroundColor: '#2cd46a',
-        padding: 25,
-        alignSelf: 'stretch',
-        flexDirection: 'row'
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        flexDirection: 'row',
+        borderRadius: 50,
     },
     submitButtonText: {
         fontSize: 24,
         color: '#fff',
-        flex: 1,
+        paddingRight: 24,
         textAlign: 'center',
         fontWeight: 'bold'
     },

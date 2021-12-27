@@ -4,7 +4,6 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
 export const ScanQR = ({navigation}) => {
-
     let setPatientID = e => {
         //console.log('QR scanned, patientID = ' + e.data);
         if (e.data == null) {

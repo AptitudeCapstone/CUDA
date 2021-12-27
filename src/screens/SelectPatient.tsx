@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AltSubmitButton, SubmitButton} from '../components/SubmitButton';
 import {ScrollPicker} from 'react-native-value-picker';
@@ -22,10 +22,10 @@ export const SelectPatient = ({route, navigation}) => {
                     </View>
                     <View
                         style={{
-                        alignItems: 'center',
-                        height: 180,
-                        paddingBottom: 30,
-                        marginBottom: 30,
+                            alignItems: 'center',
+                            height: 180,
+                            paddingBottom: 30,
+                            marginBottom: 30,
                         }}
                     >
                         <ScrollPicker
@@ -37,7 +37,9 @@ export const SelectPatient = ({route, navigation}) => {
                             separatorColor='#aaa'
                             selectedColor='#fff'
                         />
-                        <SubmitButton title='Select patient' customClick={add_test_result}/>
+                        <View style={styles.navButtonContainer}>
+                            <SubmitButton title='Select patient' customClick={add_test_result}/>
+                        </View>
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -46,22 +48,24 @@ export const SelectPatient = ({route, navigation}) => {
                     </View>
                 </View>
                 <View styles={styles.section}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ScanQR')}>
-                        <View style={styles.navButton}>
-                            <Text style={styles.headingText}>Scan QR</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <Icon
-                                    onPress={() => navigation.navigate('ScanQR')}
-                                    name='camera'
-                                    size={30}
-                                    color='#fff'
-                                />
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View style={styles.navButtonContainer}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ScanQR')}>
+                            <View style={styles.navButton}>
+                                <Text style={styles.navButtonText}>Scan QR</Text>
+                                <Text>
+                                    <Icon
+                                        onPress={() => navigation.navigate('ScanQR')}
+                                        name='camera'
+                                        size={30}
+                                        color='#fff'
+                                    />
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.section}>
-                    <View>
+                    <View style={styles.navButtonContainer}>
                         <AltSubmitButton
                             title='Skip this step'
                             customClick={() => navigation.navigate('Diagnostic')}
@@ -96,15 +100,24 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold'
     },
+    navButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     navButton: {
         backgroundColor: '#2cd46a',
-        padding: 25,
-        alignSelf: 'stretch',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
         flexDirection: 'row',
+        borderRadius: 50,
     },
     navButtonText: {
-        fontSize: 14,
-        color: '#eee',
-        textAlign: 'left',
+        fontSize: 24,
+        color: '#fff',
+        paddingRight: 24,
+        textAlign: 'center',
+        fontWeight: 'bold'
     }
 });

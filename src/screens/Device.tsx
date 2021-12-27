@@ -37,7 +37,7 @@ export const DeviceScreen = ({route, navigation}) => {
         getDeviceInformation();
 
         device.onDisconnected(() => {
-            if(navigation.canGoBack()) {
+            if (navigation.canGoBack()) {
                 navigation.goBack();
             }
         });
@@ -62,7 +62,7 @@ export const DeviceScreen = ({route, navigation}) => {
                 </View>
                 {/* Display a list of all services */}
                 {services &&
-                    services.map((service) => <ServiceCard service={service} navigation={navigation}/>)
+                services.map((service) => <ServiceCard service={service} navigation={navigation}/>)
                 }
             </View>
         </ScrollView>

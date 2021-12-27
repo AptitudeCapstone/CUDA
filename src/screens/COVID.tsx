@@ -134,15 +134,15 @@ export const COVID = ({route, navigation}) => {
 
     return (
         <SafeAreaView style={styles.page}>
-                <View style={{flex: 0.47, backgroundColor: '#222'}}>
-                    <FlatList
-                        data={covidTests}
-                        ListHeaderComponent={COVIDListHeader}
-                        ItemSeparatorComponent={listViewItemSeparator}
-                        keyExtractor={(item, index) => item.test_id}
-                        renderItem={({item}) => covidListItemView(item)}
-                    />
-                </View>
+            <View style={{flex: 0.47, backgroundColor: '#222'}}>
+                <FlatList
+                    data={covidTests}
+                    ListHeaderComponent={COVIDListHeader}
+                    ItemSeparatorComponent={listViewItemSeparator}
+                    keyExtractor={(item, index) => item.test_id}
+                    renderItem={({item}) => covidListItemView(item)}
+                />
+            </View>
         </SafeAreaView>
     );
 }

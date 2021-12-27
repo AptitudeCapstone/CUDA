@@ -35,24 +35,24 @@ export const QRCodes = ({navigation}) => {
         });
 
         let qrCodes = [];
-        for(let i = 0; i < numberOfCodes; ++i) {
+        for (let i = 0; i < numberOfCodes; ++i) {
             const svg = <QRCode
                 level="Q"
-                style={{width: 256, marginBottom: 50 }}
+                style={{width: 256, marginBottom: 50}}
                 value={'hello world'}
             />;
             const serializer = new XMLSerializer();
             const svgStr = serializer.serializeToString(svg);
-            const img_src = 'data:image/svg+xml;base64,'+ window.btoa(svgStr);
+            const img_src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
             qrCodes.push(img_src);
         }
-        
+
         // make the pdf using QR code + patient data
         let html = '';
-        for(let i = 0; i < numberOfCodes; ++i)
+        for (let i = 0; i < numberOfCodes; ++i)
             html += patientBlock(i);
 
-        const options={html, fileName: 'patientQR', directory: 'Documents'};
+        const options = {html, fileName: 'patientQR', directory: 'Documents'};
         const file = RNHTMLtoPDF.convert(options);
         const pdfSource = file.filePath;
         setPDFSource(pdfSource);
@@ -88,8 +88,8 @@ export const QRCodes = ({navigation}) => {
                             <SubmitButton title='Generate Codes' customClick={generatePDF}/>
                         </View>
                     </View>
-                    { showPDF &&
-                        <Pdf style={styles.pdf} source={pdfSource}/>
+                    {showPDF &&
+                    <Pdf style={styles.pdf} source={pdfSource}/>
                     }
                 </View>
             </TouchableWithoutFeedback>
