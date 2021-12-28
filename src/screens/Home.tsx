@@ -10,6 +10,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
+import ModalSelector from 'react-native-modal-selector-searchable';
 
 const manager = new BleManager();
 
@@ -48,6 +49,9 @@ export const Home = ({navigation}) => {
     const [scannedDevices, dispatch] = useReducer(reducer, []);
     const [isScanning, setIsScanning] = useState(false);
     const [patientSelection, setPatientSelection] = useState(0);
+    const [patientID, setPatientID] = useState(0);
+    const [patients, setPatients] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const scanDevices = () => {
         // toggle activity indicator on
@@ -128,28 +132,46 @@ export const Home = ({navigation}) => {
             );
         });
 
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM table_patients',
+                [],
+                (tx, results) => {
+                    let temp = [];
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push({
+                            key: results.rows.item(i).patient_id,
+                            label: results.rows.item(i).patient_name.toString()
+                        });
+                    setPatients(temp);
+                }
+            );
+        });
+
         // destroy manager when done
         return () => {
             manager.destroy();
         };
     }, []);
 
+
+
     // set patient ID via QR code
-    let setPatientID = e => {
+    let setPatientByQR = e => {
         //console.log('QR scanned, patientID = ' + e.data);
         if (e.data == null) {
-            navigation.navigate('Home');
             Alert.alert('No QR code found.');
         } else
-            navigation.navigate('Diagnostic', {navigation, patientID: e.data});
+            setPatientID(e.data);
+            //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
     }
 
     // for test section to select method of patient selection
     const patient_selection_change = (selection) => {
-        setPatientSelection(selection);
-
         switch (selection) {
             case 1: // if select from list
+                // populate patients list
+                setModalVisible(true);
                 break;
             case 2: // if select by scanning qr
                 break;
@@ -158,29 +180,18 @@ export const Home = ({navigation}) => {
             default: // if none selected
                 break;
         }
+
+        setPatientSelection(selection);
+    }
+
+    const hideModal = () => {
+        if(modalVisible)
+            setModalVisible(false);
     }
 
     // for test section to start test
     const start_test = () => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM table_patients',
-                [],
-                (tx, results) => {
-                    var temp = [];
-                    var temp2 = [];
-                    for (let i = 0; i < results.rows.length; ++i) {
-                        temp.push(results.rows.item(i));
-                        temp2.push({
-                            value: results.rows.item(i).patient_id,
-                            label: results.rows.item(i).patient_name.toString()
-                        });
-                    }
-
-                    navigation.navigate('SelectPatient', {navigation, patients: temp, patientIDs: temp2});
-                }
-            );
-        });
+        //navigation.navigate('SelectPatient', {navigation, patients: temp, patientIDs: temp2});
     }
 
     return (
@@ -251,7 +262,7 @@ export const Home = ({navigation}) => {
                     <View style={styles.navButtonContainer}>
                         <TouchableOpacity
                             style={styles.navButton}
-                            onPress={() => patient_selection_change(1)}
+                            onPress={() => {patient_selection_change(1);}}
                         >
                             <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
                                 <IconF name='user' size={30} color='#fff'/>
@@ -280,7 +291,6 @@ export const Home = ({navigation}) => {
                     {patientSelection == 0 ? (
                         <TouchableOpacity
                         style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
-                        onPress={start_test}
                         >
                         <Text style={styles.testButtonText}>Begin</Text>
                         <Text style={{textAlign: 'right'}}>
@@ -290,11 +300,59 @@ export const Home = ({navigation}) => {
                     ) : (
                         <View></View>
                     )}
+                    {(patientSelection == 1 && modalVisible) ? (
+                        <ModalSelector
+                            data={patients}
+                            visible={modalVisible}
+                            onCancel={hideModal}
+                            onChange={(option)=>{ setPatientID(`${option.key}`); hideModal();}}
+                        />
+                    ) : (
+                        <View></View>
+                    )}
+                    {(patientSelection == 1 && patientID == 0) ? (
+                            <TouchableOpacity
+                                style={styles.testButtonGrayed}
+                            >
+                                <Text style={styles.testButtonText}>Begin</Text>
+                                <Text style={{textAlign: 'right'}}>
+                                    <IconAD name='arrowright' size={30} color='#fff'/>
+                                </Text>
+                            </TouchableOpacity>
+                    ) : (
+                        <View></View>
+                    )}
+                    {(patientSelection == 1 && patientID != 0) ? (
+                        <TouchableOpacity
+                            style={styles.testButton}
+                            onPress={start_test}
+                        >
+                            <Text style={styles.testButtonText}>Begin</Text>
+                            <Text style={{textAlign: 'right'}}>
+                                <IconAD name='arrowright' size={30} color='#fff'/>
+                            </Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View></View>
+                    )}
                     {patientSelection == 2 ? (
                         <QRCodeScanner
-                            onRead={setPatientID}
+                            onRead={setPatientByQR}
                             flashMode={RNCamera.Constants.FlashMode.auto}
                         />
+                    ) : (
+                        <View></View>
+                    )}
+                    {patientSelection == 3 ? (
+                        <TouchableOpacity
+                            style={styles.testButton}
+                            onPress={start_test}
+                        >
+                            <Text style={styles.testButtonText}>Begin</Text>
+                            <Text style={{textAlign: 'right'}}>
+                                <IconAD name='arrowright' size={30} color='#fff'/>
+                            </Text>
+                        </TouchableOpacity>
                     ) : (
                         <View></View>
                     )}
