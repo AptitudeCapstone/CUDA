@@ -3,13 +3,14 @@ import {
     ActivityIndicator,
     Alert,
     Dimensions,
-    FlatList, SafeAreaView,
+    FlatList,
+    Modal,
+    SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
-    Modal
+    View
 } from 'react-native';
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
@@ -175,7 +176,7 @@ export const Home = ({navigation}) => {
             Alert.alert('No QR code found.');
         } else
             alert(e.data);
-            //setPatientID(e.data);
+        //setPatientID(e.data);
 
         setCamModalVisible(false);
         //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
@@ -215,210 +216,214 @@ export const Home = ({navigation}) => {
     }
 
     return (
-        <SafeAreaView style={{backgroundColor: '#222', flex: 1,
-            flexDirection: 'column'}}>
-        <ScrollView>
-            <View style={styles.page}>
-            <View style={styles.section}>
-                <View style={styles.headingContainer}>
-                    <Text style={styles.headingText}>Patients</Text>
-                </View>
-                <View style={styles.navButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.navButton}
-                        onPress={() => navigation.navigate('NewPatient', {device: Device})}
-                    >
-                        <View style={styles.navIcon}>
-                            <IconF name='user-plus' size={30} color='#fff'/>
+        <SafeAreaView style={{
+            backgroundColor: '#222', flex: 1,
+            flexDirection: 'column'
+        }}>
+            <ScrollView>
+                <View style={styles.page}>
+                    <View style={styles.section}>
+                        <View style={styles.headingContainer}>
+                            <Text style={styles.headingText}>Patients</Text>
                         </View>
-                        <Text style={styles.navButtonText}>Create Patient</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.navButton}
-                        onPress={() => navigation.navigate('Patients')}
-                    >
-                        <View style={styles.navIcon}>
-                            <IconF name='user' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>View patients</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.navButton}
-                        onPress={() => navigation.navigate('QRCodes')}
-                    >
-                        <View style={styles.navIcon}>
-                            <IconMCA name='qrcode' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>Create QR Codes</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View
-                style={styles.testSection}
-            >
-                <View style={styles.testButtonContainer}>
-                    <View style={styles.headingContainer}>
-                        <Text style={styles.headingText}>Start a Test</Text>
-                        {isScanning ? (
-                            <Text style={{textAlign: 'right'}}>
-                                <ActivityIndicator color={'white'} size={25}/>
-                            </Text>
-                        ) : (
-                            <Text style={{textAlign: 'right'}}>
-                                <IconAD onPress={scanDevices} name='plus' size={24} color='#fff'/>
-                            </Text>
-                        )}
-                    </View>
-
-                    {scannedDevices.length == 0 ? (
                         <View style={styles.navButtonContainer}>
-                            <View style={styles.navButton}>
-                                <Text style={styles.navButtonText}>No devices found</Text>
-                            </View>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('NewPatient', {device: Device})}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user-plus' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>Create Patient</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('Patients')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>View patients</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('QRCodes')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconMCA name='qrcode' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>Create QR Codes</Text>
+                            </TouchableOpacity>
                         </View>
-                    ) : (
-                        <FlatList
-                            keyExtractor={(item) => item.id}
-                            data={scannedDevices}
-                            renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                            contentContainerStyle={styles.content}
-                        />
-                    )}
-                    <View style={styles.navButtonContainer}>
-                        <TouchableOpacity
-                            style={styles.navButton}
-                            onPress={() => {
-                                patient_selection_change(1);
-                            }}
-                        >
-                            <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
-                                <IconF name='user' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>Using Name or ID</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.navButton}
-                            onPress={() => {
-                                patient_selection_change(2);
-                                setCamModalVisible(true);
-                            }}
-                        >
-                            <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
-                                <IconMCA name='qrcode-scan' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>Using a QR Code</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.navButton}
-                            onPress={() => {
-                                patient_selection_change(3);
-                            }}
-                        >
-                            <View style={(patientSelection == 3 ? styles.navIconSelected : styles.navIcon)}>
-                                <IconF name='user-x' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>As a Guest</Text>
-                        </TouchableOpacity>
                     </View>
-                    {patientSelection == 0 ? (
-                        <TouchableOpacity
-                            style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
-                        >
-                            <Text style={styles.testButtonText}>Begin</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <IconAD name='arrowright' size={30} color='#fff'/>
-                            </Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <View></View>
-                    )}
-                    {(patientSelection == 1 && listModalVisible) ? (
-                        <ModalSelector
-                            data={patients}
-                            visible={listModalVisible}
-                            onCancel={hideListModal}
-                            onChange={(option) => {
-                                setPatientID(`${option.key}`);
-                                hideListModal();
-                            }}
-                        />
-                    ) : (
-                        <View></View>
-                    )}
-                    {(patientSelection == 1 && patientID == 0) ? (
-                        <TouchableOpacity
-                            style={styles.testButtonGrayed}
-                        >
-                            <Text style={styles.testButtonText}>Begin</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <IconAD name='arrowright' size={30} color='#fff'/>
-                            </Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <View></View>
-                    )}
-                    {(patientSelection == 1 && patientID != 0) ? (
-                        <TouchableOpacity
-                            style={styles.testButton}
-                            onPress={start_test}
-                        >
-                            <Text style={styles.testButtonText}>Begin</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <IconAD name='arrowright' size={30} color='#fff'/>
-                            </Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <View></View>
-                    )}
-                    {patientSelection == 2 ? (
-                        <Modal
-                            transparent={true}
-                            visible={camModalVisible}
-                            onRequestClose={() => {
-                                setCamModalVisible(false);
-                            }}
-                        >
-                            <View style={{backgroundColor: 'rgba(255, 255, 255, 0.9)', flex: 1}}>
-                            <QRCodeScanner
-                                topContent={<View style={{backgroundColor: '#2cab5c',
-                                    borderRadius: 100,
-                                    marginBottom: 20,
-                                    paddingTop: 25, paddingBottom: 25, paddingLeft: 40, paddingRight: 40,}}><Text style={{fontSize: 24,
-                                    color: '#eee',
-                                    textAlign: 'center',
-                                    fontWeight: 'bold'}}>Place QR code in frame</Text></View>}
-                                bottomContent={<TouchableOpacity
-                                    style={styles.testButtonGrayed}
-                                    onPress={hideCamModal}
-                                >
-                                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                                </TouchableOpacity>}
-                                containerStyle={{marginTop: 40}}
-                                onRead={setPatientByQR}
-                                flashMode={RNCamera.Constants.FlashMode.auto}
-                            />
+                    <View style={styles.testSection}>
+                        <View style={styles.testButtonContainer}>
+                            <View style={styles.headingContainer}>
+                                <Text style={styles.headingText}>Start a Test</Text>
+                                {isScanning ? (
+                                    <Text style={{textAlign: 'right'}}>
+                                        <ActivityIndicator color={'white'} size={25}/>
+                                    </Text>
+                                ) : (
+                                    <View></View>
+                                )}
                             </View>
-                        </Modal>
-                    ) : (
-                        <View></View>
-                    )}
-                    {patientSelection == 3 ? (
-                        <TouchableOpacity
-                            style={styles.testButton}
-                            onPress={start_test}
-                        >
-                            <Text style={styles.testButtonText}>Begin</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <IconAD name='arrowright' size={30} color='#fff'/>
-                            </Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <View></View>
-                    )}
+
+                            {scannedDevices.length == 0 ? (
+                                <View style={styles.navButtonContainer}>
+                                    <View style={styles.navButton}>
+                                        <Text style={styles.navButtonText}>No devices found</Text>
+                                    </View>
+                                </View>
+                            ) : (
+
+                                <FlatList
+                                    horizontal={true}
+                                    keyExtractor={(item) => item.id}
+                                    data={scannedDevices}
+                                    renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
+                                    contentContainerStyle={styles.navButtonContainer}
+                                />
+
+                            )}
+                            <View style={styles.navButtonContainer}>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => {
+                                        patient_selection_change(1);
+                                    }}
+                                >
+                                    <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
+                                        <IconF name='user' size={30} color='#fff'/>
+                                    </View>
+                                    <Text style={styles.navButtonText}>Using Name or ID</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => {
+                                        patient_selection_change(2);
+                                        setCamModalVisible(true);
+                                    }}
+                                >
+                                    <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
+                                        <IconMCA name='qrcode-scan' size={30} color='#fff'/>
+                                    </View>
+                                    <Text style={styles.navButtonText}>Using a QR Code</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => {
+                                        patient_selection_change(3);
+                                    }}
+                                >
+                                    <View style={(patientSelection == 3 ? styles.navIconSelected : styles.navIcon)}>
+                                        <IconF name='user-x' size={30} color='#fff'/>
+                                    </View>
+                                    <Text style={styles.navButtonText}>As a Guest</Text>
+                                </TouchableOpacity>
+                            </View>
+                            {patientSelection == 0 ? (
+                                <TouchableOpacity
+                                    style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
+                                >
+                                    <Text style={styles.testButtonText}>Begin</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconAD name='arrowright' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View></View>
+                            )}
+                            {(patientSelection == 1 && listModalVisible) ? (
+                                <ModalSelector
+                                    data={patients}
+                                    visible={listModalVisible}
+                                    onCancel={hideListModal}
+                                    onChange={(option) => {
+                                        setPatientID(`${option.key}`);
+                                        hideListModal();
+                                    }}
+                                />
+                            ) : (
+                                <View></View>
+                            )}
+                            {(patientSelection == 1 && patientID == 0) ? (
+                                <TouchableOpacity
+                                    style={styles.testButtonGrayed}
+                                >
+                                    <Text style={styles.testButtonText}>Begin</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconAD name='arrowright' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View></View>
+                            )}
+                            {(patientSelection == 1 && patientID != 0) ? (
+                                <TouchableOpacity
+                                    style={styles.testButton}
+                                    onPress={start_test}
+                                >
+                                    <Text style={styles.testButtonText}>Begin</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconAD name='arrowright' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View></View>
+                            )}
+                            {patientSelection == 2 ? (
+                                <Modal
+                                    transparent={true}
+                                    visible={camModalVisible}
+                                    onRequestClose={() => {
+                                        setCamModalVisible(false);
+                                    }}
+                                >
+                                    <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: 1}}>
+                                        <QRCodeScanner
+                                            topContent={<View style={{
+                                                borderRadius: 100,
+                                                marginBottom: 20,
+                                                paddingTop: 25, paddingBottom: 25, paddingLeft: 40, paddingRight: 40,
+                                            }}><Text style={{
+                                                fontSize: 24,
+                                                color: '#eee',
+                                                textAlign: 'center',
+                                                fontWeight: 'bold'
+                                            }}>Place the QR code within the frame to continue</Text></View>}
+                                            bottomContent={<TouchableOpacity
+                                                style={styles.testButtonGrayed}
+                                                onPress={hideCamModal}
+                                            >
+                                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                                            </TouchableOpacity>}
+                                            containerStyle={{marginTop: 40}}
+                                            onRead={setPatientByQR}
+                                            flashMode={RNCamera.Constants.FlashMode.auto}
+                                        />
+                                    </View>
+                                </Modal>
+                            ) : (
+                                <View></View>
+                            )}
+                            {patientSelection == 3 ? (
+                                <TouchableOpacity
+                                    style={styles.testButton}
+                                    onPress={start_test}
+                                >
+                                    <Text style={styles.testButtonText}>Begin</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconAD name='arrowright' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View></View>
+                            )}
+                        </View>
+                    </View>
                 </View>
-            </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
         </SafeAreaView>
     );
 }

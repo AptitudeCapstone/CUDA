@@ -28,18 +28,23 @@ const DeviceCard = ({navigation, device}) => {
             onPress={() => navigation.navigate('Device', {navigation: navigation, device: device})}
         >
             {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
-            {isConnected ? (
-                <Text style={styles.navButtonText} numberOfLines={1} ellipsizeMode='middle'>
-                    {device.id}
-                    <View style={{paddingLeft: 25}}><IconMCI style={{textAlign: 'right'}} name={iconName} size={24}
-                                                             color="#fff"/></View>
-                    <View style={{paddingLeft: 25}}><IconAD style={{textAlign: 'right'}} name='checkcircle' size={24}
-                                                            color="#fff"/></View>
-                </Text>
+            {isConnected ?
+                (
+                <View>
+                    <View style={styles.navIconSelected}>
+                    <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
+                             color="#fff"/>
+                    </View>
+                    <Text style={styles.navButtonText}>{device.name}</Text>
+                </View>
             ) : (
-                <Text>
-                    <IconAD name='plus' size={24} color="#fff"/>
-                </Text>
+                    <View>
+                        <View style={styles.navIcon}>
+                            <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
+                                     color="#fff"/>
+                        </View>
+                        <Text style={styles.navButtonText}>{device.id}</Text>
+                    </View>
             )}
         </TouchableOpacity>
     );
@@ -47,18 +52,33 @@ const DeviceCard = ({navigation, device}) => {
 
 const styles = StyleSheet.create({
     navButton: {
-        backgroundColor: '#444',
+        margin: 15,
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    navIcon: {
+        backgroundColor: '#333',
         padding: 20,
-        alignSelf: 'stretch',
-        borderBottomWidth: 2,
-        borderBottomColor: '#666',
-        alignItems: 'center'
+        borderWidth: 1,
+        borderColor: '#555',
+        borderRadius: 5000,
+        marginBottom: 10
+    },
+    navIconSelected: {
+        backgroundColor: '#2cab5c',
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 5000,
+        marginBottom: 10
     },
     navButtonText: {
         fontSize: 14,
         color: '#eee',
-        textAlign: 'left',
-        alignItems: 'center'
+        textAlign: 'center',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
 });
 
