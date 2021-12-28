@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SubmitButton from '../components/SubmitButton';
 import TextInputField from '../components/TextInputField';
 import {openDatabase} from 'react-native-sqlite-storage';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -44,10 +45,7 @@ export const CreatePatient = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
-
-
-            <View style={{alignItems: 'center', backgroundColor: '#222', flex: 0.5}}>
-                <ScrollView style={{flex: 1}}>
+                <KeyboardAwareScrollView extraScrollHeight={100} style={{backgroundColor: '#222'}}>
                     <View style={styles.section}>
                         <Text style={styles.headingText}>Name</Text>
                         <TextInputField
@@ -80,13 +78,15 @@ export const CreatePatient = ({navigation}) => {
                             style={{padding: 25, color: '#fff'}}
                         />
                     </View>
-                </ScrollView>
-                <View style={styles.section}>
-                    <View style={{marginTop: 45}}>
-                        <SubmitButton title='Create Patient' customClick={register_user}/>
-                    </View>
-                </View>
-            </View>
+                        <View style={styles.testButtonContainer}>
+                            <TouchableOpacity
+                                style={styles.testButton}
+                                onPress={register_user}
+                            >
+                                <Text style={styles.testButtonText}>Create Patient</Text>
+                            </TouchableOpacity>
+                        </View>
+                </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 }
@@ -98,13 +98,33 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     section: {
-        flexDirection: 'column',
     },
     headingText: {
-        margin: 40,
+        margin: 20,
         fontSize: 18,
         color: '#fff',
         textAlign: 'center',
         fontWeight: 'bold'
-    }
+    },
+    testButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    testButton: {
+        backgroundColor: '#2cab5c',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    testButtonText: {
+        fontSize: 24,
+        color: '#fff',
+        paddingRight: 24,
+        textAlign: 'center',
+        fontWeight: 'bold'
+    },
 });

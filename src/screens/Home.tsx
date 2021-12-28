@@ -243,7 +243,7 @@ export const Home = ({navigation}) => {
                                 <View style={styles.navIcon}>
                                     <IconF name='user' size={30} color='#fff'/>
                                 </View>
-                                <Text style={styles.navButtonText}>View patients</Text>
+                                <Text style={styles.navButtonText}>View Patients</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.navButton}
@@ -261,8 +261,8 @@ export const Home = ({navigation}) => {
                             <View style={styles.headingContainer}>
                                 <Text style={styles.headingText}>Start a Test</Text>
                                 {isScanning ? (
-                                    <Text style={{textAlign: 'right'}}>
-                                        <ActivityIndicator color={'white'} size={25}/>
+                                    <Text style={{marginLeft: -28, textAlign: 'right'}}>
+                                        <ActivityIndicator color={'white'} size={28}/>
                                     </Text>
                                 ) : (
                                     <View></View>
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         flex: 1,
         textAlign: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     subheadingContainer: {
         paddingTop: 10,

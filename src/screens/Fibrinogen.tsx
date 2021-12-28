@@ -1,5 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    Alert,
+    Animated,
+    Dimensions,
+    FlatList,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {LineChart} from "react-native-chart-kit";
@@ -52,7 +62,7 @@ export const Fibrinogen = ({route, navigation}) => {
                 style={{
                     marginLeft: '5%',
                     marginRight: '5%',
-                    height: 1,
+                    height: 0,
                     width: '90%',
                     backgroundColor: '#ccc'
                 }}
@@ -61,17 +71,55 @@ export const Fibrinogen = ({route, navigation}) => {
     };
 
     let fibListItemView = (item) => {
+        const sqlDelete = () => {
+            db.transaction(function (tx) {
+                tx.executeSql(
+                    'DELETE FROM table_tests WHERE test_id=' + item.test_id,
+                    [],
+                    (tx, results) => {
+
+                    }
+                );
+            });
+        }
+
+            const animatedDelete = () => {
+                Alert.alert(
+                    "Are your sure?",
+                    "This will permanently delete the test result",
+                    [
+                        {
+                            text: "Cancel"
+                        },
+                        {
+                            text: "Confirm",
+                            onPress: () => {
+                                sqlDelete();
+                                const height = new Animated.Value(70);
+                                Animated.timing(height, {
+                                    toValue: 0,
+                                    duration: 350,
+                                    useNativeDriver: false
+                                }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
+                            },
+                        },
+                    ]
+                );
+            }
+
         const swipeRight = (progress, dragX) => {
             const scale = dragX.interpolate({
                 inputRange: [-200, 0],
                 outputRange: [1, 0.5],
                 extrapolate: 'clamp'
             })
+
             return (
                 <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'center', textAlign: 'center',}}
                                   onPress={animatedDelete}>
                     <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
                         <Animated.Text style={{
+                            color: '#fff',
                             marginLeft: 25,
                             marginRight: 25,
                             fontSize: 15,
@@ -81,15 +129,6 @@ export const Fibrinogen = ({route, navigation}) => {
                     </Animated.View>
                 </TouchableOpacity>
             )
-        }
-
-        const animatedDelete = () => {
-            const height = new Animated.Value(70)
-            Animated.timing(height, {
-                toValue: 0,
-                duration: 350,
-                useNativeDriver: false
-            }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
         }
 
         return (

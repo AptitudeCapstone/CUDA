@@ -43,7 +43,7 @@ const DeviceCard = ({navigation, device}) => {
                             <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
                                      color="#fff"/>
                         </View>
-                        <Text style={styles.navButtonText}>{device.id}</Text>
+                        <Text style={styles.navButtonText}>{device.name}</Text>
                     </View>
             )}
         </TouchableOpacity>
