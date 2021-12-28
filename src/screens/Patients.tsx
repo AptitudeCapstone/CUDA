@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
@@ -77,20 +77,33 @@ export const Patients = ({navigation}) => {
                     [],
                     (tx, results) => {
                         console.log('Results', results.rowsAffected);
-                        navigation.navigate('Home');
                     }
                 );
             });
         };
 
         const animatedDelete = () => {
-            sqlDelete();
-            const height = new Animated.Value(70);
-            Animated.timing(height, {
-                toValue: 0,
-                duration: 350,
-                useNativeDriver: false
-            }).start(() => setFlatListItems(prevState => prevState.filter(e => e.patient_id !== item.patient_id)))
+            Alert.alert(
+                "Are your sure?",
+                "This will delete all patient data and free the patient QR code for reuse",
+                [
+                    {
+                        text: "Cancel"
+                    },
+                    {
+                        text: "Confirm",
+                        onPress: () => {
+                            sqlDelete();
+                            const height = new Animated.Value(70);
+                            Animated.timing(height, {
+                                toValue: 0,
+                                duration: 350,
+                                useNativeDriver: false
+                            }).start(() => setFlatListItems(prevState => prevState.filter(e => e.patient_id !== item.patient_id)))
+                        },
+                    },
+                ]
+            );
         }
 
         let patient_id = item.patient_id;

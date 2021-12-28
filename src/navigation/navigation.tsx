@@ -22,7 +22,7 @@ export const RootNavigator = () => (
     <NavigationContainer>
         <Stack.Navigator
             initialRouteName='Home'
-            screenOptions={{headerTitleAlign: 'center',}}
+            screenOptions={{headerTitleAlign: 'center',headerShadowVisible: false}}
         >
             <Stack.Screen
                 name='Home'
