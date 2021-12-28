@@ -1,6 +1,16 @@
 import React, {useEffect, useReducer, useState} from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView} from 'react-native';
-import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
+import {
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    FlatList, SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    Modal
+} from 'react-native';
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,6 +28,8 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
     console.log('ERROR: ' + error)
 });
+
+let ScreenHeight = Dimensions.get("window").height;
 
 const reducer = (
     state: Device[],
@@ -51,7 +63,8 @@ export const Home = ({navigation}) => {
     const [patientSelection, setPatientSelection] = useState(0);
     const [patientID, setPatientID] = useState(0);
     const [patients, setPatients] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [listModalVisible, setListListModalVisible] = useState(false);
+    const [camModalVisible, setCamModalVisible] = useState(false);
 
     const scanDevices = () => {
         // toggle activity indicator on
@@ -155,15 +168,17 @@ export const Home = ({navigation}) => {
     }, []);
 
 
-
     // set patient ID via QR code
     let setPatientByQR = e => {
         //console.log('QR scanned, patientID = ' + e.data);
         if (e.data == null) {
             Alert.alert('No QR code found.');
         } else
-            setPatientID(e.data);
-            //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
+            alert(e.data);
+            //setPatientID(e.data);
+
+        setCamModalVisible(false);
+        //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
     }
 
     // for test section to select method of patient selection
@@ -171,7 +186,7 @@ export const Home = ({navigation}) => {
         switch (selection) {
             case 1: // if select from list
                 // populate patients list
-                setModalVisible(true);
+                setListListModalVisible(true);
                 break;
             case 2: // if select by scanning qr
                 break;
@@ -184,9 +199,14 @@ export const Home = ({navigation}) => {
         setPatientSelection(selection);
     }
 
-    const hideModal = () => {
-        if(modalVisible)
-            setModalVisible(false);
+    const hideListModal = () => {
+        if (listModalVisible)
+            setListListModalVisible(false);
+    }
+
+    const hideCamModal = () => {
+        if (camModalVisible)
+            setCamModalVisible(false);
     }
 
     // for test section to start test
@@ -195,8 +215,11 @@ export const Home = ({navigation}) => {
     }
 
     return (
-        <ScrollView style={styles.page}>
-            <View styles={styles.section}>
+        <SafeAreaView style={{backgroundColor: '#222', flex: 1,
+            flexDirection: 'column'}}>
+        <ScrollView>
+            <View style={styles.page}>
+            <View style={styles.section}>
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Patients</Text>
                 </View>
@@ -230,7 +253,9 @@ export const Home = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View styles={styles.section}>
+            <View
+                style={styles.testSection}
+            >
                 <View style={styles.testButtonContainer}>
                     <View style={styles.headingContainer}>
                         <Text style={styles.headingText}>Start a Test</Text>
@@ -247,9 +272,9 @@ export const Home = ({navigation}) => {
 
                     {scannedDevices.length == 0 ? (
                         <View style={styles.navButtonContainer}>
-                        <View style={styles.navButton}>
-                            <Text style={styles.navButtonText}>No devices found</Text>
-                        </View>
+                            <View style={styles.navButton}>
+                                <Text style={styles.navButtonText}>No devices found</Text>
+                            </View>
                         </View>
                     ) : (
                         <FlatList
@@ -262,7 +287,9 @@ export const Home = ({navigation}) => {
                     <View style={styles.navButtonContainer}>
                         <TouchableOpacity
                             style={styles.navButton}
-                            onPress={() => {patient_selection_change(1);}}
+                            onPress={() => {
+                                patient_selection_change(1);
+                            }}
                         >
                             <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
                                 <IconF name='user' size={30} color='#fff'/>
@@ -271,7 +298,10 @@ export const Home = ({navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.navButton}
-                            onPress={() => patient_selection_change(2)}
+                            onPress={() => {
+                                patient_selection_change(2);
+                                setCamModalVisible(true);
+                            }}
                         >
                             <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
                                 <IconMCA name='qrcode-scan' size={30} color='#fff'/>
@@ -280,7 +310,9 @@ export const Home = ({navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.navButton}
-                            onPress={() => patient_selection_change(3)}
+                            onPress={() => {
+                                patient_selection_change(3);
+                            }}
                         >
                             <View style={(patientSelection == 3 ? styles.navIconSelected : styles.navIcon)}>
                                 <IconF name='user-x' size={30} color='#fff'/>
@@ -290,35 +322,38 @@ export const Home = ({navigation}) => {
                     </View>
                     {patientSelection == 0 ? (
                         <TouchableOpacity
-                        style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
+                            style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
                         >
-                        <Text style={styles.testButtonText}>Begin</Text>
-                        <Text style={{textAlign: 'right'}}>
-                        <IconAD name='arrowright' size={30} color='#fff'/>
-                        </Text>
+                            <Text style={styles.testButtonText}>Begin</Text>
+                            <Text style={{textAlign: 'right'}}>
+                                <IconAD name='arrowright' size={30} color='#fff'/>
+                            </Text>
                         </TouchableOpacity>
                     ) : (
                         <View></View>
                     )}
-                    {(patientSelection == 1 && modalVisible) ? (
+                    {(patientSelection == 1 && listModalVisible) ? (
                         <ModalSelector
                             data={patients}
-                            visible={modalVisible}
-                            onCancel={hideModal}
-                            onChange={(option)=>{ setPatientID(`${option.key}`); hideModal();}}
+                            visible={listModalVisible}
+                            onCancel={hideListModal}
+                            onChange={(option) => {
+                                setPatientID(`${option.key}`);
+                                hideListModal();
+                            }}
                         />
                     ) : (
                         <View></View>
                     )}
                     {(patientSelection == 1 && patientID == 0) ? (
-                            <TouchableOpacity
-                                style={styles.testButtonGrayed}
-                            >
-                                <Text style={styles.testButtonText}>Begin</Text>
-                                <Text style={{textAlign: 'right'}}>
-                                    <IconAD name='arrowright' size={30} color='#fff'/>
-                                </Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.testButtonGrayed}
+                        >
+                            <Text style={styles.testButtonText}>Begin</Text>
+                            <Text style={{textAlign: 'right'}}>
+                                <IconAD name='arrowright' size={30} color='#fff'/>
+                            </Text>
+                        </TouchableOpacity>
                     ) : (
                         <View></View>
                     )}
@@ -336,10 +371,34 @@ export const Home = ({navigation}) => {
                         <View></View>
                     )}
                     {patientSelection == 2 ? (
-                        <QRCodeScanner
-                            onRead={setPatientByQR}
-                            flashMode={RNCamera.Constants.FlashMode.auto}
-                        />
+                        <Modal
+                            transparent={true}
+                            visible={camModalVisible}
+                            onRequestClose={() => {
+                                setCamModalVisible(false);
+                            }}
+                        >
+                            <View style={{backgroundColor: 'rgba(255, 255, 255, 0.9)', flex: 1}}>
+                            <QRCodeScanner
+                                topContent={<View style={{backgroundColor: '#2cab5c',
+                                    borderRadius: 100,
+                                    marginBottom: 20,
+                                    paddingTop: 25, paddingBottom: 25, paddingLeft: 40, paddingRight: 40,}}><Text style={{fontSize: 24,
+                                    color: '#eee',
+                                    textAlign: 'center',
+                                    fontWeight: 'bold'}}>Place QR code in frame</Text></View>}
+                                bottomContent={<TouchableOpacity
+                                    style={styles.testButtonGrayed}
+                                    onPress={hideCamModal}
+                                >
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </TouchableOpacity>}
+                                containerStyle={{marginTop: 40}}
+                                onRead={setPatientByQR}
+                                flashMode={RNCamera.Constants.FlashMode.auto}
+                            />
+                            </View>
+                        </Modal>
                     ) : (
                         <View></View>
                     )}
@@ -358,20 +417,25 @@ export const Home = ({navigation}) => {
                     )}
                 </View>
             </View>
+            </View>
         </ScrollView>
-
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     page: {
-        backgroundColor: '#222',
-        flex: 1,
         paddingTop: 40,
         paddingBottom: 40,
+        flex: 1,
+        flexDirection: 'column'
     },
     section: {
-        flexDirection: 'row',
+        flexDirection: 'column',
+        flex: 1
+    },
+    testSection: {
+        flexDirection: 'column'
     },
     headingContainer: {
         paddingTop: 20,
@@ -469,6 +533,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: '#fff',
         paddingRight: 24,
+        textAlign: 'center',
+        fontWeight: 'bold'
+    },
+    cancelButtonText: {
+        fontSize: 24,
+        color: '#fff',
         textAlign: 'center',
         fontWeight: 'bold'
     },
