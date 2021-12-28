@@ -175,8 +175,7 @@ export const Home = ({navigation}) => {
         if (e.data == null) {
             Alert.alert('No QR code found.');
         } else
-            alert(e.data);
-        //setPatientID(e.data);
+            setPatientID(e.data);
 
         setCamModalVisible(false);
         //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
@@ -213,6 +212,7 @@ export const Home = ({navigation}) => {
     // for test section to start test
     const start_test = () => {
         //navigation.navigate('SelectPatient', {navigation, patients: temp, patientIDs: temp2});
+        navigation.navigate('Diagnostic', {navigation, patientID: patientID});
     }
 
     return (
@@ -276,7 +276,6 @@ export const Home = ({navigation}) => {
                                     </View>
                                 </View>
                             ) : (
-
                                 <FlatList
                                     horizontal={true}
                                     keyExtractor={(item) => item.id}
@@ -284,7 +283,6 @@ export const Home = ({navigation}) => {
                                     renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
                                     contentContainerStyle={styles.navButtonContainer}
                                 />
-
                             )}
                             <View style={styles.navButtonContainer}>
                                 <TouchableOpacity

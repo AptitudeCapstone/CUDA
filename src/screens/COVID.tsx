@@ -17,7 +17,7 @@ export const COVID = ({route, navigation}) => {
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + patient_id,
+                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + patient_id + ' ORDER BY test_time DESC',
                 [],
                 (tx, results) => {
                     var temp = [];
@@ -114,18 +114,23 @@ export const COVID = ({route, navigation}) => {
 
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                <Animated.View style={{flex: 1}}>
+                <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                     <View
                         key={item.test_id}
-                        style={{flexDirection: 'row', flex: 1}}>
-                        <View style={styles.result}>
-                            <Text
-                                style={styles.resultText}>{(item.test_result == 0) ? 'Neg.' : 'Pos.'}
-                            </Text>
+                        style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
+                    >
+                        <View style={{
+                            backgroundColor: '#353535',
+                            padding: 20,
+                            paddingBottom: 10,
+                            flex: 1,
+                            borderTopLeftRadius: 15,
+                            borderTopRightRadius: 15
+                        }}>
+                            <Text style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
                         </View>
-                        <View style={styles.time}>
-                            <Text
-                                style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
+                        <View style={{padding: 20}}>
+                            <Text style={styles.text}>{(item.test_result == 0) ? 'Negative' : 'Positive'}</Text>
                         </View>
                     </View>
                 </Animated.View>
@@ -133,25 +138,11 @@ export const COVID = ({route, navigation}) => {
         );
     };
 
-    let COVIDListHeader = () => {
-        return (
-            <View style={{flexDirection: 'row', flex: 1}}>
-                <View style={{flex: 0.3, justifyContent: 'center'}}>
-                    <Text style={styles.rowHeaderText}>Result</Text>
-                </View>
-                <View style={{flex: 0.7, justifyContent: 'center'}}>
-                    <Text style={styles.rowHeaderText}>Timestamp</Text>
-                </View>
-            </View>
-        )
-    }
-
     return (
         <SafeAreaView style={styles.page}>
-            <View style={{flex: 0.47, backgroundColor: '#222'}}>
+            <View style={{flex: 1, backgroundColor: '#222'}}>
                 <FlatList
                     data={covidTests}
-                    ListHeaderComponent={COVIDListHeader}
                     ItemSeparatorComponent={listViewItemSeparator}
                     keyExtractor={(item, index) => item.test_id}
                     renderItem={({item}) => covidListItemView(item)}
@@ -178,6 +169,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     patientID: {
+
         flex: 0.25,
         textAlign: 'center',
         justifyContent: 'center'
@@ -189,12 +181,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     result: {
-        flex: 0.3,
+        flex: 0.4,
         textAlign: 'center',
         justifyContent: 'center'
     },
     resultText: {
-        fontSize: 14,
+        fontSize: 30,
         color: '#fff',
         padding: 20,
         textAlign: 'center'
@@ -206,24 +198,29 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     time: {
-        flex: 0.7,
+        flex: 0.6,
         textAlign: 'center',
         justifyContent: 'center'
     },
     timeText: {
-        fontSize: 14,
+        fontSize: 22,
+        fontWeight: 'bold',
+        paddingTop: 4,
+        paddingBottom: 14,
         color: '#fff',
-        padding: 20,
-        textAlign: 'center'
+        flex: 1,
+        textAlign: 'left',
     },
     text: {
-        fontSize: 14,
-        color: '#fff',
-        padding: 20,
-        textAlign: 'center'
+        fontSize: 18,
+        color: '#eee',
+        flex: 1,
+        textAlign: 'left',
+        paddingTop: 4,
+        paddingBottom: 4,
     },
     headingContainer: {
-        backgroundColor: '#333',
+
         paddingTop: 24,
         paddingBottom: 24,
         paddingLeft: 24,

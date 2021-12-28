@@ -74,7 +74,7 @@ export const Fibrinogen = ({route, navigation}) => {
         const sqlDelete = () => {
             db.transaction(function (tx) {
                 tx.executeSql(
-                    'DELETE FROM table_tests WHERE test_id=' + item.test_id,
+                    'DELETE FROM table_tests WHERE test_id=' + item.test_id + ' ORDER BY test_time DESC',
                     [],
                     (tx, results) => {
 
@@ -133,36 +133,29 @@ export const Fibrinogen = ({route, navigation}) => {
 
         return (
             <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                <Animated.View style={{flex: 1}}>
+                <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                     <View
                         key={item.test_id}
-                        style={{flexDirection: 'row', flex: 1}}>
-                        <View style={styles.result}>
-                            <Text style={styles.fibResultText}>{item.test_result} mg/mL
-                            </Text>
+                        style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
+                    >
+                        <View style={{
+                            backgroundColor: '#353535',
+                            padding: 20,
+                            paddingBottom: 10,
+                            flex: 1,
+                            borderTopLeftRadius: 15,
+                            borderTopRightRadius: 15
+                        }}>
+                            <Text style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
                         </View>
-                        <View style={styles.time}>
-                            <Text
-                                style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
+                        <View style={{padding: 20}}>
+                            <Text style={styles.text}>{item.test_result} mg/mL</Text>
                         </View>
                     </View>
                 </Animated.View>
             </Swipeable>
         );
     };
-
-    let FibListHeader = () => {
-        return (
-            <View style={{flexDirection: 'row', flex: 1}}>
-                <View style={{flex: 0.4, justifyContent: 'center'}}>
-                    <Text style={styles.rowHeaderText}>Result</Text>
-                </View>
-                <View style={{flex: 0.6, justifyContent: 'center'}}>
-                    <Text style={styles.rowHeaderText}>Timestamp</Text>
-                </View>
-            </View>
-        )
-    }
 
     const screenWidth = Dimensions.get('window').width;
 
@@ -197,7 +190,6 @@ export const Fibrinogen = ({route, navigation}) => {
                 <View style={{flex: 0.4}}>
                     <FlatList
                         data={fibTests}
-                        ListHeaderComponent={FibListHeader}
                         ItemSeparatorComponent={listViewItemSeparator}
                         keyExtractor={(item, index) => item.test_id}
                         renderItem={({item}) => fibListItemView(item)}
@@ -246,7 +238,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     result: {
-
         flex: 0.4,
         textAlign: 'center',
         justifyContent: 'center'
@@ -264,22 +255,26 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     time: {
-
         flex: 0.6,
         textAlign: 'center',
         justifyContent: 'center'
     },
     timeText: {
-        fontSize: 14,
+        fontSize: 22,
+        fontWeight: 'bold',
+        paddingTop: 4,
+        paddingBottom: 14,
         color: '#fff',
-        padding: 20,
-        textAlign: 'center'
+        flex: 1,
+        textAlign: 'left',
     },
     text: {
-        fontSize: 14,
-        color: '#fff',
-        padding: 20,
-        textAlign: 'center'
+        fontSize: 18,
+        color: '#eee',
+        flex: 1,
+        textAlign: 'left',
+        paddingTop: 4,
+        paddingBottom: 4,
     },
     headingContainer: {
 
