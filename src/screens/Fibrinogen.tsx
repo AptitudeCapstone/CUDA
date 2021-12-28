@@ -83,29 +83,29 @@ export const Fibrinogen = ({route, navigation}) => {
             });
         }
 
-            const animatedDelete = () => {
-                Alert.alert(
-                    "Are your sure?",
-                    "This will permanently delete the test result",
-                    [
-                        {
-                            text: "Cancel"
+        const animatedDelete = () => {
+            Alert.alert(
+                "Are your sure?",
+                "This will permanently delete the test result",
+                [
+                    {
+                        text: "Cancel"
+                    },
+                    {
+                        text: "Confirm",
+                        onPress: () => {
+                            sqlDelete();
+                            const height = new Animated.Value(70);
+                            Animated.timing(height, {
+                                toValue: 0,
+                                duration: 350,
+                                useNativeDriver: false
+                            }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
                         },
-                        {
-                            text: "Confirm",
-                            onPress: () => {
-                                sqlDelete();
-                                const height = new Animated.Value(70);
-                                Animated.timing(height, {
-                                    toValue: 0,
-                                    duration: 350,
-                                    useNativeDriver: false
-                                }).start(() => setFibTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
-                            },
-                        },
-                    ]
-                );
-            }
+                    },
+                ]
+            );
+        }
 
         const swipeRight = (progress, dragX) => {
             const scale = dragX.interpolate({

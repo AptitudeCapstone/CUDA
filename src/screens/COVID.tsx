@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format, parseISO} from 'date-fns';
@@ -35,7 +35,7 @@ export const COVID = ({route, navigation}) => {
                 style={{
                     marginLeft: '5%',
                     marginRight: '5%',
-                    height: 1,
+                    height: 0,
                     width: '90%',
                     backgroundColor: '#ccc'
                 }}
@@ -44,6 +44,42 @@ export const COVID = ({route, navigation}) => {
     };
 
     let covidListItemView = (item) => {
+        const sqlDelete = () => {
+            db.transaction(function (tx) {
+                tx.executeSql(
+                    'DELETE FROM table_tests WHERE test_id=' + item.test_id,
+                    [],
+                    (tx, results) => {
+
+                    }
+                );
+            });
+        }
+
+        const animatedDelete = () => {
+            Alert.alert(
+                "Are your sure?",
+                "This will permanently delete the test result",
+                [
+                    {
+                        text: "Cancel"
+                    },
+                    {
+                        text: "Confirm",
+                        onPress: () => {
+                            sqlDelete();
+                            const height = new Animated.Value(70);
+                            Animated.timing(height, {
+                                toValue: 0,
+                                duration: 350,
+                                useNativeDriver: false
+                            }).start(() => setCovidTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
+                        },
+                    },
+                ]
+            );
+        }
+
         const swipeRight = (progress, dragX) => {
             const scale = dragX.interpolate({
                 inputRange: [-200, 0],
@@ -74,28 +110,6 @@ export const COVID = ({route, navigation}) => {
                     </Animated.View>
                 </TouchableOpacity>
             )
-        }
-
-        let sqlDelete = () => {
-            db.transaction(function (tx) {
-                tx.executeSql(
-                    'DELETE FROM table_tests WHERE patient_id=' + item.patient_id + ' AND test_id=' + item.test_id,
-                    [],
-                    (tx, results) => {
-                        console.log('Deleted ' + results.rowsAffected.length + ' user');
-                    }
-                );
-            });
-        };
-
-        const animatedDelete = () => {
-            sqlDelete();
-            const height = new Animated.Value(70);
-            Animated.timing(height, {
-                toValue: 0,
-                duration: 350,
-                useNativeDriver: false
-            }).start(() => setCovidTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
         }
 
         return (
