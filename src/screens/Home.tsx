@@ -339,23 +339,12 @@ export const Home = ({navigation}) => {
                                     data={patients}
                                     visible={listModalVisible}
                                     onCancel={hideListModal}
+                                    customSelector={<View></View>}
                                     onChange={(option) => {
                                         setPatientID(`${option.key}`);
                                         hideListModal();
                                     }}
                                 />
-                            ) : (
-                                <View></View>
-                            )}
-                            {(patientSelection == 1 && patientID == 0) ? (
-                                <TouchableOpacity
-                                    style={styles.testButtonGrayed}
-                                >
-                                    <Text style={styles.testButtonText}>Begin</Text>
-                                    <Text style={{textAlign: 'right'}}>
-                                        <IconAD name='arrowright' size={30} color='#fff'/>
-                                    </Text>
-                                </TouchableOpacity>
                             ) : (
                                 <View></View>
                             )}
@@ -404,6 +393,18 @@ export const Home = ({navigation}) => {
                                         />
                                     </View>
                                 </Modal>
+                            ) : (
+                                <View></View>
+                            )}
+                            {((patientSelection == 1 || patientSelection == 2) && patientID == 0) ? (
+                                <TouchableOpacity
+                                    style={styles.testButtonGrayed}
+                                >
+                                    <Text style={styles.testButtonText}>Begin</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconAD name='arrowright' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
                             ) : (
                                 <View></View>
                             )}
