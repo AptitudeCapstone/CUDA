@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Device} from 'react-native-ble-plx';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconAD from 'react-native-vector-icons/AntDesign';
 
 const DeviceCard = ({navigation, device}) => {
 
@@ -30,14 +29,14 @@ const DeviceCard = ({navigation, device}) => {
             {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
             {isConnected ?
                 (
-                <View>
-                    <View style={styles.navIconSelected}>
-                    <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
-                             color="#fff"/>
+                    <View>
+                        <View style={styles.navIconSelected}>
+                            <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
+                                     color="#fff"/>
+                        </View>
+                        <Text style={styles.navButtonText}>{device.name}</Text>
                     </View>
-                    <Text style={styles.navButtonText}>{device.name}</Text>
-                </View>
-            ) : (
+                ) : (
                     <View>
                         <View style={styles.navIcon}>
                             <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
@@ -45,7 +44,7 @@ const DeviceCard = ({navigation, device}) => {
                         </View>
                         <Text style={styles.navButtonText}>{device.name}</Text>
                     </View>
-            )}
+                )}
         </TouchableOpacity>
     );
 };

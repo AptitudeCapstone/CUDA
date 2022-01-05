@@ -16,10 +16,12 @@ export const Diagnostic = ({route, navigation}) => {
 
     let add_test_result = () => {
         db.transaction(function (tx) {
+            const date = new Date();
             tx.executeSql(
-                'INSERT INTO table_tests (patient_id, test_type, test_result, test_time) VALUES (?,?,?,datetime("now"))',
-                [patientID, testType, testResult],
+                'INSERT INTO table_tests (patient_id, test_type, test_result, test_time) VALUES (?,?,?,?)',
+                [patientID, testType, testResult, date.toISOString()],
                 (tx, results) => {
+                    console.log(results.rows.item(0).test_time + ' is date of new test');
                     console.log('Results', results.rowsAffected);
                     navigation.navigate('AllResults')
                 }

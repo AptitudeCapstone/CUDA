@@ -37,9 +37,9 @@ export const EditPatient = ({route, navigation}) => {
     // this is run once each time screen is opened
     const isFocused = useIsFocused();
     useEffect(() => {
-        setPatientName(nameModalValue);
-        setPatientPhone(phoneModalValue);
-        setPatientAddress(addressModalValue);
+        setPatientName(patient_name);
+        setPatientPhone(patient_phone);
+        setPatientAddress(patient_address);
     }, [isFocused]);
 
     let update_name = () => {
@@ -55,6 +55,7 @@ export const EditPatient = ({route, navigation}) => {
             );
         });
 
+        setPatientName(nameModalValue);
         setNameModalVisible(!nameModalVisible);
     };
 
@@ -71,6 +72,7 @@ export const EditPatient = ({route, navigation}) => {
             );
         });
 
+        setPatientPhone(phoneModalValue.toString());
         setPhoneModalVisible(!phoneModalVisible);
     };
 
@@ -87,6 +89,7 @@ export const EditPatient = ({route, navigation}) => {
             );
         });
 
+        setPatientAddress(addressModalValue);
         setAddressModalVisible(!addressModalVisible);
     };
 
@@ -140,7 +143,7 @@ export const EditPatient = ({route, navigation}) => {
                     }}>
                     <Text style={styles.headingText}>Enter new number</Text>
                     <TextInput
-                        value={phoneModalValue.toString()}
+                        value={phoneModalValue}
                         onChangeText={setPhoneModalValue}
                         placeholder={'Enter phone'}
                         maxLength={10}
@@ -199,31 +202,31 @@ export const EditPatient = ({route, navigation}) => {
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>{patient_name}</Text>
+                            <Text style={styles.nameText}>{patientName}</Text>
                         </View>
                     </View>
                     <View styles={styles.section}>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>Phone Number</Text>
+                            <Text style={styles.nameText}>Phone Number </Text>
                             <Text style={{textAlign: 'right'}}>
                                 <Icon onPress={() => setPhoneModalVisible(!phoneModalVisible)} name='edit' size={36}
                                       color='#fff'/>
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>{patient_phone}</Text>
+                            <Text style={styles.nameText}>{patientPhone}</Text>
                         </View>
                     </View>
                     <View styles={styles.section}>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>Email Address</Text>
+                            <Text style={styles.nameText}>Email Address </Text>
                             <Text style={{textAlign: 'right'}}>
                                 <Icon onPress={() => setAddressModalVisible(!addressModalVisible)} name='edit' size={36}
                                       color='#fff'/>
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>{patient_address}</Text>
+                            <Text style={styles.nameText}>{patientAddress}</Text>
                         </View>
                     </View>
                 </View>

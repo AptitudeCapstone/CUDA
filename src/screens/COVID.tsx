@@ -127,7 +127,8 @@ export const COVID = ({route, navigation}) => {
                             borderTopLeftRadius: 15,
                             borderTopRightRadius: 15
                         }}>
-                            <Text style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
+                            <Text
+                                style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d @ hh:mm:ss aaaa')}</Text>
                         </View>
                         <View style={{padding: 20}}>
                             <Text style={styles.text}>{(item.test_result == 0) ? 'Negative' : 'Positive'}</Text>

@@ -13,8 +13,6 @@ import {AllResults} from '../screens/AllResults';
 import {COVID} from '../screens/COVID';
 import {Fibrinogen} from '../screens/Fibrinogen';
 import {QRCodes} from '../screens/QRCodes';
-import {SelectPatient} from "../screens/SelectPatient";
-import {ScanQR} from "../screens/ScanQR";
 
 const Stack = createStackNavigator();
 
@@ -22,7 +20,7 @@ export const RootNavigator = () => (
     <NavigationContainer>
         <Stack.Navigator
             initialRouteName='Home'
-            screenOptions={{headerTitleAlign: 'center',headerShadowVisible: false}}
+            screenOptions={{headerTitleAlign: 'center', headerShadowVisible: false}}
         >
             <Stack.Screen
                 name='Home'
@@ -96,34 +94,6 @@ export const RootNavigator = () => (
                 component={QRCodes}
                 options={{
                     title: 'QR Code Generator',
-                    headerStyle: {
-                        backgroundColor: '#333',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
-                name='SelectPatient'
-                component={SelectPatient}
-                options={{
-                    title: 'Select Patient for Test',
-                    headerStyle: {
-                        backgroundColor: '#333',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
-                name='ScanQR'
-                component={ScanQR}
-                options={{
-                    title: 'Scan Patient QR',
                     headerStyle: {
                         backgroundColor: '#333',
                     },

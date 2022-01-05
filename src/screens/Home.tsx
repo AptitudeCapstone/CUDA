@@ -2,7 +2,6 @@ import React, {useEffect, useReducer, useState} from 'react';
 import {
     ActivityIndicator,
     Alert,
-    Dimensions,
     FlatList,
     Modal,
     SafeAreaView,
@@ -29,8 +28,6 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
     console.log('ERROR: ' + error)
 });
-
-let ScreenHeight = Dimensions.get("window").height;
 
 const reducer = (
     state: Device[],
@@ -141,7 +138,7 @@ export const Home = ({navigation}) => {
                 []
             );
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_tests(test_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, test_type INT(8), test_result VARCHAR(255), test_time TEXT)',
+                'CREATE TABLE IF NOT EXISTS table_tests(test_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, test_type INT(8), test_result VARCHAR(255), test_time VARCHAR(255))',
                 []
             );
         });
@@ -185,10 +182,26 @@ export const Home = ({navigation}) => {
     const patient_selection_change = (selection) => {
         switch (selection) {
             case 1: // if select from list
+                db.transaction((tx) => {
+                    tx.executeSql(
+                        'SELECT * FROM table_patients',
+                        [],
+                        (tx, results) => {
+                            let temp = [];
+                            for (let i = 0; i < results.rows.length; ++i)
+                                temp.push({
+                                    key: results.rows.item(i).patient_id,
+                                    label: results.rows.item(i).patient_name.toString()
+                                });
+                            setPatients(temp);
+                        }
+                    );
+                });
                 // populate patients list
                 setListListModalVisible(true);
                 break;
-            case 2: // if select by scanning qr
+            case 2: // if select by scanning qr clear patient ID
+                setPatientID(0);
                 break;
             case 3: // if no select
                 break;
@@ -342,6 +355,22 @@ export const Home = ({navigation}) => {
                                         setPatientID(`${option.key}`);
                                         hideListModal();
                                     }}
+                                    optionContainerStyle={{backgroundColor: '#111', border: 0}}
+                                    optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
+                                    optionStyle={{
+                                        padding: 20,
+                                        backgroundColor: '#eee',
+                                        borderRadius: 100,
+                                        margin: 5,
+                                        marginBottom: 15,
+                                        borderColor: '#222'
+                                    }}
+                                    cancelText={'Cancel'}
+                                    cancelStyle={styles.cancelButton}
+                                    cancelTextStyle={styles.testButtonText}
+                                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                                    listType={'FLATLIST'}
                                 />
                             ) : (
                                 <View></View>
@@ -532,6 +561,18 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginTop: 20,
         marginBottom: 20,
+    },
+    cancelButton: {
+        backgroundColor: 'rgb(222,167,91)',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'center',
+        alignItems: 'center'
     },
     testButtonText: {
         fontSize: 24,

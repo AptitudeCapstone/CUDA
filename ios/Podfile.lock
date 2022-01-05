@@ -288,7 +288,7 @@ PODS:
     - React-Core
   - react-native-camera/RN (4.2.1):
     - React-Core
-  - react-native-html-to-pdf (0.11.0):
+  - react-native-html-to-pdf (0.12.0):
     - React-Core
   - react-native-pdf (6.4.0):
     - React-Core
@@ -365,6 +365,9 @@ PODS:
     - React-Core
   - RNPermissions (3.1.0):
     - React-Core
+  - RNQrGenerator (1.2.0):
+    - React
+    - ZXingObjC
   - RNScreens (3.8.0):
     - React-Core
     - React-RCTImage
@@ -375,6 +378,9 @@ PODS:
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
+  - ZXingObjC (3.6.5):
+    - ZXingObjC/All (= 3.6.5)
+  - ZXingObjC/All (3.6.5)
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
@@ -439,6 +445,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNQrGenerator (from `../node_modules/rn-qr-generator`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -461,6 +468,7 @@ SPEC REPOS:
     - MultiplatformBleAdapter
     - OpenSSL-Universal
     - YogaKit
+    - ZXingObjC
 
 EXTERNAL SOURCES:
   boost:
@@ -541,6 +549,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNQrGenerator:
+    :path: "../node_modules/rn-qr-generator"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -586,7 +596,7 @@ SPEC CHECKSUMS:
   react-native-ble-plx: caac53ee98151ec81198239d591c203809a1ed6e
   react-native-blob-util: d2919a2243cba497cd5713f72faeec283c69fde4
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
-  react-native-html-to-pdf: f54ef996ffaddc2516102d8148991dc4d05a8486
+  react-native-html-to-pdf: 4c5c6e26819fe202971061594058877aa9b25265
   react-native-pdf: a6a5a3f0bdf340eb2eed6c96034424d2cc3f84b0
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-sqlite-storage: f6d515e1c446d1e6d026aa5352908a25d4de3261
@@ -604,11 +614,13 @@ SPEC CHECKSUMS:
   ReactCommon: 620442811dc6f707b4bf5e3b27d4f19c12d5a821
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNPermissions: 4b54095940aea8c03fa3e6c92d4ac3647b31ed4e
+  RNQrGenerator: 34beaf1996de4a2f2122c7019dccd1717b22d8d7
   RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
+  ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
 PODFILE CHECKSUM: 25d497b90c5d7e4b647537a9770f4830d2b2b883
 

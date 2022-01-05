@@ -119,6 +119,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>RNQrGenerator.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>RNSVG.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -250,6 +255,11 @@
 			<false/>
 		</dict>
 		<key>YogaKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ZXingObjC.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

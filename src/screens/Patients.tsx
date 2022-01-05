@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import {useIsFocused} from "@react-navigation/native";
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -11,6 +12,7 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 export const Patients = ({navigation}) => {
     let [flatListItems, setFlatListItems] = useState([]);
 
+    const isFocused = useIsFocused();
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -24,7 +26,7 @@ export const Patients = ({navigation}) => {
                 }
             );
         });
-    }, []);
+    }, [isFocused]);
 
     let listViewItemSeparator = () => {
         return (

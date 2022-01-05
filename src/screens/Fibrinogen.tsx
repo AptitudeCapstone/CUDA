@@ -30,7 +30,7 @@ export const Fibrinogen = ({route, navigation}) => {
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + (patient_id),
+                'SELECT * FROM table_tests WHERE test_type=1 AND patient_id=' + patient_id + ' ORDER BY test_time DESC',
                 [],
                 (tx, results) => {
                     var temp = [];
@@ -45,7 +45,8 @@ export const Fibrinogen = ({route, navigation}) => {
                     for (const row of temp) {
                         //console.log(row);
                         temp2.push(parseInt((row['test_result'])));
-                        temp3.push(row['test_time']);
+                        console.log(row['test_time']);
+                        temp3.push(format(parseISO(row['test_time']), 'MMM d'));
                     }
 
                     setFibVals(temp2);
@@ -74,7 +75,7 @@ export const Fibrinogen = ({route, navigation}) => {
         const sqlDelete = () => {
             db.transaction(function (tx) {
                 tx.executeSql(
-                    'DELETE FROM table_tests WHERE test_id=' + item.test_id + ' ORDER BY test_time DESC',
+                    'DELETE FROM table_tests WHERE test_id=' + item.test_id,
                     [],
                     (tx, results) => {
 
@@ -146,7 +147,8 @@ export const Fibrinogen = ({route, navigation}) => {
                             borderTopLeftRadius: 15,
                             borderTopRightRadius: 15
                         }}>
-                            <Text style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d, yyyy, hh:mm:ss aaaa')}</Text>
+                            <Text
+                                style={styles.timeText}>{format(parseISO(item.test_time), 'MMM d @ hh:mm:ss aaaa')}</Text>
                         </View>
                         <View style={{padding: 20}}>
                             <Text style={styles.text}>{item.test_result} mg/mL</Text>
@@ -160,11 +162,11 @@ export const Fibrinogen = ({route, navigation}) => {
     const screenWidth = Dimensions.get('window').width;
 
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFrom: "#111",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#08130D",
+        backgroundGradientTo: "#222",
         backgroundGradientToOpacity: 0.2,
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     };
 
     const data = {
@@ -185,7 +187,7 @@ export const Fibrinogen = ({route, navigation}) => {
     console.log(fibTimes);
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#222',}}>
             <View style={{flex: 1, backgroundColor: '#222', justifyContent: 'space-between'}}>
                 <View style={{flex: 0.4}}>
                     <FlatList
@@ -201,6 +203,8 @@ export const Fibrinogen = ({route, navigation}) => {
                         width={screenWidth} // from react-native
                         height={400}
                         chartConfig={chartConfig}
+                        withInnerLines={false}
+                        withOuterLines={false}
                         bezier
                     />
                 </View>
