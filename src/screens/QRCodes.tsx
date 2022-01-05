@@ -18,7 +18,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 export const QRCodes = ({navigation}) => {
     const [numberOfCodes, setNumberOfCodes] = useState(0);
-    const [pdfSource, setPDFSource] = useState({uri:"data:application/pdf;base64,"})
+    const [pdfSource, setPDFSource] = useState({uri:""})
     const [pdfHtml, setPdfHtml] = useState('');
     const [imageUris, setImageUris] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -48,7 +48,8 @@ export const QRCodes = ({navigation}) => {
                 .catch((err) => console.log('Cannot create QR code', err));
         }
 
-        await generatePDF().then(setModalVisible(true));
+        await generatePDF();
+        await showPDF();
     };
 
     const hideModal = () => {
@@ -56,7 +57,7 @@ export const QRCodes = ({navigation}) => {
             setModalVisible(false);
 
         setImageUris([]);
-        setPDFSource({uri:""});
+        setPDFSource({uri:''});
     }
 
     const generatePDF = async () => {
@@ -90,6 +91,11 @@ export const QRCodes = ({navigation}) => {
 
         let pdf = await RNHTMLtoPDF.convert(options);
         setPDFSource({uri:'data:application/pdf;base64,' + pdf.base64});
+    };
+
+    const showPDF = async () => {
+        await generatePDF();
+        setModalVisible(true);
     };
 
     return (
@@ -126,11 +132,10 @@ export const QRCodes = ({navigation}) => {
                         hideModal();
                     }}
                 >
-                    <View style={{flex: 0.8}}>
+                    <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource == '') ? 0 : 1, marginTop: 40}}>
                         <Pdf
                             source={pdfSource}
                             onLoadComplete={(numberOfPages,filePath) => {
-                                setModalVisible(true);
                                 console.log('showing modal');
                             }}
                             onPageChanged={(page,numberOfPages) => {
@@ -143,26 +148,26 @@ export const QRCodes = ({navigation}) => {
                                 console.log(`Link pressed: ${uri}`);
                             }}
                             style={styles.pdf}/>
-                    </View>
-                    <View>
-                        <View style={styles.testButtonContainer}>
-                        <TouchableOpacity
-                            onPress={generateQR}
-                            style={styles.testButton}
-                        >
-                            <Text style={styles.testButtonText}>Share</Text>
-                            <Text style={{textAlign: 'right'}}>
-                                <IconF name='share' size={30} color='#fff'/>
-                            </Text>
-                        </TouchableOpacity>
-                        </View>
-                        <View style={styles.testButtonContainer}>
-                        <TouchableOpacity
-                            onPress={hideModal}
-                            style={styles.cancelButton}
-                        >
-                            <Text style={styles.cancelButtonText}>Close</Text>
-                        </TouchableOpacity>
+                        <View>
+                            <View style={styles.testButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={generateQR}
+                                    style={styles.testButton}
+                                >
+                                    <Text style={styles.testButtonText}>Share</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconF name='share' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.testButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={hideModal}
+                                    style={styles.cancelButton}
+                                >
+                                    <Text style={styles.cancelButtonText}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </Modal>
@@ -190,8 +195,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     pdf: {
-        paddingTop: 50,
-        paddingBottom: 50,
         flex: 1
     },
     cancelButton: {
