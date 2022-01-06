@@ -24,10 +24,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 
 const manager = new BleManager();
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 const reducer = (
     state: Device[],
@@ -224,15 +221,16 @@ export const Home = ({navigation}) => {
 
     // for test section to start test
     const start_test = () => {
-        //navigation.navigate('SelectPatient', {navigation, patients: temp, patientIDs: temp2});
         navigation.navigate('Diagnostic', {navigation, patientID: patientID});
     }
 
     return (
-        <SafeAreaView style={{
-            backgroundColor: '#222', flex: 1,
-            flexDirection: 'column'
-        }}>
+        <SafeAreaView
+            style={{
+                backgroundColor: '#222', flex: 1,
+                flexDirection: 'column'
+            }}
+        >
             <ScrollView>
                 <View style={styles.page}>
                     <View style={styles.section}>

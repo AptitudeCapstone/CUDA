@@ -1,13 +1,17 @@
 import React, {useState} from 'react';
-import {Keyboard, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
-import TextInputField from '../components/TextInputField';
-import SubmitButton from '../components/SubmitButton';
+import {
+    Keyboard,
+    SafeAreaView,
+    StyleSheet,
+    TouchableOpacity,
+    Text,
+    TouchableWithoutFeedback,
+    View,
+    TextInput
+} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 export const Diagnostic = ({route, navigation}) => {
     const {patientID} = route.params;
@@ -32,29 +36,63 @@ export const Diagnostic = ({route, navigation}) => {
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}
-                                      style={{flex: 1}}>
+                                      style={{flex: 1}}
+            >
                 <View style={styles.page}>
                     <View style={styles.section}>
-                        <TextInputField
-                            placeholder='Enter test ID (0 or 1)'
-                            onChangeText={
-                                (testType) => setTestType(testType)
-                            }
-                            maxLength={10}
-                            keyboardType="numeric"
-                            style={{padding: 25}}
-                        />
-                        <TextInputField
-                            placeholder='Enter result'
-                            onChangeText={
-                                (testResult) => setTestResult(testResult)
-                            }
-                            maxLength={10}
-                            keyboardType="numeric"
-                            style={{padding: 25}}
-                        />
-                        <View style={{marginTop: 45}}>
-                            <SubmitButton title='Log Test Result' customClick={add_test_result}/>
+                        <View
+                            style={{
+                                marginLeft: 35,
+                                marginRight: 35,
+                                marginTop: 10,
+                                marginBottom: 20,
+                                borderColor: '#eee',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }}
+                        >
+                            <TextInput
+                                underlineColorAndroid='transparent'
+                                placeholder='Enter test ID (0 or 1)'
+                                placeholderTextColor='#bbb'
+                                keyboardType='numeric'
+                                onChangeText={(testType) => setTestType(testType)}
+                                numberOfLines={1}
+                                multiline={false}
+                                style={{padding: 25}}
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <View
+                            style={{
+                                marginLeft: 35,
+                                marginRight: 35,
+                                marginTop: 10,
+                                marginBottom: 20,
+                                borderColor: '#eee',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }}
+                        >
+                            <TextInput
+                                underlineColorAndroid='transparent'
+                                placeholder='Enter result'
+                                placeholderTextColor='#bbb'
+                                keyboardType='numeric'
+                                onChangeText={(testResult) => setTestResult(testResult)}
+                                numberOfLines={1}
+                                multiline={false}
+                                style={{padding: 25}}
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <View style={styles.testButtonContainer}>
+                            <TouchableOpacity
+                                onPress={add_test_result}
+                                style={styles.testButton}
+                            >
+                                <Text style={styles.testButtonText}>Log Test Result</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -90,5 +128,27 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#eee',
         textAlign: 'left',
-    }
+    },
+    testButton: {
+        backgroundColor: '#2cab5c',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        flexDirection: 'row',
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    testButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 45,
+    },
+    testButtonText: {
+        fontSize: 24,
+        color: '#fff',
+        textAlign: 'center',
+        fontWeight: 'bold'
+    },
 });

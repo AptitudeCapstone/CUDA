@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     container: {
         padding: 12,
     },
-
     header: {
         backgroundColor: '#222',
         marginBottom: 12,

@@ -3,10 +3,7 @@ import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, Vi
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-var db = openDatabase({name: 'TestDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'TestDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 export const Results = ({navigation}) => {
     let [flatListItems, setFlatListItems] = useState([]);
@@ -20,6 +17,7 @@ export const Results = ({navigation}) => {
                     var temp = [];
                     for (let i = 0; i < results.rows.length; ++i)
                         temp.push(results.rows.item(i));
+
                     setFlatListItems(temp);
                 }
             );
@@ -46,6 +44,7 @@ export const Results = ({navigation}) => {
                 outputRange: [1, 0.5],
                 extrapolate: 'clamp'
             })
+
             return (
                 <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'center', textAlign: 'center',}}
                                   onPress={animatedDelete}>
@@ -73,11 +72,15 @@ export const Results = ({navigation}) => {
 
 
         return (
-            <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
+            <Swipeable
+                renderRightActions={swipeRight}
+                rightThreshold={-200}
+            >
                 <Animated.View style={{flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white'}}>
                     <View
                         key={item.test_id}
-                        style={{backgroundColor: 'white', padding: 20}}>
+                        style={{backgroundColor: 'white', padding: 20}}
+                    >
                         <Text style={styles.text}>Test ID: {item.test_id}</Text>
                         <Text style={styles.text}>Patient ID: {item.patient_id}</Text>
                         <Text style={styles.text}>Test Type: {item.test_type}</Text>

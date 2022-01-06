@@ -13,10 +13,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from "@react-navigation/native";
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 export const EditPatient = ({route, navigation}) => {
 
@@ -82,9 +79,8 @@ export const EditPatient = ({route, navigation}) => {
                 'UPDATE table_patients set patient_address=? where patient_id=?',
                 [addressModalValue, patient_id],
                 (tx, results) => {
-                    if (results.rowsAffected <= 0) {
+                    if (results.rowsAffected <= 0)
                         console.log('Patient update failed');
-                    }
                 }
             );
         });
@@ -110,7 +106,8 @@ export const EditPatient = ({route, navigation}) => {
                         alignSelf: 'center',
                         justifyContent: 'center',
                         backgroundColor: '#444',
-                    }}>
+                    }}
+                >
                     <Text style={styles.headingText}>Enter new name</Text>
                     <TextInput
                         value={nameModalValue}
@@ -121,12 +118,18 @@ export const EditPatient = ({route, navigation}) => {
                         autoCorrect={false}
                     />
                     <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
-                                          onPress={() => setNameModalVisible(!nameModalVisible)}><Text
-                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
-                                          onPress={update_name}><Text
-                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                            onPress={() => setNameModalVisible(!nameModalVisible)}
+                        >
+                            <Text style={{color: '#fff'}}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                            onPress={update_name}
+                        >
+                            <Text style={{color: '#fff'}}>Apply</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -140,7 +143,8 @@ export const EditPatient = ({route, navigation}) => {
                         alignSelf: 'center',
                         justifyContent: 'center',
                         backgroundColor: '#444',
-                    }}>
+                    }}
+                >
                     <Text style={styles.headingText}>Enter new number</Text>
                     <TextInput
                         value={phoneModalValue}
@@ -151,16 +155,26 @@ export const EditPatient = ({route, navigation}) => {
                         style={{backgroundColor: '#fff', padding: 15, margin: 10}}
                     />
                     <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
-                                          onPress={() => setPhoneModalVisible(!phoneModalVisible)}><Text
-                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
-                                          onPress={update_phone}><Text
-                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                            onPress={() => setPhoneModalVisible(!phoneModalVisible)}
+                        >
+                            <Text style={{color: '#fff'}}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                            onPress={update_phone}
+                        >
+                            <Text style={{color: '#fff'}}>Apply</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-            <Modal visible={addressModalVisible} transparent={true} style={{justifyContent: 'center'}}>
+            <Modal
+                visible={addressModalVisible}
+                transparent={true}
+                style={{justifyContent: 'center'}}
+            >
                 <View
                     style={{
                         marginTop: 100,
@@ -182,12 +196,18 @@ export const EditPatient = ({route, navigation}) => {
                         autoCorrect={false}
                     />
                     <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                        <TouchableOpacity style={{backgroundColor: '#666', margin: 10, padding: 20}}
-                                          onPress={() => setAddressModalVisible(!addressModalVisible)}><Text
-                            style={{color: '#fff'}}>Cancel</Text></TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
-                                          onPress={update_address}><Text
-                            style={{color: '#fff'}}>Apply</Text></TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#666', margin: 10, padding: 20}}
+                            onPress={() => setAddressModalVisible(!addressModalVisible)}
+                        >
+                            <Text style={{color: '#fff'}}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
+                            onPress={update_address}
+                        >
+                            <Text style={{color: '#fff'}}>Apply</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -197,7 +217,9 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Name </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setNameModalVisible(!nameModalVisible)} name='edit' size={36}
+                                <Icon onPress={() => setNameModalVisible(!nameModalVisible)}
+                                      name='edit'
+                                      size={36}
                                       color='#fff'/>
                             </Text>
                         </View>
@@ -209,7 +231,9 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Phone Number </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setPhoneModalVisible(!phoneModalVisible)} name='edit' size={36}
+                                <Icon onPress={() => setPhoneModalVisible(!phoneModalVisible)}
+                                      name='edit'
+                                      size={36}
                                       color='#fff'/>
                             </Text>
                         </View>
@@ -221,7 +245,9 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Email Address </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setAddressModalVisible(!addressModalVisible)} name='edit' size={36}
+                                <Icon onPress={() => setAddressModalVisible(!addressModalVisible)}
+                                      name='edit'
+                                      size={36}
                                       color='#fff'/>
                             </Text>
                         </View>

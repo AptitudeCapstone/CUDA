@@ -3,12 +3,11 @@ import {
     Keyboard, Modal,
     SafeAreaView,
     StyleSheet,
-    Text, TouchableOpacity,
+    Text, TextInput, TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
 import IconF from 'react-native-vector-icons/Feather';
-import TextInputField from '../components/TextInputField';
 import Pdf from 'react-native-pdf';
 import RNQRGenerator from 'rn-qr-generator';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
@@ -60,9 +59,9 @@ export const QRCodes = ({navigation}) => {
         // start page
         let html = ''; // within page, make a grid
 
-        for(let i = 0; i <= Math.floor(imageUris.length / 12); ++i) {
+        for(let i = 0; i <= imageUris.length / 12; ++i) {
             // add page container
-            html += '<div style="height: 723pt;">';
+            html += '<div style="height: ' + (712 + Math.floor(i)).toString() + 'pt;">';
             html += '<div style="display: grid;grid-template-columns: repeat(3, 1fr);">';
 
             // add grid of QR codes to page
@@ -104,19 +103,35 @@ export const QRCodes = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
-            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}
-                                      style={styles.page}>
+            <TouchableWithoutFeedback
+                onPress={() => Keyboard.dismiss()}
+                style={styles.page}
+            >
                 <View style={{alignItems: 'center', backgroundColor: '#222'}}>
                     <View style={styles.section}>
                         <Text style={styles.headingText}>Number of Codes</Text>
-                        <TextInputField
-                            placeholder='Enter number'
-                            keyboardType='numeric'
-                            onChangeText={
-                                (numCodes) => setNumberOfCodes(numCodes)
-                            }
-                            style={{padding: 25, color: '#fff'}}
-                        />
+                        <View
+                            style={{
+                                marginLeft: 35,
+                                marginRight: 35,
+                                marginTop: 10,
+                                marginBottom: 20,
+                                borderColor: '#eee',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }}>
+                            <TextInput
+                                underlineColorAndroid='transparent'
+                                placeholder='Enter number'
+                                placeholderTextColor='#bbb'
+                                keyboardType='numeric'
+                                onChangeText={(numCodes) => setNumberOfCodes(numCodes)}
+                                numberOfLines={1}
+                                multiline={false}
+                                style={{padding: 25, color: '#fff'}}
+                                blurOnSubmit={false}
+                            />
+                        </View>
                     </View>
                     <View style={styles.section}>
                         <TouchableOpacity

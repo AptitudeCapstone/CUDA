@@ -7,10 +7,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {format, parseISO} from 'date-fns';
 
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 export const Patient = ({route, navigation}) => {
 
@@ -206,14 +203,19 @@ export const Patient = ({route, navigation}) => {
                 <View style={styles.nameContainer}>
                     <Text style={styles.nameText}>{patientName}</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('EditPatient', {
-                            navigation,
-                            patient_id,
-                            patient_name: patientName,
-                            patient_phone: patientPhone,
-                            patient_address: patientAddress
-                        })} name='edit' size={36}
-                              color='#fff'
+                        <Icon
+                            onPress={() => {
+                                navigation.navigate('EditPatient', {
+                                    navigation,
+                                    patient_id,
+                                    patient_name: patientName,
+                                    patient_phone: patientPhone,
+                                    patient_address: patientAddress
+                                })}
+                            }
+                            name='edit'
+                            size={36}
+                            color='#fff'
                         />
                     </Text>
                 </View>
@@ -222,9 +224,16 @@ export const Patient = ({route, navigation}) => {
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>COVID Tests</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('COVID', {navigation, patient_id})} name='arrowright'
-                              size={24}
-                              color='#fff'/>
+                        <Icon
+                            onPress={() => {
+                                navigation.navigate('COVID', {
+                                    navigation,
+                                    patient_id})
+                                }
+                            }
+                            name='arrowright'
+                            size={24}
+                            color='#fff'/>
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>
@@ -239,9 +248,14 @@ export const Patient = ({route, navigation}) => {
                 <View style={styles.headingContainer}>
                     <Text style={styles.headingText}>Fibrinogen Tests</Text>
                     <Text style={{textAlign: 'right'}}>
-                        <Icon onPress={() => navigation.navigate('Fibrinogen', {navigation, patient_id})}
-                              name='arrowright' size={24}
-                              color='#fff'/>
+                        <Icon
+                            onPress={() => {
+                                navigation.navigate('Fibrinogen', {
+                                    navigation,
+                                    patient_id})}
+                            }
+                            name='arrowright' size={24}
+                            color='#fff'/>
                     </Text>
                 </View>
                 <View style={styles.subheadingContainer}>

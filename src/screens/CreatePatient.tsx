@@ -1,13 +1,9 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import TextInputField from '../components/TextInputField';
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
 
 export const CreatePatient = ({navigation}) => {
     let [patientName, setPatientName] = useState('');
@@ -35,8 +31,8 @@ export const CreatePatient = ({navigation}) => {
                 'INSERT INTO table_patients (patient_name, patient_contact, patient_address) VALUES (?,?,?)',
                 [patientName, patientPhone, patientEmail],
                 (tx, results) => {
-                    console.log('Results', results.rowsAffected);
-                    navigation.navigate('Home')
+                    //console.log('Results', results.rowsAffected);
+                    navigation.navigate('Home');
                 }
             );
         });
@@ -44,41 +40,90 @@ export const CreatePatient = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
-            <KeyboardAwareScrollView extraScrollHeight={120} style={{
-                backgroundColor: '#222', paddingTop: 40,
-                paddingBottom: 40
-            }}>
+            <KeyboardAwareScrollView
+                extraScrollHeight={120}
+                style={{
+                    backgroundColor: '#222', paddingTop: 40,
+                    paddingBottom: 40
+                }}
+            >
                 <View style={styles.section}>
                     <Text style={styles.headingText}>Name</Text>
-                    <TextInputField
-                        placeholder='Enter name'
-                        onChangeText={
-                            (patientName) => setPatientName(patientName)
-                        }
-                        style={{padding: 25, color: '#fff'}}
-                    />
+                    <View
+                        style={{
+                            marginLeft: 35,
+                            marginRight: 35,
+                            marginTop: 10,
+                            marginBottom: 20,
+                            borderColor: '#eee',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }}
+                    >
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Enter name'
+                            placeholderTextColor='#bbb'
+                            keyboardType='default'
+                            onChangeText={(patientName) => setPatientName(patientName)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.headingText}>Phone Number</Text>
-                    <TextInputField
-                        placeholder='Enter phone number'
-                        onChangeText={
-                            (patientPhone) => setPatientPhone(patientPhone)
-                        }
-                        maxLength={10}
-                        keyboardType="numeric"
-                        style={{padding: 25, color: '#fff'}}
-                    />
+                    <View
+                        style={{
+                            marginLeft: 35,
+                            marginRight: 35,
+                            marginTop: 10,
+                            marginBottom: 20,
+                            borderColor: '#eee',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }}
+                    >
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Enter phone number'
+                            placeholderTextColor='#bbb'
+                            keyboardType='numeric'
+                            onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.headingText}>Email address</Text>
-                    <TextInputField
-                        placeholder='Enter email address'
-                        onChangeText={
-                            (patientEmail) => setPatientEmail(patientEmail)
-                        }
-                        style={{padding: 25, color: '#fff'}}
-                    />
+                    <View
+                        style={{
+                            marginLeft: 35,
+                            marginRight: 35,
+                            marginTop: 10,
+                            marginBottom: 20,
+                            borderColor: '#eee',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }}
+                    >
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Enter email address'
+                            placeholderTextColor='#bbb'
+                            keyboardType='email-address'
+                            onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
                 </View>
                 <View style={styles.testButtonContainer}>
                     <TouchableOpacity
