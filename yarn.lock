@@ -5908,6 +5908,11 @@ react-native-screens@^3.8.0:
   dependencies:
     warn-once "^0.1.0"
 
+react-native-share-pdf@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-share-pdf/-/react-native-share-pdf-0.0.6.tgz#731be00ab28a5e907016aa4c559910d1d2a4f550"
+  integrity sha512-4lvrEpHFv7rZkhU25lya745HTWQrVqElLvybuW4a6pLsHC7qmtCQaTxmvY/Tb+CJwJpvEHo29vqNQggVm83zcg==
+
 react-native-sqlite-storage@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/react-native-sqlite-storage/-/react-native-sqlite-storage-6.0.1.tgz#ce6a6b852f07abbea68658d5363818c8bef45dfb"

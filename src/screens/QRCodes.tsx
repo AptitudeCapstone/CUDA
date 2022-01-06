@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import {
-    Dimensions,
     Keyboard, Modal,
     SafeAreaView,
-    ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
     TouchableWithoutFeedback,
@@ -14,21 +12,27 @@ import TextInputField from '../components/TextInputField';
 import Pdf from 'react-native-pdf';
 import RNQRGenerator from 'rn-qr-generator';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-
+import RNShareFile from 'react-native-share-pdf';
 
 export const QRCodes = ({navigation}) => {
     const [numberOfCodes, setNumberOfCodes] = useState(0);
-    const [pdfSource, setPDFSource] = useState({uri:""})
-    const [pdfHtml, setPdfHtml] = useState('');
+    const [pdfSource, setPDFSource] = useState('');
+    const [shareSource, setShareSource] = useState(null);
     const [imageUris, setImageUris] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
 
+    // sharing menu functions
+    async function loadAndSharePDF() {
+        console.log(RNShareFile.sharePDF);
+        const showError = await RNShareFile.sharePDF(shareSource.document, shareSource.filename);
+        if (showError) console.log(showError);
+    }
+
+    // qr generating functions
     const generateQR = async () => {
-        console.log(imageUris);
-        console.log(numberOfCodes);
-        console.log(pdfSource);
         setImageUris([]);
-        setPDFSource({uri:""});
+        setPDFSource({uri: ''});
+
         for (let i = 1; i <= numberOfCodes; ++i) {
             RNQRGenerator.generate({
                 value: i.toString(),
@@ -52,20 +56,11 @@ export const QRCodes = ({navigation}) => {
         await showPDF();
     };
 
-    const hideModal = () => {
-        if (modalVisible)
-            setModalVisible(false);
-
-        setImageUris([]);
-        setPDFSource({uri:''});
-    }
-
     const generatePDF = async () => {
         // start page
         let html = ''; // within page, make a grid
 
         for(let i = 0; i <= Math.floor(imageUris.length / 12); ++i) {
-
             // add page container
             html += '<div style="height: 723pt;">';
             html += '<div style="display: grid;grid-template-columns: repeat(3, 1fr);">';
@@ -90,13 +85,22 @@ export const QRCodes = ({navigation}) => {
         };
 
         let pdf = await RNHTMLtoPDF.convert(options);
-        setPDFSource({uri:'data:application/pdf;base64,' + pdf.base64});
+        setPDFSource({uri: 'data:application/pdf;base64,' + pdf.base64});
+        setShareSource({file: pdf.file, document: pdf.base64});
     };
 
     const showPDF = async () => {
         await generatePDF();
         setModalVisible(true);
     };
+
+    const hidePDF = () => {
+        if (modalVisible)
+            setModalVisible(false);
+
+        setImageUris([]);
+        setPDFSource({uri: ''});
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
@@ -107,7 +111,7 @@ export const QRCodes = ({navigation}) => {
                         <Text style={styles.headingText}>Number of Codes</Text>
                         <TextInputField
                             placeholder='Enter number'
-                            keyboardType="numeric"
+                            keyboardType='numeric'
                             onChangeText={
                                 (numCodes) => setNumberOfCodes(numCodes)
                             }
@@ -128,30 +132,17 @@ export const QRCodes = ({navigation}) => {
                 <Modal
                     transparent={true}
                     visible={modalVisible}
-                    onRequestClose={() => {
-                        hideModal();
-                    }}
+                    onRequestClose={() => {hidePDF}}
                 >
                     <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource == '') ? 0 : 1, marginTop: 40}}>
                         <Pdf
                             source={pdfSource}
-                            onLoadComplete={(numberOfPages,filePath) => {
-                                console.log('showing modal');
-                            }}
-                            onPageChanged={(page,numberOfPages) => {
-                                console.log(`Current page: ${page}`);
-                            }}
-                            onError={(error) => {
-                                console.log(error);
-                            }}
-                            onPressLink={(uri) => {
-                                console.log(`Link pressed: ${uri}`);
-                            }}
+                            onError={(error) => {console.log(error);}}
                             style={styles.pdf}/>
                         <View>
                             <View style={styles.testButtonContainer}>
                                 <TouchableOpacity
-                                    onPress={generateQR}
+                                    onPress={loadAndSharePDF}
                                     style={styles.testButton}
                                 >
                                     <Text style={styles.testButtonText}>Share</Text>
@@ -162,7 +153,7 @@ export const QRCodes = ({navigation}) => {
                             </View>
                             <View style={styles.testButtonContainer}>
                                 <TouchableOpacity
-                                    onPress={hideModal}
+                                    onPress={hidePDF}
                                     style={styles.cancelButton}
                                 >
                                     <Text style={styles.cancelButtonText}>Close</Text>
