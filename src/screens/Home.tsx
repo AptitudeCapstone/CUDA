@@ -162,17 +162,17 @@ export const Home = ({navigation}) => {
         };
     }, []);
 
-
     // set patient ID via QR code
     let setPatientByQR = e => {
-        //console.log('QR scanned, patientID = ' + e.data);
         if (e.data == null) {
             Alert.alert('No QR code found.');
-        } else
+        } else {
+            // check if patient exists in database
             setPatientID(e.data);
 
+        }
+
         setCamModalVisible(false);
-        //navigation.navigate('Diagnostic', {navigation, patientID: e.data});
     }
 
     // for test section to select method of patient selection
@@ -210,13 +210,11 @@ export const Home = ({navigation}) => {
     }
 
     const hideListModal = () => {
-        if (listModalVisible)
-            setListListModalVisible(false);
+        if (listModalVisible) setListListModalVisible(false);
     }
 
     const hideCamModal = () => {
-        if (camModalVisible)
-            setCamModalVisible(false);
+        if (camModalVisible) setCamModalVisible(false);
     }
 
     // for test section to start test
