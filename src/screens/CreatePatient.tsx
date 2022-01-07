@@ -3,35 +3,48 @@ import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 
 import {openDatabase} from 'react-native-sqlite-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const CreatePatient = ({navigation}) => {
-    let [patientName, setPatientName] = useState('');
-    let [patientPhone, setPatientPhone] = useState('');
-    let [patientEmail, setPatientEmail] = useState('');
+    const [patientName, setPatientName] = useState('');
+    const [patientEmail, setPatientEmail] = useState('');
+    const [patientPhone, setPatientPhone] = useState(0);
+    const [patientStreetAddress1, setPatientStreetAddress1] = useState('');
+    const [patientStreetAddress2, setPatientStreetAddress2] = useState('');
+    const [patientCity, setPatientCity] = useState('');
+    const [patientState, setPatientState] = useState('');
+    const [patientCountry, setPatientCountry] = useState('');
+    const [patientZip, setPatientZip] = useState(0);
 
-    let register_user = () => {
+    const register_user = () => {
         console.log(patientName, patientPhone, patientEmail);
 
-        if (!patientName) {
-            alert('Patient name is required');
-            return;
-        }
-        if (!patientPhone) {
-            alert('Patient number is required');
-            return;
-        }
-        if (!patientEmail) {
-            alert('Patient email is required');
-            return;
-        }
+        // find the first available QR code id
+        let patientQrId = 0;
 
         db.transaction(function (tx) {
             tx.executeSql(
-                'INSERT INTO table_patients (patient_name, patient_contact, patient_address) VALUES (?,?,?)',
-                [patientName, patientPhone, patientEmail],
+                'INSERT INTO table_patients (' +
+                'qrId, ' +
+                'name, ' +
+                'email, ' +
+                'phone, ' +
+                'street_address_1, ' +
+                'street_address_2, ' +
+                'city, ' +
+                'state, ' +
+                'country, ' +
+                'zip' +
+                ') VALUES (?,?,?,?,?,?,?,?,?,?)',
+                [patientQrId, patientName, patientEmail, patientPhone,
+                    patientStreetAddress1, patientStreetAddress2,
+                    patientCity, patientState, patientCountry,
+                    patientZip],
                 (tx, results) => {
-                    //console.log('Results', results.rowsAffected);
+                    console.log('Results', results.rowsAffected);
                     navigation.navigate('Home');
                 }
             );
@@ -49,20 +62,10 @@ export const CreatePatient = ({navigation}) => {
             >
                 <View style={styles.section}>
                     <Text style={styles.headingText}>Name</Text>
-                    <View
-                        style={{
-                            marginLeft: 35,
-                            marginRight: 35,
-                            marginTop: 10,
-                            marginBottom: 20,
-                            borderColor: '#eee',
-                            borderWidth: 1,
-                            borderRadius: 5
-                        }}
-                    >
+                    <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'
-                            placeholder='Enter name'
+                            placeholder='Name'
                             placeholderTextColor='#bbb'
                             keyboardType='default'
                             onChangeText={(patientName) => setPatientName(patientName)}
@@ -74,21 +77,24 @@ export const CreatePatient = ({navigation}) => {
                     </View>
                 </View>
                 <View style={styles.section}>
-                    <Text style={styles.headingText}>Phone Number</Text>
-                    <View
-                        style={{
-                            marginLeft: 35,
-                            marginRight: 35,
-                            marginTop: 10,
-                            marginBottom: 20,
-                            borderColor: '#eee',
-                            borderWidth: 1,
-                            borderRadius: 5
-                        }}
-                    >
+                    <Text style={styles.headingText}>Contact</Text>
+                    <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'
-                            placeholder='Enter phone number'
+                            placeholder='Email address'
+                            placeholderTextColor='#bbb'
+                            keyboardType='email-address'
+                            onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Phone number'
                             placeholderTextColor='#bbb'
                             keyboardType='numeric'
                             onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
@@ -100,24 +106,79 @@ export const CreatePatient = ({navigation}) => {
                     </View>
                 </View>
                 <View style={styles.section}>
-                    <Text style={styles.headingText}>Email address</Text>
-                    <View
-                        style={{
-                            marginLeft: 35,
-                            marginRight: 35,
-                            marginTop: 10,
-                            marginBottom: 20,
-                            borderColor: '#eee',
-                            borderWidth: 1,
-                            borderRadius: 5
-                        }}
-                    >
+                    <Text style={styles.headingText}>Street Address</Text>
+                    <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'
-                            placeholder='Enter email address'
+                            placeholder='Address line 1'
                             placeholderTextColor='#bbb'
-                            keyboardType='email-address'
-                            onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
+                            keyboardType='default'
+                            onChangeText={(patientStreetAddress1) => setPatientStreetAddress1(patientStreetAddress1)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Address line 2 (e.g. Apt. #1)'
+                            placeholderTextColor='#bbb'
+                            keyboardType='default'
+                            onChangeText={(patientStreetAddress2) => setPatientStreetAddress2(patientStreetAddress2)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='City'
+                            placeholderTextColor='#bbb'
+                            keyboardType='default'
+                            onChangeText={(patientCity) => setPatientCity(patientCity)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='State'
+                            placeholderTextColor='#bbb'
+                            keyboardType='default'
+                            onChangeText={(patientState) => setPatientState(patientState)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Country'
+                            placeholderTextColor='#bbb'
+                            keyboardType='default'
+                            onChangeText={(patientCountry) => setPatientCountry(patientCountry)}
+                            numberOfLines={1}
+                            multiline={false}
+                            style={{padding: 25, color: '#fff'}}
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <View style={styles.textBoxContainer}>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='5-digit zip code'
+                            placeholderTextColor='#bbb'
+                            keyboardType='numeric'
+                            onChangeText={(patientZip) => setPatientZip(patientZip)}
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
@@ -145,6 +206,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     section: {},
+    textBoxContainer: {
+        marginLeft: 35,
+        marginRight: 35,
+        marginTop: 0,
+        marginBottom: 20,
+        borderColor: '#eee',
+        borderWidth: 1,
+        borderRadius: 5
+    },
     headingText: {
         margin: 20,
         fontSize: 18,

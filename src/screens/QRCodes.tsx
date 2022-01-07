@@ -1,9 +1,12 @@
 import React, {useState} from 'react';
 import {
-    Keyboard, Modal,
+    Keyboard,
+    Modal,
     SafeAreaView,
     StyleSheet,
-    Text, TextInput, TouchableOpacity,
+    Text,
+    TextInput,
+    TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -59,15 +62,15 @@ export const QRCodes = ({navigation}) => {
         // start page
         let html = ''; // within page, make a grid
 
-        for(let i = 0; i <= imageUris.length / 12; ++i) {
+        for (let i = 0; i <= imageUris.length / 12; ++i) {
             // add page container
             html += '<div style="height: ' + (712 + Math.floor(i)).toString() + 'pt;">';
             html += '<div style="display: grid;grid-template-columns: repeat(3, 1fr);">';
 
             // add grid of QR codes to page
             let j = 0;
-            while((i*12) + j < imageUris.length && j < 12) {
-                html += '<img style="margin-left:40pt;margin-top:50pt;width:100pt;height:100pt;" src="data:image/jpeg;base64, ' + imageUris[12*i + j] + '"/>';
+            while ((i * 12) + j < imageUris.length && j < 12) {
+                html += '<img style="margin-left:40pt;margin-top:50pt;width:100pt;height:100pt;" src="data:image/jpeg;base64, ' + imageUris[12 * i + j] + '"/>';
                 ++j;
             }
 
@@ -147,12 +150,15 @@ export const QRCodes = ({navigation}) => {
                 <Modal
                     transparent={true}
                     visible={modalVisible}
-                    onRequestClose={() => {hidePDF}}
+                    onRequestClose={() => hidePDF}
                 >
-                    <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource == '') ? 0 : 1, marginTop: 40}}>
+                    <View
+                        style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource == '') ? 0 : 1, marginTop: 40}}>
                         <Pdf
                             source={pdfSource}
-                            onError={(error) => {console.log(error);}}
+                            onError={(error) => {
+                                console.log(error)
+                            }}
                             style={styles.pdf}/>
                         <View>
                             <View style={styles.testButtonContainer}>

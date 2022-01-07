@@ -1,7 +1,6 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import {
     ActivityIndicator,
-    Alert,
     FlatList,
     Modal,
     SafeAreaView,
@@ -24,7 +23,10 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 
 const manager = new BleManager();
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 const reducer = (
     state: Device[],
@@ -56,9 +58,11 @@ export const Home = ({navigation}) => {
     const [scannedDevices, dispatch] = useReducer(reducer, []);
     const [isScanning, setIsScanning] = useState(false);
     const [patientSelection, setPatientSelection] = useState(0);
-    const [patientID, setPatientID] = useState(0);
+    const [testPatientID, setTestPatientID] = useState(0);
+    const [viewPatientID, setViewPatientID] = useState(0);
     const [patients, setPatients] = useState([]);
-    const [listModalVisible, setListListModalVisible] = useState(false);
+    const [testModalVisible, setTestModalVisible] = useState(false);
+    const [viewPatientModal, setViewPatientModal] = useState(false);
     const [camModalVisible, setCamModalVisible] = useState(false);
 
     const scanDevices = () => {
@@ -67,16 +71,15 @@ export const Home = ({navigation}) => {
 
         // scan devices
         manager.startDeviceScan(null, null, (error, scannedDevice) => {
-            if (error)
-                console.warn(error);
+            if (error) console.warn(error);
 
             // scan for devices with name 'raspberrypi'
             if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
                 // stop scanning
-                manager.stopDeviceScan();
+                //manager.stopDeviceScan();
 
                 // turn off activity indicator
-                setIsScanning(false);
+                //setIsScanning(false);
 
                 // connect to device
                 scannedDevice
@@ -85,17 +88,15 @@ export const Home = ({navigation}) => {
                         manager.onDeviceDisconnected(
                             deviceData.id,
                             (connectionError, connectionData) => {
-                                if (connectionError) {
-                                    console.log(connectionError);
-                                }
-                                console.log('Device is disconnected');
+                                if (connectionError) console.log(connectionError);
+
                                 console.log(connectionData);
-                                console.log('Restarting BLE device scan');
+                                console.log('Device is disconnected. Restarting BLE device scan. ');
                                 setIsScanning(true);
                                 scanDevices();
                             },
                         );
-                        // discover all services and characteristics
+
                         return scannedDevice.discoverAllServicesAndCharacteristics();
                     })
                     .then(async (deviceObject) => {
@@ -110,7 +111,8 @@ export const Home = ({navigation}) => {
                                     console.log(error.message);
                                     return;
                                 }
-                                console.log(characteristic.uuid, decodeBleString(characteristic.value));
+
+                                //console.log(characteristic.uuid, decodeBleString(characteristic.value));
                             },
                         );
                     })
@@ -125,21 +127,40 @@ export const Home = ({navigation}) => {
     };
 
     useEffect(() => {
-        // start to scan when page is open
-        scanDevices();
-
         // if this is the first run of the app, create the database tables
-        db.transaction(function (tx) {
+        db.transaction((tx) => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_patients(patient_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_name VARCHAR(30), patient_contact INT(15), patient_address VARCHAR(255))',
-                []
+                'CREATE TABLE IF NOT EXISTS table_patients(' +
+                'id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
+                'qrId INT(10), ' +
+                'name VARCHAR(30), ' +
+                'email VARCHAR(255), ' +
+                'phone INT(15), ' +
+                'street_address_1 VARCHAR(255), ' +
+                'street_address_2 VARCHAR(255), ' +
+                'city VARCHAR(255), ' +
+                'state VARCHAR(18), ' +
+                'country VARCHAR(30), ' +
+                'zip INT(8))',
+                [], (tx, results) => {
+                }
             );
+        });
+        db.transaction((tx) => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_tests(test_id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, test_type INT(8), test_result VARCHAR(255), test_time VARCHAR(255))',
-                []
+                'CREATE TABLE IF NOT EXISTS table_tests(' +
+                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+                'patient_id INTEGER, ' +
+                'type INT(3), ' +
+                'result VARCHAR(255), ' +
+                'time VARCHAR(255))',
+                [],
+                (tx, results) => {
+                }
             );
         });
 
+        // update patients list based on database
         db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM table_patients',
@@ -148,13 +169,19 @@ export const Home = ({navigation}) => {
                     let temp = [];
                     for (let i = 0; i < results.rows.length; ++i)
                         temp.push({
-                            key: results.rows.item(i).patient_id,
-                            label: results.rows.item(i).patient_name.toString()
+                            key: results.rows.item(i).id,
+                            label: results.rows.item(i).name.toString()
                         });
+
                     setPatients(temp);
                 }
             );
         });
+    },);
+
+    useEffect(() => {
+        // start to scan when page is open
+        scanDevices();
 
         // destroy manager when done
         return () => {
@@ -165,10 +192,10 @@ export const Home = ({navigation}) => {
     // set patient ID via QR code
     let setPatientByQR = e => {
         if (e.data == null) {
-            Alert.alert('No QR code found.');
+            alert('No QR code found');
         } else {
             // check if patient exists in database
-            setPatientID(e.data);
+            setTestPatientID(e.data);
 
         }
 
@@ -179,7 +206,7 @@ export const Home = ({navigation}) => {
     const patient_selection_change = (selection) => {
         switch (selection) {
             case 1: // if select from list
-                db.transaction((tx) => {
+                db.transaction(tx => {
                     tx.executeSql(
                         'SELECT * FROM table_patients',
                         [],
@@ -187,20 +214,19 @@ export const Home = ({navigation}) => {
                             let temp = [];
                             for (let i = 0; i < results.rows.length; ++i)
                                 temp.push({
-                                    key: results.rows.item(i).patient_id,
-                                    label: results.rows.item(i).patient_name.toString()
+                                    key: results.rows.item(i).id,
+                                    label: results.rows.item(i).name
                                 });
                             setPatients(temp);
                         }
                     );
                 });
+
                 // populate patients list
-                setListListModalVisible(true);
+                setTestModalVisible(true);
                 break;
             case 2: // if select by scanning qr clear patient ID
-                setPatientID(0);
-                break;
-            case 3: // if no select
+                setTestPatientID(0);
                 break;
             default: // if none selected
                 break;
@@ -209,23 +235,74 @@ export const Home = ({navigation}) => {
         setPatientSelection(selection);
     }
 
-    const hideListModal = () => {
-        if (listModalVisible) setListListModalVisible(false);
+    const toggleViewPatientModal = () => {
+        if (viewPatientModal) {
+            db.transaction(tx => {
+                tx.executeSql(
+                    'SELECT * FROM table_patients WHERE id=' + viewPatientID,
+                    [],
+                    (tx, results) => {
+                        let patient = results.rows.item(0);
+                        console.log(results.rows);
+                        console.log('navigating to patient window with id ' + viewPatientID);
+                        navigation.navigate('Patient', {
+                            navigation,
+                            patient_id: viewPatientID,
+                            patient_qr_id: patient.qrId.toString(),
+                            patient_name: patient.name,
+                            patient_email: patient.email,
+                            patient_phone: patient.phone.toString(),
+                            patient_street_address_1: patient.street_address_1,
+                            patient_street_address_2: patient.street_address_2,
+                            patient_city: patient.city,
+                            patient_state: patient.state,
+                            patient_country: patient.country,
+                            patient_zip: patient.zip.toString()
+                        });
+                    }
+                );
+            });
+        } else {
+            console.log('showing view patient window. currently selected: ' + viewPatientID);
+            if (patients.length == 0) {
+                db.transaction(tx => {
+                    tx.executeSql(
+                        'SELECT * FROM table_patients',
+                        [],
+                        (tx, results) => {
+                            let temp = [];
+                            for (let i = 0; i < results.rows.length; ++i)
+                                temp.push({
+                                    key: results.rows.item(i).id,
+                                    label: results.rows.item(i).name
+                                });
+                            setPatients(temp);
+                        }
+                    );
+                });
+            }
+        }
+
+        setViewPatientModal(!viewPatientModal);
+    }
+
+    const hideTestPatientModal = () => {
+        if (testModalVisible) setTestModalVisible(false);
     }
 
     const hideCamModal = () => {
         if (camModalVisible) setCamModalVisible(false);
     }
 
-    // for test section to start test
     const start_test = () => {
-        navigation.navigate('Diagnostic', {navigation, patientID: patientID});
+        navigation.navigate('Diagnostic', {navigation, patientID: testPatientID});
     }
 
     return (
         <SafeAreaView
             style={{
-                backgroundColor: '#222', flex: 1,
+                backgroundColor: '#222',
+                flex: 1,
                 flexDirection: 'column'
             }}
         >
@@ -247,7 +324,9 @@ export const Home = ({navigation}) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.navButton}
-                                onPress={() => navigation.navigate('Patients')}
+                                onPress={() => {
+                                    toggleViewPatientModal()
+                                }}
                             >
                                 <View style={styles.navIcon}>
                                     <IconF name='user' size={30} color='#fff'/>
@@ -341,15 +420,15 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            {(patientSelection == 1 && listModalVisible) ? (
+                            {(patientSelection == 1 && testModalVisible) ? (
                                 <ModalSelector
                                     data={patients}
-                                    visible={listModalVisible}
-                                    onCancel={hideListModal}
+                                    visible={testModalVisible}
+                                    onCancel={hideTestPatientModal}
                                     customSelector={<View></View>}
                                     onChange={(option) => {
-                                        setPatientID(`${option.key}`);
-                                        hideListModal();
+                                        setTestPatientID(option.key);
+                                        hideTestPatientModal();
                                     }}
                                     optionContainerStyle={{backgroundColor: '#111', border: 0}}
                                     optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
@@ -371,7 +450,7 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            {(patientSelection == 1 && patientID != 0) ? (
+                            {(patientSelection == 1 && testPatientID != 0) ? (
                                 <TouchableOpacity
                                     style={styles.testButton}
                                     onPress={start_test}
@@ -419,7 +498,7 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            {((patientSelection == 1 || patientSelection == 2) && patientID == 0) ? (
+                            {((patientSelection == 1 || patientSelection == 2) && testPatientID == 0) ? (
                                 <TouchableOpacity
                                     style={styles.testButtonGrayed}
                                 >
@@ -444,6 +523,34 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
+                            <ModalSelector
+                                data={patients}
+                                visible={viewPatientModal}
+                                onCancel={() => {
+                                    toggleViewPatientModal();
+                                }}
+                                customSelector={<View></View>}
+                                onChange={(option) => {
+                                    setViewPatientID(option.key);
+                                    toggleViewPatientModal();
+                                }}
+                                optionContainerStyle={{backgroundColor: '#111', border: 0}}
+                                optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
+                                optionStyle={{
+                                    padding: 20,
+                                    backgroundColor: '#eee',
+                                    borderRadius: 100,
+                                    margin: 5,
+                                    marginBottom: 15,
+                                    borderColor: '#222'
+                                }}
+                                cancelText={'Cancel'}
+                                cancelStyle={styles.cancelButton}
+                                cancelTextStyle={styles.testButtonText}
+                                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                                listType={'FLATLIST'}
+                            />
                         </View>
                     </View>
                 </View>

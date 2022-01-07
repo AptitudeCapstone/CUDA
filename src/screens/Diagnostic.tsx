@@ -3,15 +3,18 @@ import {
     Keyboard,
     SafeAreaView,
     StyleSheet,
-    TouchableOpacity,
     Text,
+    TextInput,
+    TouchableOpacity,
     TouchableWithoutFeedback,
-    View,
-    TextInput
+    View
 } from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const Diagnostic = ({route, navigation}) => {
     const {patientID} = route.params;

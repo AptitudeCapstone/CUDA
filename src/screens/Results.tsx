@@ -3,7 +3,10 @@ import {Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, Vi
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-var db = openDatabase({name: 'TestDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'TestDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const Results = ({navigation}) => {
     let [flatListItems, setFlatListItems] = useState([]);

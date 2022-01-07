@@ -6,7 +6,6 @@ import {Home} from '../screens/Home';
 import {CreatePatient} from '../screens/CreatePatient';
 import {EditPatient} from '../screens/EditPatient';
 import {DeviceScreen} from '../screens/Device';
-import {Patients} from '../screens/Patients';
 import {Patient} from '../screens/Patient';
 import {Diagnostic} from '../screens/Diagnostic';
 import {AllResults} from '../screens/AllResults';
@@ -33,9 +32,9 @@ export const RootNavigator = () => (
                 name='NewPatient'
                 component={CreatePatient}
                 options={{
-                    title: 'Create a New Patient',
+                    title: 'Register Patient',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -49,7 +48,7 @@ export const RootNavigator = () => (
                 options={{
                     title: 'Edit Patient',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -62,26 +61,12 @@ export const RootNavigator = () => (
                 component={DeviceScreen}
             />
             <Stack.Screen
-                name='Patients'
-                component={Patients}
-                options={{
-                    title: 'All Patients',
-                    headerStyle: {
-                        backgroundColor: '#333',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
                 name='Patient'
                 component={Patient}
                 options={{
                     title: '',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -93,9 +78,9 @@ export const RootNavigator = () => (
                 name='QRCodes'
                 component={QRCodes}
                 options={{
-                    title: 'QR Code Generator',
+                    title: 'Generate QR Codes',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -109,7 +94,7 @@ export const RootNavigator = () => (
                 options={{
                     title: 'Run a Test',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -121,9 +106,9 @@ export const RootNavigator = () => (
                 name='Results'
                 component={AllResults}
                 options={{
-                    title: 'Test Results',
+                    title: 'All Results',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -137,7 +122,7 @@ export const RootNavigator = () => (
                 options={{
                     title: 'COVID Test Results',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -151,7 +136,7 @@ export const RootNavigator = () => (
                 options={{
                     title: 'Fibrinogen Test Results',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {
@@ -163,9 +148,9 @@ export const RootNavigator = () => (
                 name='AllResults'
                 component={AllResults}
                 options={{
-                    title: 'Test Results',
+                    title: 'All Test Results',
                     headerStyle: {
-                        backgroundColor: '#333',
+                        backgroundColor: '#222',
                     },
                     headerTintColor: '#eee',
                     headerTitleStyle: {

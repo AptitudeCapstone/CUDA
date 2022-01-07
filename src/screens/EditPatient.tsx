@@ -13,19 +13,34 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from "@react-navigation/native";
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const EditPatient = ({route, navigation}) => {
 
-    const {patient_id, patient_name, patient_phone, patient_address} = route.params;
+    const {
+        patient_id,
+        patient_qr_id,
+        patient_name,
+        patient_email,
+        patient_phone,
+        patient_street_address_1,
+        patient_street_address_2,
+        patient_city,
+        patient_state,
+        patient_country,
+        patient_zip
+    } = route.params;
 
-    let [patientName, setPatientName] = useState(patient_name);
-    let [patientPhone, setPatientPhone] = useState(patient_phone);
-    let [patientAddress, setPatientAddress] = useState(patient_address);
+    const [patientName, setPatientName] = useState(patient_name);
+    const [patientPhone, setPatientPhone] = useState(patient_phone);
+    const [patientEmail, setPatientEmail] = useState(patient_email);
 
-    let [nameModalValue, setNameModalValue] = useState(patient_name);
-    let [phoneModalValue, setPhoneModalValue] = useState(patient_phone);
-    let [addressModalValue, setAddressModalValue] = useState(patient_address);
+    const [nameModalValue, setNameModalValue] = useState(patient_name);
+    const [phoneModalValue, setPhoneModalValue] = useState(patient_phone.toString());
+    const [emailModalValue, setEmailModalValue] = useState(patient_email);
 
     const [nameModalVisible, setNameModalVisible] = useState(false);
     const [phoneModalVisible, setPhoneModalVisible] = useState(false);
@@ -36,18 +51,19 @@ export const EditPatient = ({route, navigation}) => {
     useEffect(() => {
         setPatientName(patient_name);
         setPatientPhone(patient_phone);
-        setPatientAddress(patient_address);
+        setPatientEmail(patient_email);
+        setNameModalValue(patient_name);
+        setPhoneModalValue(patient_phone.toString());
+        setEmailModalValue(patient_email);
     }, [isFocused]);
 
-    let update_name = () => {
+    const update_name = () => {
         db.transaction((tx) => {
             tx.executeSql(
-                'UPDATE table_patients set patient_name=? where patient_id=?',
+                'UPDATE table_patients set name=? where id=?',
                 [nameModalValue, patient_id],
                 (tx, results) => {
-                    if (results.rowsAffected <= 0) {
-                        console.log('Patient update failed');
-                    }
+                    if (results.rowsAffected <= 0) console.log('Patient update failed');
                 }
             );
         });
@@ -56,36 +72,33 @@ export const EditPatient = ({route, navigation}) => {
         setNameModalVisible(!nameModalVisible);
     };
 
-    let update_phone = () => {
+    const update_phone = () => {
         db.transaction((tx) => {
             tx.executeSql(
-                'UPDATE table_patients set patient_contact=? where patient_id=?',
+                'UPDATE table_patients set phone=? where id=?',
                 [phoneModalValue, patient_id],
                 (tx, results) => {
-                    if (results.rowsAffected <= 0) {
-                        console.log('Patient update failed');
-                    }
+                    if (results.rowsAffected <= 0) console.log('Patient update failed');
                 }
             );
         });
 
-        setPatientPhone(phoneModalValue.toString());
+        setPatientPhone(phoneModalValue);
         setPhoneModalVisible(!phoneModalVisible);
     };
 
-    let update_address = () => {
+    const update_email = () => {
         db.transaction((tx) => {
             tx.executeSql(
-                'UPDATE table_patients set patient_address=? where patient_id=?',
-                [addressModalValue, patient_id],
+                'UPDATE table_patients set email=? where id=?',
+                [emailModalValue, patient_id],
                 (tx, results) => {
-                    if (results.rowsAffected <= 0)
-                        console.log('Patient update failed');
+                    if (results.rowsAffected <= 0) console.log('Patient update failed');
                 }
             );
         });
 
-        setPatientAddress(addressModalValue);
+        setPatientEmail(emailModalValue);
         setAddressModalVisible(!addressModalVisible);
     };
 
@@ -113,7 +126,7 @@ export const EditPatient = ({route, navigation}) => {
                         value={nameModalValue}
                         onChangeText={setNameModalValue}
                         placeholder={'Enter text'}
-                        style={{backgroundColor: '#fff', padding: 15, margin: 10}}
+                        style={styles.textBox}
                         autoComplete='off'
                         autoCorrect={false}
                     />
@@ -151,8 +164,8 @@ export const EditPatient = ({route, navigation}) => {
                         onChangeText={setPhoneModalValue}
                         placeholder={'Enter phone'}
                         maxLength={10}
-                        keyboardType="numeric"
-                        style={{backgroundColor: '#fff', padding: 15, margin: 10}}
+                        keyboardType='numeric'
+                        style={styles.textBox}
                     />
                     <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
                         <TouchableOpacity
@@ -188,10 +201,10 @@ export const EditPatient = ({route, navigation}) => {
                 >
                     <Text style={styles.headingText}>Enter new email</Text>
                     <TextInput
-                        value={addressModalValue}
-                        onChangeText={setAddressModalValue}
+                        value={emailModalValue}
+                        onChangeText={setEmailModalValue}
                         placeholder={'Enter address'}
-                        style={{backgroundColor: '#fff', padding: 15, margin: 10}}
+                        style={styles.textBox}
                         autoComplete='off'
                         autoCorrect={false}
                     />
@@ -204,7 +217,7 @@ export const EditPatient = ({route, navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{backgroundColor: '#2cd46a', margin: 10, padding: 20}}
-                            onPress={update_address}
+                            onPress={update_email}
                         >
                             <Text style={{color: '#fff'}}>Apply</Text>
                         </TouchableOpacity>
@@ -217,10 +230,11 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Name </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setNameModalVisible(!nameModalVisible)}
-                                      name='edit'
-                                      size={36}
-                                      color='#fff'/>
+                                <Icon
+                                    onPress={() => setNameModalVisible(!nameModalVisible)}
+                                    name='edit'
+                                    size={36}
+                                    color='#fff'/>
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
@@ -231,10 +245,11 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Phone Number </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setPhoneModalVisible(!phoneModalVisible)}
-                                      name='edit'
-                                      size={36}
-                                      color='#fff'/>
+                                <Icon
+                                    onPress={() => setPhoneModalVisible(!phoneModalVisible)}
+                                    name='edit'
+                                    size={36}
+                                    color='#fff'/>
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
@@ -245,14 +260,15 @@ export const EditPatient = ({route, navigation}) => {
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameText}>Email Address </Text>
                             <Text style={{textAlign: 'right'}}>
-                                <Icon onPress={() => setAddressModalVisible(!addressModalVisible)}
-                                      name='edit'
-                                      size={36}
-                                      color='#fff'/>
+                                <Icon
+                                    onPress={() => setAddressModalVisible(!addressModalVisible)}
+                                    name='edit'
+                                    size={36}
+                                    color='#fff'/>
                             </Text>
                         </View>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameText}>{patientAddress}</Text>
+                            <Text style={styles.nameText}>{patientEmail}</Text>
                         </View>
                     </View>
                 </View>
@@ -269,6 +285,14 @@ const styles = StyleSheet.create({
     },
     section: {
         flexDirection: 'row',
+    },
+    textBox: {
+        padding: 25,
+        color: '#222',
+        backgroundColor: '#eee',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ccc'
     },
     nameContainer: {
         paddingTop: 20,

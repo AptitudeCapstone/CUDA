@@ -15,7 +15,10 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {LineChart} from "react-native-chart-kit";
 import {format, parseISO} from 'date-fns';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {}, error => {console.log('ERROR: ' + error)});
+var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+}, error => {
+    console.log('ERROR: ' + error)
+});
 
 export const Fibrinogen = ({route, navigation}) => {
     const {patient_id} = route.params;
