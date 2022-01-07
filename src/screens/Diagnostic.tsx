@@ -30,7 +30,6 @@ export const Diagnostic = ({route, navigation}) => {
                 (tx, results) => {
                     console.log(results.rows.item(0).test_time + ' is date of new test');
                     console.log('Results', results.rowsAffected);
-                    navigation.navigate('AllResults')
                 }
             );
         });

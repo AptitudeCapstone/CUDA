@@ -8,7 +8,6 @@ import {EditPatient} from '../screens/EditPatient';
 import {DeviceScreen} from '../screens/Device';
 import {Patient} from '../screens/Patient';
 import {Diagnostic} from '../screens/Diagnostic';
-import {AllResults} from '../screens/AllResults';
 import {COVID} from '../screens/COVID';
 import {Fibrinogen} from '../screens/Fibrinogen';
 import {QRCodes} from '../screens/QRCodes';
@@ -103,20 +102,6 @@ export const RootNavigator = () => (
                 }}
             />
             <Stack.Screen
-                name='Results'
-                component={AllResults}
-                options={{
-                    title: 'All Results',
-                    headerStyle: {
-                        backgroundColor: '#222',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
                 name='COVID'
                 component={COVID}
                 options={{
@@ -135,20 +120,6 @@ export const RootNavigator = () => (
                 component={Fibrinogen}
                 options={{
                     title: 'Fibrinogen Test Results',
-                    headerStyle: {
-                        backgroundColor: '#222',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
-                name='AllResults'
-                component={AllResults}
-                options={{
-                    title: 'All Test Results',
                     headerStyle: {
                         backgroundColor: '#222',
                     },

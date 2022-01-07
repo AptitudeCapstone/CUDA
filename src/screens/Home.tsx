@@ -235,19 +235,19 @@ export const Home = ({navigation}) => {
         setPatientSelection(selection);
     }
 
-    const toggleViewPatientModal = () => {
+    const toggleViewPatientModal = (id) => {
         if (viewPatientModal) {
+            let patient = null;
+
             db.transaction(tx => {
                 tx.executeSql(
-                    'SELECT * FROM table_patients WHERE id=' + viewPatientID,
+                    'SELECT * FROM table_patients WHERE id=' + id,
                     [],
                     (tx, results) => {
-                        let patient = results.rows.item(0);
-                        console.log(results.rows);
-                        console.log('navigating to patient window with id ' + viewPatientID);
+                        patient = results.rows.item(0);
                         navigation.navigate('Patient', {
                             navigation,
-                            patient_id: viewPatientID,
+                            patient_id: id,
                             patient_qr_id: patient.qrId.toString(),
                             patient_name: patient.name,
                             patient_email: patient.email,
@@ -263,7 +263,7 @@ export const Home = ({navigation}) => {
                 );
             });
         } else {
-            console.log('showing view patient window. currently selected: ' + viewPatientID);
+            console.log('showing view patient window. currently selected: ' + id);
             if (patients.length == 0) {
                 db.transaction(tx => {
                     tx.executeSql(
@@ -325,7 +325,7 @@ export const Home = ({navigation}) => {
                             <TouchableOpacity
                                 style={styles.navButton}
                                 onPress={() => {
-                                    toggleViewPatientModal()
+                                    toggleViewPatientModal(0)
                                 }}
                             >
                                 <View style={styles.navIcon}>
@@ -424,7 +424,7 @@ export const Home = ({navigation}) => {
                                 <ModalSelector
                                     data={patients}
                                     visible={testModalVisible}
-                                    onCancel={hideTestPatientModal}
+                                    onCancel={hideTestPatientModal()}
                                     customSelector={<View></View>}
                                     onChange={(option) => {
                                         setTestPatientID(option.key);
@@ -527,12 +527,11 @@ export const Home = ({navigation}) => {
                                 data={patients}
                                 visible={viewPatientModal}
                                 onCancel={() => {
-                                    toggleViewPatientModal();
+                                    toggleViewPatientModal(0);
                                 }}
                                 customSelector={<View></View>}
                                 onChange={(option) => {
-                                    setViewPatientID(option.key);
-                                    toggleViewPatientModal();
+                                    toggleViewPatientModal(option.key);
                                 }}
                                 optionContainerStyle={{backgroundColor: '#111', border: 0}}
                                 optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
