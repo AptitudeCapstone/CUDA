@@ -255,7 +255,6 @@ export const EditPatient = ({route, navigation}) => {
                             value={streetAddress1ModalValue}
                             onChangeText={setStreetAddress1ModalValue}
                             placeholder={'E.g. 125 Valley Rd.'}
-                            maxLength={10}
                             keyboardType='default'
                             style={styles.textBox}
                         />
@@ -282,7 +281,6 @@ export const EditPatient = ({route, navigation}) => {
                             value={streetAddress2ModalValue}
                             onChangeText={setStreetAddress2ModalValue}
                             placeholder={'E.g. Apt. #1'}
-                            maxLength={10}
                             keyboardType='default'
                             style={styles.textBox}
                         />
@@ -309,7 +307,6 @@ export const EditPatient = ({route, navigation}) => {
                             value={cityModalValue}
                             onChangeText={setCityModalValue}
                             placeholder={'Enter city'}
-                            maxLength={10}
                             keyboardType='default'
                             style={styles.textBox}
                         />
@@ -336,7 +333,6 @@ export const EditPatient = ({route, navigation}) => {
                             value={stateModalValue}
                             onChangeText={setStateModalValue}
                             placeholder={'Enter state'}
-                            maxLength={10}
                             keyboardType='default'
                             style={styles.textBox}
                         />
@@ -363,7 +359,6 @@ export const EditPatient = ({route, navigation}) => {
                             value={countryModalValue}
                             onChangeText={setCountryModalValue}
                             placeholder={'Enter country'}
-                            maxLength={10}
                             keyboardType='default'
                             style={styles.textBox}
                         />
@@ -390,7 +385,7 @@ export const EditPatient = ({route, navigation}) => {
                             value={zipModalValue}
                             onChangeText={setZipModalValue}
                             placeholder={'Enter zip'}
-                            maxLength={10}
+                            maxLength={5}
                             keyboardType='numeric'
                             style={styles.textBox}
                         />

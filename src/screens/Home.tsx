@@ -59,10 +59,9 @@ export const Home = ({navigation}) => {
     const [isScanning, setIsScanning] = useState(false);
     const [patientSelection, setPatientSelection] = useState(0);
     const [testPatientID, setTestPatientID] = useState(0);
-    const [viewPatientID, setViewPatientID] = useState(0);
     const [patients, setPatients] = useState([]);
-    const [testModalVisible, setTestModalVisible] = useState(false);
-    const [viewPatientModal, setViewPatientModal] = useState(false);
+    const [testPatientModalVisible, setTestPatientModalVisible] = useState(false);
+    const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
     const [camModalVisible, setCamModalVisible] = useState(false);
 
     const scanDevices = () => {
@@ -76,10 +75,10 @@ export const Home = ({navigation}) => {
             // scan for devices with name 'raspberrypi'
             if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
                 // stop scanning
-                //manager.stopDeviceScan();
+                manager.stopDeviceScan();
 
                 // turn off activity indicator
-                //setIsScanning(false);
+                setIsScanning(false);
 
                 // connect to device
                 scannedDevice
@@ -189,54 +188,8 @@ export const Home = ({navigation}) => {
         };
     }, []);
 
-    // set patient ID via QR code
-    let setPatientByQR = e => {
-        if (e.data == null) {
-            alert('No QR code found');
-        } else {
-            // check if patient exists in database
-            setTestPatientID(e.data);
-
-        }
-
-        setCamModalVisible(false);
-    }
-
-    // for test section to select method of patient selection
-    const patient_selection_change = (selection) => {
-        switch (selection) {
-            case 1: // if select from list
-                db.transaction(tx => {
-                    tx.executeSql(
-                        'SELECT * FROM table_patients',
-                        [],
-                        (tx, results) => {
-                            let temp = [];
-                            for (let i = 0; i < results.rows.length; ++i)
-                                temp.push({
-                                    key: results.rows.item(i).id,
-                                    label: results.rows.item(i).name
-                                });
-                            setPatients(temp);
-                        }
-                    );
-                });
-
-                // populate patients list
-                setTestModalVisible(true);
-                break;
-            case 2: // if select by scanning qr clear patient ID
-                setTestPatientID(0);
-                break;
-            default: // if none selected
-                break;
-        }
-
-        setPatientSelection(selection);
-    }
-
     const toggleViewPatientModal = (id) => {
-        if (viewPatientModal) {
+        if (viewPatientModalVisible) {
             let patient = null;
 
             db.transaction(tx => {
@@ -262,39 +215,56 @@ export const Home = ({navigation}) => {
                     }
                 );
             });
-        } else {
-            console.log('showing view patient window. currently selected: ' + id);
-            if (patients.length == 0) {
-                db.transaction(tx => {
-                    tx.executeSql(
-                        'SELECT * FROM table_patients',
-                        [],
-                        (tx, results) => {
-                            let temp = [];
-                            for (let i = 0; i < results.rows.length; ++i)
-                                temp.push({
-                                    key: results.rows.item(i).id,
-                                    label: results.rows.item(i).name
-                                });
-                            setPatients(temp);
-                        }
-                    );
-                });
-            }
         }
 
-        setViewPatientModal(!viewPatientModal);
+        setViewPatientModalVisible(!viewPatientModalVisible);
     }
 
-    const hideTestPatientModal = () => {
-        if (testModalVisible) setTestModalVisible(false);
+    // for test section to select method of patient selection
+    const patient_selection_change = (selection) => {
+        switch (selection) {
+            case 1: // if select from list
+                setTestPatientID(0);
+                break;
+            case 2: // if select by scanning qr clear patient ID
+                setTestPatientID(0);
+                toggleCamModal(-1);
+                break;
+            default: // if none selected
+                break;
+        }
+
+        setPatientSelection(selection);
     }
 
-    const hideCamModal = () => {
-        if (camModalVisible) setCamModalVisible(false);
+    const toggleTestPatientModal = (id) => {
+        if (testPatientModalVisible && id >= 0) {
+            setTestPatientID(id);
+        }
+
+        setTestPatientModalVisible(!testPatientModalVisible);
+    }
+
+    // set patient ID via QR code
+    let setPatientByQR = e => {
+        if (e.data == null) {
+            alert('No QR code found');
+        } else {
+            // check if patient exists in database
+            if (e.data >= 0)
+                setTestPatientID(e.data);
+
+            toggleCamModal(e.data);
+            setCamModalVisible(false);
+        }
+    }
+
+    const toggleCamModal = () => {
+        setCamModalVisible(!camModalVisible);
     }
 
     const start_test = () => {
+        console.log('navigating with patient id ' + testPatientID)
         navigation.navigate('Diagnostic', {navigation, patientID: testPatientID});
     }
 
@@ -377,6 +347,7 @@ export const Home = ({navigation}) => {
                                     style={styles.navButton}
                                     onPress={() => {
                                         patient_selection_change(1);
+                                        toggleTestPatientModal(-1);
                                     }}
                                 >
                                     <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
@@ -388,7 +359,6 @@ export const Home = ({navigation}) => {
                                     style={styles.navButton}
                                     onPress={() => {
                                         patient_selection_change(2);
-                                        setCamModalVisible(true);
                                     }}
                                 >
                                     <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
@@ -420,15 +390,14 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            {(patientSelection == 1 && testModalVisible) ? (
+                            {(patientSelection == 1) ? (
                                 <ModalSelector
                                     data={patients}
-                                    visible={testModalVisible}
-                                    onCancel={hideTestPatientModal()}
+                                    visible={testPatientModalVisible}
+                                    onCancel={() => toggleTestPatientModal(-1)}
                                     customSelector={<View></View>}
                                     onChange={(option) => {
-                                        setTestPatientID(option.key);
-                                        hideTestPatientModal();
+                                        toggleTestPatientModal(option.key);
                                     }}
                                     optionContainerStyle={{backgroundColor: '#111', border: 0}}
                                     optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
@@ -450,7 +419,7 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            {(patientSelection == 1 && testPatientID != 0) ? (
+                            {((patientSelection == 1 || patientSelection == 2) && testPatientID != 0) ? (
                                 <TouchableOpacity
                                     style={styles.testButton}
                                     onPress={start_test}
@@ -473,22 +442,35 @@ export const Home = ({navigation}) => {
                                 >
                                     <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: 1}}>
                                         <QRCodeScanner
-                                            topContent={<View style={{
-                                                borderRadius: 100,
-                                                marginBottom: 20,
-                                                paddingTop: 25, paddingBottom: 25, paddingLeft: 40, paddingRight: 40,
-                                            }}><Text style={{
-                                                fontSize: 24,
-                                                color: '#eee',
-                                                textAlign: 'center',
-                                                fontWeight: 'bold'
-                                            }}>Place the QR code within the frame to continue</Text></View>}
-                                            bottomContent={<TouchableOpacity
-                                                style={styles.testButtonGrayed}
-                                                onPress={hideCamModal}
-                                            >
-                                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                                            </TouchableOpacity>}
+                                            topContent={
+                                                <View
+                                                    style={{
+                                                        borderRadius: 100,
+                                                        marginBottom: 20,
+                                                        paddingTop: 25,
+                                                        paddingBottom: 25,
+                                                        paddingLeft: 40,
+                                                        paddingRight: 40,
+                                                    }}
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 24,
+                                                            color: '#eee',
+                                                            textAlign: 'center',
+                                                            fontWeight: 'bold'
+                                                        }}
+                                                    >Place the QR code within the frame to continue</Text>
+                                                </View>
+                                            }
+                                            bottomContent={
+                                                <TouchableOpacity
+                                                    style={styles.testButtonGrayed}
+                                                    onPress={() => toggleCamModal()}
+                                                >
+                                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                                </TouchableOpacity>
+                                            }
                                             containerStyle={{marginTop: 40}}
                                             onRead={setPatientByQR}
                                             flashMode={RNCamera.Constants.FlashMode.auto}
@@ -499,9 +481,7 @@ export const Home = ({navigation}) => {
                                 <View></View>
                             )}
                             {((patientSelection == 1 || patientSelection == 2) && testPatientID == 0) ? (
-                                <TouchableOpacity
-                                    style={styles.testButtonGrayed}
-                                >
+                                <TouchableOpacity style={styles.testButtonGrayed}>
                                     <Text style={styles.testButtonText}>Begin</Text>
                                     <Text style={{textAlign: 'right'}}>
                                         <IconAD name='arrowright' size={30} color='#fff'/>
@@ -525,7 +505,7 @@ export const Home = ({navigation}) => {
                             )}
                             <ModalSelector
                                 data={patients}
-                                visible={viewPatientModal}
+                                visible={viewPatientModalVisible}
                                 onCancel={() => {
                                     toggleViewPatientModal(0);
                                 }}

@@ -54,7 +54,7 @@ export const CreatePatient = ({navigation}) => {
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
             <KeyboardAwareScrollView
-                extraScrollHeight={120}
+                extraScrollHeight={150}
                 style={{
                     backgroundColor: '#222', paddingTop: 40,
                     paddingBottom: 40
@@ -106,7 +106,7 @@ export const CreatePatient = ({navigation}) => {
                     </View>
                 </View>
                 <View style={styles.section}>
-                    <Text style={styles.headingText}>Street Address</Text>
+                    <Text style={styles.headingText}>Address</Text>
                     <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'
