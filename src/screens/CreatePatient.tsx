@@ -25,6 +25,27 @@ export const CreatePatient = ({navigation}) => {
         // find the first available QR code id
         let patientQrId = 0;
 
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM table_patients',
+                [],
+                (tx, results) => {
+                    let temp = [];
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push(results.rows.item(i).qrId);
+
+                    for(let i = 1; i <= temp.length; ++i) {
+                        if (!temp.includes(i))
+                            patientQrId = i;
+                    }
+
+                    if(patientQrId == 0)
+                        patientQrId = temp.length + 1;
+
+                }
+            );
+        });
+
         db.transaction(function (tx) {
             tx.executeSql(
                 'INSERT INTO table_patients (' +
@@ -56,7 +77,8 @@ export const CreatePatient = ({navigation}) => {
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{
-                    backgroundColor: '#222', paddingTop: 40,
+                    backgroundColor: '#222',
+                    paddingTop: 40,
                     paddingBottom: 40
                 }}
             >

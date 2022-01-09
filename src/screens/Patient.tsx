@@ -72,6 +72,7 @@ export const Patient = ({route, navigation}) => {
                 (tx, results) => {
                     let patient = results.rows.item(0);
                     setPatientQrId(patient.qrId);
+                    console.log(patient.qrId);
                     setPatientName(patient.name);
                     setPatientEmail(patient.email);
                     setPatientPhone(patient.phone);

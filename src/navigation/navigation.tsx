@@ -2,6 +2,7 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
+import {Welcome} from '../screens/Welcome';
 import {Home} from '../screens/Home';
 import {CreatePatient} from '../screens/CreatePatient';
 import {EditPatient} from '../screens/EditPatient';
@@ -17,9 +18,16 @@ const Stack = createStackNavigator();
 export const RootNavigator = () => (
     <NavigationContainer>
         <Stack.Navigator
-            initialRouteName='Home'
+            initialRouteName='Welcome'
             screenOptions={{headerTitleAlign: 'center', headerShadowVisible: false}}
         >
+            <Stack.Screen
+                name='Welcome'
+                component={Welcome}
+                options={{
+                    headerShown: false
+                }}
+            />
             <Stack.Screen
                 name='Home'
                 component={Home}

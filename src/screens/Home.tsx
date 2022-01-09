@@ -13,117 +13,23 @@ import {
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
-import {BleManager, Device} from "react-native-ble-plx";
-import {DeviceCard} from "../components/DeviceCard";
-import {openDatabase} from 'react-native-sqlite-storage';
-import {Base64} from '../lib/base64';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 import ModalSelector from 'react-native-modal-selector-searchable';
-
-const manager = new BleManager();
+import {openDatabase} from 'react-native-sqlite-storage';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
     console.log('ERROR: ' + error)
 });
 
-const reducer = (
-    state: Device[],
-    action: { type: 'ADD_DEVICE'; payload: Device } | { type: 'CLEAR' },
-): Device[] => {
-    switch (action.type) {
-        case 'ADD_DEVICE':
-            const {payload: device} = action;
-
-            // check if the detected device is not already added to the list
-            if (device && !state.find((dev) => dev.id === device.id)) {
-                return [...state, device];
-            }
-            return state;
-        case 'CLEAR':
-            return [];
-        default:
-            return state;
-    }
-};
-
-const decodeBleString = (value: string | undefined | null): string => {
-    if (!value) return '';
-    return Base64.decode(value).charCodeAt(0);
-};
-
 export const Home = ({navigation}) => {
-    // reducer to store discovered ble devices
-    const [scannedDevices, dispatch] = useReducer(reducer, []);
-    const [isScanning, setIsScanning] = useState(false);
     const [patientSelection, setPatientSelection] = useState(0);
     const [testPatientID, setTestPatientID] = useState(0);
     const [patients, setPatients] = useState([]);
     const [testPatientModalVisible, setTestPatientModalVisible] = useState(false);
     const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
     const [camModalVisible, setCamModalVisible] = useState(false);
-
-    const scanDevices = () => {
-        // toggle activity indicator on
-        setIsScanning(true);
-
-        // scan devices
-        manager.startDeviceScan(null, null, (error, scannedDevice) => {
-            if (error) console.warn(error);
-
-            // scan for devices with name 'raspberrypi'
-            if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
-                // stop scanning
-                manager.stopDeviceScan();
-
-                // turn off activity indicator
-                setIsScanning(false);
-
-                // connect to device
-                scannedDevice
-                    .connect()
-                    .then((deviceData) => {
-                        manager.onDeviceDisconnected(
-                            deviceData.id,
-                            (connectionError, connectionData) => {
-                                if (connectionError) console.log(connectionError);
-
-                                console.log(connectionData);
-                                console.log('Device is disconnected. Restarting BLE device scan. ');
-                                setIsScanning(true);
-                                scanDevices();
-                            },
-                        );
-
-                        return scannedDevice.discoverAllServicesAndCharacteristics();
-                    })
-                    .then(async (deviceObject) => {
-                        console.log('deviceObject: ' + deviceObject);
-                        // subscribe for the readable service
-                        scannedDevice.monitorCharacteristicForService(
-                            '00000001-710e-4a5b-8d75-3e5b444bc3cf',
-                            '00000002-710e-4a5b-8d75-3e5b444bc3cf',
-                            (error, characteristic) => {
-                                if (error) {
-                                    console.log('Error in monitorCharacteristicForService');
-                                    console.log(error.message);
-                                    return;
-                                }
-
-                                //console.log(characteristic.uuid, decodeBleString(characteristic.value));
-                            },
-                        );
-                    })
-                    .catch((error) => {
-                        console.warn(error);
-                    });
-
-                // add to devices list using reducer
-                dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
-            }
-        });
-    };
 
     useEffect(() => {
         // if this is the first run of the app, create the database tables
@@ -178,16 +84,6 @@ export const Home = ({navigation}) => {
         });
     },);
 
-    useEffect(() => {
-        // start to scan when page is open
-        scanDevices();
-
-        // destroy manager when done
-        return () => {
-            manager.destroy();
-        };
-    }, []);
-
     const toggleViewPatientModal = (id) => {
         if (viewPatientModalVisible) {
             let patient = null;
@@ -228,7 +124,7 @@ export const Home = ({navigation}) => {
                 break;
             case 2: // if select by scanning qr clear patient ID
                 setTestPatientID(0);
-                toggleCamModal(-1);
+                toggleCamModal();
                 break;
             default: // if none selected
                 break;
@@ -254,7 +150,7 @@ export const Home = ({navigation}) => {
             if (e.data >= 0)
                 setTestPatientID(e.data);
 
-            toggleCamModal(e.data);
+            toggleCamModal();
             setCamModalVisible(false);
         }
     }
@@ -264,7 +160,6 @@ export const Home = ({navigation}) => {
     }
 
     const start_test = () => {
-        console.log('navigating with patient id ' + testPatientID)
         navigation.navigate('Diagnostic', {navigation, patientID: testPatientID});
     }
 
@@ -316,32 +211,6 @@ export const Home = ({navigation}) => {
                     </View>
                     <View style={styles.testSection}>
                         <View style={styles.testButtonContainer}>
-                            <View style={styles.headingContainer}>
-                                <Text style={styles.headingText}>Start a Test</Text>
-                                {isScanning ? (
-                                    <Text style={{marginLeft: -28, textAlign: 'right'}}>
-                                        <ActivityIndicator color={'white'} size={28}/>
-                                    </Text>
-                                ) : (
-                                    <View></View>
-                                )}
-                            </View>
-
-                            {scannedDevices.length == 0 ? (
-                                <View style={styles.navButtonContainer}>
-                                    <View style={styles.navButton}>
-                                        <Text style={styles.navButtonText}>No devices found</Text>
-                                    </View>
-                                </View>
-                            ) : (
-                                <FlatList
-                                    horizontal={true}
-                                    keyExtractor={(item) => item.id}
-                                    data={scannedDevices}
-                                    renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                                    contentContainerStyle={styles.navButtonContainer}
-                                />
-                            )}
                             <View style={styles.navButtonContainer}>
                                 <TouchableOpacity
                                     style={styles.navButton}
