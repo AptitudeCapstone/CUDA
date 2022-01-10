@@ -37,6 +37,7 @@ export const CreateOrganization = ({navigation}) => {
                 })
                 .then(() => console.log('Set /organizations/' + orgID +
                     ' to name: ' + name +
+                    ', addCode: ' + addCode +
                     ', ownerEmail1: ' + ownerEmail1 +
                     ', ownerEmail2: ' + ownerEmail2  +
                     ', ownerEmail3: ' + ownerEmail3 +
@@ -84,9 +85,10 @@ export const CreateOrganization = ({navigation}) => {
                             underlineColorAndroid='transparent'
                             placeholder='4+ digits *'
                             placeholderTextColor='#bbb'
-                            keyboardType='default'
+                            keyboardType='numeric'
                             onChangeText={(newAddCode) => setAddCode(newAddCode)}
                             numberOfLines={1}
+                            maxLength={8}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
                             blurOnSubmit={false}

@@ -7,6 +7,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
 import IconF from 'react-native-vector-icons/Feather';
 import IconI from 'react-native-vector-icons/Ionicons';
+import {useIsFocused} from "@react-navigation/native";
 
 const manager = new BleManager();
 
@@ -40,10 +41,23 @@ const decodeBleString = (value: string | undefined | null): string => {
     return Base64.decode(value).charCodeAt(0);
 };
 
-export const Welcome = ({navigation}) => {
-    // reducer to store discovered ble devices
+export const Welcome = ({route, navigation}) => {
+    // reducer to store covered ble devices
     const [scannedDevices, dispatch] = useReducer(reducer, []);
     const [isScanning, setIsScanning] = useState(false);
+
+    const [connectedOrg, setConnectedOrg] = useState('');   // database key of the current organization
+    const [connectedOrgName, setConnectedOrgName] = useState('');   // name of the current organization
+
+    // this is run once each time screen is opened
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (route.params) {
+            const {currentOrgName} = route.params;
+            setConnectedOrgName(currentOrgName);
+        }
+    }, [isFocused]);
 
     const scanDevices = () => {
         // toggle activity indicator on
@@ -212,6 +226,9 @@ export const Welcome = ({navigation}) => {
                                     <Text style={styles.headingText}>Organization</Text>
                                 </View>
                             </View>
+                            {connectedOrgName == '' ?
+                                (
+                            <View>
                             <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
                                 <View style={{flex: 1,}}>
                                     <Text style={styles.mediumText}>Connecting this app to an organization will sync
@@ -238,6 +255,9 @@ export const Welcome = ({navigation}) => {
                                     <Text style={styles.navButtonText}>Connect to an Organization</Text>
                                 </TouchableOpacity>
                             </View>
+                            </View>
+                                ) : (<View><Text>{connectedOrgName}</Text></View>)
+                            }
                         </View>
                         <View
                             style={styles.window}

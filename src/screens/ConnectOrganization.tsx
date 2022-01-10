@@ -1,53 +1,47 @@
-import React, {Alert, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
 
 export const ConnectOrganization = ({navigation}) => {
     const [name, setName] = useState('');
     const [addCode, setAddCode] = useState(-1);
-    const [ownerEmail1, setOwnerEmail1] = useState('');
-    const [ownerEmail2, setOwnerEmail2] = useState('');
-    const [ownerEmail3, setOwnerEmail3] = useState('');
-    const [streetAddress1, setStreetAddress1] = useState('');
-    const [streetAddress2, setStreetAddress2] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-    const [country, setCountry] = useState('');
-    const [zip, setZip] = useState(0);
 
     const connect_organization = () => {
-        if(name != '' && (addCode == 0 || addCode >= 1000) && ownerEmail1 != '') {
-            const newReference = database().ref('/organizations').push();
-            const orgID = newReference.key;
-
-            newReference
-                .set({
-                    name: name,
-                    addCode: addCode,
-                    ownerEmail1: ownerEmail1,
-                    ownerEmail2: ownerEmail2,
-                    ownerEmail3: ownerEmail3,
-                    streetAddress1: streetAddress1,
-                    streetAddress2: streetAddress2,
-                    city: city,
-                    state: state,
-                    country: country,
-                    zip: zip
-                })
-                .then(() => console.log('Set /organizations/' + orgID +
-                    ' to name: ' + name +
-                    ', ownerEmail1: ' + ownerEmail1 +
-                    ', ownerEmail2: ' + ownerEmail2  +
-                    ', ownerEmail3: ' + ownerEmail3 +
-                    ', streetAddress1: ' + streetAddress1 +
-                    ', streetAddress2: ' + streetAddress2 +
-                    ', city: ' + city +
-                    ', state: ' + state  +
-                    ', country: ' + country +
-                    ', zip: ' + zip));
-        } else
-            Alert.alert('Please complete the required fields');
+        // transaction to search org with add code, create user associated with that org
+        if(addCode >= 0) {
+            database().ref('organizations/').orderByChild('addCode').equalTo('111111').once('value', function(snapshot) {
+                if(snapshot.val()) {
+                    snapshot.forEach(function (data) {
+                        Alert.alert(
+                            'Organization Found',
+                            'Attempting to sync data with ' + data.val().name,
+                            [
+                                {
+                                    text: 'Continue',
+                                    onPress: () => navigation.navigate('Welcome', {
+                                        navigation,
+                                        currentOrg: data.key,
+                                        currentOrgName: data.val().name
+                                    }).catch(error => {
+                                        console.log(error);
+                                    }),
+                                },
+                                {
+                                    text: 'Cancel',
+                                    style: 'cancel',
+                                },
+                            ]
+                        );
+                    });
+                } else {
+                    Alert.alert('Error', 'No organization was found with this add code');
+                }
+            })
+        } else {
+            //verify that org with add code exists
+            Alert.alert('Please enter a valid add code');
+        }
     };
 
     return (
@@ -68,10 +62,11 @@ export const ConnectOrganization = ({navigation}) => {
                             underlineColorAndroid='transparent'
                             placeholder='4+ digits *'
                             placeholderTextColor='#bbb'
-                            keyboardType='default'
+                            keyboardType='numeric'
                             onChangeText={(newAddCode) => setAddCode(newAddCode)}
                             numberOfLines={1}
                             multiline={false}
+                            maxLength={8}
                             style={{padding: 25, color: '#fff'}}
                             blurOnSubmit={false}
                         />
