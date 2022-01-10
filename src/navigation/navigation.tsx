@@ -4,6 +4,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {Welcome} from '../screens/Welcome';
 import {Home} from '../screens/Home';
+import {CreateOrganization} from '../screens/CreateOrganization';
+import {ConnectOrganization} from '../screens/ConnectOrganization';
 import {CreatePatient} from '../screens/CreatePatient';
 import {EditPatient} from '../screens/EditPatient';
 import {DeviceScreen} from '../screens/Device';
@@ -36,10 +38,38 @@ export const RootNavigator = () => (
                 }}
             />
             <Stack.Screen
+                name='CreateOrganization'
+                component={CreateOrganization}
+                options={{
+                    title: 'Register Organization',
+                    headerStyle: {
+                        backgroundColor: '#222',
+                    },
+                    headerTintColor: '#eee',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                }}
+            />
+            <Stack.Screen
                 name='NewPatient'
                 component={CreatePatient}
                 options={{
                     title: 'Register Patient',
+                    headerStyle: {
+                        backgroundColor: '#222',
+                    },
+                    headerTintColor: '#eee',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                }}
+            />
+            <Stack.Screen
+                name='ConnectOrganization'
+                component={ConnectOrganization}
+                options={{
+                    title: 'Connect',
                     headerStyle: {
                         backgroundColor: '#222',
                     },

@@ -6,7 +6,7 @@ import {DeviceCard} from "../components/DeviceCard";
 import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
 import IconF from 'react-native-vector-icons/Feather';
-import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconI from 'react-native-vector-icons/Ionicons';
 
 const manager = new BleManager();
 
@@ -175,6 +175,40 @@ export const Welcome = ({navigation}) => {
                         >
                             <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
                                 <View style={{flex: 1}}>
+                                    <Text style={styles.headingText}>Test Administer</Text>
+                                </View>
+                            </View>
+                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                <View style={{flex: 1,}}>
+                                    <Text style={styles.mediumText}>While it is not required, creating a test administer account allows you to sync patient data with other apps and retain data if the app is deleted</Text>
+                                </View>
+                            </View>
+                            <View style={styles.navButtonContainer}>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => navigation.navigate('CreateOrganization')}
+                                >
+                                    <View style={styles.navIcon}>
+                                        <IconF name='user-plus' size={30} color='#fff'/>
+                                    </View>
+                                    <Text style={styles.navButtonText}>Create Administer Account</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => navigation.navigate('ConnectOrganization')}
+                                >
+                                    <View style={styles.navIcon}>
+                                        <IconF name='user' size={30} color='#fff'/>
+                                    </View>
+                                    <Text style={styles.navButtonText}>Login to an Existing Account</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View
+                            style={styles.window}
+                        >
+                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                <View style={{flex: 1}}>
                                     <Text style={styles.headingText}>Organization</Text>
                                 </View>
                             </View>
@@ -187,23 +221,24 @@ export const Welcome = ({navigation}) => {
                             <View style={styles.navButtonContainer}>
                                 <TouchableOpacity
                                     style={styles.navButton}
+                                    onPress={() => navigation.navigate('CreateOrganization')}
                                 >
                                     <View style={styles.navIcon}>
                                         <IconF name='user-plus' size={30} color='#fff'/>
                                     </View>
-                                    <Text style={styles.navButtonText}>Create a new organization</Text>
+                                    <Text style={styles.navButtonText}>Create a New Organization</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.navButton}
+                                    onPress={() => navigation.navigate('ConnectOrganization')}
                                 >
                                     <View style={styles.navIcon}>
                                         <IconF name='user' size={30} color='#fff'/>
                                     </View>
-                                    <Text style={styles.navButtonText}>Connect to an organization</Text>
+                                    <Text style={styles.navButtonText}>Connect to an Organization</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-
                         <View
                             style={styles.window}
                         >
@@ -257,10 +292,9 @@ export const Welcome = ({navigation}) => {
                             <View style={styles.navButtonContainer}>
                             <TouchableOpacity
                                 style={styles.navButton}
-                                onPress={() => navigation.navigate('NewPatient', {device: Device})}
                             >
                                 <View style={styles.navIcon}>
-                                    <IconF name='user-plus' size={30} color='#fff'/>
+                                    <IconI name='water' size={30} color='#40a2ed'/>
                                 </View>
                                 <Text style={styles.navButtonText}>COVID</Text>
                             </TouchableOpacity>
@@ -268,7 +302,7 @@ export const Welcome = ({navigation}) => {
                                 style={styles.navButton}
                             >
                                 <View style={styles.navIcon}>
-                                    <IconF name='user' size={30} color='#fff'/>
+                                    <IconI name='water' size={30} color='#e64949'/>
                                 </View>
                                 <Text style={styles.navButtonText}>Fibrinogen</Text>
                             </TouchableOpacity>
@@ -316,11 +350,11 @@ const styles = StyleSheet.create({
         flex: 1
     },
     mediumText: {
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 15,
+        paddingRight: 15,
         paddingTop: 25,
         paddingBottom: 25,
-        fontSize: 22,
+        fontSize: 20,
         color: '#fff',
         textAlign: 'center'
     },
@@ -357,7 +391,7 @@ const styles = StyleSheet.create({
     },
     navIcon: {
         backgroundColor: '#333',
-        padding: 16,
+        padding: 20,
         borderWidth: 1,
         borderColor: '#555',
         borderRadius: 5000,
