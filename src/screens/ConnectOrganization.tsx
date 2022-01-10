@@ -4,13 +4,14 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
 
 export const ConnectOrganization = ({navigation}) => {
-    const [name, setName] = useState('');
     const [addCode, setAddCode] = useState(-1);
 
     const connect_organization = () => {
         // transaction to search org with add code, create user associated with that org
+
         if(addCode >= 0) {
             database().ref('organizations/').orderByChild('addCode').equalTo('111111').once('value', function(snapshot) {
+                //verify that org with add code exists
                 if(snapshot.val()) {
                     snapshot.forEach(function (data) {
                         Alert.alert(
@@ -23,9 +24,7 @@ export const ConnectOrganization = ({navigation}) => {
                                         navigation,
                                         currentOrg: data.key,
                                         currentOrgName: data.val().name
-                                    }).catch(error => {
-                                        console.log(error);
-                                    }),
+                                    })
                                 },
                                 {
                                     text: 'Cancel',
@@ -39,7 +38,6 @@ export const ConnectOrganization = ({navigation}) => {
                 }
             })
         } else {
-            //verify that org with add code exists
             Alert.alert('Please enter a valid add code');
         }
     };

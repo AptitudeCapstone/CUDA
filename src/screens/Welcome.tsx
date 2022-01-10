@@ -1,5 +1,5 @@
 import React, {useEffect, useReducer, useState} from 'react';
-import {Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, ActivityIndicator} from 'react-native';
+import {Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, ActivityIndicator} from 'react-native';
 import logo from '../CUDA-logos_white.png';
 import {BleManager, Device} from "react-native-ble-plx";
 import {DeviceCard} from "../components/DeviceCard";
@@ -58,6 +58,26 @@ export const Welcome = ({route, navigation}) => {
             setConnectedOrgName(currentOrgName);
         }
     }, [isFocused]);
+
+    const disconnectFromOrg = () => {
+        Alert.alert(
+            'Confirm',
+            'Are you sure you want to disconnect from ' + connectedOrgName + '? \n\nYou can always reconnect. ',
+            [
+                {
+                    text: 'Continue',
+                    onPress: () => {
+                        setConnectedOrg('');
+                        setConnectedOrgName('');
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]
+        );
+    }
 
     const scanDevices = () => {
         // toggle activity indicator on
@@ -256,7 +276,21 @@ export const Welcome = ({route, navigation}) => {
                                 </TouchableOpacity>
                             </View>
                             </View>
-                                ) : (<View><Text>{connectedOrgName}</Text></View>)
+                                ) : (
+                                    <View>
+                                        <Text style={styles.mediumText}>Data is being synced with {connectedOrgName}</Text>
+                                        <View style={styles.navButtonContainer}>
+                                            <TouchableOpacity
+                                                style={styles.navButton}
+                                                onPress={disconnectFromOrg}
+                                            >
+                                                <View style={styles.navIcon}>
+                                                    <IconF name='user-minus' size={30} color='#fff'/>
+                                                </View>
+                                                <Text style={styles.navButtonText}>Disconnect from {connectedOrgName}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>)
                             }
                         </View>
                         <View
