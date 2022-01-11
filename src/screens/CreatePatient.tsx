@@ -1,12 +1,7 @@
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {openDatabase} from 'react-native-sqlite-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+import database from "@react-native-firebase/database";
 
 export const CreatePatient = ({navigation}) => {
     const [patientName, setPatientName] = useState('');
@@ -20,57 +15,39 @@ export const CreatePatient = ({navigation}) => {
     const [patientZip, setPatientZip] = useState(0);
 
     const register_user = () => {
-        console.log(patientName, patientPhone, patientEmail);
+        database().ref('/patients/').orderByChild('qrId').once('value', function (snapshot) {
 
-        // find the first available QR code id
-        let patientQrId = 0;
+            let qrId = 1;
+            if (snapshot.val()) {
+                let takenQRs = [];
 
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM table_patients',
-                [],
-                (tx, results) => {
-                    let temp = [];
-                    for (let i = 0; i < results.rows.length; ++i)
-                        temp.push(results.rows.item(i).qrId);
+                snapshot.forEach(function (data) {
+                    takenQRs.push(data.val().qrId);
+                });
 
-                    for(let i = 1; i <= temp.length; ++i) {
-                        if (!temp.includes(i))
-                            patientQrId = i;
-                    }
+                while(takenQRs.includes(qrId))
+                    qrId += 1;
+            }
 
-                    if(patientQrId == 0)
-                        patientQrId = temp.length + 1;
 
-                }
-            );
+            const patientReference = database().ref('/patients').push();
+
+            patientReference
+                .set({
+                    name: patientName,
+                    qrId: qrId,
+                    email: patientEmail,
+                    phone: patientPhone,
+                    addressLine1: patientStreetAddress1,
+                    addressLine2: patientStreetAddress2,
+                    city: patientCity,
+                    state: patientState,
+                    country: patientCountry,
+                    zip: patientZip
+                })
+                .then(() => console.log('Added entry for /users/' + patientReference.key));
         });
-
-        db.transaction(function (tx) {
-            tx.executeSql(
-                'INSERT INTO table_patients (' +
-                'qrId, ' +
-                'name, ' +
-                'email, ' +
-                'phone, ' +
-                'street_address_1, ' +
-                'street_address_2, ' +
-                'city, ' +
-                'state, ' +
-                'country, ' +
-                'zip' +
-                ') VALUES (?,?,?,?,?,?,?,?,?,?)',
-                [patientQrId, patientName, patientEmail, patientPhone,
-                    patientStreetAddress1, patientStreetAddress2,
-                    patientCity, patientState, patientCountry,
-                    patientZip],
-                (tx, results) => {
-                    console.log('Results', results.rowsAffected);
-                    navigation.navigate('Home');
-                }
-            );
-        });
-    };
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>

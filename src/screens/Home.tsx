@@ -1,27 +1,12 @@
-import React, {useEffect, useReducer, useState} from 'react';
-import {
-    ActivityIndicator,
-    FlatList,
-    Modal,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import {openDatabase} from 'react-native-sqlite-storage';
-
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+import database from "@react-native-firebase/database";
 
 export const Home = ({navigation}) => {
     const [patientSelection, setPatientSelection] = useState(0);
@@ -32,84 +17,39 @@ export const Home = ({navigation}) => {
     const [camModalVisible, setCamModalVisible] = useState(false);
 
     useEffect(() => {
-        // if this is the first run of the app, create the database tables
-        db.transaction((tx) => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_patients(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
-                'qrId INT(10), ' +
-                'name VARCHAR(30), ' +
-                'email VARCHAR(255), ' +
-                'phone INT(15), ' +
-                'street_address_1 VARCHAR(255), ' +
-                'street_address_2 VARCHAR(255), ' +
-                'city VARCHAR(255), ' +
-                'state VARCHAR(18), ' +
-                'country VARCHAR(30), ' +
-                'zip INT(8))',
-                [], (tx, results) => {
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_tests(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-                'patient_id INTEGER, ' +
-                'type INT(3), ' +
-                'result VARCHAR(255), ' +
-                'time VARCHAR(255))',
-                [],
-                (tx, results) => {
-                }
-            );
-        });
+        database().ref('/patients/').once('value', function (snapshot) {
 
-        // update patients list based on database
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM table_patients',
-                [],
-                (tx, results) => {
-                    let temp = [];
-                    for (let i = 0; i < results.rows.length; ++i)
-                        temp.push({
-                            key: results.rows.item(i).id,
-                            label: results.rows.item(i).name.toString()
-                        });
+            let temp = [];
+            if (snapshot.val()) {
+                snapshot.forEach(function (data) {
+                    temp.push({key: data.key, label: data.val().name});
+                });
 
-                    setPatients(temp);
-                }
-            );
-        });
+                setPatients(temp);
+            }
+        })
     },);
 
     const toggleViewPatientModal = (id) => {
         if (viewPatientModalVisible) {
-            let patient = null;
-
-            db.transaction(tx => {
-                tx.executeSql(
-                    'SELECT * FROM table_patients WHERE id=' + id,
-                    [],
-                    (tx, results) => {
-                        patient = results.rows.item(0);
-                        navigation.navigate('Patient', {
-                            navigation,
-                            patient_id: id,
-                            patient_qr_id: patient.qrId.toString(),
-                            patient_name: patient.name,
-                            patient_email: patient.email,
-                            patient_phone: patient.phone.toString(),
-                            patient_street_address_1: patient.street_address_1,
-                            patient_street_address_2: patient.street_address_2,
-                            patient_city: patient.city,
-                            patient_state: patient.state,
-                            patient_country: patient.country,
-                            patient_zip: patient.zip.toString()
-                        });
-                    }
-                );
+            database().ref('patients/' + id).once('value', function (patient) {
+                //verify that org with add code exists
+                if (patient.val()) {
+                    navigation.navigate('Patient', {
+                        navigation,
+                        patient_id: id,
+                        patient_qr_id: patient.val().qrId.toString(),
+                        patient_name: patient.val().name,
+                        patient_email: patient.val().email,
+                        patient_phone: patient.val().phone.toString(),
+                        patient_street_address_1: patient.val().addressLine1,
+                        patient_street_address_2: patient.val().addressLine2,
+                        patient_city: patient.val().city,
+                        patient_state: patient.val().state,
+                        patient_country: patient.val().country,
+                        patient_zip: patient.val().zip.toString()
+                    });
+                }
             });
         }
 
@@ -180,7 +120,7 @@ export const Home = ({navigation}) => {
                         <View style={styles.navButtonContainer}>
                             <TouchableOpacity
                                 style={styles.navButton}
-                                onPress={() => navigation.navigate('NewPatient', {device: Device})}
+                                onPress={() => navigation.navigate('NewPatient')}
                             >
                                 <View style={styles.navIcon}>
                                     <IconF name='user-plus' size={30} color='#fff'/>

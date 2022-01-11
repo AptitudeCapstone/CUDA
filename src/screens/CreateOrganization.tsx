@@ -17,7 +17,7 @@ export const CreateOrganization = ({navigation}) => {
     const [zip, setZip] = useState(0);
 
     const register_organization = () => {
-        if(name != '' && (addCode == 0 || addCode >= 1000) && ownerEmail1 != '') {
+        if (name != '' && (addCode == 0 || addCode >= 1000) && ownerEmail1 != '') {
             const newReference = database().ref('/organizations').push();
             const orgID = newReference.key;
 
@@ -39,12 +39,12 @@ export const CreateOrganization = ({navigation}) => {
                     ' to name: ' + name +
                     ', addCode: ' + addCode +
                     ', ownerEmail1: ' + ownerEmail1 +
-                    ', ownerEmail2: ' + ownerEmail2  +
+                    ', ownerEmail2: ' + ownerEmail2 +
                     ', ownerEmail3: ' + ownerEmail3 +
                     ', streetAddress1: ' + streetAddress1 +
                     ', streetAddress2: ' + streetAddress2 +
                     ', city: ' + city +
-                    ', state: ' + state  +
+                    ', state: ' + state +
                     ', country: ' + country +
                     ', zip: ' + zip));
         } else
@@ -79,7 +79,8 @@ export const CreateOrganization = ({navigation}) => {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.altHeadingText}>Add Code *</Text>
-                    <Text style={styles.subheadingText}>This unique code is used for apps to connect to this organization</Text>
+                    <Text style={styles.subheadingText}>This unique code is used for apps to connect to this
+                        organization</Text>
                     <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'

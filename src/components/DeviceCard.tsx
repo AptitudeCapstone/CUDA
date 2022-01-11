@@ -29,22 +29,17 @@ const DeviceCard = ({navigation, device}) => {
             {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
             {isConnected ?
                 (
-                    <View>
                         <View style={styles.navIconSelected}>
-                            <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
+                            <IconMCI name={iconName} size={24}
                                      color="#fff"/>
                         </View>
-                        <Text style={styles.navButtonText}>{device.name}</Text>
-                    </View>
                 ) : (
-                    <View>
                         <View style={styles.navIcon}>
-                            <IconMCI style={{textAlign: 'right'}} name={iconName} size={30}
+                            <IconMCI name={iconName} size={24}
                                      color="#fff"/>
                         </View>
-                        <Text style={styles.navButtonText}>{device.name}</Text>
-                    </View>
                 )}
+            <Text style={styles.navButtonText}>{device.name}</Text>
         </TouchableOpacity>
     );
 };
@@ -57,7 +52,7 @@ const styles = StyleSheet.create({
     },
     navIcon: {
         backgroundColor: '#333',
-        padding: 20,
+        padding: 14,
         borderWidth: 1,
         borderColor: '#555',
         borderRadius: 5000,
@@ -65,7 +60,7 @@ const styles = StyleSheet.create({
     },
     navIconSelected: {
         backgroundColor: '#555',
-        padding: 20,
+        padding: 14,
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 5000,

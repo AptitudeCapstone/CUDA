@@ -1,5 +1,16 @@
 import React, {useEffect, useReducer, useState} from 'react';
-import {Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, ActivityIndicator} from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import logo from '../CUDA-logos_white.png';
 import {BleManager, Device} from "react-native-ble-plx";
 import {DeviceCard} from "../components/DeviceCard";
@@ -7,7 +18,12 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import {Base64} from '../lib/base64';
 import IconF from 'react-native-vector-icons/Feather';
 import IconI from 'react-native-vector-icons/Ionicons';
+import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
+import IconA from 'react-native-vector-icons/AntDesign';
+import IconFo from 'react-native-vector-icons/Foundation';
 import {useIsFocused} from "@react-navigation/native";
+import database from "@react-native-firebase/database";
 
 const manager = new BleManager();
 
@@ -48,6 +64,12 @@ export const Welcome = ({route, navigation}) => {
 
     const [connectedOrg, setConnectedOrg] = useState('');   // database key of the current organization
     const [connectedOrgName, setConnectedOrgName] = useState('');   // name of the current organization
+
+    const [testPatientModalVisible, setTestPatientModalVisible] = useState(false);
+    const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
+
+    const [currentPage, setCurrentPage] = useState(2);
+    const [testType, setTestType] = useState('Fibrinogen');
 
     // this is run once each time screen is opened
     const isFocused = useIsFocused();
@@ -150,150 +172,214 @@ export const Welcome = ({route, navigation}) => {
         };
     }, []);
 
-    useEffect(() => {
-        // if this is the first run of the app, create the database tables
-        db.transaction((tx) => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_patients(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
-                'qrId INT(10), ' +
-                'name VARCHAR(30), ' +
-                'email VARCHAR(255), ' +
-                'phone INT(15), ' +
-                'street_address_1 VARCHAR(255), ' +
-                'street_address_2 VARCHAR(255), ' +
-                'city VARCHAR(255), ' +
-                'state VARCHAR(18), ' +
-                'country VARCHAR(30), ' +
-                'zip INT(8))',
-                [], (tx, results) => {
+    const toggleViewPatientModal = (id) => {
+        if (viewPatientModalVisible) {
+            database().ref('patients/' + id).once('value', function (patient) {
+                //verify that org with add code exists
+                if (patient.val()) {
+                    navigation.navigate('Patient', {
+                        navigation,
+                        patient_id: id,
+                        patient_qr_id: patient.val().qrId.toString(),
+                        patient_name: patient.val().name,
+                        patient_email: patient.val().email,
+                        patient_phone: patient.val().phone.toString(),
+                        patient_street_address_1: patient.val().addressLine1,
+                        patient_street_address_2: patient.val().addressLine2,
+                        patient_city: patient.val().city,
+                        patient_state: patient.val().state,
+                        patient_country: patient.val().country,
+                        patient_zip: patient.val().zip.toString()
+                    });
                 }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS table_tests(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-                'patient_id INTEGER, ' +
-                'type INT(3), ' +
-                'result VARCHAR(255), ' +
-                'time VARCHAR(255))',
-                [],
-                (tx, results) => {
-                }
-            );
-        });
-    },);
+            });
+        }
 
-        return (
-            <SafeAreaView style={styles.page}>
-                <View style={{justifyContent: 'center', alignContent: 'center', textAlign: 'center', flexDirection: 'row'}}>
-                    <Image
-                        style={{
-                            width: 120,
-                            height: 120,
-                            marginBottom: -20,
-                            marginTop: -20
-                        }}
-                        source={logo}
-                    />
-                </View>
-                <ScrollView>
-                    <View style={styles.page}>
-                        {/*
+        setViewPatientModalVisible(!viewPatientModalVisible);
+    }
+
+    return (
+        <SafeAreaView style={styles.page}>
+            <ScrollView>
+                <View style={styles.page}>
+                    {/*
                         this is where I could show the current organization and user info
                         for now, just displays the setup organization questions
                      */}
-                        <View
-                            style={styles.window}
-                        >
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1}}>
-                                    <Text style={styles.headingText}>Test Administer</Text>
-                                </View>
-                            </View>
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1,}}>
-                                    <Text style={styles.mediumText}>While it is not required, creating a test administer account allows you to sync patient data with other apps and retain data if the app is deleted</Text>
-                                </View>
-                            </View>
-                            <View style={styles.navButtonContainer}>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => navigation.navigate('CreateOrganization')}
-                                >
-                                    <View style={styles.navIcon}>
-                                        <IconF name='user-plus' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Create Administer Account</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => navigation.navigate('ConnectOrganization')}
-                                >
-                                    <View style={styles.navIcon}>
-                                        <IconF name='user' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Login to an Existing Account</Text>
-                                </TouchableOpacity>
+                    {(currentPage == 0) ?
+                        (
+                    <View
+                        style={styles.window}
+                    >
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1}}>
+                                <Text style={styles.headingText}>Test Administer</Text>
                             </View>
                         </View>
-                        <View
-                            style={styles.window}
-                        >
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1}}>
-                                    <Text style={styles.headingText}>Organization</Text>
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1,}}>
+                                <Text style={styles.mediumText}>While it is not required, creating a test administer
+                                    account allows you to sync patient data with other apps and retain data if the app
+                                    is deleted</Text>
+                            </View>
+                        </View>
+                        <View style={styles.navButtonContainer}>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('CreateOrganization')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user-plus' size={30} color='#fff'/>
                                 </View>
-                            </View>
-                            {connectedOrgName == '' ?
-                                (
-                            <View>
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1,}}>
-                                    <Text style={styles.mediumText}>Connecting this app to an organization will sync
-                                        data with other apps from the organization</Text>
+                                <Text style={styles.navButtonText}>Create Administer Account</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('ConnectOrganization')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user' size={30} color='#fff'/>
                                 </View>
+                                <Text style={styles.navButtonText}>Login to an Existing Account</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    ) : (<View></View>)}
+                    {(currentPage == 0) ?
+                        (
+                    <View
+                        style={styles.window}
+                    >
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1}}>
+                                <Text style={styles.headingText}>Connect</Text>
                             </View>
-                            <View style={styles.navButtonContainer}>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => navigation.navigate('CreateOrganization')}
-                                >
-                                    <View style={styles.navIcon}>
-                                        <IconF name='user-plus' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Create a New Organization</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => navigation.navigate('ConnectOrganization')}
-                                >
-                                    <View style={styles.navIcon}>
-                                        <IconF name='user' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Connect to an Organization</Text>
-                                </TouchableOpacity>
-                            </View>
-                            </View>
-                                ) : (
-                                    <View>
-                                        <Text style={styles.mediumText}>Data is being synced with {connectedOrgName}</Text>
-                                        <View style={styles.navButtonContainer}>
-                                            <TouchableOpacity
-                                                style={styles.navButton}
-                                                onPress={disconnectFromOrg}
-                                            >
-                                                <View style={styles.navIcon}>
-                                                    <IconF name='user-minus' size={30} color='#fff'/>
-                                                </View>
-                                                <Text style={styles.navButtonText}>Disconnect from {connectedOrgName}</Text>
-                                            </TouchableOpacity>
+                        </View>
+                        {connectedOrgName == '' ?
+                            (
+                                <View>
+                                    <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                        <View style={{flex: 1,}}>
+                                            <Text style={styles.mediumText}>Connecting to an organization
+                                                syncs patient data with all other apps from the organization</Text>
                                         </View>
-                                    </View>)
-                            }
+                                    </View>
+                                    <View style={styles.navButtonContainer}>
+                                        <TouchableOpacity
+                                            style={styles.navButton}
+                                            onPress={() => navigation.navigate('CreateOrganization')}
+                                        >
+                                            <View style={styles.navIcon}>
+                                                <IconMCI name='database-plus' size={30} color='#fff'/>
+                                            </View>
+                                            <Text style={styles.navButtonText}>Create a New Organization</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.navButton}
+                                            onPress={() => navigation.navigate('ConnectOrganization')}
+                                        >
+                                            <View style={styles.navIcon}>
+                                                <IconMCI name='database-search' size={30} color='#fff'/>
+                                            </View>
+                                            <Text style={styles.navButtonText}>Connect to an Organization</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View>
+                                    <Text style={styles.mediumText}>Data is being synced with {connectedOrgName}</Text>
+                                    <View style={styles.navButtonContainer}>
+                                        <TouchableOpacity
+                                            style={styles.navButton}
+                                            onPress={disconnectFromOrg}
+                                        >
+                                            <View style={styles.navIcon}>
+                                                <IconF name='user-minus' size={30} color='#fff'/>
+                                            </View>
+                                            <Text style={styles.navButtonText}>Disconnect from {connectedOrgName}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>)
+                        }
+                    </View>
+                        ) : (<View></View>)}
+                    {(currentPage == 1) ?
+                        (
+                    <View><View
+                        style={styles.window}
+                    >
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1}}>
+                                <Text style={styles.headingText}>COVID</Text>
+                            </View>
                         </View>
-                        <View
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1,}}>
+                                <Text style={styles.mediumText}>Test patients for COVID and view historical data</Text>
+                            </View>
+                        </View>
+                        <View style={styles.navButtonContainer}>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('NewPatient')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user-plus' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>Create Patient</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => {
+                                    toggleViewPatientModal(0)
+                                }}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>View Patients</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View
+                        style={styles.window}
+                    >
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1}}>
+                                <Text style={styles.headingText}>Fibrinogen</Text>
+                            </View>
+                        </View>
+                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                            <View style={{flex: 1,}}>
+                                <Text style={styles.mediumText}>Test patients for fibrinogen levels and view historical data</Text>
+                            </View>
+                        </View>
+                        <View style={styles.navButtonContainer}>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => navigation.navigate('NewPatient')}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user-plus' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>Create Patient</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => {
+                                    toggleViewPatientModal(0)
+                                }}
+                            >
+                                <View style={styles.navIcon}>
+                                    <IconF name='user' size={30} color='#fff'/>
+                                </View>
+                                <Text style={styles.navButtonText}>View Patients</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                        </View>) : (<View></View>)}
+                    {(currentPage == 2) ?
+                        (<View
                             style={styles.window}
                         >
                             <View style={{marginLeft: 20, marginRight: 20}}>
@@ -329,50 +415,110 @@ export const Welcome = ({route, navigation}) => {
                                 )}
                             </View>
 
-                        </View>
-                        <View
-                            style={styles.window}
-                        >
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1}}>
-                                    <Text style={styles.headingText}>Patient Data</Text>
-                                </View>
-                            </View>
-                            <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                <View style={{flex: 1,}}>
-                                    <Text style={styles.mediumText}>View historical patient data</Text>
-                                </View>
-                            </View>
-                            <View style={styles.navButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.navButton}
+                        </View>) : (<View></View>)}
+                    {(currentPage == 3) ?
+                        (
+                            <View
+                                style={styles.window}
                             >
-                                <View style={styles.navIcon}>
-                                    <IconI name='water' size={30} color='#40a2ed'/>
+                                <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                    <View style={{flex: 1}}>
+                                        <Text style={styles.headingText}>Test Type</Text>
+                                    </View>
                                 </View>
-                                <Text style={styles.navButtonText}>COVID</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.navButton}
-                            >
-                                <View style={styles.navIcon}>
-                                    <IconI name='water' size={30} color='#e64949'/>
+                                <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                    <View style={{flex: 1,}}>
+                                        <Text style={styles.mediumText}>Change between test types. This will happen automatically if a sensor is inserted. </Text>
+                                    </View>
                                 </View>
-                                <Text style={styles.navButtonText}>Fibrinogen</Text>
-                            </TouchableOpacity>
+                                <View style={styles.navButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.navButton}
+                                        onPress={() => {
+                                            setCurrentPage(1);
+                                            setTestType('COVID');
+                                        }}
+                                    >
+                                        <View style={styles.navIcon}>
+                                            <IconMCI name='water' size={30} color='#fff'/>
+                                        </View>
+                                        <Text style={styles.navButtonText}>Fibrinogen</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.navButton}
+                                        onPress={() => {
+                                            setCurrentPage(1);
+                                            setTestType('COVID');
+                                        }}
+                                    >
+                                        <View style={styles.navIcon}>
+                                            <IconMCI name='water' size={30} color='#fff'/>
+                                        </View>
+                                        <Text style={styles.navButtonText}>COVID</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                        ) : (<View></View>)}
+                </View>
+            </ScrollView>
+            <View style={{justifyContent: 'center', alignContent: 'center', textAlign: 'center', flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#555', padding: 10, marginBottom: 5, paddingBottom: 5}}>
+                {/*<Image
+                    style={{
+                        width: 130,
+                        height: 130,
+
+
+                    }}
+                    source={logo}
+                />*/}
+                <View style={styles.topNavButtonContainer}>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentPage(0)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconF name='user' size={30} color='#fff'/>
                         </View>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        );
+                        <Text style={styles.navButtonText}>Account</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentPage(1)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconFo name='graph-bar' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Patients</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentPage(2)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconMI name='device-hub' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Devices</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentPage(3)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconMCI name='water' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Test Type</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
     page: {
         backgroundColor: '#222',
         flex: 1,
-        padding: 20
+        padding: 20,
     },
     section: {
         flex: 1,
@@ -396,7 +542,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     headingText: {
-        padding: 10,
+        padding: 5,
         fontSize: 32,
         color: '#fff',
         textAlign: 'center',
@@ -404,11 +550,11 @@ const styles = StyleSheet.create({
         flex: 1
     },
     mediumText: {
-        paddingLeft: 15,
-        paddingRight: 15,
+        paddingLeft: 5,
+        paddingRight: 5,
         paddingTop: 25,
         paddingBottom: 25,
-        fontSize: 20,
+        fontSize: 18,
         color: '#fff',
         textAlign: 'center'
     },
@@ -429,6 +575,46 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginTop: 10,
         marginBottom: 10,
+    },
+    navBarButtonContainer: {
+        paddingBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        flex: 1
+    },
+    topNavBarButton: {
+        margin: 0,
+        flex: 1,
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    topNavBarIcon: {
+        padding: 14,
+        borderRadius: 5000,
+        marginBottom: 10,
+    },
+    topNavButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        flex: 1
+    },
+    navBarButton: {
+        margin: 15,
+        flex: 0.5,
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    navBarIcon: {
+        backgroundColor: '#333',
+        padding: 18,
+        borderWidth: 1,
+        borderColor: '#555',
+        borderRadius: 5000,
+        marginBottom: 4,
     },
     navButtonContainer: {
         flexDirection: 'row',

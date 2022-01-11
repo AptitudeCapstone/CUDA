@@ -10,14 +10,9 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {openDatabase} from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from "@react-navigation/native";
-
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+import database from "@react-native-firebase/database";
 
 export const EditPatient = ({route, navigation}) => {
 
@@ -94,66 +89,60 @@ export const EditPatient = ({route, navigation}) => {
     }, [isFocused]);
 
     const update = (fieldName) => {
-        let value = '';
+        let value = null;
 
         switch (fieldName) {
             case 'name':
-                value = nameModalValue;
+                value = {name: nameModalValue};
                 setPatientName(nameModalValue);
                 setNameModalVisible(!nameModalVisible);
                 break;
             case 'email':
-                value = emailModalValue;
+                value = {email: emailModalValue};
                 setPatientEmail(emailModalValue);
                 setEmailModalVisible(!emailModalVisible);
                 break;
             case 'phone':
-                value = phoneModalValue;
+                value = {phone: phoneModalValue.toString()};
                 setPatientPhone(phoneModalValue.toString());
                 setPhoneModalVisible(!phoneModalVisible);
                 break;
             case 'street_address_1':
-                value = streetAddress1ModalValue;
+                value = {addressLine1: streetAddress1ModalValue};
                 setPatientStreetAddress1(streetAddress1ModalValue);
                 setStreetAddress1ModalVisible(!streetAddress1ModalVisible);
                 break;
             case 'street_address_2':
-                value = streetAddress2ModalValue;
+                value = {addressLine2: streetAddress2ModalValue};
                 setPatientStreetAddress2(streetAddress2ModalValue);
                 setStreetAddress2ModalVisible(!streetAddress2ModalVisible);
                 break;
             case 'city':
-                value = cityModalValue;
+                value = {city: cityModalValue};
                 setPatientCity(cityModalValue);
                 setCityModalVisible(!cityModalVisible);
                 break;
             case 'state':
-                value = stateModalValue;
+                value = {state: stateModalValue};
                 setPatientState(stateModalValue);
                 setStateModalVisible(!stateModalVisible);
                 break;
             case 'country':
-                value = countryModalValue;
+                value = {country: countryModalValue};
                 setPatientCountry(countryModalValue);
                 setCountryModalVisible(!countryModalVisible);
                 break;
             case 'zip':
-                value = zipModalValue;
+                value = {zip: zipModalValue.toString()};
                 setPatientZip(zipModalValue.toString());
                 setZipModalVisible(!zipModalVisible);
                 break;
         }
 
-        db.transaction((tx) => {
-            tx.executeSql(
-                'UPDATE table_patients set ' + fieldName + '=? where id=?',
-                [value, patient_id],
-                (tx, results) => {
-                    if (results.rowsAffected <= 0) console.log('Patient update failed');
-                    else console.log('Updated ' + fieldName + ' with value ' + value.toString())
-                }
-            );
-        });
+        database()
+            .ref('/patients/' + patient_id)
+            .update(value)
+            .then(() => console.log('Data updated.'));
     }
 
     return (

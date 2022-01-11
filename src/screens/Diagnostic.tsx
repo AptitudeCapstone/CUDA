@@ -9,12 +9,7 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import {openDatabase} from 'react-native-sqlite-storage';
-
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
+import database from "@react-native-firebase/database";
 
 export const Diagnostic = ({route, navigation}) => {
     const {patientID} = route.params;
@@ -22,17 +17,16 @@ export const Diagnostic = ({route, navigation}) => {
     let [testResult, setTestResult] = useState('');
 
     let add_test_result = () => {
-        db.transaction(function (tx) {
-            const date = new Date();
-            tx.executeSql(
-                'INSERT INTO table_tests (patient_id, test_type, test_result, test_time) VALUES (?,?,?,?)',
-                [patientID, testType, testResult, date.toISOString()],
-                (tx, results) => {
-                    console.log(results.rows.item(0).test_time + ' is date of new test');
-                    console.log('Results', results.rowsAffected);
-                }
-            );
-        });
+        const testReference = database().ref('/tests').push();
+        const date = new Date();
+        testReference
+            .set({
+                name: patientID,
+                type: testType,
+                result: testResult,
+                time: date.toISOString()
+            })
+            .then(() => console.log('Added entry for /tests/' + testReference.key));
     }
 
     return (

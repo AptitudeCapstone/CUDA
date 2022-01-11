@@ -13,7 +13,6 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 });
 
 export const Patient = ({route, navigation}) => {
-
     const {
         patient_id,
         patient_qr_id,
