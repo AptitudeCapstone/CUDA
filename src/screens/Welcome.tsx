@@ -164,18 +164,9 @@ export const Welcome = ({route, navigation}) => {
 
     const NavBar = () => {
         return(
-            <View style={{
-                justifyContent: 'center',
-                alignContent: 'center',
-                textAlign: 'center',
-                flexDirection: 'row',
-                padding: 10,
-                marginBottom: 5,
-                paddingBottom: 5
-            }}>
-                <View style={styles.topNavButtonContainer}>
+            <View style={styles.topNavButtonContainer}>
                     <TouchableOpacity
-                        style={styles.topNavBarButton}
+                        style={currentPage == 0 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
                         onPress={() => navigate(0, 0, 0)}
                     >
                         <View style={styles.topNavBarIcon}>
@@ -184,7 +175,7 @@ export const Welcome = ({route, navigation}) => {
                         <Text style={styles.navButtonText}>Account</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.topNavBarButton}
+                        style={currentPage == 1 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
                         onPress={() => navigate(1, 0, 1)}
                     >
                         <View style={styles.topNavBarIcon}>
@@ -193,7 +184,7 @@ export const Welcome = ({route, navigation}) => {
                         <Text style={styles.navButtonText}>Patient Data</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.topNavBarButton}
+                        style={currentPage == 2 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
                         onPress={() => navigate(2, 0, 2)}
                     >
                         <View style={styles.topNavBarIcon}>
@@ -202,7 +193,7 @@ export const Welcome = ({route, navigation}) => {
                         <Text style={styles.navButtonText}>Devices</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.topNavBarButton}
+                        style={currentPage == 3 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
                         onPress={() => navigate(3, 0, -1)}
                     >
                         <View style={styles.topNavBarIcon}>
@@ -210,7 +201,6 @@ export const Welcome = ({route, navigation}) => {
                         </View>
                         <Text style={styles.navButtonText}>Start Test</Text>
                     </TouchableOpacity>
-                </View>
             </View>
         );
     }
@@ -219,81 +209,79 @@ export const Welcome = ({route, navigation}) => {
         if(currentVisibleSubNav == 0)
             return(
                 <View style={styles.subNavBarContainer}>
-                    <View style={styles.topNavButtonContainer}>
-                        <TouchableOpacity
-                            style={styles.topNavBarButton}
-                            onPress={() => navigate(0, 0, 0)}
-                        >
-                            <View style={styles.topNavBarIcon}>
-                                <IconF name='user' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>My Account</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.topNavBarButton}
-                            onPress={() => navigate(0, 1, 0)}
-                        >
-                            <View style={styles.topNavBarIcon}>
-                                <IconMI name='device-hub' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>Sync with an Organization</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentSubpage(0)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconF name='user' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>My Account</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentSubpage(1)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconMI name='device-hub' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Sync with an Organization</Text>
+                    </TouchableOpacity>
+
                 </View>);
         else if(currentVisibleSubNav == 1)
             return(
                 <View style={styles.subNavBarContainer}>
-                    <View style={styles.topNavButtonContainer}>
-                        <TouchableOpacity
-                            style={styles.topNavBarButton}
-                            onPress={() => navigate(1, 0, 1)}
-                        >
-                            <View style={styles.topNavBarIcon}>
-                                <IconF name='user' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>COVID</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.topNavBarButton}
-                            onPress={() => navigate(1, 1, 1)}
-                        >
-                            <View style={styles.topNavBarIcon}>
-                                <IconFo name='graph-bar' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>Fibrinogen</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.topNavBarButton}
-                        >
-                            <View style={styles.topNavBarIcon}>
-                                <IconFo name='graph-bar' size={30} color='#fff'/>
-                            </View>
-                            <Text style={styles.navButtonText}>QR Codes</Text>
-                        </TouchableOpacity>
-                    </View>
+
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentSubpage(0)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconF name='user' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>COVID</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                        onPress={() => setCurrentSubpage(1)}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconFo name='graph-bar' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>Fibrinogen</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.topNavBarButton}
+                    >
+                        <View style={styles.topNavBarIcon}>
+                            <IconFo name='graph-bar' size={30} color='#fff'/>
+                        </View>
+                        <Text style={styles.navButtonText}>QR Codes</Text>
+                    </TouchableOpacity>
                 </View>
             );
         else if(currentVisibleSubNav == 2)
-            return(
-                <View style={styles.subNavBarContainer}>
-                    {scannedDevices.length == 0 ? (
-                        <View style={styles.navButtonContainer}>
-                            <View style={{flexDirection: 'row', padding: 15}}>
-                                <Text style={styles.navButtonText}>No devices found</Text>
-                                <Text style={{marginLeft: 20, marginTop: -5}}>
-                                    <ActivityIndicator color={'white'} size={28}/>
-                                </Text>
-                            </View>
+            if(scannedDevices.length == 0)
+                return(
+                    <View style={styles.subNavBarContainer}>
+                        <View style={{flexDirection: 'row', paddingTop: 20, marginBottom: 16}}>
+                            <Text style={{color: '#eee', fontSize: 14, marginTop: 14, marginBottom: -4}}>No devices found</Text>
+                            <Text style={{marginLeft: 20, marginTop: 8, marginBottom: 0}}>
+                                <ActivityIndicator color={'white'} size={32}/>
+                            </Text>
                         </View>
-                    ) : (
-                        <FlatList
-                            horizontal={true}
-                            keyExtractor={(item) => item.id}
-                            data={scannedDevices}
-                            renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
-                            contentContainerStyle={styles.navButtonContainer}
-                        />
-                    )}
+                    </View>
+                );
+            else return (
+                <View style={styles.subNavBarContainer}>
+                    <FlatList
+                        horizontal={true}
+                        keyExtractor={(item) => item.id}
+                        data={scannedDevices}
+                        renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
+                        contentContainerStyle={styles.subNavBarContainer}
+                    />
                 </View>
             );
         else
@@ -378,76 +366,73 @@ export const Welcome = ({route, navigation}) => {
                 );
             }
 
-            if (currentPage == 0)
-                return (
-                    <View
-                        style={styles.window}
-                    >
-                        <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                            <View style={{flex: 1}}>
-                                <Text style={styles.headingText}>Connect</Text>
-                            </View>
+            return (
+                <View
+                    style={styles.window}
+                >
+                    <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                        <View style={{flex: 1}}>
+                            <Text style={styles.headingText}>Connect</Text>
                         </View>
-                        {connectedOrgName == '' ?
-                            (
-                                <View>
-                                    <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
-                                        <View style={{flex: 1,}}>
-                                            <Text style={styles.mediumText}>Connecting to an organization
-                                                syncs patient data with all other apps from the
-                                                organization</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.navButtonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.navButton}
-                                            onPress={() => navigation.navigate('CreateOrganization')}
-                                        >
-                                            <View style={styles.navIcon}>
-                                                <IconMCI name='database-plus' size={30} color='#fff'/>
-                                            </View>
-                                            <Text style={styles.navButtonText}>Create a New Organization</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={styles.navButton}
-                                            onPress={() => navigation.navigate('ConnectOrganization')}
-                                        >
-                                            <View style={styles.navIcon}>
-                                                <IconMCI name='database-search' size={30} color='#fff'/>
-                                            </View>
-                                            <Text style={styles.navButtonText}>Connect to an Organization</Text>
-                                        </TouchableOpacity>
+                    </View>
+                    {connectedOrgName == '' ?
+                        (
+                            <View>
+                                <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
+                                    <View style={{flex: 1,}}>
+                                        <Text style={styles.mediumText}>Connecting to an organization
+                                            syncs patient data with all other apps from the
+                                            organization</Text>
                                     </View>
                                 </View>
-                            ) : (
-                                <View>
-                                    <Text style={styles.mediumText}>Data is being synced
-                                        with {connectedOrgName}</Text>
-                                    <View style={styles.navButtonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.navButton}
-                                            onPress={disconnectFromOrg}
-                                        >
-                                            <View style={styles.navIcon}>
-                                                <IconF name='user-minus' size={30} color='#fff'/>
-                                            </View>
-                                            <Text style={styles.navButtonText}>Disconnect
-                                                from {connectedOrgName}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>)
-                        }
-                    </View>
-                );
-            else
-                return <View/>;
+                                <View style={styles.navButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.navButton}
+                                        onPress={() => navigation.navigate('CreateOrganization')}
+                                    >
+                                        <View style={styles.navIcon}>
+                                            <IconMCI name='database-plus' size={30} color='#fff'/>
+                                        </View>
+                                        <Text style={styles.navButtonText}>Create a New Organization</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.navButton}
+                                        onPress={() => navigation.navigate('ConnectOrganization')}
+                                    >
+                                        <View style={styles.navIcon}>
+                                            <IconMCI name='database-search' size={30} color='#fff'/>
+                                        </View>
+                                        <Text style={styles.navButtonText}>Connect to an Organization</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        ) : (
+                            <View>
+                                <Text style={styles.mediumText}>Data is being synced
+                                    with {connectedOrgName}</Text>
+                                <View style={styles.navButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.navButton}
+                                        onPress={disconnectFromOrg}
+                                    >
+                                        <View style={styles.navIcon}>
+                                            <IconF name='user-minus' size={30} color='#fff'/>
+                                        </View>
+                                        <Text style={styles.navButtonText}>Disconnect
+                                            from {connectedOrgName}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>)
+                    }
+                </View>
+            );
         }
 
 
         if (currentPage == 0) {
             if(currentSubpage == 0)
                 return (
-                    <ScrollView>
+                    <ScrollView style={styles.page}>
                         <View style={styles.page}>
                             <AccountWindow />
                         </View>
@@ -455,7 +440,7 @@ export const Welcome = ({route, navigation}) => {
                 );
             else if(currentSubpage == 1)
                 return (
-                    <ScrollView>
+                    <ScrollView style={styles.page}>
                         <View style={styles.page}>
                             <ConnectWindow />
                         </View>
@@ -466,8 +451,6 @@ export const Welcome = ({route, navigation}) => {
 
 
     }
-
-
 
     /*
 
@@ -599,7 +582,7 @@ export const Welcome = ({route, navigation}) => {
         if (currentPage == 1) {
             if(currentSubpage == 0)
                 return (
-                    <ScrollView>
+                    <ScrollView style={styles.page}>
                         <View style={styles.page}>
                             <COVIDWindow />
                         </View>
@@ -607,7 +590,7 @@ export const Welcome = ({route, navigation}) => {
                 );
             else if(currentSubpage == 1)
                 return (
-                    <ScrollView>
+                    <ScrollView style={styles.page}>
                         <View style={styles.page}>
                             <FibrinogenWindow />
                         </View>
@@ -645,7 +628,7 @@ export const Welcome = ({route, navigation}) => {
 
         if (currentPage == 2)
             return (
-                <ScrollView>
+                <ScrollView style={styles.page}>
                     <View style={styles.page}>
                         <DeviceWindow />
                     </View>
@@ -821,7 +804,7 @@ export const Welcome = ({route, navigation}) => {
 
         if (currentPage == 3)
             return (
-                <ScrollView>
+                <ScrollView style={styles.page}>
                     <View style={styles.page}>
                         <TestTypeWindow />
                         <TestWindow />
@@ -839,7 +822,11 @@ export const Welcome = ({route, navigation}) => {
      */
 
     return (
-        <SafeAreaView style={styles.page}>
+        <SafeAreaView style={{
+            backgroundColor: '#333',
+            flex: 1,
+            marginTop: -35
+            }}>
             <ModalSelector
                 data={patients}
                 visible={viewPatientModalVisible}
@@ -898,12 +885,6 @@ const styles = StyleSheet.create({
         borderColor: '#555',
         borderRadius: 15
     },
-    numbering: {
-        fontSize: 36,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
     headingText: {
         padding: 5,
         fontSize: 32,
@@ -940,63 +921,45 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     subNavBarContainer: {
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignContent: 'center',
         textAlign: 'center',
         flexDirection: 'row',
-        borderTopWidth: 0,
-        borderTopColor: '#555',
-        padding: 10,
-        marginBottom: 5,
-        paddingBottom: 5
-    },
-    navBarButtonContainer: {
-        paddingBottom: 10,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        flex: 1
+        paddingLeft: 10,
+        paddingRight: 10,
+        backgroundColor: '#333'
     },
     topNavBarButton: {
         margin: 0,
-        flex: 1,
         textAlign: 'center',
         alignItems: 'center',
+        padding: 14,
+    },
+    topNavBarButtonSelected: {
+        textAlign: 'center',
+        alignItems: 'center',
+        padding: 14,
+        backgroundColor: '#333'
     },
     topNavBarIcon: {
-        padding: 14,
         borderRadius: 5000,
-        marginBottom: 10,
+        paddingBottom: 4,
     },
     topNavButtonContainer: {
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        textAlign: 'center',
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        flex: 1
-    },
-    navBarButton: {
-        margin: 15,
-        marginTop: 5,
-        flex: 0.5,
-        textAlign: 'center',
-        alignItems: 'center',
-    },
-    navBarIcon: {
-        backgroundColor: '#333',
-        padding: 15,
-        borderWidth: 1,
-        borderColor: '#555',
-        borderRadius: 5000,
-        marginBottom: 4,
+        borderTopWidth: 1,
+        borderTopColor: '#555',
+        backgroundColor: '#222'
     },
     navButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        flex: 1
+        flex: 1,
     },
     navButton: {
         margin: 15,

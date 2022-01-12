@@ -21,50 +21,43 @@ const DeviceCard = ({navigation, device}) => {
         iconName = 'signal-cellular-1';
     }
 
-    return (
-        <TouchableOpacity
-            style={styles.navButton}
+        return (
+            <TouchableOpacity
+            style={isConnected ? styles.navButtonConnected : styles.navButton}
             onPress={() => navigation.navigate('Device', {navigation: navigation, device: device})}
         >
-            {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
-            {isConnected ?
-                (
-                    <View style={styles.navIconSelected}>
-                        <IconMCI name={iconName} size={24}
-                                 color="#fff"/>
-                    </View>
-                ) : (
-                    <View style={styles.navIcon}>
-                        <IconMCI name={iconName} size={24}
-                                 color="#fff"/>
-                    </View>
-                )}
+            <View style={styles.navIcon}>
+                <IconMCI name={iconName} size={30}
+                         color="#fff"/>
+            </View>
             <Text style={styles.navButtonText}>{device.name}</Text>
         </TouchableOpacity>
-    );
+        );
+
 };
 
 const styles = StyleSheet.create({
     navButton: {
-        margin: 15,
+        margin: 0,
         textAlign: 'center',
         alignItems: 'center',
+        padding: 16,
+        paddingBottom: 13
+    },
+    navButtonConnected: {
+        backgroundColor: '#333',
+        margin: 0,
+        textAlign: 'center',
+        alignItems: 'center',
+        padding: 16,
+        paddingBottom: 17,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#555'
     },
     navIcon: {
-        backgroundColor: '#333',
-        padding: 14,
-        borderWidth: 1,
-        borderColor: '#555',
         borderRadius: 5000,
-        marginBottom: 10
-    },
-    navIconSelected: {
-        backgroundColor: '#555',
-        padding: 14,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5000,
-        marginBottom: 10
+        paddingBottom: 4
     },
     navButtonText: {
         fontSize: 14,
