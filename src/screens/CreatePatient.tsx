@@ -25,7 +25,7 @@ export const CreatePatient = ({navigation}) => {
                     takenQRs.push(data.val().qrId);
                 });
 
-                while(takenQRs.includes(qrId))
+                while (takenQRs.includes(qrId))
                     qrId += 1;
             }
 

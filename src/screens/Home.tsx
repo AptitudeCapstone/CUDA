@@ -312,33 +312,6 @@ export const Home = ({navigation}) => {
                             ) : (
                                 <View></View>
                             )}
-                            <ModalSelector
-                                data={patients}
-                                visible={viewPatientModalVisible}
-                                onCancel={() => {
-                                    toggleViewPatientModal(0);
-                                }}
-                                customSelector={<View></View>}
-                                onChange={(option) => {
-                                    toggleViewPatientModal(option.key);
-                                }}
-                                optionContainerStyle={{backgroundColor: '#111', border: 0}}
-                                optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
-                                optionStyle={{
-                                    padding: 20,
-                                    backgroundColor: '#eee',
-                                    borderRadius: 100,
-                                    margin: 5,
-                                    marginBottom: 15,
-                                    borderColor: '#222'
-                                }}
-                                cancelText={'Cancel'}
-                                cancelStyle={styles.cancelButton}
-                                cancelTextStyle={styles.testButtonText}
-                                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                                listType={'FLATLIST'}
-                            />
                         </View>
                     </View>
                 </View>

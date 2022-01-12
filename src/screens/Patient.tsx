@@ -4,8 +4,7 @@ import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAre
 import Icon from 'react-native-vector-icons/AntDesign';
 import {openDatabase} from 'react-native-sqlite-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {format, parseISO} from 'date-fns';
-
+import {parseISO} from 'date-fns';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -71,7 +70,6 @@ export const Patient = ({route, navigation}) => {
                 (tx, results) => {
                     let patient = results.rows.item(0);
                     setPatientQrId(patient.qrId);
-                    console.log(patient.qrId);
                     setPatientName(patient.name);
                     setPatientEmail(patient.email);
                     setPatientPhone(patient.phone);
@@ -90,9 +88,6 @@ export const Patient = ({route, navigation}) => {
                 (tx, results) => {
                     if (results.rows.length > 0) {
                         let timeBetween = timeBetweenDates(parseISO(results.rows.item(0).time));
-                        console.log(timeBetween);
-                        //console.log('at ' + format(parseISO(results.rows.item(0).test_time),  'MMM d @ hh:mm:ss aaaa'));
-                        //console.log('current time is ' + format(Date.now(),  'MMM d @ hh:mm:ss aaaa'));
                         if (timeBetween.years > 0) {
                             setLastCovidLength(timeBetween.years);
                             if (timeBetween.years > 1)
@@ -162,9 +157,6 @@ export const Patient = ({route, navigation}) => {
                 (tx, results) => {
                     if (results.rows.length > 0) {
                         let timeBetween = timeBetweenDates(parseISO(results.rows.item(0).time));
-                        console.log(timeBetween);
-                        console.log('at ' + format(parseISO(results.rows.item(0).test_time), 'MMM d @ hh:mm:ss aaaa'));
-                        console.log('current time is ' + format(Date.now(), 'MMM d @ hh:mm:ss aaaa'));
 
                         if (timeBetween.years > 0) {
                             setLastFibLength(timeBetween.years);

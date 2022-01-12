@@ -3,6 +3,7 @@ import {Alert, Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpac
 import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format, parseISO} from 'date-fns';
+import database from "@react-native-firebase/database";
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -15,18 +16,16 @@ export const COVID = ({route, navigation}) => {
     let [covidTests, setCovidTests] = useState([]);
 
     useEffect(() => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM table_tests WHERE test_type=0 AND patient_id=' + patient_id + ' ORDER BY test_time DESC',
-                [],
-                (tx, results) => {
-                    var temp = [];
-                    for (let i = 0; i < results.rows.length; ++i)
-                        temp.push(results.rows.item(i));
-                    setCovidTests(temp);
-                }
-            );
-        });
+        database().ref('tests/covid/').orderByChild('date').once('value', function (snapshot) {
+            //verify that org with add code exists
+            if (snapshot.val()) {
+                let temp = [];
+                snapshot.forEach(function (data) {
+                    temp.push(data.val());
+                });
+                setCovidTests(temp);
+            }
+        })
     }, []);
 
     let listViewItemSeparator = () => {
@@ -45,6 +44,7 @@ export const COVID = ({route, navigation}) => {
 
     let covidListItemView = (item) => {
         const sqlDelete = () => {
+            database().ref('tests/covid/' + item.test_id)
             db.transaction(function (tx) {
                 tx.executeSql(
                     'DELETE FROM table_tests WHERE test_id=' + item.test_id,

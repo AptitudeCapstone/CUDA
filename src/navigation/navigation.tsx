@@ -10,7 +10,6 @@ import {CreatePatient} from '../screens/CreatePatient';
 import {EditPatient} from '../screens/EditPatient';
 import {DeviceScreen} from '../screens/Device';
 import {Patient} from '../screens/Patient';
-import {Diagnostic} from '../screens/Diagnostic';
 import {COVID} from '../screens/COVID';
 import {Fibrinogen} from '../screens/Fibrinogen';
 import {QRCodes} from '../screens/QRCodes';
@@ -116,20 +115,6 @@ export const RootNavigator = () => (
                 component={QRCodes}
                 options={{
                     title: 'Generate QR Codes',
-                    headerStyle: {
-                        backgroundColor: '#222',
-                    },
-                    headerTintColor: '#eee',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Stack.Screen
-                name='Diagnostic'
-                component={Diagnostic}
-                options={{
-                    title: 'Run a Test',
                     headerStyle: {
                         backgroundColor: '#222',
                     },

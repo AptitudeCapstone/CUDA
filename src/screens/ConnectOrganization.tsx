@@ -10,7 +10,7 @@ export const ConnectOrganization = ({navigation}) => {
         // transaction to search org with add code, create user associated with that org
 
         if (addCode >= 0) {
-            database().ref('organizations/').orderByChild('addCode').equalTo('111111').once('value', function (snapshot) {
+            database().ref('organizations/').orderByChild('addCode').equalTo(addCode).once('value', function (snapshot) {
                 //verify that org with add code exists
                 if (snapshot.val()) {
                     snapshot.forEach(function (data) {

@@ -29,15 +29,15 @@ const DeviceCard = ({navigation, device}) => {
             {/*<Text style={styles.navButtonText}>{device.id}</Text><Text style={styles.navButtonText}>{`Name : ${device.name}`}</Text>*/}
             {isConnected ?
                 (
-                        <View style={styles.navIconSelected}>
-                            <IconMCI name={iconName} size={24}
-                                     color="#fff"/>
-                        </View>
+                    <View style={styles.navIconSelected}>
+                        <IconMCI name={iconName} size={24}
+                                 color="#fff"/>
+                    </View>
                 ) : (
-                        <View style={styles.navIcon}>
-                            <IconMCI name={iconName} size={24}
-                                     color="#fff"/>
-                        </View>
+                    <View style={styles.navIcon}>
+                        <IconMCI name={iconName} size={24}
+                                 color="#fff"/>
+                    </View>
                 )}
             <Text style={styles.navButtonText}>{device.name}</Text>
         </TouchableOpacity>
