@@ -38,8 +38,8 @@ allprojects {
     }
 }
 
-android {
-    dexOptions {
-        jumboMode = true
-    }
-}
+//android {
+//    dexOptions {
+//        jumboMode = true
+//    }
+//}

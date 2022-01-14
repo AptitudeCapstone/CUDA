@@ -78,6 +78,16 @@ import com.android.build.OutputFile
  * ]
  */
 
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+android {
+    buildToolsVersion = "30.0.2"
+    compileSdkVersion = 30
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
+}
+
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]

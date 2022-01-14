@@ -1,454 +1,414 @@
-import React, {useEffect, useState} from 'react';
-import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import IconAD from 'react-native-vector-icons/AntDesign';
+import React, {useEffect, useReducer, useState} from 'react';
+import {
+    ActivityIndicator,
+    FlatList,
+    Modal,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import {BleManager, Device} from "react-native-ble-plx";
+import {DeviceCard} from "../components/DeviceCard";
+import {Base64} from '../lib/base64';
+import IconA from 'react-native-vector-icons/AntDesign';
+import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
-import IconMCA from 'react-native-vector-icons/MaterialCommunityIcons';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
-import ModalSelector from 'react-native-modal-selector-searchable';
-import database from "@react-native-firebase/database";
+import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useIsFocused} from "@react-navigation/native";
+import {fonts, format, icons, modal} from '../style/style';
 
-export const Home = ({navigation}) => {
-    const [patientSelection, setPatientSelection] = useState(0);
-    const [testPatientID, setTestPatientID] = useState(0);
-    const [patients, setPatients] = useState([]);
-    const [testPatientModalVisible, setTestPatientModalVisible] = useState(false);
-    const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
-    const [camModalVisible, setCamModalVisible] = useState(false);
+const manager = new BleManager();
 
-    useEffect(() => {
-        database().ref('/patients/').once('value', function (snapshot) {
+const reducer = (
+    state: Device[],
+    action: { type: 'ADD_DEVICE'; payload: Device } | { type: 'CLEAR' },
+): Device[] => {
+    switch (action.type) {
+        case 'ADD_DEVICE':
+            const {payload: device} = action;
 
-            let temp = [];
-            if (snapshot.val()) {
-                snapshot.forEach(function (data) {
-                    temp.push({key: data.key, label: data.val().name});
-                });
-
-                setPatients(temp);
+            // check if the detected device is not already added to the list
+            if (device && !state.find((dev) => dev.id === device.id)) {
+                return [...state, device];
             }
-        })
-    },);
+            return state;
+        case 'CLEAR':
+            return [];
+        default:
+            return state;
+    }
+};
 
-    const toggleViewPatientModal = (id) => {
-        if (viewPatientModalVisible) {
-            database().ref('patients/' + id).once('value', function (patient) {
-                //verify that org with add code exists
-                if (patient.val()) {
-                    navigation.navigate('Patient', {
-                        navigation,
-                        patient_id: id,
-                        patient_qr_id: patient.val().qrId.toString(),
-                        patient_name: patient.val().name,
-                        patient_email: patient.val().email,
-                        patient_phone: patient.val().phone.toString(),
-                        patient_street_address_1: patient.val().addressLine1,
-                        patient_street_address_2: patient.val().addressLine2,
-                        patient_city: patient.val().city,
-                        patient_state: patient.val().state,
-                        patient_country: patient.val().country,
-                        patient_zip: patient.val().zip.toString()
+const decodeBleString = (value: string | undefined | null): string => {
+    if (!value) return '';
+    return Base64.decode(value).charCodeAt(0);
+};
+
+export const Home = ({route, navigation}) => {
+
+    /*
+
+        BLUETOOTH
+
+     */
+
+    // used to determine current bluetooth devices in range
+    const [scannedDevices, dispatch] = useReducer(reducer, []);
+    const [isScanning, setIsScanning] = useState(false);
+
+    // start to scan when page is open, destroy manager when done
+    useEffect(() => {
+        scanDevices();
+
+        return () => {
+            manager.destroy()
+        };
+    }, []);
+
+    // scan for BLE devices
+    const scanDevices = () => {
+        // toggle activity indicator on
+        setIsScanning(true);
+
+        manager.startDeviceScan(null, null, (error, scannedDevice) => {
+            if (error) console.warn(error);
+
+            // filter by name for 'raspberrypi'
+            if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
+                // stop scanning
+                manager.stopDeviceScan();
+
+                // turn off activity indicator
+                setIsScanning(false);
+
+                // connect to device
+                scannedDevice
+                    .connect()
+                    .then((deviceData) => {
+                        manager.onDeviceDisconnected(
+                            deviceData.id,
+                            (connectionError, connectionData) => {
+                                if (connectionError) console.log(connectionError);
+
+                                console.log(connectionData);
+                                console.log('Device is disconnected. Restarting BLE device scan. ');
+                                setIsScanning(true);
+                                scanDevices();
+                            },
+                        );
+
+                        return scannedDevice.discoverAllServicesAndCharacteristics();
+                    })
+                    .then(async (deviceObject) => {
+                        console.log('deviceObject: ' + deviceObject);
+                        // subscribe for the readable service
+                        scannedDevice.monitorCharacteristicForService(
+                            '00000001-710e-4a5b-8d75-3e5b444bc3cf',
+                            '00000002-710e-4a5b-8d75-3e5b444bc3cf',
+                            (error, characteristic) => {
+                                if (error) {
+                                    console.log('Error in monitorCharacteristicForService');
+                                    console.log(error.message);
+                                    return;
+                                }
+
+                                //console.log(characteristic.uuid, decodeBleString(characteristic.value));
+                            },
+                        );
+                    })
+                    .catch((error) => {
+                        console.warn(error);
                     });
-                }
-            });
-        }
 
-        setViewPatientModalVisible(!viewPatientModalVisible);
-    }
+                // add to devices list using reducer
+                dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
+            }
+        });
+    };
 
-    // for test section to select method of patient selection
-    const patient_selection_change = (selection) => {
-        switch (selection) {
-            case 1: // if select from list
-                setTestPatientID(0);
-                break;
-            case 2: // if select by scanning qr clear patient ID
-                setTestPatientID(0);
-                toggleCamModal();
-                break;
-            default: // if none selected
-                break;
-        }
-
-        setPatientSelection(selection);
-    }
-
-    const toggleTestPatientModal = (id) => {
-        if (testPatientModalVisible && id >= 0) {
-            setTestPatientID(id);
-        }
-
-        setTestPatientModalVisible(!testPatientModalVisible);
-    }
-
-    // set patient ID via QR code
-    let setPatientByQR = e => {
-        if (e.data == null) {
-            alert('No QR code found');
-        } else {
-            // check if patient exists in database
-            if (e.data >= 0)
-                setTestPatientID(e.data);
-
-            toggleCamModal();
-            setCamModalVisible(false);
-        }
-    }
-
-    const toggleCamModal = () => {
-        setCamModalVisible(!camModalVisible);
-    }
-
-    const start_test = () => {
-        navigation.navigate('Diagnostic', {navigation, patientID: testPatientID});
-    }
-
-    return (
-        <SafeAreaView
-            style={{
-                backgroundColor: '#222',
-                flex: 1,
-                flexDirection: 'column'
-            }}
-        >
-            <ScrollView>
-                <View style={styles.page}>
-                    <View style={styles.section}>
-                        <View style={styles.headingContainer}>
-                            <Text style={styles.headingText}>Patients</Text>
-                        </View>
-                        <View style={styles.navButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.navButton}
-                                onPress={() => navigation.navigate('NewPatient')}
-                            >
-                                <View style={styles.navIcon}>
-                                    <IconF name='user-plus' size={30} color='#fff'/>
-                                </View>
-                                <Text style={styles.navButtonText}>Create Patient</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.navButton}
-                                onPress={() => {
-                                    toggleViewPatientModal(0)
-                                }}
-                            >
-                                <View style={styles.navIcon}>
-                                    <IconF name='user' size={30} color='#fff'/>
-                                </View>
-                                <Text style={styles.navButtonText}>View Patients</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.navButton}
-                                onPress={() => navigation.navigate('QRCodes')}
-                            >
-                                <View style={styles.navIcon}>
-                                    <IconMCA name='qrcode' size={30} color='#fff'/>
-                                </View>
-                                <Text style={styles.navButtonText}>Create QR Codes</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.testSection}>
-                        <View style={styles.testButtonContainer}>
-                            <View style={styles.navButtonContainer}>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => {
-                                        patient_selection_change(1);
-                                        toggleTestPatientModal(-1);
-                                    }}
-                                >
-                                    <View style={(patientSelection == 1 ? styles.navIconSelected : styles.navIcon)}>
-                                        <IconF name='user' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Using Name or ID</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => {
-                                        patient_selection_change(2);
-                                    }}
-                                >
-                                    <View style={(patientSelection == 2 ? styles.navIconSelected : styles.navIcon)}>
-                                        <IconMCA name='qrcode-scan' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>Using a QR Code</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => {
-                                        patient_selection_change(3);
-                                    }}
-                                >
-                                    <View style={(patientSelection == 3 ? styles.navIconSelected : styles.navIcon)}>
-                                        <IconF name='user-x' size={30} color='#fff'/>
-                                    </View>
-                                    <Text style={styles.navButtonText}>As a Guest</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {patientSelection == 0 ? (
-                                <TouchableOpacity
-                                    style={(patientSelection == 0 ? styles.testButtonGrayed : styles.testButton)}
-                                >
-                                    <Text style={styles.testButtonText}>Begin</Text>
-                                    <Text style={{textAlign: 'right'}}>
-                                        <IconAD name='arrowright' size={30} color='#fff'/>
-                                    </Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View></View>
-                            )}
-                            {(patientSelection == 1) ? (
-                                <ModalSelector
-                                    data={patients}
-                                    visible={testPatientModalVisible}
-                                    onCancel={() => toggleTestPatientModal(-1)}
-                                    customSelector={<View></View>}
-                                    onChange={(option) => {
-                                        toggleTestPatientModal(option.key);
-                                    }}
-                                    optionContainerStyle={{backgroundColor: '#111', border: 0}}
-                                    optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
-                                    optionStyle={{
-                                        padding: 20,
-                                        backgroundColor: '#eee',
-                                        borderRadius: 100,
-                                        margin: 5,
-                                        marginBottom: 15,
-                                        borderColor: '#222'
-                                    }}
-                                    cancelText={'Cancel'}
-                                    cancelStyle={styles.cancelButton}
-                                    cancelTextStyle={styles.testButtonText}
-                                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                                    listType={'FLATLIST'}
-                                />
-                            ) : (
-                                <View></View>
-                            )}
-                            {((patientSelection == 1 || patientSelection == 2) && testPatientID != 0) ? (
-                                <TouchableOpacity
-                                    style={styles.testButton}
-                                    onPress={start_test}
-                                >
-                                    <Text style={styles.testButtonText}>Begin</Text>
-                                    <Text style={{textAlign: 'right'}}>
-                                        <IconAD name='arrowright' size={30} color='#fff'/>
-                                    </Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View></View>
-                            )}
-                            {patientSelection == 2 ? (
-                                <Modal
-                                    transparent={true}
-                                    visible={camModalVisible}
-                                    onRequestClose={() => {
-                                        setCamModalVisible(false);
-                                    }}
-                                >
-                                    <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: 1}}>
-                                        <QRCodeScanner
-                                            topContent={
-                                                <View
-                                                    style={{
-                                                        borderRadius: 100,
-                                                        marginBottom: 20,
-                                                        paddingTop: 25,
-                                                        paddingBottom: 25,
-                                                        paddingLeft: 40,
-                                                        paddingRight: 40,
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 24,
-                                                            color: '#eee',
-                                                            textAlign: 'center',
-                                                            fontWeight: 'bold'
-                                                        }}
-                                                    >Place the QR code within the frame to continue</Text>
-                                                </View>
-                                            }
-                                            bottomContent={
-                                                <TouchableOpacity
-                                                    style={styles.testButtonGrayed}
-                                                    onPress={() => toggleCamModal()}
-                                                >
-                                                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                                                </TouchableOpacity>
-                                            }
-                                            containerStyle={{marginTop: 40}}
-                                            onRead={setPatientByQR}
-                                            flashMode={RNCamera.Constants.FlashMode.auto}
-                                        />
-                                    </View>
-                                </Modal>
-                            ) : (
-                                <View></View>
-                            )}
-                            {((patientSelection == 1 || patientSelection == 2) && testPatientID == 0) ? (
-                                <TouchableOpacity style={styles.testButtonGrayed}>
-                                    <Text style={styles.testButtonText}>Begin</Text>
-                                    <Text style={{textAlign: 'right'}}>
-                                        <IconAD name='arrowright' size={30} color='#fff'/>
-                                    </Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View></View>
-                            )}
-                            {patientSelection == 3 ? (
-                                <TouchableOpacity
-                                    style={styles.testButton}
-                                    onPress={start_test}
-                                >
-                                    <Text style={styles.testButtonText}>Begin</Text>
-                                    <Text style={{textAlign: 'right'}}>
-                                        <IconAD name='arrowright' size={30} color='#fff'/>
-                                    </Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View></View>
-                            )}
-                        </View>
+    const DeviceList = () => {
+        if (scannedDevices.length == 0)
+            return (
+                <View style={format.deviceList}>
+                    <View style={{flexDirection: 'row', paddingTop: 20, marginBottom: 16}}>
+                        <Text style={{color: '#eee', fontSize: 14, marginTop: 14, marginBottom: -4}}>No devices
+                            found</Text>
+                        <Text style={{marginLeft: 20, marginTop: 8, marginBottom: 0}}>
+                            <ActivityIndicator color={'white'} size={32}/>
+                        </Text>
                     </View>
                 </View>
+            );
+        else return (
+            <View style={format.deviceList}>
+                <FlatList
+                    horizontal={true}
+                    keyExtractor={(item) => item.id}
+                    data={scannedDevices}
+                    renderItem={({item}) => <DeviceCard device={item} navigation={navigation}/>}
+                />
+            </View>
+        );
+    }
+
+    /*
+
+        User Bar
+
+     */
+
+    const [name, setName] = useState('null');
+
+    const [guestWindowVisible, setGuestWindowVisible] = useState(false);
+    const [userWindowVisible, setUserWindowVisible] = useState(false);
+
+    const toggleGuestWindow = () => {
+        if(orgWindowVisible) setOrgWindowVisible(false);
+        setGuestWindowVisible(!guestWindowVisible);
+    }
+
+    const toggleUserWindow = () => {
+        if(orgWindowVisible) setOrgWindowVisible(false);
+        setUserWindowVisible(!userWindowVisible);
+    }
+
+    const GuestWindow = () => {
+        if (guestWindowVisible) return (
+            <View>
+                <TouchableOpacity
+                    style={format.horizontalSubBar}
+
+                >
+                    <Text style={fonts.mediumLink}>Create Account  <IconF name='plus' size={20}/></Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={format.horizontalSubBar}
+
+                >
+                    <Text style={fonts.mediumLink}>Login to Existing Account  <IconF name='user' size={20}/></Text>
+                </TouchableOpacity>
+            </View>
+        );
+        else return (<View/>);
+    }
+
+    const UserWindow = () => {
+        if (userWindowVisible) return (
+            <View>
+                <TouchableOpacity
+                    style={format.horizontalSubBar}
+                    onPress={() => {setEditPatientWindowVisible(!editPatientWindowVisible)}}
+                >
+                    <Text style={fonts.mediumLink}>Edit Account  <IconA name='edit' size={20}/></Text>
+                </TouchableOpacity>
+            </View>
+        );
+        else return (<View/>);
+    }
+
+    const UserBar = () => {
+        if (name === null) {
+            return (
+                    <TouchableOpacity
+                        style={format.horizontalBar}
+                        onPress={toggleGuestWindow}
+                    >
+                        <Text style={fonts.username}>Guest <IconE
+                            name={guestWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                    </TouchableOpacity>
+            );
+        } else {
+            return (
+                    <TouchableOpacity
+                        style={format.horizontalBar}
+                        onPress={toggleUserWindow}
+                    >
+                        <Text style={fonts.username}>{name} <IconE
+                            name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                    </TouchableOpacity>
+            );
+        }
+    }
+
+    /*
+
+        Organization Bar
+
+     */
+
+    // used throughout pages to determine the currently synced organization
+    const [org, setOrg] = useState(null);   // database key of the current organization
+    const [orgName, setOrgName] = useState(null);   // name of the current organization
+
+    // determines when page comes into focus
+    const isFocused = useIsFocused();
+
+    const [orgWindowVisible, setOrgWindowVisible] = useState(false);
+
+    const toggleOrgWindow = () => {
+        if(userWindowVisible) setUserWindowVisible(false);
+        if(guestWindowVisible) setGuestWindowVisible(false);
+        setOrgWindowVisible(!orgWindowVisible);
+    }
+
+    const OrganizationWindow = () => {
+        if (orgWindowVisible) {
+            if (orgName === null)
+                return (
+                    <View>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+
+                        >
+                            <Text style={fonts.mediumLink}>Connect to Organization  <IconMCI name='database'
+                                                                                            size={20}/></Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+
+                        >
+                            <Text style={fonts.mediumLink}>Create an Organization  <IconMCI name='database-plus'
+                                                                                           size={20}/></Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            else
+                return (
+                    <View>
+                    <View
+                        style={format.horizontalSubBar}
+
+                    >
+                        <Text style={fonts.mediumLink}>Add code: 12345</Text>
+                    </View>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+
+                        >
+                            <Text style={fonts.mediumLink}>Disconnect from {orgName}  <IconMCI name='database-minus'
+                                                                                           size={24}/></Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+        }
+        else return (<View/>);}
+
+
+    const OrganizationBar = () => {
+        if(name != null) {
+            if (orgName === null)
+                return (
+                    <TouchableOpacity
+                        style={format.horizontalBar}
+                        onPress={toggleOrgWindow}
+                    >
+                        <IconMCI
+                            style={icons.smallIcon}
+                            name='database'
+                            size={30}/>
+                    </TouchableOpacity>
+
+                );
+            else return (
+                <TouchableOpacity
+                    style={format.horizontalBar}
+                    onPress={toggleOrgWindow}
+                >
+                    <IconMCI style={icons.smallIcon}
+                             name='database-check'
+                             size={30}/>
+                </TouchableOpacity>
+            );
+        } else {
+            return <View />;
+        }
+    }
+
+    const EditPatientWindow = () => {
+        return (
+        <Modal
+            visible={editPatientWindowVisible}
+            transparent={true}
+            style={{justifyContent: 'center'}}
+        >
+            <ScrollView style={modal.modal}>
+                <Text style={modal.headingText}>Enter new name</Text>
+                <TextInput
+
+
+                    placeholder={'Enter text'}
+                    style={modal.textBox}
+                    autoComplete='off'
+                    autoCorrect={false}
+                />
+                <Text style={modal.headingText}>Enter new email</Text>
+                <TextInput
+
+
+                    placeholder={'Enter text'}
+                    style={modal.textBox}
+                    autoComplete='off'
+                    autoCorrect={false}
+                />
+                <Text style={modal.headingText}>Enter new name</Text>
+                <TextInput
+
+
+                    placeholder={'Enter new phone number'}
+                    style={modal.textBox}
+                    autoComplete='off'
+                    autoCorrect={false}
+                />
+                <Text style={modal.headingText}>Enter new street address</Text>
+                <TextInput
+
+
+                    placeholder={'Enter text'}
+                    style={modal.textBox}
+                    autoComplete='off'
+                    autoCorrect={false}
+                />
+                <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
+                    <TouchableOpacity
+                        style={modal.modalCancelButton}
+
+                    >
+                        <Text style={{color: '#fff'}}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={modal.modalSubmitButton}
+
+                    >
+                        <Text style={{color: '#fff'}}>Apply</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
+        </Modal>
+        );
+    }
+
+    /*
+
+        HOME PAGE
+
+     */
+
+    const [editPatientWindowVisible, setEditPatientWindowVisible] = useState(false);
+
+    return (
+        <SafeAreaView style={format.page}>
+            <EditPatientWindow />
+            <View style={format.pageHeader}>
+                <UserBar/>
+                <OrganizationBar/>
+            </View>
+            <GuestWindow/>
+            <UserWindow/>
+            <OrganizationWindow />
+            <DeviceList/>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    page: {
-        paddingTop: 40,
-        paddingBottom: 40,
-        flex: 1,
-        flexDirection: 'column'
-    },
-    section: {
-        flexDirection: 'column',
-        flex: 1
-    },
-    testSection: {
-        flexDirection: 'column'
-    },
-    headingContainer: {
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingLeft: 24,
-        paddingRight: 24,
-        flexDirection: 'row',
-    },
-    headingText: {
-        fontSize: 24,
-        color: '#fff',
-        flex: 1,
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    subheadingContainer: {
-        paddingTop: 10,
-        paddingBottom: 12,
-        paddingLeft: 24,
-        paddingRight: 24,
-        flexDirection: 'row',
-    },
-    subheadingText: {
-        fontSize: 14,
-        color: '#fff',
-        flex: 1,
-        textAlign: 'left',
-    },
-    statusText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#222',
-        flex: 1,
-        textAlign: 'center',
-    },
-    navButtonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    navButton: {
-        margin: 15,
-        flex: 0.3,
-        textAlign: 'center',
-        alignItems: 'center',
-    },
-    navIcon: {
-        backgroundColor: '#333',
-        padding: 20,
-        borderWidth: 1,
-        borderColor: '#555',
-        borderRadius: 5000,
-        marginBottom: 10
-    },
-    navIconSelected: {
-        backgroundColor: '#555',
-        padding: 20,
-        borderWidth: 1,
-        borderColor: '#888',
-        borderRadius: 5000,
-        marginBottom: 10
-    },
-    navButtonText: {
-        fontSize: 14,
-        color: '#eee',
-        textAlign: 'center',
-    },
-    testButtonContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#282828',
-    },
-    testButton: {
-        backgroundColor: '#2cab5c',
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 25,
-        paddingBottom: 25,
-        flexDirection: 'row',
-        borderRadius: 50,
-        marginTop: 20,
-        marginBottom: 20,
-    },
-    testButtonGrayed: {
-        backgroundColor: 'rgb(222,167,91)',
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 25,
-        paddingBottom: 25,
-        flexDirection: 'row',
-        borderRadius: 50,
-        marginTop: 20,
-        marginBottom: 20,
-    },
-    cancelButton: {
-        backgroundColor: 'rgb(222,167,91)',
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 25,
-        paddingBottom: 25,
-        borderRadius: 50,
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'center',
-        alignItems: 'center'
-    },
-    testButtonText: {
-        fontSize: 24,
-        color: '#fff',
-        paddingRight: 24,
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
-    cancelButtonText: {
-        fontSize: 24,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
-});
