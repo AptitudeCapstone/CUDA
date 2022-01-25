@@ -11,16 +11,16 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {BleManager, Device} from "react-native-ble-plx";
-import {DeviceCard} from "../components/DeviceCard";
+import {BleManager, Device} from 'react-native-ble-plx';
+import {DeviceCard} from '../components/DeviceCard';
 import {Base64} from '../lib/base64';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconFo from 'react-native-vector-icons/Foundation';
-import {useIsFocused} from "@react-navigation/native";
-import database from "@react-native-firebase/database";
-import ModalSelector from "react-native-modal-selector-searchable";
+import {useIsFocused} from '@react-navigation/native';
+import ModalSelector from 'react-native-modal-selector-searchable';
+import database from '@react-native-firebase/database';
 
 const manager = new BleManager();
 

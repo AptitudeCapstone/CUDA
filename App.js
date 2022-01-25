@@ -18,21 +18,20 @@ const App = () => {
         <NavigationContainer>
         <Tab.Navigator
             initialRouteName='Welcome'
-            tabBarOptions={{
-                activeTintColor: '#fff',
-                inactiveTintColor: '#ccc',
-                activeBackgroundColor: '#222',
-                inactiveBackgroundColor: '#222',
-            }}
             screenOptions={{
-                tabBarStyle: {
+                tabBarActiveTintColor: "#fff",
+                tabBarInactiveTintColor: "#ccc",
+                tabBarActiveBackgroundColor: "#222",
+                tabBarInactiveBackgroundColor: "#222",
+                tabBarStyle: [{
+                    display: 'flex',
                     backgroundColor: '#222',
-                    paddingBottom: 0,
-                },
+                    paddingBottom: 30,
+                }, null],
                 paddingTop: 10,
-                paddingBottom: 0,
+                paddingBottom: 30,
                 safeAreaInsets: {
-                    bottom: 30,
+                    bottom: 0,
                 },
             }}
         >

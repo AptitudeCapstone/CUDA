@@ -26,11 +26,13 @@ export const format = StyleSheet.create({
         padding: 8,
         paddingLeft: 15,
         paddingRight: 15,
-        backgroundColor: '#333',
+        backgroundColor: '#444',
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: '#eee',
-        margin: 5
+        borderColor: '#888',
+        margin: 5,
+        flexDirection: 'row',
+        justifyContent: 'center'
     }
 });
 
@@ -58,7 +60,10 @@ export const icons = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#eee',
-        padding: 2
+    },
+    linkIcon: {
+        color: '#eee',
+        marginLeft: 20
     }
 })
 

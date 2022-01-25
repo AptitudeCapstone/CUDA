@@ -17,8 +17,18 @@ import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
+import IconI from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from "@react-navigation/native";
 import {fonts, format, icons, modal} from '../style/style';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+} from 'react-native-google-signin';
+
 
 const manager = new BleManager();
 
@@ -48,6 +58,76 @@ const decodeBleString = (value: string | undefined | null): string => {
 };
 
 export const Home = ({route, navigation}) => {
+
+    /*
+
+        FIREBASE AUTHENTICATION WITH GOOGLE SIGN IN
+
+     */
+
+    const [loggedIn, setloggedIn] = useState(false);
+    const [userInfo, setuserInfo] = useState([]);
+
+    const _signIn = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const {accessToken, idToken} = await GoogleSignin.signIn();
+            setloggedIn(true);
+            const credential = auth.GoogleAuthProvider.credential(
+                idToken,
+                accessToken,
+            );
+            await auth().signInWithCredential(credential);
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+                alert('Cancel');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                alert('Sign in in progress');
+                // operation (f.e. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                alert('PLAY_SERVICES_NOT_AVAILABLE');
+                // play services not available or outdated
+            } else {
+                // some other error happened
+            }
+        }
+    };
+
+    const signOut = async () => {
+        try {
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+            auth()
+                .signOut()
+                .then(() => alert('You are signed out'));
+            setloggedIn(false);
+            setuserInfo([]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    function onAuthStateChanged(user) {
+        console.log(user);
+        if (user) {
+            setloggedIn(true);
+            setuserInfo(user);
+        }
+    }
+
+
+    useEffect(() => {
+        GoogleSignin.configure({
+            scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
+            webClientId:
+                '141405103878-rsc5n2819h3b7fors0u0oadthfv4dmde.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+            offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+        });
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    }, []);
+
 
     /*
 
@@ -161,56 +241,73 @@ export const Home = ({route, navigation}) => {
      */
 
     const [name, setName] = useState('null');
-
     const [guestWindowVisible, setGuestWindowVisible] = useState(false);
     const [userWindowVisible, setUserWindowVisible] = useState(false);
 
     const toggleGuestWindow = () => {
+        // close other window before opening
         if(orgWindowVisible) setOrgWindowVisible(false);
         setGuestWindowVisible(!guestWindowVisible);
     }
 
     const toggleUserWindow = () => {
+        // close other window before opening
         if(orgWindowVisible) setOrgWindowVisible(false);
         setUserWindowVisible(!userWindowVisible);
     }
 
-    const GuestWindow = () => {
+    const GuestButtons = () => {
         if (guestWindowVisible) return (
             <View>
                 <TouchableOpacity
                     style={format.horizontalSubBar}
 
                 >
-                    <Text style={fonts.mediumLink}>Create Account  <IconF name='plus' size={20}/></Text>
+                    <Text style={fonts.mediumLink}>Create Account</Text>
+                    <IconF style={icons.linkIcon} name='plus' size={20}/>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={format.horizontalSubBar}
 
                 >
-                    <Text style={fonts.mediumLink}>Login to Existing Account  <IconF name='user' size={20}/></Text>
+                    <Text style={fonts.mediumLink}>Sign in</Text>
+                    <IconF style={icons.linkIcon} name='user' size={20}/>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={format.horizontalSubBar}
+                    onPress={_signIn}
+                >
+                    <Text style={fonts.mediumLink}>Sign in with Google</Text>
+                    <IconI style={icons.linkIcon} name='logo-google' size={20}/>
                 </TouchableOpacity>
             </View>
-        );
-        else return (<View/>);
+        ); else
+            return <View/>;
     }
 
-    const UserWindow = () => {
+    const UserButtons = () => {
         if (userWindowVisible) return (
             <View>
                 <TouchableOpacity
                     style={format.horizontalSubBar}
                     onPress={() => {setEditPatientWindowVisible(!editPatientWindowVisible)}}
                 >
-                    <Text style={fonts.mediumLink}>Edit Account  <IconA name='edit' size={20}/></Text>
+                    <Text style={fonts.mediumLink}>Edit Account</Text>
+                    <IconA style={icons.linkIcon} name='edit' size={20}/>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={format.horizontalSubBar}
+                    onPress={() => {setEditPatientWindowVisible(!editPatientWindowVisible)}}
+                >
+                    <Text style={fonts.mediumLink}>Logout  <IconMI name='logout' size={20}/></Text>
                 </TouchableOpacity>
             </View>
-        );
-        else return (<View/>);
+        ); else
+            return <View/>;
     }
 
     const UserBar = () => {
-        if (name === null) {
+        if (!loggedIn) {
             return (
                     <TouchableOpacity
                         style={format.horizontalBar}
@@ -226,7 +323,7 @@ export const Home = ({route, navigation}) => {
                         style={format.horizontalBar}
                         onPress={toggleUserWindow}
                     >
-                        <Text style={fonts.username}>{name} <IconE
+                        <Text style={fonts.username}>{userInfo.displayName} <IconE
                             name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
                     </TouchableOpacity>
             );
@@ -242,13 +339,13 @@ export const Home = ({route, navigation}) => {
     // used throughout pages to determine the currently synced organization
     const [org, setOrg] = useState(null);   // database key of the current organization
     const [orgName, setOrgName] = useState(null);   // name of the current organization
+    const [orgWindowVisible, setOrgWindowVisible] = useState(false);
 
     // determines when page comes into focus
     const isFocused = useIsFocused();
 
-    const [orgWindowVisible, setOrgWindowVisible] = useState(false);
-
     const toggleOrgWindow = () => {
+        // hide user/guest window if opening organization window
         if(userWindowVisible) setUserWindowVisible(false);
         if(guestWindowVisible) setGuestWindowVisible(false);
         setOrgWindowVisible(!orgWindowVisible);
@@ -293,8 +390,9 @@ export const Home = ({route, navigation}) => {
                         </TouchableOpacity>
                     </View>
                 );
-        }
-        else return (<View/>);}
+        } else
+            return <View/>;
+    }
 
 
     const OrganizationBar = () => {
@@ -405,8 +503,8 @@ export const Home = ({route, navigation}) => {
                 <UserBar/>
                 <OrganizationBar/>
             </View>
-            <GuestWindow/>
-            <UserWindow/>
+            <GuestButtons/>
+            <UserButtons/>
             <OrganizationWindow />
             <DeviceList/>
         </SafeAreaView>
