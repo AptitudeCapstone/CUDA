@@ -33,7 +33,20 @@ export const format = StyleSheet.create({
         margin: 5,
         flexDirection: 'row',
         justifyContent: 'center'
-    }
+    },
+    textBox: {
+        padding: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
+        color: '#222',
+        backgroundColor: '#aaa',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#888',
+        marginLeft: 40,
+        marginRight: 40,
+        marginBottom: 15,
+    },
 });
 
 export const fonts = StyleSheet.create({
@@ -52,6 +65,14 @@ export const fonts = StyleSheet.create({
         textAlign: 'center',
         color: '#eee',
     },
+    heading: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        paddingTop: 2,
+        paddingBottom: 18
+    }
 });
 
 export const icons = StyleSheet.create({
@@ -65,45 +86,27 @@ export const icons = StyleSheet.create({
         color: '#eee',
         marginLeft: 20
     }
-})
+});
 
-export const modal = StyleSheet.create({
-    modal: {
-        backgroundColor: '#222',
-        padding: 15,
-        flex: 1,
-        borderRadius: 10
+export const buttons = StyleSheet.create({
+    submitButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    headingText: {
-        margin: 20,
-        marginBottom: 30,
-        fontSize: 18,
+    submitButton: {
+        backgroundColor: '#2cab5c',
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 60,
+    },
+    submitButtonText: {
+        fontSize: 24,
         color: '#fff',
         textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    modalCancelButton: {
-        backgroundColor: '#666',
-        margin: 10,
-        padding: 20,
-        borderRadius: 10
-    },
-    modalSubmitButton: {
-        backgroundColor: '#2cd46a',
-        margin: 10,
-        padding: 20,
-        borderRadius: 10
-    },
-    textBox: {
-        padding: 15,
-        paddingTop: 10,
-        paddingBottom: 10,
-        color: '#222',
-        backgroundColor: '#eee',
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginLeft: 40,
-        marginRight: 40
-    },
-})
+        fontWeight: 'bold'
+    }
+});

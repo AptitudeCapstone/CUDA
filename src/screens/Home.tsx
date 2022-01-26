@@ -1,6 +1,7 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import {
     ActivityIndicator,
+    Alert,
     FlatList,
     Modal,
     SafeAreaView,
@@ -78,6 +79,7 @@ export const Home = ({route, navigation}) => {
                 accessToken,
             );
             await auth().signInWithCredential(credential);
+            setUserWindowVisible(false);
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 // user cancelled the login flow
@@ -88,8 +90,6 @@ export const Home = ({route, navigation}) => {
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                 alert('PLAY_SERVICES_NOT_AVAILABLE');
                 // play services not available or outdated
-            } else {
-                // some other error happened
             }
         }
     };
@@ -100,9 +100,10 @@ export const Home = ({route, navigation}) => {
             await GoogleSignin.signOut();
             auth()
                 .signOut()
-                .then(() => alert('You are signed out'));
+                .then(() => Alert.alert('Signed out', 'You have been successfully signed out'));
             setloggedIn(false);
             setuserInfo([]);
+            setUserWindowVisible(false);
         } catch (error) {
             console.error(error);
         }
@@ -119,10 +120,10 @@ export const Home = ({route, navigation}) => {
 
     useEffect(() => {
         GoogleSignin.configure({
-            scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
+            scopes: ['email'],
             webClientId:
-                '141405103878-rsc5n2819h3b7fors0u0oadthfv4dmde.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
-            offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+                '141405103878-rsc5n2819h3b7fors0u0oadthfv4dmde.apps.googleusercontent.com',
+            offlineAccess: true,
         });
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber; // unsubscribe on unmount
@@ -240,15 +241,8 @@ export const Home = ({route, navigation}) => {
 
      */
 
-    const [name, setName] = useState('null');
-    const [guestWindowVisible, setGuestWindowVisible] = useState(false);
     const [userWindowVisible, setUserWindowVisible] = useState(false);
 
-    const toggleGuestWindow = () => {
-        // close other window before opening
-        if(orgWindowVisible) setOrgWindowVisible(false);
-        setGuestWindowVisible(!guestWindowVisible);
-    }
 
     const toggleUserWindow = () => {
         // close other window before opening
@@ -256,54 +250,61 @@ export const Home = ({route, navigation}) => {
         setUserWindowVisible(!userWindowVisible);
     }
 
-    const GuestButtons = () => {
-        if (guestWindowVisible) return (
-            <View>
-                <TouchableOpacity
-                    style={format.horizontalSubBar}
-
-                >
-                    <Text style={fonts.mediumLink}>Create Account</Text>
-                    <IconF style={icons.linkIcon} name='plus' size={20}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={format.horizontalSubBar}
-
-                >
-                    <Text style={fonts.mediumLink}>Sign in</Text>
-                    <IconF style={icons.linkIcon} name='user' size={20}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={format.horizontalSubBar}
-                    onPress={_signIn}
-                >
-                    <Text style={fonts.mediumLink}>Sign in with Google</Text>
-                    <IconI style={icons.linkIcon} name='logo-google' size={20}/>
-                </TouchableOpacity>
-            </View>
-        ); else
-            return <View/>;
-    }
 
     const UserButtons = () => {
-        if (userWindowVisible) return (
-            <View>
-                <TouchableOpacity
-                    style={format.horizontalSubBar}
-                    onPress={() => {setEditPatientWindowVisible(!editPatientWindowVisible)}}
-                >
-                    <Text style={fonts.mediumLink}>Edit Account</Text>
-                    <IconA style={icons.linkIcon} name='edit' size={20}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={format.horizontalSubBar}
-                    onPress={() => {setEditPatientWindowVisible(!editPatientWindowVisible)}}
-                >
-                    <Text style={fonts.mediumLink}>Logout  <IconMI name='logout' size={20}/></Text>
-                </TouchableOpacity>
-            </View>
-        ); else
-            return <View/>;
+        if (userWindowVisible) {
+            if (loggedIn)
+                return (
+                    <View>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+                            onPress={() => {
+                                navigation.navigate('Edit Account');
+                            }}
+                        >
+                            <Text style={fonts.mediumLink}>Edit Account</Text>
+                            <IconA style={icons.linkIcon} name='edit' size={20}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+                            onPress={signOut}
+                        >
+                            <Text style={fonts.mediumLink}>Logout <IconMI name='logout' size={20}/></Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            else return (
+                    <View>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+                            onPress={() => {
+                                setUserWindowVisible(false);
+                                navigation.navigate('Create Account');
+                            }}
+                        >
+                            <Text style={fonts.mediumLink}>Create Account</Text>
+                            <IconF style={icons.linkIcon} name='plus' size={20}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+                            onPress={() => {
+                                setUserWindowVisible(false);
+                                navigation.navigate('Sign In');
+                            }}
+                        >
+                            <Text style={fonts.mediumLink}>Sign in</Text>
+                            <IconF style={icons.linkIcon} name='user' size={20}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={format.horizontalSubBar}
+                            onPress={_signIn}
+                        >
+                            <Text style={fonts.mediumLink}>Sign in with Google</Text>
+                            <IconI style={icons.linkIcon} name='logo-google' size={20}/>
+                        </TouchableOpacity>
+                    </View>
+                );
+        } else return <View />;
     }
 
     const UserBar = () => {
@@ -311,10 +312,10 @@ export const Home = ({route, navigation}) => {
             return (
                     <TouchableOpacity
                         style={format.horizontalBar}
-                        onPress={toggleGuestWindow}
+                        onPress={toggleUserWindow}
                     >
                         <Text style={fonts.username}>Guest <IconE
-                            name={guestWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                            name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
                     </TouchableOpacity>
             );
         } else {
@@ -347,7 +348,6 @@ export const Home = ({route, navigation}) => {
     const toggleOrgWindow = () => {
         // hide user/guest window if opening organization window
         if(userWindowVisible) setUserWindowVisible(false);
-        if(guestWindowVisible) setGuestWindowVisible(false);
         setOrgWindowVisible(!orgWindowVisible);
     }
 
@@ -396,7 +396,7 @@ export const Home = ({route, navigation}) => {
 
 
     const OrganizationBar = () => {
-        if(name != null) {
+        if(userInfo != []) {
             if (orgName === null)
                 return (
                     <TouchableOpacity
@@ -425,68 +425,6 @@ export const Home = ({route, navigation}) => {
         }
     }
 
-    const EditPatientWindow = () => {
-        return (
-        <Modal
-            visible={editPatientWindowVisible}
-            transparent={true}
-            style={{justifyContent: 'center'}}
-        >
-            <ScrollView style={modal.modal}>
-                <Text style={modal.headingText}>Enter new name</Text>
-                <TextInput
-
-
-                    placeholder={'Enter text'}
-                    style={modal.textBox}
-                    autoComplete='off'
-                    autoCorrect={false}
-                />
-                <Text style={modal.headingText}>Enter new email</Text>
-                <TextInput
-
-
-                    placeholder={'Enter text'}
-                    style={modal.textBox}
-                    autoComplete='off'
-                    autoCorrect={false}
-                />
-                <Text style={modal.headingText}>Enter new name</Text>
-                <TextInput
-
-
-                    placeholder={'Enter new phone number'}
-                    style={modal.textBox}
-                    autoComplete='off'
-                    autoCorrect={false}
-                />
-                <Text style={modal.headingText}>Enter new street address</Text>
-                <TextInput
-
-
-                    placeholder={'Enter text'}
-                    style={modal.textBox}
-                    autoComplete='off'
-                    autoCorrect={false}
-                />
-                <View style={{flexDirection: 'row', alignSelf: 'center', margin: 10}}>
-                    <TouchableOpacity
-                        style={modal.modalCancelButton}
-
-                    >
-                        <Text style={{color: '#fff'}}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={modal.modalSubmitButton}
-
-                    >
-                        <Text style={{color: '#fff'}}>Apply</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </Modal>
-        );
-    }
 
     /*
 
@@ -498,12 +436,10 @@ export const Home = ({route, navigation}) => {
 
     return (
         <SafeAreaView style={format.page}>
-            <EditPatientWindow />
             <View style={format.pageHeader}>
                 <UserBar/>
                 <OrganizationBar/>
             </View>
-            <GuestButtons/>
             <UserButtons/>
             <OrganizationWindow />
             <DeviceList/>
