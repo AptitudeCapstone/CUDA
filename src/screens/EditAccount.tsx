@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {fonts, format, icons, buttons} from '../style/style';
+import {buttons, fonts, format} from '../style/style';
 
 
 export const EditAccount = ({navigation, route}) => {
@@ -19,19 +19,19 @@ export const EditAccount = ({navigation, route}) => {
 
 
     const edit_user = () => {
-        if(newPassword != null) {
+        if (newPassword != null) {
             user.updatePassword(newPassword).catch((error) => {
                 console.log(error);
             });
         }
 
-        if(newEmail != null) {
+        if (newEmail != null) {
             user.updateEmail(newEmail).catch((error) => {
                 console.log(error);
             });
         }
 
-        if(name != null) {
+        if (name != null) {
             user.updateProfile({displayName: name}).catch((error) => {
                 console.log(error);
             });
@@ -50,25 +50,25 @@ export const EditAccount = ({navigation, route}) => {
                 }}
             >
                 <Text style={fonts.heading}>Update Name</Text>
-                    <View style={format.textBox}>
-                        <TextInput
-                            underlineColorAndroid='transparent'
-                            placeholder='New Name'
-                            placeholderTextColor='#555'
-                            keyboardType='default'
-                            onChangeText={(name) => setName(name)}
-                            numberOfLines={1}
-                            multiline={false}
-                            style={{padding: 10, color: '#333'}}
-                            blurOnSubmit={false}
-                        />
-                    </View>
+                <View style={format.textBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
+                        placeholder='New Name'
+                        placeholderTextColor='#333'
+                        keyboardType='default'
+                        onChangeText={(name) => setName(name)}
+                        numberOfLines={1}
+                        multiline={false}
+                        style={{padding: 10, color: '#333'}}
+                        blurOnSubmit={false}
+                    />
+                </View>
                 {showEmailPass ? (<View><Text style={fonts.heading}>Update Email Address</Text>
                     <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='New Email address'
-                            placeholderTextColor='#555'
+                            placeholderTextColor='#333'
                             keyboardType='email-address'
                             onChangeText={(email) => setNewEmail(email)}
                             numberOfLines={1}
@@ -82,14 +82,14 @@ export const EditAccount = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='New Password'
-                            placeholderTextColor='#555'
+                            placeholderTextColor='#333'
                             onChangeText={(password) => setNewPassword(password)}
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 10, color: '#333'}}
                             blurOnSubmit={false}
                         />
-                    </View></View>) : (<View />)}
+                    </View></View>) : (<View/>)}
 
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity

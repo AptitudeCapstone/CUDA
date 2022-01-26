@@ -108,5 +108,24 @@ export const buttons = StyleSheet.create({
         color: '#fff',
         textAlign: 'center',
         fontWeight: 'bold'
-    }
+    },
+    forgotPasswordContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    forgotPasswordButton: {
+        paddingLeft: 50,
+        paddingRight: 50,
+        paddingTop: 25,
+        paddingBottom: 25,
+        borderRadius: 50,
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    forgotPasswordText: {
+        fontSize: 24,
+        color: '#eee',
+        textAlign: 'center',
+        fontWeight: 'bold'
+    },
 });

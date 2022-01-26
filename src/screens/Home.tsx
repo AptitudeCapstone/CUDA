@@ -1,16 +1,5 @@
 import React, {useEffect, useReducer, useState} from 'react';
-import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Modal,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {BleManager, Device} from "react-native-ble-plx";
 import {DeviceCard} from "../components/DeviceCard";
 import {Base64} from '../lib/base64';
@@ -21,14 +10,9 @@ import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from "@react-navigation/native";
-import {fonts, format, icons, modal} from '../style/style';
-import database from '@react-native-firebase/database';
+import {fonts, format, icons} from '../style/style';
 import auth from '@react-native-firebase/auth';
-import {
-    GoogleSignin,
-    GoogleSigninButton,
-    statusCodes,
-} from 'react-native-google-signin';
+import {GoogleSignin, statusCodes,} from 'react-native-google-signin';
 
 
 const manager = new BleManager();
@@ -246,7 +230,7 @@ export const Home = ({route, navigation}) => {
 
     const toggleUserWindow = () => {
         // close other window before opening
-        if(orgWindowVisible) setOrgWindowVisible(false);
+        if (orgWindowVisible) setOrgWindowVisible(false);
         setUserWindowVisible(!userWindowVisible);
     }
 
@@ -274,59 +258,59 @@ export const Home = ({route, navigation}) => {
                     </View>
                 );
             else return (
-                    <View>
-                        <TouchableOpacity
-                            style={format.horizontalSubBar}
-                            onPress={() => {
-                                setUserWindowVisible(false);
-                                navigation.navigate('Create Account');
-                            }}
-                        >
-                            <Text style={fonts.mediumLink}>Create Account</Text>
-                            <IconF style={icons.linkIcon} name='plus' size={20}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={format.horizontalSubBar}
-                            onPress={() => {
-                                setUserWindowVisible(false);
-                                navigation.navigate('Sign In');
-                            }}
-                        >
-                            <Text style={fonts.mediumLink}>Sign in</Text>
-                            <IconF style={icons.linkIcon} name='user' size={20}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={format.horizontalSubBar}
-                            onPress={_signIn}
-                        >
-                            <Text style={fonts.mediumLink}>Sign in with Google</Text>
-                            <IconI style={icons.linkIcon} name='logo-google' size={20}/>
-                        </TouchableOpacity>
-                    </View>
-                );
-        } else return <View />;
+                <View>
+                    <TouchableOpacity
+                        style={format.horizontalSubBar}
+                        onPress={() => {
+                            setUserWindowVisible(false);
+                            navigation.navigate('Create Account');
+                        }}
+                    >
+                        <Text style={fonts.mediumLink}>Create Account</Text>
+                        <IconF style={icons.linkIcon} name='plus' size={20}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={format.horizontalSubBar}
+                        onPress={() => {
+                            setUserWindowVisible(false);
+                            navigation.navigate('Sign In');
+                        }}
+                    >
+                        <Text style={fonts.mediumLink}>Sign in</Text>
+                        <IconF style={icons.linkIcon} name='user' size={20}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={format.horizontalSubBar}
+                        onPress={_signIn}
+                    >
+                        <Text style={fonts.mediumLink}>Sign in with Google</Text>
+                        <IconI style={icons.linkIcon} name='logo-google' size={20}/>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else return <View/>;
     }
 
     const UserBar = () => {
         if (!loggedIn) {
             return (
-                    <TouchableOpacity
-                        style={format.horizontalBar}
-                        onPress={toggleUserWindow}
-                    >
-                        <Text style={fonts.username}>Guest <IconE
-                            name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={format.horizontalBar}
+                    onPress={toggleUserWindow}
+                >
+                    <Text style={fonts.username}>Guest <IconE
+                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                </TouchableOpacity>
             );
         } else {
             return (
-                    <TouchableOpacity
-                        style={format.horizontalBar}
-                        onPress={toggleUserWindow}
-                    >
-                        <Text style={fonts.username}>{userInfo.displayName} <IconE
-                            name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={format.horizontalBar}
+                    onPress={toggleUserWindow}
+                >
+                    <Text style={fonts.username}>{userInfo.displayName} <IconE
+                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                </TouchableOpacity>
             );
         }
     }
@@ -347,7 +331,7 @@ export const Home = ({route, navigation}) => {
 
     const toggleOrgWindow = () => {
         // hide user/guest window if opening organization window
-        if(userWindowVisible) setUserWindowVisible(false);
+        if (userWindowVisible) setUserWindowVisible(false);
         setOrgWindowVisible(!orgWindowVisible);
     }
 
@@ -360,14 +344,14 @@ export const Home = ({route, navigation}) => {
                             style={format.horizontalSubBar}
 
                         >
-                            <Text style={fonts.mediumLink}>Connect to Organization  <IconMCI name='database'
+                            <Text style={fonts.mediumLink}>Connect to Organization <IconMCI name='database'
                                                                                             size={20}/></Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
 
                         >
-                            <Text style={fonts.mediumLink}>Create an Organization  <IconMCI name='database-plus'
+                            <Text style={fonts.mediumLink}>Create an Organization <IconMCI name='database-plus'
                                                                                            size={20}/></Text>
                         </TouchableOpacity>
                     </View>
@@ -375,18 +359,18 @@ export const Home = ({route, navigation}) => {
             else
                 return (
                     <View>
-                    <View
-                        style={format.horizontalSubBar}
+                        <View
+                            style={format.horizontalSubBar}
 
-                    >
-                        <Text style={fonts.mediumLink}>Add code: 12345</Text>
-                    </View>
+                        >
+                            <Text style={fonts.mediumLink}>Add code: 12345</Text>
+                        </View>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
 
                         >
-                            <Text style={fonts.mediumLink}>Disconnect from {orgName}  <IconMCI name='database-minus'
-                                                                                           size={24}/></Text>
+                            <Text style={fonts.mediumLink}>Disconnect from {orgName} <IconMCI name='database-minus'
+                                                                                              size={24}/></Text>
                         </TouchableOpacity>
                     </View>
                 );
@@ -396,7 +380,7 @@ export const Home = ({route, navigation}) => {
 
 
     const OrganizationBar = () => {
-        if(userInfo != []) {
+        if (userInfo != []) {
             if (orgName === null)
                 return (
                     <TouchableOpacity
@@ -421,7 +405,7 @@ export const Home = ({route, navigation}) => {
                 </TouchableOpacity>
             );
         } else {
-            return <View />;
+            return <View/>;
         }
     }
 
@@ -441,7 +425,7 @@ export const Home = ({route, navigation}) => {
                 <OrganizationBar/>
             </View>
             <UserButtons/>
-            <OrganizationWindow />
+            <OrganizationWindow/>
             <DeviceList/>
         </SafeAreaView>
     );

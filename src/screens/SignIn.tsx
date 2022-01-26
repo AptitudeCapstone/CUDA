@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {fonts, format, icons, buttons} from '../style/style';
+import {buttons, format} from '../style/style';
 
 export const SignIn = ({navigation, route}) => {
     const [email, setEmail] = useState('');
@@ -13,9 +13,9 @@ export const SignIn = ({navigation, route}) => {
             Alert.alert('Signed In', 'You have been successfully signed in');
             navigation.navigate('Home');
         }).catch(error => {
-            if(error.code === 'auth/wrong-password')
+            if (error.code === 'auth/wrong-password')
                 Alert.alert('Error', 'Password is incorrect');
-            else if(error.code === 'user-not-found')
+            else if (error.code === 'user-not-found')
                 Alert.alert('Error', 'Account was not found with that email');
         });
     }
@@ -35,7 +35,7 @@ export const SignIn = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address'
-                            placeholderTextColor='#555'
+                            placeholderTextColor='#333'
                             keyboardType='email-address'
                             onChangeText={(email) => setEmail(email)}
                             numberOfLines={1}
@@ -48,7 +48,7 @@ export const SignIn = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Password'
-                            placeholderTextColor='#555'
+                            placeholderTextColor='#333'
                             onChangeText={(password) => setPassword(password)}
                             numberOfLines={1}
                             multiline={false}
@@ -56,6 +56,14 @@ export const SignIn = ({navigation, route}) => {
                             blurOnSubmit={false}
                         />
                     </View>
+                </View>
+                <View style={buttons.forgotPasswordContainer}>
+                    <TouchableOpacity
+                        style={buttons.forgotPasswordButton}
+                        onPress={() => navigation.navigate('Forgot Password')}
+                    >
+                        <Text style={buttons.forgotPasswordText}>Forgot Password</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity

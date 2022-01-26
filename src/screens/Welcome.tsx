@@ -81,7 +81,9 @@ export const Welcome = ({route, navigation}) => {
     useEffect(() => {
         scanDevices();
 
-        return () => {manager.destroy()};
+        return () => {
+            manager.destroy()
+        };
     }, []);
 
     // scan for BLE devices
@@ -163,51 +165,51 @@ export const Welcome = ({route, navigation}) => {
     }
 
     const NavBar = () => {
-        return(
+        return (
             <View style={styles.topNavButtonContainer}>
-                    <TouchableOpacity
-                        style={currentPage == 0 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
-                        onPress={() => navigate(0, 0, 0)}
-                    >
-                        <View style={styles.topNavBarIcon}>
-                            <IconF name='user' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>Account</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={currentPage == 1 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
-                        onPress={() => navigate(1, 0, 1)}
-                    >
-                        <View style={styles.topNavBarIcon}>
-                            <IconFo name='graph-bar' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>Patient Data</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={currentPage == 2 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
-                        onPress={() => navigate(2, 0, 2)}
-                    >
-                        <View style={styles.topNavBarIcon}>
-                            <IconMI name='device-hub' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>Devices</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={currentPage == 3 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
-                        onPress={() => navigate(3, 0, -1)}
-                    >
-                        <View style={styles.topNavBarIcon}>
-                            <IconMCI name='water' size={30} color='#fff'/>
-                        </View>
-                        <Text style={styles.navButtonText}>Start Test</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={currentPage == 0 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
+                    onPress={() => navigate(0, 0, 0)}
+                >
+                    <View style={styles.topNavBarIcon}>
+                        <IconF name='user' size={30} color='#fff'/>
+                    </View>
+                    <Text style={styles.navButtonText}>Account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={currentPage == 1 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
+                    onPress={() => navigate(1, 0, 1)}
+                >
+                    <View style={styles.topNavBarIcon}>
+                        <IconFo name='graph-bar' size={30} color='#fff'/>
+                    </View>
+                    <Text style={styles.navButtonText}>Patient Data</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={currentPage == 2 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
+                    onPress={() => navigate(2, 0, 2)}
+                >
+                    <View style={styles.topNavBarIcon}>
+                        <IconMI name='device-hub' size={30} color='#fff'/>
+                    </View>
+                    <Text style={styles.navButtonText}>Devices</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={currentPage == 3 ? styles.topNavBarButtonSelected : styles.topNavBarButton}
+                    onPress={() => navigate(3, 0, -1)}
+                >
+                    <View style={styles.topNavBarIcon}>
+                        <IconMCI name='water' size={30} color='#fff'/>
+                    </View>
+                    <Text style={styles.navButtonText}>Start Test</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 
     const SubNavBar = () => {
-        if(currentVisibleSubNav == 0)
-            return(
+        if (currentVisibleSubNav == 0)
+            return (
                 <View style={styles.subNavBarContainer}>
                     <TouchableOpacity
                         style={styles.topNavBarButton}
@@ -229,8 +231,8 @@ export const Welcome = ({route, navigation}) => {
                     </TouchableOpacity>
 
                 </View>);
-        else if(currentVisibleSubNav == 1)
-            return(
+        else if (currentVisibleSubNav == 1)
+            return (
                 <View style={styles.subNavBarContainer}>
 
                     <TouchableOpacity
@@ -261,12 +263,13 @@ export const Welcome = ({route, navigation}) => {
                     </TouchableOpacity>
                 </View>
             );
-        else if(currentVisibleSubNav == 2)
-            if(scannedDevices.length == 0)
-                return(
+        else if (currentVisibleSubNav == 2)
+            if (scannedDevices.length == 0)
+                return (
                     <View style={styles.subNavBarContainer}>
                         <View style={{flexDirection: 'row', paddingTop: 20, marginBottom: 16}}>
-                            <Text style={{color: '#eee', fontSize: 14, marginTop: 14, marginBottom: -4}}>No devices found</Text>
+                            <Text style={{color: '#eee', fontSize: 14, marginTop: 14, marginBottom: -4}}>No devices
+                                found</Text>
                             <Text style={{marginLeft: 20, marginTop: 8, marginBottom: 0}}>
                                 <ActivityIndicator color={'white'} size={32}/>
                             </Text>
@@ -285,7 +288,7 @@ export const Welcome = ({route, navigation}) => {
                 </View>
             );
         else
-            return <View />;
+            return <View/>;
     }
 
     /*
@@ -430,19 +433,19 @@ export const Welcome = ({route, navigation}) => {
 
 
         if (currentPage == 0) {
-            if(currentSubpage == 0)
+            if (currentSubpage == 0)
                 return (
                     <ScrollView style={styles.page}>
                         <View style={styles.page}>
-                            <AccountWindow />
+                            <AccountWindow/>
                         </View>
                     </ScrollView>
                 );
-            else if(currentSubpage == 1)
+            else if (currentSubpage == 1)
                 return (
                     <ScrollView style={styles.page}>
                         <View style={styles.page}>
-                            <ConnectWindow />
+                            <ConnectWindow/>
                         </View>
                     </ScrollView>
                 );
@@ -496,7 +499,7 @@ export const Welcome = ({route, navigation}) => {
 
     const PatientDataPage = () => {
         const COVIDWindow = () => {
-            return(
+            return (
                 <View
                     style={styles.window}
                 >
@@ -538,7 +541,7 @@ export const Welcome = ({route, navigation}) => {
         }
 
         const FibrinogenWindow = () => {
-            return(
+            return (
                 <View
                     style={styles.window}
                 >
@@ -580,19 +583,19 @@ export const Welcome = ({route, navigation}) => {
         }
 
         if (currentPage == 1) {
-            if(currentSubpage == 0)
+            if (currentSubpage == 0)
                 return (
                     <ScrollView style={styles.page}>
                         <View style={styles.page}>
-                            <COVIDWindow />
+                            <COVIDWindow/>
                         </View>
                     </ScrollView>
                 );
-            else if(currentSubpage == 1)
+            else if (currentSubpage == 1)
                 return (
                     <ScrollView style={styles.page}>
                         <View style={styles.page}>
-                            <FibrinogenWindow />
+                            <FibrinogenWindow/>
                         </View>
                     </ScrollView>
                 );
@@ -608,7 +611,7 @@ export const Welcome = ({route, navigation}) => {
 
     const DevicePage = () => {
         const DeviceWindow = () => {
-            return(
+            return (
                 <View
                     style={styles.window}
                 >
@@ -630,7 +633,7 @@ export const Welcome = ({route, navigation}) => {
             return (
                 <ScrollView style={styles.page}>
                     <View style={styles.page}>
-                        <DeviceWindow />
+                        <DeviceWindow/>
                     </View>
                 </ScrollView>
             );
@@ -650,7 +653,7 @@ export const Welcome = ({route, navigation}) => {
         const [testResult, setTestResult] = useState('');
 
         const TestTypeWindow = () => {
-            return(
+            return (
                 <View style={styles.window}>
                     <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
                         <View style={{flex: 1}}>
@@ -718,8 +721,8 @@ export const Welcome = ({route, navigation}) => {
                 Alert.alert('Success', 'Added test result to database');
             }
 
-            if(testType == 'COVID')
-                return(
+            if (testType == 'COVID')
+                return (
                     <View style={styles.window}>
                         <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
                             <View style={{flex: 1}}>
@@ -758,8 +761,8 @@ export const Welcome = ({route, navigation}) => {
                         </View>
                     </View>
                 );
-            else if(testType == 'Fibrinogen')
-                return(
+            else if (testType == 'Fibrinogen')
+                return (
                     <View style={styles.window}>
                         <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20}}>
                             <View style={{flex: 1}}>
@@ -799,15 +802,15 @@ export const Welcome = ({route, navigation}) => {
                     </View>
                 );
             else
-                return <View />;
+                return <View/>;
         }
 
         if (currentPage == 3)
             return (
                 <ScrollView style={styles.page}>
                     <View style={styles.page}>
-                        <TestTypeWindow />
-                        <TestWindow />
+                        <TestTypeWindow/>
+                        <TestWindow/>
                     </View>
                 </ScrollView>
             );
@@ -826,14 +829,14 @@ export const Welcome = ({route, navigation}) => {
             backgroundColor: '#333',
             flex: 1,
             marginTop: -35
-            }}>
+        }}>
             <ModalSelector
                 data={patients}
                 visible={viewPatientModalVisible}
                 onCancel={() => {
                     toggleViewPatientModal(0);
                 }}
-                customSelector={<View />}
+                customSelector={<View/>}
                 onChange={(option) => {
                     toggleViewPatientModal(option.key);
                 }}
@@ -854,12 +857,12 @@ export const Welcome = ({route, navigation}) => {
                 searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
                 listType={'FLATLIST'}
             />
-            <AccountPage />
-            <PatientDataPage />
-            <DevicePage />
-            <TestPage />
-            <NavBar />
-            <SubNavBar />
+            <AccountPage/>
+            <PatientDataPage/>
+            <DevicePage/>
+            <TestPage/>
+            <NavBar/>
+            <SubNavBar/>
         </SafeAreaView>
     );
 }

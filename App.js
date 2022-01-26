@@ -5,6 +5,7 @@ import {Home} from './src/screens/Home';
 import {CreateAccount} from './src/screens/CreateAccount';
 import {SignIn} from './src/screens/SignIn';
 import {EditAccount} from './src/screens/EditAccount';
+import {ForgotPassword} from './src/screens/ForgotPassword';
 import {CreateOrganization} from './src/screens/CreateOrganization';
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -37,6 +38,11 @@ const HomeStack = () => {
             <Stack.Screen
                 name='Edit Account'
                 component={EditAccount}
+                options={{title: 'Edit Account', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+            />
+            <Stack.Screen
+                name='Forgot Password'
+                component={ForgotPassword}
                 options={{title: 'Edit Account', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
             />
         </Stack.Navigator>
