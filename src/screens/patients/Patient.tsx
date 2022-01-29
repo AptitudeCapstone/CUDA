@@ -5,6 +5,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {openDatabase} from 'react-native-sqlite-storage';
 import {useIsFocused} from '@react-navigation/native';
 import {parseISO} from 'date-fns';
+import ModalSelector from "react-native-modal-selector-searchable";
+import database from "@react-native-firebase/database";
+import {buttons, format, fonts} from '../../style/style';
+import IconE from 'react-native-vector-icons/Entypo';
 
 var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
@@ -12,30 +16,18 @@ var db = openDatabase({name: 'PatientDatabase.db'}, () => {
 });
 
 export const Patient = ({route, navigation}) => {
-    const {
-        patient_id,
-        patient_qr_id,
-        patient_name,
-        patient_email,
-        patient_phone,
-        patient_street_address_1,
-        patient_street_address_2,
-        patient_city,
-        patient_state,
-        patient_country,
-        patient_zip
-    } = route.params;
 
-    const [patientQrId, setPatientQrId] = useState(patient_qr_id);
-    const [patientName, setPatientName] = useState(patient_name);
-    const [patientEmail, setPatientEmail] = useState(patient_email);
-    const [patientPhone, setPatientPhone] = useState(patient_phone);
-    const [patientStreetAddress1, setPatientStreetAddress1] = useState(patient_street_address_1);
-    const [patientStreetAddress2, setPatientStreetAddress2] = useState(patient_street_address_2);
-    const [patientCity, setPatientCity] = useState(patient_city);
-    const [patientState, setPatientState] = useState(patient_state);
-    const [patientCountry, setPatientCountry] = useState(patient_country);
-    const [patientZip, setPatientZip] = useState(patient_zip);
+    const [patient_id, setPatientId] = useState(null);
+    const [patientQrId, setPatientQrId] = useState(null);
+    const [patientName, setPatientName] = useState(null);
+    const [patientEmail, setPatientEmail] = useState(null);
+    const [patientPhone, setPatientPhone] = useState(null);
+    const [patientStreetAddress1, setPatientStreetAddress1] = useState(null);
+    const [patientStreetAddress2, setPatientStreetAddress2] = useState(null);
+    const [patientCity, setPatientCity] = useState(null);
+    const [patientState, setPatientState] = useState(null);
+    const [patientCountry, setPatientCountry] = useState(null);
+    const [patientZip, setPatientZip] = useState(null);
 
     const [covidTests, setCovidTests] = useState(0);
     const [fibTests, setFibTests] = useState(0);
@@ -220,13 +212,106 @@ export const Patient = ({route, navigation}) => {
         });
     }, [isFocused]);
 
+    /*
+
+        VIEW PATIENT DATA PAGE
+
+     */
+
+    const [patients, setPatients] = useState([]);
+    const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
+
+    const toggleViewPatientModal = (patientKey) => {
+        if (viewPatientModalVisible) {
+            database().ref('patients/' + patientKey).once('value', function (patient) {
+                //verify that org with add code exists
+                if (patient.val()) {
+                    navigation.navigate('Patient', {
+                        navigation,
+                        patient_id: patientKey,
+                        patient_qr_id: patient.val().qrId.toString(),
+                        patient_name: patient.val().name,
+                        patient_email: patient.val().email,
+                        patient_phone: patient.val().phone.toString(),
+                        patient_street_address_1: patient.val().addressLine1,
+                        patient_street_address_2: patient.val().addressLine2,
+                        patient_city: patient.val().city,
+                        patient_state: patient.val().state,
+                        patient_country: patient.val().country,
+                        patient_zip: patient.val().zip.toString()
+                    });
+                }
+            });
+        } else {
+            database().ref('patients/').once('value', function (patients) {
+                let temp = [];
+
+                patients.forEach(function (patient) {
+                    temp.push({key: patient.key, label: patient.val().name});
+                });
+
+                setPatients(temp);
+            });
+        }
+
+        setViewPatientModalVisible(!viewPatientModalVisible);
+    }
+
+    const PatientBar = () => {
+            return (
+                <TouchableOpacity
+                    style={format.horizontalBar}
+                    onPress={() => toggleViewPatientModal(null)}
+                >
+                    <Text style={fonts.username}>Select a patient <IconE
+                        name='chevron-down' size={30}/></Text>
+                </TouchableOpacity>
+            );
+    }
+
+    /*
+
+        COVID/FIBRINOGEN SELECTION BAR
+
+     */
+
+
+
     return (
         <SafeAreaView style={{flex: 1, flexDirection: 'column', backgroundColor: '#222'}}>
+            <ModalSelector
+                data={patients}
+                visible={viewPatientModalVisible}
+                onCancel={() => {
+                    toggleViewPatientModal(null);
+                }}
+                customSelector={<View/>}
+                onChange={(option) => {
+                    toggleViewPatientModal(option.key);
+                }}
+                optionContainerStyle={{backgroundColor: '#111', border: 0}}
+                optionTextStyle={{color: '#444', fontSize: 18, fontWeight: 'bold'}}
+                optionStyle={{
+                    padding: 20,
+                    backgroundColor: '#eee',
+                    borderRadius: 100,
+                    margin: 5,
+                    marginBottom: 15,
+                    borderColor: '#222'
+                }}
+                cancelText={'Cancel'}
+                cancelStyle={styles.cancelButton}
+                cancelTextStyle={styles.testButtonText}
+                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                listType={'FLATLIST'}
+            />
             <View style={{flex: 1, flexDirection: 'column', backgroundColor: '#222', justifyContent: 'space-around'}}>
-
+                <View>
+                    <PatientBar />
+                </View>
                 <View style={styles.section}>
                     <View style={styles.nameContainer}>
-                        <Text style={styles.nameText}>{patientName}</Text>
                         <Text style={{textAlign: 'right'}}>
                             <Icon
                                 onPress={() => {

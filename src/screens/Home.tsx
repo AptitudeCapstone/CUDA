@@ -270,13 +270,10 @@ export const Home = ({route, navigation}) => {
                 <View>
                     <TouchableOpacity
                         style={format.horizontalSubBar}
-                        onPress={() => {
-                            setUserWindowVisible(false);
-                            navigation.navigate('Create Account');
-                        }}
+                        onPress={_signIn}
                     >
-                        <Text style={fonts.mediumLink}>Create Account</Text>
-                        <IconF style={icons.linkIcon} name='plus' size={20}/>
+                        <Text style={fonts.mediumLink}>Sign in with Google</Text>
+                        <IconI style={icons.linkIcon} name='logo-google' size={20}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={format.horizontalSubBar}
@@ -285,15 +282,18 @@ export const Home = ({route, navigation}) => {
                             navigation.navigate('Sign In');
                         }}
                     >
-                        <Text style={fonts.mediumLink}>Sign in</Text>
+                        <Text style={fonts.mediumLink}>Sign in with Email</Text>
                         <IconF style={icons.linkIcon} name='user' size={20}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={format.horizontalSubBar}
-                        onPress={_signIn}
+                        onPress={() => {
+                            setUserWindowVisible(false);
+                            navigation.navigate('Create Account');
+                        }}
                     >
-                        <Text style={fonts.mediumLink}>Sign in with Google</Text>
-                        <IconI style={icons.linkIcon} name='logo-google' size={20}/>
+                        <Text style={fonts.mediumLink}>Create Account</Text>
+                        <IconF style={icons.linkIcon} name='user-plus' size={20}/>
                     </TouchableOpacity>
                 </View>
             );

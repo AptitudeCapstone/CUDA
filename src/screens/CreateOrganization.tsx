@@ -57,15 +57,14 @@ export const CreateOrganization = ({navigation}) => {
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{
-                    backgroundColor: '#333',
                     paddingTop: 40,
                     paddingBottom: 40
                 }}
             >
-                <View style={styles.section}>
+                <View>
                     <Text style={fonts.heading}>New Organization</Text>
-                    <Text style={styles.headingText}>Name *</Text>
-                    <View style={styles.textBoxContainer}>
+                    <Text style={fonts.subheading}>Name *</Text>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Name *'
@@ -79,11 +78,11 @@ export const CreateOrganization = ({navigation}) => {
                         />
                     </View>
                 </View>
-                <View style={styles.section}>
-                    <Text style={styles.altHeadingText}>Add Code *</Text>
-                    <Text style={styles.subheadingText}>This unique code is used for apps to connect to this
+                <View>
+                    <Text style={fonts.subheading}>Add Code *</Text>
+                    <Text style={fonts.smallText}>This unique code is used for apps to connect to this
                         organization</Text>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='4+ digits *'
@@ -98,9 +97,9 @@ export const CreateOrganization = ({navigation}) => {
                         />
                     </View>
                 </View>
-                <View style={styles.section}>
-                    <Text style={styles.headingText}>Recovery Email(s)</Text>
-                    <View style={styles.textBoxContainer}>
+                <View>
+                    <Text style={fonts.subheading}>Recovery Email(s)</Text>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address 1 *'
@@ -113,7 +112,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address 2'
@@ -126,7 +125,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address 3'
@@ -140,9 +139,9 @@ export const CreateOrganization = ({navigation}) => {
                         />
                     </View>
                 </View>
-                <View style={styles.section}>
-                    <Text style={styles.headingText}>Address</Text>
-                    <View style={styles.textBoxContainer}>
+                <View>
+                    <Text style={fonts.subheading}>Address</Text>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Address line 1'
@@ -155,7 +154,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Address line 2 (e.g. Apt. #1)'
@@ -168,7 +167,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='City'
@@ -181,7 +180,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='State'
@@ -194,7 +193,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Country'
@@ -207,7 +206,7 @@ export const CreateOrganization = ({navigation}) => {
                             blurOnSubmit={false}
                         />
                     </View>
-                    <View style={styles.textBoxContainer}>
+                    <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='5-digit zip code'
@@ -221,81 +220,15 @@ export const CreateOrganization = ({navigation}) => {
                         />
                     </View>
                 </View>
-                <View style={styles.testButtonContainer}>
+                <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
-                        style={styles.testButton}
+                        style={buttons.submitButton}
                         onPress={register_organization}
                     >
-                        <Text style={styles.testButtonText}>Create Organization</Text>
+                        <Text style={buttons.submitButtonText}>Create Organization</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    page: {
-        backgroundColor: '#222',
-        flex: 1,
-        justifyContent: 'space-between',
-    },
-    section: {},
-    textBoxContainer: {
-        marginLeft: 35,
-        marginRight: 35,
-        marginTop: 0,
-        marginBottom: 20,
-        borderColor: '#eee',
-        borderWidth: 1,
-        borderRadius: 5
-    },
-    headingText: {
-        margin: 20,
-        fontSize: 18,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
-    altHeadingText: {
-        margin: 20,
-        marginBottom: 0,
-        fontSize: 18,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
-    subheadingText: {
-        marginTop: 0,
-        marginBottom: 10,
-        marginLeft: 20,
-        marginRight: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 10,
-        paddingBottom: 10,
-        fontSize: 14,
-        color: '#fff',
-        textAlign: 'center',
-    },
-    testButtonContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    testButton: {
-        backgroundColor: '#2cab5c',
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 25,
-        paddingBottom: 25,
-        borderRadius: 50,
-        marginTop: 40,
-        marginBottom: 60,
-    },
-    testButtonText: {
-        fontSize: 24,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    },
-});

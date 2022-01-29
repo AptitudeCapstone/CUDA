@@ -8,6 +8,7 @@ import {EditAccount} from './src/screens/account/EditAccount';
 import {ForgotPassword} from './src/screens/account/ForgotPassword';
 import {ConnectOrganization} from './src/screens/account/ConnectOrganization';
 import {CreateOrganization} from './src/screens/CreateOrganization';
+import {Patient} from './src/screens/patients/Patient';
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
@@ -29,32 +30,44 @@ const HomeStack = () => {
             <Stack.Screen
                 name='Create Account'
                 component={CreateAccount}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
             <Stack.Screen
                 name='Sign In'
                 component={SignIn}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
             <Stack.Screen
                 name='Edit Account'
                 component={EditAccount}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
             <Stack.Screen
                 name='Forgot Password'
                 component={ForgotPassword}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
             <Stack.Screen
                 name='Create Organization'
                 component={CreateOrganization}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
             <Stack.Screen
                 name='Connect Organization'
                 component={ConnectOrganization}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const PatientStack = () => {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen
+                name='Patient'
+                component={Patient}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     );
@@ -101,7 +114,7 @@ const App = () => {
             />
             <Tab.Screen
                 name='PatientData'
-                component={Welcome}
+                component={PatientStack}
                 options={{
                     title: 'Patient Data',
                     headerShown: false,

@@ -41,7 +41,6 @@ export const CreateAccount = ({navigation, route}) => {
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{
-                    backgroundColor: '#333',
                     paddingTop: 40,
                     paddingBottom: 40
                 }}

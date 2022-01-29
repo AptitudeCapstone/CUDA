@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const format = StyleSheet.create({
     page: {
-        backgroundColor: '#333',
+        backgroundColor: '#222',
         flex: 1
     },
     pageHeader: {
@@ -16,7 +16,6 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         paddingLeft: 10,
         paddingRight: 10,
-        backgroundColor: '#333'
     },
     horizontalBar: {
         padding: 15,
@@ -78,6 +77,19 @@ export const fonts = StyleSheet.create({
         padding: 15,
         paddingTop: 2,
         paddingBottom: 18
+    },
+    smallText: {
+        marginTop: 0,
+        marginBottom: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 10,
+        paddingBottom: 10,
+        fontSize: 14,
+        color: '#fff',
+        textAlign: 'center',
     }
 });
 
