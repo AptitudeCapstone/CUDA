@@ -42,6 +42,23 @@ export const format = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5
     },
+    testSelectBar: {
+        flexDirection: 'row',
+        padding: 10,
+        justifyContent: 'center'
+    },
+    selectPatientBar: {
+        padding: 10,
+        paddingLeft: 30,
+        paddingRight: 30,
+        backgroundColor: '#333',
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#555',
+        margin: 5,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
 });
 
 export const fonts = StyleSheet.create({
@@ -90,7 +107,18 @@ export const fonts = StyleSheet.create({
         fontSize: 14,
         color: '#fff',
         textAlign: 'center',
-    }
+    },
+    selectButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        padding: 4,
+        fontWeight: 'bold'
+    },
+    patientSelectText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#eee',
+    },
 });
 
 export const icons = StyleSheet.create({
@@ -147,4 +175,37 @@ export const buttons = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold'
     },
+    covidSelectButton: {
+        padding: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: '#3c499e',
+        marginLeft: 15,
+        marginRight: 15,
+        borderRadius: 50,
+        borderColor: '#555',
+        borderWidth: 1
+    },
+    fibrinogenSelectButton: {
+        padding: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: '#9c3a2f',
+        marginLeft: 15,
+        marginRight: 15,
+        borderRadius: 50,
+        borderColor: '#555',
+        borderWidth: 1
+    },
+    unselectedButton: {
+        padding: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: '#333',
+        marginLeft: 15,
+        marginRight: 15,
+        borderRadius: 50,
+        borderColor: '#555',
+        borderWidth: 1
+    }
 });

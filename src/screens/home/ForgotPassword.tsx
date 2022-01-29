@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, format, fonts} from '../../style/style';
+import {buttons, fonts, format} from '../../style/style';
 
 export const ForgotPassword = ({navigation, route}) => {
     const [email, setEmail] = useState('');
@@ -24,19 +24,19 @@ export const ForgotPassword = ({navigation, route}) => {
                 }}
             >
                 <Text style={fonts.heading}>Email address</Text>
-                    <View style={format.textBox}>
-                        <TextInput
-                            underlineColorAndroid='transparent'
-                            placeholder='Email address'
-                            placeholderTextColor='#bbb'
-                            keyboardType='email-address'
-                            onChangeText={(email) => setEmail(email)}
-                            numberOfLines={1}
-                            multiline={false}
-                            style={{padding: 20, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
-                    </View>
+                <View style={format.textBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
+                        placeholder='Email address'
+                        placeholderTextColor='#bbb'
+                        keyboardType='email-address'
+                        onChangeText={(email) => setEmail(email)}
+                        numberOfLines={1}
+                        multiline={false}
+                        style={{padding: 20, color: '#fff'}}
+                        blurOnSubmit={false}
+                    />
+                </View>
 
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity

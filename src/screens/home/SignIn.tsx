@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, format, fonts} from '../../style/style';
+import {buttons, fonts, format} from '../../style/style';
 
 export const SignIn = ({navigation, route}) => {
     const [email, setEmail] = useState('');

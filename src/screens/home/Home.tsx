@@ -1,8 +1,8 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {BleManager, Device} from "react-native-ble-plx";
-import {DeviceCard} from "../components/DeviceCard";
-import {Base64} from '../lib/base64';
+import {DeviceCard} from "../../components/DeviceCard";
+import {Base64} from '../../lib/base64';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
@@ -10,10 +10,9 @@ import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from "@react-navigation/native";
-import {fonts, format, icons} from '../style/style';
+import {fonts, format, icons} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin, statusCodes,} from 'react-native-google-signin';
-
 
 const manager = new BleManager();
 
@@ -105,7 +104,7 @@ export const Home = ({route, navigation}) => {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        if(auth().currentUser != null)
+        if (auth().currentUser != null)
             setuserInfo(auth().currentUser)
     }, [isFocused]);
 
@@ -342,14 +341,18 @@ export const Home = ({route, navigation}) => {
                     <View>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
-                            onPress={() => {navigation.navigate('Connect Organization')}}
+                            onPress={() => {
+                                navigation.navigate('Connect Organization')
+                            }}
                         >
                             <Text style={fonts.mediumLink}>Connect to Organization <IconMCI name='database'
                                                                                             size={20}/></Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
-                            onPress={() => {navigation.navigate('Create Organization')}}
+                            onPress={() => {
+                                navigation.navigate('Create Organization')
+                            }}
                         >
                             <Text style={fonts.mediumLink}>Create an Organization <IconMCI name='database-plus'
                                                                                            size={20}/></Text>
@@ -385,7 +388,10 @@ export const Home = ({route, navigation}) => {
                 return (
                     <TouchableOpacity
                         style={format.horizontalBar}
-                        onPress={() => {if(userWindowVisible) setUserWindowVisible(false); setOrgWindowVisible(!orgWindowVisible)}}
+                        onPress={() => {
+                            if (userWindowVisible) setUserWindowVisible(false);
+                            setOrgWindowVisible(!orgWindowVisible)
+                        }}
                     >
                         <IconMCI
                             style={icons.smallIcon}
@@ -396,7 +402,10 @@ export const Home = ({route, navigation}) => {
             else return (
                 <TouchableOpacity
                     style={format.horizontalBar}
-                    onPress={() => {if(userWindowVisible) setUserWindowVisible(false); setOrgWindowVisible(!orgWindowVisible)}}
+                    onPress={() => {
+                        if (userWindowVisible) setUserWindowVisible(false);
+                        setOrgWindowVisible(!orgWindowVisible)
+                    }}
                 >
                     <IconMCI style={icons.smallIcon}
                              name='database-check'
