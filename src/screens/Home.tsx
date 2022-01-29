@@ -101,6 +101,14 @@ export const Home = ({route, navigation}) => {
         }
     }
 
+    // determines when page comes into focus
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if(auth().currentUser != null)
+            setuserInfo(auth().currentUser)
+    }, [isFocused]);
+
 
     useEffect(() => {
         GoogleSignin.configure({
@@ -253,7 +261,8 @@ export const Home = ({route, navigation}) => {
                             style={format.horizontalSubBar}
                             onPress={signOut}
                         >
-                            <Text style={fonts.mediumLink}>Logout <IconMI name='logout' size={20}/></Text>
+                            <Text style={fonts.mediumLink}>Logout</Text>
+                            <IconMI style={icons.linkIcon} name='logout' size={20}/>
                         </TouchableOpacity>
                     </View>
                 );
@@ -322,18 +331,9 @@ export const Home = ({route, navigation}) => {
      */
 
     // used throughout pages to determine the currently synced organization
-    const [org, setOrg] = useState(null);   // database key of the current organization
+    const [orgID, setOrgID] = useState(null);   // database key of the current organization
     const [orgName, setOrgName] = useState(null);   // name of the current organization
     const [orgWindowVisible, setOrgWindowVisible] = useState(false);
-
-    // determines when page comes into focus
-    const isFocused = useIsFocused();
-
-    const toggleOrgWindow = () => {
-        // hide user/guest window if opening organization window
-        if (userWindowVisible) setUserWindowVisible(false);
-        setOrgWindowVisible(!orgWindowVisible);
-    }
 
     const OrganizationWindow = () => {
         if (orgWindowVisible) {
@@ -342,14 +342,14 @@ export const Home = ({route, navigation}) => {
                     <View>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
-
+                            onPress={() => {navigation.navigate('Connect Organization')}}
                         >
                             <Text style={fonts.mediumLink}>Connect to Organization <IconMCI name='database'
                                                                                             size={20}/></Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
-
+                            onPress={() => {navigation.navigate('Create Organization')}}
                         >
                             <Text style={fonts.mediumLink}>Create an Organization <IconMCI name='database-plus'
                                                                                            size={20}/></Text>
@@ -385,19 +385,18 @@ export const Home = ({route, navigation}) => {
                 return (
                     <TouchableOpacity
                         style={format.horizontalBar}
-                        onPress={toggleOrgWindow}
+                        onPress={() => {if(userWindowVisible) setUserWindowVisible(false); setOrgWindowVisible(!orgWindowVisible)}}
                     >
                         <IconMCI
                             style={icons.smallIcon}
                             name='database'
                             size={30}/>
                     </TouchableOpacity>
-
                 );
             else return (
                 <TouchableOpacity
                     style={format.horizontalBar}
-                    onPress={toggleOrgWindow}
+                    onPress={() => {if(userWindowVisible) setUserWindowVisible(false); setOrgWindowVisible(!orgWindowVisible)}}
                 >
                     <IconMCI style={icons.smallIcon}
                              name='database-check'
@@ -415,8 +414,6 @@ export const Home = ({route, navigation}) => {
         HOME PAGE
 
      */
-
-    const [editPatientWindowVisible, setEditPatientWindowVisible] = useState(false);
 
     return (
         <SafeAreaView style={format.page}>

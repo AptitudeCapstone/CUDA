@@ -5,14 +5,14 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Welcome} from '../screens/Welcome';
 import {Home} from '../screens/Home';
 import {CreateOrganization} from '../screens/CreateOrganization';
-import {ConnectOrganization} from '../screens/ConnectOrganization';
-import {CreatePatient} from '../screens/CreatePatient';
-import {EditPatient} from '../screens/EditPatient';
+import {ConnectOrganization} from '../screens/account/ConnectOrganization';
+import {CreatePatient} from '../screens/patients/CreatePatient';
+import {EditPatient} from '../screens/patients/EditPatient';
 import {DeviceScreen} from '../screens/Device';
-import {Patient} from '../screens/Patient';
-import {COVID} from '../screens/COVID';
-import {Fibrinogen} from '../screens/Fibrinogen';
-import {QRCodes} from '../screens/QRCodes';
+import {Patient} from '../screens/patients/Patient';
+import {COVID} from '../screens/patients/COVID';
+import {Fibrinogen} from '../screens/patients/Fibrinogen';
+import {QRCodes} from '../screens/patients/QRCodes';
 
 const Stack = createStackNavigator();
 

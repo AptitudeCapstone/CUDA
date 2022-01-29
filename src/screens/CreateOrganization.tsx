@@ -2,6 +2,7 @@ import React, {Alert, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
+import {buttons, format, fonts} from '../style/style';
 
 export const CreateOrganization = ({navigation}) => {
     const [name, setName] = useState('');
@@ -52,16 +53,17 @@ export const CreateOrganization = ({navigation}) => {
     };
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
+        <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{
-                    backgroundColor: '#222',
+                    backgroundColor: '#333',
                     paddingTop: 40,
                     paddingBottom: 40
                 }}
             >
                 <View style={styles.section}>
+                    <Text style={fonts.heading}>New Organization</Text>
                     <Text style={styles.headingText}>Name *</Text>
                     <View style={styles.textBoxContainer}>
                         <TextInput

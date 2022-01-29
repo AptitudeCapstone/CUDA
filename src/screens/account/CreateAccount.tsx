@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, format} from '../style/style';
+import {buttons, format, fonts} from '../../style/style';
 
 
 export const CreateAccount = ({navigation, route}) => {
@@ -47,41 +47,45 @@ export const CreateAccount = ({navigation, route}) => {
                 }}
             >
                 <View>
+                    <Text style={fonts.heading}>New Account</Text>
+                    <Text style={fonts.subheading}>Name</Text>
                     <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Name'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             keyboardType='default'
                             onChangeText={(name) => setName(name)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>
+                    <Text style={fonts.subheading}>Email Address</Text>
                     <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             keyboardType='email-address'
                             onChangeText={(email) => setEmail(email)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>
+                    <Text style={fonts.subheading}>Password</Text>
                     <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
-                            placeholder='Password'
-                            placeholderTextColor='#333'
+                            placeholder='Password (6+ characters)'
+                            placeholderTextColor='#bbb'
                             onChangeText={(password) => setPassword(password)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>

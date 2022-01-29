@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {buttons, format, fonts} from '../../style/style';
 import database from '@react-native-firebase/database';
 
 export const ConnectOrganization = ({navigation}) => {
@@ -47,14 +48,14 @@ export const ConnectOrganization = ({navigation}) => {
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{
-                    backgroundColor: '#222',
+                    backgroundColor: '#333',
                     paddingTop: 40,
                     paddingBottom: 40
                 }}
             >
                 <View style={styles.section}>
-                    <Text style={styles.altHeadingText}>Add Code *</Text>
-                    <Text style={styles.subheadingText}>Enter the organization's add code</Text>
+                    <Text style={fonts.heading}>Sync Account with Organization</Text>
+                    <Text style={styles.subheadingText}>Enter the organization's add code *</Text>
                     <View style={styles.textBoxContainer}>
                         <TextInput
                             underlineColorAndroid='transparent'

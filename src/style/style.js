@@ -35,17 +35,13 @@ export const format = StyleSheet.create({
         justifyContent: 'center'
     },
     textBox: {
-        padding: 15,
-        paddingTop: 10,
-        paddingBottom: 10,
-        color: '#222',
-        backgroundColor: '#aaa',
-        borderRadius: 10,
+        marginLeft: 35,
+        marginRight: 35,
+        marginTop: 0,
+        marginBottom: 20,
+        borderColor: '#eee',
         borderWidth: 1,
-        borderColor: '#888',
-        marginLeft: 40,
-        marginRight: 40,
-        marginBottom: 15,
+        borderRadius: 5
     },
 });
 
@@ -66,10 +62,20 @@ export const fonts = StyleSheet.create({
         color: '#eee',
     },
     heading: {
-        fontSize: 16,
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#eee',
+        padding: 15,
+        paddingTop: 2,
+        paddingBottom: 35
+    },
+    subheading: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        padding: 15,
         paddingTop: 2,
         paddingBottom: 18
     }
@@ -114,16 +120,17 @@ export const buttons = StyleSheet.create({
         alignItems: 'center',
     },
     forgotPasswordButton: {
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 25,
-        paddingBottom: 25,
+        backgroundColor: '#348ceb',
+        paddingLeft: 40,
+        paddingRight: 40,
+        paddingTop: 20,
+        paddingBottom: 20,
         borderRadius: 50,
-        marginTop: 20,
+        marginTop: 40,
         marginBottom: 20,
     },
     forgotPasswordText: {
-        fontSize: 24,
+        fontSize: 20,
         color: '#eee',
         textAlign: 'center',
         fontWeight: 'bold'

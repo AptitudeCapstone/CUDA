@@ -2,10 +2,11 @@ import React from 'react';
 
 import {Welcome} from './src/screens/Welcome';
 import {Home} from './src/screens/Home';
-import {CreateAccount} from './src/screens/CreateAccount';
-import {SignIn} from './src/screens/SignIn';
-import {EditAccount} from './src/screens/EditAccount';
-import {ForgotPassword} from './src/screens/ForgotPassword';
+import {CreateAccount} from './src/screens/account/CreateAccount';
+import {SignIn} from './src/screens/account/SignIn';
+import {EditAccount} from './src/screens/account/EditAccount';
+import {ForgotPassword} from './src/screens/account/ForgotPassword';
+import {ConnectOrganization} from './src/screens/account/ConnectOrganization';
 import {CreateOrganization} from './src/screens/CreateOrganization';
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -28,30 +29,38 @@ const HomeStack = () => {
             <Stack.Screen
                 name='Create Account'
                 component={CreateAccount}
-                options={{title: 'Create Account', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
             />
             <Stack.Screen
                 name='Sign In'
                 component={SignIn}
-                options={{title: 'Sign in', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
             />
             <Stack.Screen
                 name='Edit Account'
                 component={EditAccount}
-                options={{title: 'Edit Account', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
             />
             <Stack.Screen
                 name='Forgot Password'
                 component={ForgotPassword}
-                options={{title: 'Edit Account', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+            />
+            <Stack.Screen
+                name='Create Organization'
+                component={CreateOrganization}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
+            />
+            <Stack.Screen
+                name='Connect Organization'
+                component={ConnectOrganization}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#333'}}}
             />
         </Stack.Navigator>
     );
-
 }
 
 const App = () => {
-
     return (
         <NavigationContainer>
         <Tab.Navigator

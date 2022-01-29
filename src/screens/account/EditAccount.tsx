@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, fonts, format} from '../style/style';
+import {buttons, fonts, format} from '../../style/style';
 
 
 export const EditAccount = ({navigation, route}) => {
@@ -54,12 +54,12 @@ export const EditAccount = ({navigation, route}) => {
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='New Name'
-                        placeholderTextColor='#333'
+                        placeholderTextColor='#bbb'
                         keyboardType='default'
                         onChangeText={(name) => setName(name)}
                         numberOfLines={1}
                         multiline={false}
-                        style={{padding: 10, color: '#333'}}
+                        style={{padding: 20, color: '#fff'}}
                         blurOnSubmit={false}
                     />
                 </View>
@@ -68,12 +68,12 @@ export const EditAccount = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='New Email address'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             keyboardType='email-address'
                             onChangeText={(email) => setNewEmail(email)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 10, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>
@@ -82,11 +82,11 @@ export const EditAccount = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='New Password'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             onChangeText={(password) => setNewPassword(password)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 10, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View></View>) : (<View/>)}

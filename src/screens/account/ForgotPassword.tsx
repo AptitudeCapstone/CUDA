@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, format, fonts} from '../style/style';
+import {buttons, format, fonts} from '../../style/style';
 
 export const ForgotPassword = ({navigation, route}) => {
     const [email, setEmail] = useState('');
@@ -29,12 +29,12 @@ export const ForgotPassword = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address'
-                            placeholderTextColor='#555'
+                            placeholderTextColor='#bbb'
                             keyboardType='email-address'
                             onChangeText={(email) => setEmail(email)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>

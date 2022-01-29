@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, format} from '../style/style';
+import {buttons, format, fonts} from '../../style/style';
 
 export const SignIn = ({navigation, route}) => {
     const [email, setEmail] = useState('');
@@ -31,16 +31,17 @@ export const SignIn = ({navigation, route}) => {
                 }}
             >
                 <View>
+                    <Text style={fonts.heading}>Sign In</Text>
                     <View style={format.textBox}>
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Email address'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             keyboardType='email-address'
                             onChangeText={(email) => setEmail(email)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>
@@ -48,22 +49,14 @@ export const SignIn = ({navigation, route}) => {
                         <TextInput
                             underlineColorAndroid='transparent'
                             placeholder='Password'
-                            placeholderTextColor='#333'
+                            placeholderTextColor='#bbb'
                             onChangeText={(password) => setPassword(password)}
                             numberOfLines={1}
                             multiline={false}
-                            style={{padding: 15, color: '#333'}}
+                            style={{padding: 20, color: '#fff'}}
                             blurOnSubmit={false}
                         />
                     </View>
-                </View>
-                <View style={buttons.forgotPasswordContainer}>
-                    <TouchableOpacity
-                        style={buttons.forgotPasswordButton}
-                        onPress={() => navigation.navigate('Forgot Password')}
-                    >
-                        <Text style={buttons.forgotPasswordText}>Forgot Password</Text>
-                    </TouchableOpacity>
                 </View>
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
@@ -71,6 +64,15 @@ export const SignIn = ({navigation, route}) => {
                         onPress={sign_in}
                     >
                         <Text style={buttons.submitButtonText}>Sign In</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={buttons.submitButtonContainer}>
+                    <Text style={buttons.submitButtonText}>Forgot Password?</Text>
+                    <TouchableOpacity
+                        style={buttons.forgotPasswordButton}
+                        onPress={() => navigation.navigate('Forgot Password')}
+                    >
+                        <Text style={buttons.submitButtonText}>Send Recovery Link</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
