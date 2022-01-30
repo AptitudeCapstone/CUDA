@@ -62,11 +62,23 @@ export const Home = ({route, navigation}) => {
                 accessToken,
             );
             await auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
-                    // update /users/  with organization for the signed in user
-                    database().ref('users/' + auth().currentUser.uid).update({
-                        displayName: auth().currentUser.providerData[0].displayName
-                    });
-                    Alert.alert('Signed In', 'You have been successfully signed in');
+                // update /users/  with organization for the signed in user
+                database().ref('users/' + auth().currentUser.uid).update({
+                    displayName: auth().currentUser.providerData[0].displayName
+                });
+                database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                    if (userSnapshot.val()) {
+                        setuserInfo(userSnapshot.val());
+                        if (userSnapshot.val().organization === undefined) {
+                            console.log('userSnapshot.val()');
+                            setOrgInfo(null);
+                        } else
+                            database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
+                                setOrgInfo(orgSnapshot.val());
+                            });
+                    }
+                });
+                Alert.alert('Signed In', 'You have been successfully signed in');
             }).catch(error => {
                 // account exists, merge data to account and delete old user
                 // TO DO...
@@ -75,14 +87,20 @@ export const Home = ({route, navigation}) => {
                     database().ref('users/' + auth().currentUser.uid).update({
                         displayName: auth().currentUser.providerData[0].displayName
                     });
+                    database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                        if (userSnapshot.val()) {
+                            setuserInfo(userSnapshot.val());
+                            if (userSnapshot.val().organization === undefined) {
+                                console.log('userSnapshot.val()');
+                                setOrgInfo(null);
+                            } else
+                                database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
+                                    setOrgInfo(orgSnapshot.val());
+                                });
+                        }
+                    });
                     Alert.alert('Signed In', 'You have been successfully signed in');
                 });
-            });
-
-            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setuserInfo(userSnapshot.val());
-                }
             });
             setUserWindowVisible(false);
             setloggedIn(true);
@@ -105,10 +123,13 @@ export const Home = ({route, navigation}) => {
         try {
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
-            auth().signOut().then(() => Alert.alert('Signed out', 'You have been successfully signed out'));
-            setloggedIn(false);
-            setuserInfo([]);
-            setUserWindowVisible(false);
+            auth().signOut().then(() => {
+                Alert.alert('Signed out', 'You have been successfully signed out');
+                setloggedIn(false);
+                setuserInfo([]);
+                setOrgInfo(null);
+                setUserWindowVisible(false);
+            });
         } catch (error) {
             console.error(error);
         }
@@ -389,9 +410,9 @@ export const Home = ({route, navigation}) => {
         database().ref('users/' + auth().currentUser.uid).update({
             organization: null
         }).then(r => {
-            Alert.alert('Disconnected', 'No longer syncing with ' + orgInfo.name)
-                        setOrgInfo(null);
-                    }
+                Alert.alert('Disconnected', 'No longer syncing with ' + orgInfo.name)
+                setOrgInfo(null);
+            }
         );
     }
 
@@ -433,7 +454,7 @@ export const Home = ({route, navigation}) => {
                             onPress={() => disconnectFromOrganization()}
                         >
                             <Text style={fonts.mediumLink}>Disconnect from {orgInfo.name} <IconMCI name='database-minus'
-                                                                                              size={24}/></Text>
+                                                                                                   size={24}/></Text>
                         </TouchableOpacity>
                     </View>
                 );
@@ -443,22 +464,8 @@ export const Home = ({route, navigation}) => {
 
 
     const OrganizationBar = () => {
-            if (orgInfo === null)
-                return (
-                    <TouchableOpacity
-                        style={format.horizontalBar}
-                        onPress={() => {
-                            if (userWindowVisible) setUserWindowVisible(false);
-                            setOrgWindowVisible(!orgWindowVisible)
-                        }}
-                    >
-                        <IconMCI
-                            style={icons.smallIcon}
-                            name='database'
-                            size={30}/>
-                    </TouchableOpacity>
-                );
-            else return (
+        if (orgInfo === null)
+            return (
                 <TouchableOpacity
                     style={format.horizontalBar}
                     onPress={() => {
@@ -466,11 +473,25 @@ export const Home = ({route, navigation}) => {
                         setOrgWindowVisible(!orgWindowVisible)
                     }}
                 >
-                    <IconMCI style={icons.smallIcon}
-                             name='database-check'
-                             size={30}/>
+                    <IconMCI
+                        style={icons.smallIcon}
+                        name='database'
+                        size={30}/>
                 </TouchableOpacity>
             );
+        else return (
+            <TouchableOpacity
+                style={format.horizontalBar}
+                onPress={() => {
+                    if (userWindowVisible) setUserWindowVisible(false);
+                    setOrgWindowVisible(!orgWindowVisible)
+                }}
+            >
+                <IconMCI style={icons.smallIcon}
+                         name='database-check'
+                         size={30}/>
+            </TouchableOpacity>
+        );
     }
 
 
