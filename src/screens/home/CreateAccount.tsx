@@ -12,12 +12,13 @@ export const CreateAccount = ({navigation, route}) => {
 
     const register_user = () => {
         if (password.length >= 6) {
-            auth().createUserWithEmailAndPassword(email, password).then((userCredentials) => {
+            var credential = auth.EmailAuthProvider.credential(email, password);
+            auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
                 if (userCredentials.user) {
                     userCredentials.user.updateProfile({
                         displayName: name
                     }).then((s) => {
-                        navigation.navigate('Sign In');
+                        navigation.navigate('Home');
                     })
                 }
             }).catch(error => {

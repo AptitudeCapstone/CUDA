@@ -8,6 +8,7 @@ import {ForgotPassword} from './src/screens/home/ForgotPassword';
 import {ConnectOrganization} from './src/screens/home/ConnectOrganization';
 import {CreateOrganization} from './src/screens/home/CreateOrganization';
 import {Patient} from './src/screens/patients/Patient';
+import {StartTest} from './src/screens/diagnostic/StartTest';
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
@@ -128,7 +129,7 @@ const App = () => {
             />
             <Tab.Screen
                 name='StartTest'
-                component={CreateOrganization}
+                component={StartTest}
                 options={{
                     title: 'Start Test',
                     headerShown: false,

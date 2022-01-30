@@ -12,14 +12,14 @@ import IconE from 'react-native-vector-icons/Entypo';
 
 export const Patient = ({route, navigation}) => {
 
+    const [selectedTest, setSelectedTest] = useState('COVID');
+    const [patientKey, setPatientId] = useState(null);
 
     /*
 
         COVID/FIBRINOGEN SELECTION BAR
 
      */
-
-    const [selectedTest, setSelectedTest] = useState('COVID');
 
     const TestSelectBar = () => {
         return (
@@ -46,16 +46,19 @@ export const Patient = ({route, navigation}) => {
 
      */
 
-    const [patientKey, setPatientId] = useState(null);
-
     const PatientSelector = () => {
         const [patients, setPatients] = useState([]);
         const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
 
-        // if null, hide
-        // if not null, get most recent patient list and show
         const toggleViewPatientModal = (patientKey) => {
-            if (patientKey === null) {
+            // if we are re-showing this modal, update patient list in case it has changed
+            if(!viewPatientModalVisible) {
+                // if signed in to org, display all patients in org
+                // traverse all
+            }
+
+            if (patientKey != null) {
+                /*
                 database().ref('patients/' + patientKey).once('value', function (patient) {
                     //verify that org with add code exists
                     if (patient.val()) {
@@ -75,7 +78,7 @@ export const Patient = ({route, navigation}) => {
                         });
                     }
                 });
-            } else {
+
                 database().ref('patients/').once('value', function (patients) {
                     let temp = [];
 
@@ -85,6 +88,7 @@ export const Patient = ({route, navigation}) => {
 
                     setPatients(temp);
                 });
+                 */
             }
 
             setViewPatientModalVisible(!viewPatientModalVisible);
@@ -92,10 +96,10 @@ export const Patient = ({route, navigation}) => {
 
         const PatientSelectorButton = () => {
             return (
-                <View style={{padding: 20, flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={format.selectPatientBarContainer}>
                     <TouchableOpacity
                         style={format.selectPatientBar}
-                        onPress={() => toggleViewPatientModal(0)}
+                        onPress={() => toggleViewPatientModal(null)}
                     >
                         <Text style={fonts.patientSelectText}>Select a patient</Text>
                         <IconE
@@ -180,7 +184,9 @@ export const Patient = ({route, navigation}) => {
             }
         }
 
-        if(patientKey != null)
+        if(patientKey != null) {
+            // patient has been selected
+            if(selectedTest == 'COVID')
             return (
                 <View>
                     <View style={styles.section}>
@@ -261,6 +267,51 @@ export const Patient = ({route, navigation}) => {
                             </View>
                         </TouchableOpacity>
                     </View>
+                </View>
+            );
+            else return (
+                <View>
+                    <View style={styles.section}>
+                        <View style={styles.nameContainer}>
+                            <Text style={{textAlign: 'right'}}>
+                                <Icon
+                                    onPress={() => {
+                                        navigation.navigate('EditPatient', {
+                                            navigation,
+                                            patientKey,
+                                            patient_qr_id: patientQrId,
+                                            patient_name: patientName,
+                                            patient_phone: patientPhone,
+                                            patient_email: patientEmail,
+                                            patient_street_address_1: patientStreetAddress1,
+                                            patient_street_address_2: patientStreetAddress2,
+                                            patient_city: patientCity,
+                                            patient_state: patientState,
+                                            patient_country: patientCountry,
+                                            patient_zip: patientZip
+                                        })
+                                    }}
+                                    name='edit'
+                                    size={36}
+                                    color='#fff'
+                                />
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.section}>
+                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
+                            <Text style={styles.sectionText}>Contact</Text>
+                            <Text style={styles.text}>{patientEmail}</Text>
+                            <Text style={styles.text}>{patientPhone}</Text>
+                        </View>
+                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
+                            <Text style={styles.sectionText}>Address</Text>
+                            <Text style={styles.text}>{patientStreetAddress1}</Text>
+                            <Text style={styles.text}>{patientStreetAddress2}</Text>
+                            <Text
+                                style={styles.text}>{patientCity + ', ' + patientState + ', ' + patientCountry + ', ' + patientZip}</Text>
+                        </View>
+                    </View>
                     <View style={styles.section}>
                         <TouchableOpacity
                             style={{flexDirection: 'row', flex: 1}}
@@ -300,7 +351,7 @@ export const Patient = ({route, navigation}) => {
                     </View>
                 </View>
             );
-        else
+        } else // patient has not yet been selected
             return (
                 <View style={{padding: 25, paddingTop: 150, paddingBottom: 50}}>
                     <Text style={fonts.heading}>To view a patient portal, select the test type and the patient or scan their QR code</Text>

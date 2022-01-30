@@ -47,6 +47,11 @@ export const format = StyleSheet.create({
         padding: 10,
         justifyContent: 'center'
     },
+    selectPatientBarContainer: {
+        padding: 20,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
     selectPatientBar: {
         padding: 10,
         paddingLeft: 30,

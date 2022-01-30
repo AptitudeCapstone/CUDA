@@ -56,13 +56,22 @@ export const Home = ({route, navigation}) => {
         try {
             await GoogleSignin.hasPlayServices();
             const {accessToken, idToken} = await GoogleSignin.signIn();
-            setloggedIn(true);
             const credential = auth.GoogleAuthProvider.credential(
                 idToken,
                 accessToken,
             );
-            await auth().signInWithCredential(credential);
+            await auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
+                if (userCredentials.user) {
+                    userCredentials.user.updateProfile({
+                        displayName: name
+                    }).then((s) => {
+                        setuserInfo(auth().currentUser)
+                    })
+                }
+            });
+            //await auth().signInWithCredential(credential);
             setUserWindowVisible(false);
+            setloggedIn(true);
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 // user cancelled the login flow
@@ -78,6 +87,7 @@ export const Home = ({route, navigation}) => {
     };
 
     const signOut = async () => {
+        // first sign out of registered account
         try {
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
@@ -90,6 +100,16 @@ export const Home = ({route, navigation}) => {
         } catch (error) {
             console.error(error);
         }
+
+        // then log in to anonymous (guest) account
+        auth()
+            .signInAnonymously()
+            .then(() => {
+                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     function onAuthStateChanged(user) {
@@ -106,6 +126,15 @@ export const Home = ({route, navigation}) => {
     useEffect(() => {
         if (auth().currentUser != null)
             setuserInfo(auth().currentUser)
+        else
+            auth()
+                .signInAnonymously()
+                .then(() => {
+                    console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
     }, [isFocused]);
 
 
@@ -244,7 +273,7 @@ export const Home = ({route, navigation}) => {
 
     const UserButtons = () => {
         if (userWindowVisible) {
-            if (loggedIn)
+            if (auth().currentUser != null && !auth().currentUser.isAnonymous)
                 return (
                     <View>
                         <TouchableOpacity
@@ -300,7 +329,7 @@ export const Home = ({route, navigation}) => {
     }
 
     const UserBar = () => {
-        if (!loggedIn) {
+        if (auth().currentUser != null && auth().currentUser.isAnonymous) {
             return (
                 <TouchableOpacity
                     style={format.horizontalBar}
