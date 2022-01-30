@@ -9,7 +9,9 @@ import {ConnectOrganization} from './src/screens/home/ConnectOrganization';
 import {CreateOrganization} from './src/screens/home/CreateOrganization';
 import {Patient} from './src/screens/patients/Patient';
 import {StartTest} from './src/screens/diagnostic/StartTest';
-import {NavigationContainer} from "@react-navigation/native";
+import {CreatePatientCOVID} from './src/screens/patients/CreatePatientCOVID';
+import {CreatePatientFibrinogen} from './src/screens/patients/CreatePatientFibrinogen';
+import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -68,6 +70,16 @@ const PatientStack = () => {
                 name='Patient'
                 component={Patient}
                 options={{headerShown: false}}
+            />
+            <Stack.Screen
+                name='Create Patient COVID'
+                component={CreatePatientCOVID}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+            />
+            <Stack.Screen
+                name='Create Patient Fibrinogen'
+                component={CreatePatientFibrinogen}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
         </Stack.Navigator>
     );

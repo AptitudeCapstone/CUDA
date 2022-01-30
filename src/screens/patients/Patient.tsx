@@ -8,6 +8,7 @@ import ModalSelector from "react-native-modal-selector-searchable";
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
+import IconF from 'react-native-vector-icons/Feather';
 
 
 export const Patient = ({route, navigation}) => {
@@ -142,6 +143,35 @@ export const Patient = ({route, navigation}) => {
                 listType={'FLATLIST'}
             />
         );
+    }
+
+    const CreatePatientButton = () => {
+        if(selectedTest == 'COVID')
+        return(
+            <View style={format.selectPatientBarContainer}>
+                <TouchableOpacity
+                    style={format.selectPatientBar}
+                    onPress={() => navigation.navigate('Create Patient COVID')}
+                >
+                    <Text style={fonts.patientSelectText}>Create Patient</Text>
+                    <IconF
+                        name='user-plus' size={26} style={{color: '#eee', paddingLeft: 25}}/>
+                </TouchableOpacity>
+            </View>
+        );
+        else
+            return(
+                <View style={format.selectPatientBarContainer}>
+                    <TouchableOpacity
+                        style={format.selectPatientBar}
+                        onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                    >
+                        <Text style={fonts.patientSelectText}>Create Patient</Text>
+                        <IconF
+                            name='user-plus' size={26} style={{color: '#eee', paddingLeft: 25}}/>
+                    </TouchableOpacity>
+                </View>
+            );
     }
 
     /*
@@ -362,6 +392,7 @@ export const Patient = ({route, navigation}) => {
     return (
         <SafeAreaView style={format.page}>
             <TestSelectBar/>
+            <CreatePatientButton />
             <PatientSelector />
             <PatientPortal/>
         </SafeAreaView>

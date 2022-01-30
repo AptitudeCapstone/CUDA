@@ -462,7 +462,6 @@ export const Home = ({route, navigation}) => {
             return <View/>;
     }
 
-
     const OrganizationBar = () => {
         if (orgInfo === null)
             return (

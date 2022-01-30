@@ -32,8 +32,7 @@ export const CreatePatient = ({navigation}) => {
 
             const patientReference = database().ref('/patients').push();
 
-            patientReference
-                .set({
+            patientReference.set({
                     name: patientName,
                     qrId: qrId,
                     email: patientEmail,
@@ -44,8 +43,7 @@ export const CreatePatient = ({navigation}) => {
                     state: patientState,
                     country: patientCountry,
                     zip: patientZip
-                })
-                .then(() => console.log('Added entry for /users/' + patientReference.key));
+                }).then(() => console.log('Added entry for /users/' + patientReference.key));
         });
     }
 
