@@ -3,6 +3,8 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
+import IconE from 'react-native-vector-icons/Entypo';
+import ModalSelector from "react-native-modal-selector-searchable";
 
 
 export const StartTest = ({navigation, route}) => {
@@ -38,6 +40,108 @@ export const StartTest = ({navigation, route}) => {
 
     /*
 
+        PATIENT SELECTOR AND MODAL
+
+     */
+
+    const PatientSelector = () => {
+        const [patients, setPatients] = useState([]);
+        const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
+
+        const toggleViewPatientModal = (patientKey) => {
+            // if we are re-showing this modal, update patient list in case it has changed
+            if (!viewPatientModalVisible) {
+                // if signed in to org, display all patients in org
+                // traverse all
+            }
+
+            if (patientKey != null) {
+                /*
+                database().ref('patients/' + patientKey).once('value', function (patient) {
+                    //verify that org with add code exists
+                    if (patient.val()) {
+                        navigation.navigate('Patient', {
+                            navigation,
+                            patient_id: patientKey,
+                            patient_qr_id: patient.val().qrId.toString(),
+                            patient_name: patient.val().name,
+                            patient_email: patient.val().email,
+                            patient_phone: patient.val().phone.toString(),
+                            patient_street_address_1: patient.val().addressLine1,
+                            patient_street_address_2: patient.val().addressLine2,
+                            patient_city: patient.val().city,
+                            patient_state: patient.val().state,
+                            patient_country: patient.val().country,
+                            patient_zip: patient.val().zip.toString()
+                        });
+                    }
+                });
+
+                database().ref('patients/').once('value', function (patients) {
+                    let temp = [];
+
+                    patients.forEach(function (patient) {
+                        temp.push({key: patient.key, label: patient.val().name});
+                    });
+
+                    setPatients(temp);
+                });
+                 */
+            }
+
+            setViewPatientModalVisible(!viewPatientModalVisible);
+        }
+
+        const PatientSelectorButton = () => {
+            return (
+                <View style={format.selectPatientBarContainer}>
+                    <TouchableOpacity
+                        style={format.selectPatientBar}
+                        onPress={() => toggleViewPatientModal(null)}
+                    >
+                        <Text style={fonts.patientSelectText}>Select a patient</Text>
+                        <IconE
+                            name='chevron-down' size={26} style={{color: '#eee', paddingLeft: 10}}/>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        return(
+            <ModalSelector
+                data={patients}
+                visible={viewPatientModalVisible}
+                onCancel={() => {
+                    toggleViewPatientModal(null);
+                }}
+                customSelector={<PatientSelectorButton/>}
+                onChange={(option) => {
+                    toggleViewPatientModal(option.key);
+                }}
+                optionContainerStyle={{
+                    backgroundColor: '#111', border: 0
+                }}
+                optionTextStyle={{
+                    color: '#444', fontSize: 18, fontWeight: 'bold'
+                }}
+                optionStyle={{
+                    padding: 20,
+                    backgroundColor: '#eee',
+                    borderRadius: 100,
+                    margin: 5,
+                    marginBottom: 15,
+                    borderColor: '#222'
+                }}
+                cancelText={'Cancel'}
+                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                listType={'FLATLIST'}
+            />
+        );
+    }
+
+    /*
+
         LOG A TEST RESULT
 
      */
@@ -49,6 +153,7 @@ export const StartTest = ({navigation, route}) => {
     return (
         <SafeAreaView style={format.page}>
             <TestSelectBar />
+            <PatientSelector />
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{

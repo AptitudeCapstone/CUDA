@@ -9,7 +9,8 @@ export const SignIn = ({navigation, route}) => {
     const [password, setPassword] = useState('');
 
     const sign_in = () => {
-        auth().signInWithEmailAndPassword(email, password).then(r => {
+        const credential = auth.EmailAuthProvider.credential(email, password);
+        auth().currentUser.linkWithCredential(credential).then(r => {
             Alert.alert('Signed In', 'You have been successfully signed in');
             navigation.navigate('Home');
         }).catch(error => {
@@ -17,6 +18,15 @@ export const SignIn = ({navigation, route}) => {
                 Alert.alert('Error', 'Password is incorrect');
             else if (error.code === 'user-not-found')
                 Alert.alert('Error', 'Account was not found with that email');
+            else {
+                auth().signInWithCredential(credential).then(r => {
+                    // account exists, merge data to account and delete old user
+                    // TO DO...
+
+                    Alert.alert('Signed In', 'You have been successfully signed in');
+                    navigation.navigate('Home');
+                });
+            }
         });
     }
 

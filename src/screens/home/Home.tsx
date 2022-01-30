@@ -55,21 +55,26 @@ export const Home = ({route, navigation}) => {
     const _signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
-            const {accessToken, idToken} = await GoogleSignin.signIn();
+            const {accessToken, idToken, user} = await GoogleSignin.signIn();
             const credential = auth.GoogleAuthProvider.credential(
                 idToken,
                 accessToken,
             );
             await auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
-                if (userCredentials.user) {
-                    userCredentials.user.updateProfile({
-                        displayName: name
-                    }).then((s) => {
-                        setuserInfo(auth().currentUser)
-                    })
-                }
+                auth().currentUser.updateProfile({displayName: auth().currentUser.providerData[0].displayName}).then(r => {
+                    Alert.alert('Signed In', 'You have been successfully signed in');
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }).catch(error => {
+                // account exists, merge data to account and delete old user
+                // TO DO...
+
+                auth().signInWithCredential(credential).then(r => {
+                    Alert.alert('Signed In', 'You have been successfully signed in');
+                });
             });
-            //await auth().signInWithCredential(credential);
+            setuserInfo(auth().currentUser);
             setUserWindowVisible(false);
             setloggedIn(true);
         } catch (error) {
@@ -91,9 +96,7 @@ export const Home = ({route, navigation}) => {
         try {
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
-            auth()
-                .signOut()
-                .then(() => Alert.alert('Signed out', 'You have been successfully signed out'));
+            auth().signOut().then(() => Alert.alert('Signed out', 'You have been successfully signed out'));
             setloggedIn(false);
             setuserInfo([]);
             setUserWindowVisible(false);
@@ -102,14 +105,11 @@ export const Home = ({route, navigation}) => {
         }
 
         // then log in to anonymous (guest) account
-        auth()
-            .signInAnonymously()
-            .then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        auth().signInAnonymously().then(() => {
+            console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+        }).catch(error => {
+            console.error(error);
+        });
     };
 
     function onAuthStateChanged(user) {
@@ -127,14 +127,11 @@ export const Home = ({route, navigation}) => {
         if (auth().currentUser != null)
             setuserInfo(auth().currentUser)
         else
-            auth()
-                .signInAnonymously()
-                .then(() => {
-                    console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            auth().signInAnonymously().then(() => {
+                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+            }).catch(error => {
+                console.error(error);
+            });
     }, [isFocused]);
 
 
