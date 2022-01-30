@@ -3,6 +3,7 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
 import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 export const ConnectOrganization = ({navigation}) => {
     const [addCode, setAddCode] = useState(-1);
@@ -14,25 +15,27 @@ export const ConnectOrganization = ({navigation}) => {
             database().ref('organizations/').orderByChild('addCode').equalTo(addCode).once('value', function (snapshot) {
                 //verify that org with add code exists
                 if (snapshot.val()) {
-                    snapshot.forEach(function (data) {
-                        Alert.alert(
+                    snapshot.forEach(function (organizationSnapshot) {
+                        const currentUserID = auth().currentUser.uid;
+                        database().ref('/users/' + currentUserID).update({
+                            organization: organizationSnapshot.key
+                        }).then(r => {
+                            Alert.alert(
                             'Organization Found',
-                            'Attempting to sync data with ' + data.val().name,
+                            'Attempting to sync data with ' + organizationSnapshot.val().name,
                             [
                                 {
                                     text: 'Continue',
-                                    onPress: () => navigation.navigate('Welcome', {
-                                        navigation,
-                                        currentOrg: data.key,
-                                        currentOrgName: data.val().name
-                                    })
+                                    onPress: () => navigation.navigate('Home')
                                 },
                                 {
                                     text: 'Cancel',
                                     style: 'cancel',
                                 },
                             ]
-                        );
+                            );
+                        });
+
                     });
                 } else {
                     Alert.alert('Error', 'No organization was found with this add code');

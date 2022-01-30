@@ -3,6 +3,7 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
+import database from "@react-native-firebase/database";
 
 
 export const CreateAccount = ({navigation, route}) => {
@@ -18,6 +19,8 @@ export const CreateAccount = ({navigation, route}) => {
                     userCredentials.user.updateProfile({
                         displayName: name
                     }).then((s) => {
+                        const newReference = database().ref('/users/' + userCredentials.user.uid);
+                        newReference.set({organization: null});
                         navigation.navigate('Home');
                     })
                 }

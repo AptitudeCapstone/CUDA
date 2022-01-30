@@ -3,6 +3,7 @@ import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-nativ
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
+import database from "@react-native-firebase/database";
 
 
 export const EditAccount = ({navigation, route}) => {
@@ -32,7 +33,9 @@ export const EditAccount = ({navigation, route}) => {
         }
 
         if (name != null) {
-            user.updateProfile({displayName: name}).catch((error) => {
+            database().ref('users/' + auth().currentUser.uid).update({
+                displayName: name
+            }).catch((error) => {
                 console.log(error);
             });
         }

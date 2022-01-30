@@ -13,6 +13,7 @@ import {useIsFocused} from "@react-navigation/native";
 import {fonts, format, icons} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin, statusCodes,} from 'react-native-google-signin';
+import database from "@react-native-firebase/database";
 
 const manager = new BleManager();
 
@@ -55,26 +56,37 @@ export const Home = ({route, navigation}) => {
     const _signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
-            const {accessToken, idToken, user} = await GoogleSignin.signIn();
+            const {accessToken, idToken} = await GoogleSignin.signIn();
             const credential = auth.GoogleAuthProvider.credential(
                 idToken,
                 accessToken,
             );
             await auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
-                auth().currentUser.updateProfile({displayName: auth().currentUser.providerData[0].displayName}).then(r => {
+                    // update /users/  with organization for the signed in user
+                    database().ref('users/' + auth().currentUser.uid).update({
+                        displayName: auth().currentUser.providerData[0].displayName
+                    });
                     Alert.alert('Signed In', 'You have been successfully signed in');
-                }).catch((error) => {
-                    console.log(error);
-                });
             }).catch(error => {
                 // account exists, merge data to account and delete old user
                 // TO DO...
 
                 auth().signInWithCredential(credential).then(r => {
+                    database().ref('users/' + auth().currentUser.uid).update({
+                        displayName: auth().currentUser.providerData[0].displayName
+                    });
                     Alert.alert('Signed In', 'You have been successfully signed in');
                 });
             });
-            setuserInfo(auth().currentUser);
+
+            // update user info based on database info
+            await database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                if (userSnapshot.val()) {
+                    userSnapshot.forEach(function (user) {
+                        setuserInfo(user.val());
+                    })
+                }
+            });
             setUserWindowVisible(false);
             setloggedIn(true);
         } catch (error) {
@@ -125,7 +137,13 @@ export const Home = ({route, navigation}) => {
 
     useEffect(() => {
         if (auth().currentUser != null)
-            setuserInfo(auth().currentUser)
+            // update user info based on database info
+            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                if (userSnapshot.val()) {
+                    setuserInfo(userSnapshot.val());
+                    console.log('logged in with user info: ' + userInfo);
+                }
+            });
         else
             auth().signInAnonymously().then(() => {
                 console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
@@ -356,13 +374,27 @@ export const Home = ({route, navigation}) => {
      */
 
     // used throughout pages to determine the currently synced organization
-    const [orgID, setOrgID] = useState(null);   // database key of the current organization
-    const [orgName, setOrgName] = useState(null);   // name of the current organization
     const [orgWindowVisible, setOrgWindowVisible] = useState(false);
+
+    const disconnectFromOrganization = () => {
+        database().ref('users/' + auth().currentUser.uid).update({
+            organization: null
+        }).then(r => {
+            // update user info based on database info
+            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                if (userSnapshot.val()) {
+                    setuserInfo(userSnapshot.val());
+                    console.log('logged in with user info: ' + userSnapshot.val());
+                }
+            });
+        });
+
+
+    }
 
     const OrganizationWindow = () => {
         if (orgWindowVisible) {
-            if (orgName === null)
+            if (userInfo.organization === undefined)
                 return (
                     <View>
                         <TouchableOpacity
@@ -390,15 +422,14 @@ export const Home = ({route, navigation}) => {
                     <View>
                         <View
                             style={format.horizontalSubBar}
-
                         >
                             <Text style={fonts.mediumLink}>Add code: 12345</Text>
                         </View>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
-
+                            onPress={() => disconnectFromOrganization()}
                         >
-                            <Text style={fonts.mediumLink}>Disconnect from {orgName} <IconMCI name='database-minus'
+                            <Text style={fonts.mediumLink}>Disconnect from {userInfo.organization} <IconMCI name='database-minus'
                                                                                               size={24}/></Text>
                         </TouchableOpacity>
                     </View>
@@ -410,7 +441,7 @@ export const Home = ({route, navigation}) => {
 
     const OrganizationBar = () => {
         if (userInfo != []) {
-            if (orgName === null)
+            if (userInfo.organization === undefined)
                 return (
                     <TouchableOpacity
                         style={format.horizontalBar}
