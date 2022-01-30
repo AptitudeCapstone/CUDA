@@ -79,12 +79,9 @@ export const Home = ({route, navigation}) => {
                 });
             });
 
-            // update user info based on database info
-            await database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
-                    userSnapshot.forEach(function (user) {
-                        setuserInfo(user.val());
-                    })
+                    setuserInfo(userSnapshot.val());
                 }
             });
             setUserWindowVisible(false);
@@ -128,20 +125,31 @@ export const Home = ({route, navigation}) => {
         console.log(user);
         if (user) {
             setloggedIn(true);
-            setuserInfo(user);
+            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                if (userSnapshot.val()) {
+                    setuserInfo(userSnapshot.val());
+                }
+            });
         }
     }
 
     // determines when page comes into focus
     const isFocused = useIsFocused();
 
+    // update user info with current authenticated user info
+    // also get organization info from user, update organization info
     useEffect(() => {
         if (auth().currentUser != null)
             // update user info based on database info
             database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
                     setuserInfo(userSnapshot.val());
-                    console.log('logged in with user info: ' + userInfo);
+                    if(userSnapshot.val().organization === undefined) {
+                        setOrgInfo(null);
+                    } else
+                        database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
+                            setOrgInfo(orgSnapshot.val());
+                        });
                 }
             });
         else
@@ -375,26 +383,21 @@ export const Home = ({route, navigation}) => {
 
     // used throughout pages to determine the currently synced organization
     const [orgWindowVisible, setOrgWindowVisible] = useState(false);
+    const [orgInfo, setOrgInfo] = useState([]);
 
     const disconnectFromOrganization = () => {
         database().ref('users/' + auth().currentUser.uid).update({
             organization: null
         }).then(r => {
-            // update user info based on database info
-            database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setuserInfo(userSnapshot.val());
-                    console.log('logged in with user info: ' + userSnapshot.val());
-                }
-            });
-        });
-
-
+            Alert.alert('Disconnected', 'No longer syncing with ' + orgInfo.name)
+                        setOrgInfo(null);
+                    }
+        );
     }
 
     const OrganizationWindow = () => {
         if (orgWindowVisible) {
-            if (userInfo.organization === undefined)
+            if (orgInfo === null)
                 return (
                     <View>
                         <TouchableOpacity
@@ -423,13 +426,13 @@ export const Home = ({route, navigation}) => {
                         <View
                             style={format.horizontalSubBar}
                         >
-                            <Text style={fonts.mediumLink}>Add code: 12345</Text>
+                            <Text style={fonts.mediumLink}>Add code: {orgInfo.addCode}</Text>
                         </View>
                         <TouchableOpacity
                             style={format.horizontalSubBar}
                             onPress={() => disconnectFromOrganization()}
                         >
-                            <Text style={fonts.mediumLink}>Disconnect from {userInfo.organization} <IconMCI name='database-minus'
+                            <Text style={fonts.mediumLink}>Disconnect from {orgInfo.name} <IconMCI name='database-minus'
                                                                                               size={24}/></Text>
                         </TouchableOpacity>
                     </View>
@@ -440,8 +443,7 @@ export const Home = ({route, navigation}) => {
 
 
     const OrganizationBar = () => {
-        if (userInfo != []) {
-            if (userInfo.organization === undefined)
+            if (orgInfo === null)
                 return (
                     <TouchableOpacity
                         style={format.horizontalBar}
@@ -469,9 +471,6 @@ export const Home = ({route, navigation}) => {
                              size={30}/>
                 </TouchableOpacity>
             );
-        } else {
-            return <View/>;
-        }
     }
 
 
