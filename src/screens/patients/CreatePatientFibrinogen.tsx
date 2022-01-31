@@ -1,30 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, Text, TextInput, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import database from "@react-native-firebase/database";
-import {fonts, format, icons, buttons} from '../../style/style';
 import {useIsFocused} from "@react-navigation/native";
+import {fonts, format} from '../../style/style';
 import auth from "@react-native-firebase/auth";
+import database from "@react-native-firebase/database";
 
 export const CreatePatientFibrinogen = ({navigation}) => {
     // text field values
-    const [patientName, setPatientName] = useState('');
-    const [patientBloodType, setPatientBloodType] = useState('');
-    const [patientSex, setPatientSex] = useState('');
-    const [patientAge, setPatientAge] = useState(0);
-    const [patientHeight, setPatientHeight] = useState('');
-    const [patientWeight, setPatientWeight] = useState('');
-
+    // get current user and org info
+    // determines when page comes into focus
     // case 1: is connected to organization
     //  - upload to /users/patients/x
     // case 2: is not connected to organization
     //  - upload to /organizations/orgKey/patients/x
-
-    // get current user and org info
-    // determines when page comes into focus
-    const isFocused = useIsFocused();
-    const [userInfo, setUserInfo] = useState(null);
-    const [orgInfo, setOrgInfo] = useState(null);
+    const isFocused = useIsFocused(),
+        [userInfo, setUserInfo] = useState(null),
+        [orgInfo, setOrgInfo] = useState(null),
+        [patientName, setPatientName] = useState(''),
+        [patientBloodType, setPatientBloodType] = useState(''),
+        [patientSex, setPatientSex] = useState(''),
+        [patientAge, setPatientAge] = useState(0),
+        [patientHeight, setPatientHeight] = useState(''),
+        [patientWeight, setPatientWeight] = useState('');
 
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
@@ -34,7 +32,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
             database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
                     setUserInfo(userSnapshot.val());
-                    if(userSnapshot.val().organization === undefined) {
+                    if (userSnapshot.val().organization === undefined) {
                         setOrgInfo(null);
                     } else
                         database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
@@ -51,7 +49,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     }, [isFocused]);
 
     const register_user = () => {
-        if(orgInfo === null) {
+        if (orgInfo === null) {
             // find the next available QR ID and use that for the next patient
             database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
 
@@ -68,7 +66,6 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 }
 
 
-
                 const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').push();
 
                 patientReference.update({
@@ -78,7 +75,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
             });
         } else {
             // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + userInfo.organization + '/patients/').orderByChild('qrId').once('value', function (snapshot) {
+            database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
 
                 let qrId = 1;
                 if (snapshot.val()) {
@@ -93,11 +90,11 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 }
 
 
-                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/').push();
+                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').push();
 
                 patientReference.update({
                     name: patientName,
-                }).then(() => console.log('Added entry for /organizations/' + userInfo.organization + '/patients/' + patientReference.key));
+                }).then(() => console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key));
             });
         }
     }

@@ -21,18 +21,18 @@ export const ConnectOrganization = ({navigation}) => {
                             organization: organizationSnapshot.key
                         }).then(r => {
                             Alert.alert(
-                            'Organization Found',
-                            'Attempting to sync data with ' + organizationSnapshot.val().name,
-                            [
-                                {
-                                    text: 'Continue',
-                                    onPress: () => navigation.navigate('Home')
-                                },
-                                {
-                                    text: 'Cancel',
-                                    style: 'cancel',
-                                },
-                            ]
+                                'Organization Found',
+                                'Attempting to sync data with ' + organizationSnapshot.val().name,
+                                [
+                                    {
+                                        text: 'Continue',
+                                        onPress: () => navigation.navigate('Home')
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                ]
                             );
                         });
 

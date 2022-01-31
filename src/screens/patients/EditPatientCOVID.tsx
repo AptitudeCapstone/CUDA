@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format} from '../../style/style';
 import {useIsFocused} from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
 
-export const CreatePatientCOVID = ({navigation}) => {
+export const EditPatientCOVID = ({route, navigation}) => {
+    const {patientKey} = route.params;
+
     // text field values
     const [patientName, setPatientName] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
@@ -15,6 +17,7 @@ export const CreatePatientCOVID = ({navigation}) => {
     const [patientStreetAddress2, setPatientStreetAddress2] = useState('');
     const [patientCity, setPatientCity] = useState('');
     const [patientState, setPatientState] = useState('');
+    const [patientCountry, setPatientCountry] = useState('');
     const [patientZip, setPatientZip] = useState(0);
 
     // case 1: is connected to organization
@@ -52,74 +55,58 @@ export const CreatePatientCOVID = ({navigation}) => {
             });
     }, [isFocused]);
 
-    const register_user = () => {
+
+
+    const update_patient = () => {
+        let patient = null;
         if (orgInfo === null) {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').orderByChild('qrId').once('value', function (snapshot) {
-
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
-
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
-
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
-                }
-
-
-                const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').push();
-
-                patientReference.update({
-                    name: patientName,
-                    qrId: qrId,
-                    email: patientEmail,
-                    phone: patientPhone,
-                    addressLine1: patientStreetAddress1,
-                    addressLine2: patientStreetAddress2,
-                    city: patientCity,
-                    state: patientState,
-                    zip: patientZip
-                }).then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/covid/' + patientReference.key));
-            });
+            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKey);
         } else {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + userInfo.organization + '/patients/covid/').orderByChild('qrId').once('value', function (snapshot) {
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
+            patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKey)
+        }
 
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
+        // first get current patient info
+        // if not empty, and not equal to current value, update the value
+        patient.once('value', function (patientSnapshot) {
+            console.log(patientSnapshot.val());
+            if (patientSnapshot.val()) {
 
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
+                if(patientName != patientSnapshot.val().name && patientName != '') {
+                    patient.update({name: patientName});
                 }
 
-                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/covid/').push();
+                if(patientEmail != patientSnapshot.val().email && patientEmail != '') {
+                    patient.update({email: patientEmail});
+                }
 
-                patientReference.update({
-                    name: patientName,
-                    qrId: qrId,
-                    email: patientEmail,
-                    phone: patientPhone,
-                    addressLine1: patientStreetAddress1,
-                    addressLine2: patientStreetAddress2,
-                    city: patientCity,
-                    state: patientState,
-                    zip: patientZip
-                }).then(() => {
-                    console.log('Added entry for /organizations/' + userInfo.organization + '/patients/covid/' + patientReference.key);
-                    navigation.navigate('Patient');
-                });
-            });
-        }
+                if(patientPhone != patientSnapshot.val().phone && patientPhone != '') {
+                    patient.update({phone: patientPhone});
+                }
+
+                if(patientStreetAddress1 != patientSnapshot.val().streetAddress1 && patientStreetAddress1 != '') {
+                    patient.update({streetAddress1: patientStreetAddress1});
+                }
+
+                if(patientStreetAddress2 != patientSnapshot.val().streetAddress2 && patientStreetAddress2 != '') {
+                    patient.update({streetAddress2: patientStreetAddress2});
+                }
+
+                if(patientCity != patientSnapshot.val().city && patientCity != '') {
+                    patient.update({city: patientCity});
+                }
+
+                if(patientState != patientSnapshot.val().state && patientState != '') {
+                    patient.update({state: patientState});
+                }
+
+                if(patientZip != patientSnapshot.val().zip && patientZip != '') {
+                    patient.update({zip: patientZip});
+                }
+            }
+        }).then(r => {Alert.alert('Successfully applied changes', 'Returning to patient portal')});
     }
 
-    return (
+    return(
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
@@ -128,8 +115,8 @@ export const CreatePatientCOVID = ({navigation}) => {
                     paddingBottom: 40
                 }}
             >
-                <Text style={fonts.heading}>Patient Info</Text>
-                <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
+                <Text style={fonts.heading}>Edit Patient Info</Text>
+                <Text style={fonts.smallText}>All fields are optional and can always be edited</Text>
                 <Text> </Text>
                 <Text style={fonts.subheading}>Name</Text>
                 <View style={format.textBox}>
@@ -145,7 +132,7 @@ export const CreatePatientCOVID = ({navigation}) => {
                         blurOnSubmit={false}
                     />
                 </View>
-                <Text style={fonts.subheading}>Contact</Text>
+                <Text style={fonts.subheading}>Email</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
@@ -159,6 +146,7 @@ export const CreatePatientCOVID = ({navigation}) => {
                         blurOnSubmit={false}
                     />
                 </View>
+                <Text style={fonts.subheading}>Phone</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
@@ -228,6 +216,19 @@ export const CreatePatientCOVID = ({navigation}) => {
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
+                        placeholder='Country'
+                        placeholderTextColor='#bbb'
+                        keyboardType='default'
+                        onChangeText={(patientCountry) => setPatientCountry(patientCountry)}
+                        numberOfLines={1}
+                        multiline={false}
+                        style={{padding: 25, color: '#fff'}}
+                        blurOnSubmit={false}
+                    />
+                </View>
+                <View style={format.textBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
                         placeholder='5-digit zip code'
                         placeholderTextColor='#bbb'
                         keyboardType='numeric'
@@ -241,9 +242,9 @@ export const CreatePatientCOVID = ({navigation}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={register_user}
+                        onPress={() => update_patient}
                     >
-                        <Text style={buttons.submitButtonText}>Create Patient</Text>
+                        <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>

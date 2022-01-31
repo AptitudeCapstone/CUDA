@@ -38,9 +38,9 @@ export const format = StyleSheet.create({
         marginRight: 35,
         marginTop: 0,
         marginBottom: 20,
-        borderColor: '#eee',
+        borderColor: '#888',
         borderWidth: 1,
-        borderRadius: 5
+        borderRadius: 10
     },
     testSelectBar: {
         flexDirection: 'row',
@@ -48,27 +48,38 @@ export const format = StyleSheet.create({
         justifyContent: 'center'
     },
     selectPatientBarContainer: {
-        padding: 20,
+        marginBottom: 20,
+        marginTop: 10,
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'space-between',
+        marginLeft: 20,
+        marginRight: 20,
+        padding: 14,
+        paddingLeft: 20,
+        paddingRight: 20,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#888'
     },
     selectPatientBar: {
-        padding: 10,
-        paddingLeft: 30,
-        paddingRight: 30,
         backgroundColor: '#333',
         borderRadius: 50,
         borderWidth: 1,
         borderColor: '#555',
         margin: 5,
         flexDirection: 'row',
-        justifyContent: 'center'
+    },
+    utilityPatientBarContainer: {
+        padding: 20,
+        paddingTop: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
 });
 
 export const fonts = StyleSheet.create({
     username: {
-      fontSize: 24,
+      fontSize: 28,
       fontWeight: 'bold',
       color: '#eee',
     },
@@ -89,7 +100,7 @@ export const fonts = StyleSheet.create({
         color: '#eee',
         padding: 15,
         paddingTop: 2,
-        paddingBottom: 35
+        paddingBottom: 35,
     },
     subheading: {
         fontSize: 20,
@@ -99,6 +110,13 @@ export const fonts = StyleSheet.create({
         padding: 15,
         paddingTop: 2,
         paddingBottom: 18
+    },
+    mediumText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        padding: 8
     },
     smallText: {
         marginTop: 0,

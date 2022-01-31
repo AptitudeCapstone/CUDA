@@ -11,6 +11,7 @@ import {Patient} from './src/screens/patients/Patient';
 import {StartTest} from './src/screens/diagnostic/StartTest';
 import {CreatePatientCOVID} from './src/screens/patients/CreatePatientCOVID';
 import {CreatePatientFibrinogen} from './src/screens/patients/CreatePatientFibrinogen';
+import {EditPatientCOVID} from './src/screens/patients/EditPatientCOVID';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
@@ -79,6 +80,11 @@ const PatientStack = () => {
             <Stack.Screen
                 name='Create Patient Fibrinogen'
                 component={CreatePatientFibrinogen}
+                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+            />
+            <Stack.Screen
+                name='Edit Patient COVID'
+                component={EditPatientCOVID}
                 options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
             />
         </Stack.Navigator>

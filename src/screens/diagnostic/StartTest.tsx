@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
 import ModalSelector from "react-native-modal-selector-searchable";
@@ -94,27 +93,25 @@ export const StartTest = ({navigation, route}) => {
 
         const PatientSelectorButton = () => {
             return (
-                <View style={format.selectPatientBarContainer}>
                     <TouchableOpacity
-                        style={format.selectPatientBar}
+                        style={format.selectPatientBarContainer}
                         onPress={() => toggleViewPatientModal(null)}
                     >
-                        <Text style={fonts.patientSelectText}>Select a patient</Text>
-                        <IconE
-                            name='chevron-down' size={26} style={{color: '#eee', paddingLeft: 10}}/>
+                        <Text style={fonts.username}>Select Patient</Text>
+                        <IconE style={fonts.username}
+                            name='chevron-down' size={34}/>
                     </TouchableOpacity>
-                </View>
             );
         }
 
-        return(
+        return (
             <ModalSelector
                 data={patients}
                 visible={viewPatientModalVisible}
                 onCancel={() => {
                     toggleViewPatientModal(null);
                 }}
-                customSelector={<PatientSelectorButton/>}
+                customSelector={<PatientSelectorButton />}
                 onChange={(option) => {
                     toggleViewPatientModal(option.key);
                 }}
@@ -152,8 +149,8 @@ export const StartTest = ({navigation, route}) => {
 
     return (
         <SafeAreaView style={format.page}>
-            <TestSelectBar />
-            <PatientSelector />
+            <TestSelectBar/>
+            <PatientSelector/>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{

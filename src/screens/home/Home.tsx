@@ -61,7 +61,7 @@ export const Home = ({route, navigation}) => {
                 idToken,
                 accessToken,
             );
-            await auth().currentUser.linkWithCredential(credential).then(function(userCredentials) {
+            await auth().currentUser.linkWithCredential(credential).then(function (userCredentials) {
                 // update /users/  with organization for the signed in user
                 database().ref('users/' + auth().currentUser.uid).update({
                     displayName: auth().currentUser.providerData[0].displayName
@@ -165,7 +165,7 @@ export const Home = ({route, navigation}) => {
             database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
                     setuserInfo(userSnapshot.val());
-                    if(userSnapshot.val().organization === undefined) {
+                    if (userSnapshot.val().organization === undefined) {
                         setOrgInfo(null);
                     } else
                         database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
@@ -279,10 +279,9 @@ export const Home = ({route, navigation}) => {
             return (
                 <View style={format.deviceList}>
                     <View style={{flexDirection: 'row', paddingTop: 20, marginBottom: 16}}>
-                        <Text style={{color: '#eee', fontSize: 14, marginTop: 14, marginBottom: -4}}>No devices
-                            found</Text>
-                        <Text style={{marginLeft: 20, marginTop: 8, marginBottom: 0}}>
-                            <ActivityIndicator color={'white'} size={32}/>
+                        <Text style={{color: '#eee', fontSize: 16, marginTop: 14, marginBottom: -4}}>Searching for CUDA devices</Text>
+                        <Text style={{marginLeft: 15, marginTop: 8, marginBottom: 0}}>
+                            <ActivityIndicator color={'white'} size={36}/>
                         </Text>
                     </View>
                 </View>
@@ -380,7 +379,7 @@ export const Home = ({route, navigation}) => {
                     onPress={toggleUserWindow}
                 >
                     <Text style={fonts.username}>Guest <IconE
-                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={34}/></Text>
                 </TouchableOpacity>
             );
         } else {
@@ -390,7 +389,7 @@ export const Home = ({route, navigation}) => {
                     onPress={toggleUserWindow}
                 >
                     <Text style={fonts.username}>{userInfo.displayName} <IconE
-                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={30}/></Text>
+                        name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={34}/></Text>
                 </TouchableOpacity>
             );
         }

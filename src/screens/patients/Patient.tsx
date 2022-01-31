@@ -1,20 +1,51 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {useIsFocused} from '@react-navigation/native';
-import {parseISO} from 'date-fns';
 import ModalSelector from "react-native-modal-selector-searchable";
-import database from "@react-native-firebase/database";
-import {buttons, fonts, format} from '../../style/style';
+import {useIsFocused} from '@react-navigation/native';
+import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
+import {buttons, fonts, format} from '../../style/style';
+import database from "@react-native-firebase/database";
+import auth from "@react-native-firebase/auth";
 
 
 export const Patient = ({route, navigation}) => {
+    // get current user and org info
+    // determines when page comes into focus
+    const isFocused = useIsFocused(),
+        [selectedTest, setSelectedTest] = useState('COVID'),
+        [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
+        [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
+        [patientDataCOVID, setPatientDataCOVID] = useState(null),
+        [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null),
+        [userInfo, setUserInfo] = useState(null),
+        [orgInfo, setOrgInfo] = useState(null);
 
-    const [selectedTest, setSelectedTest] = useState('COVID');
-    const [patientKey, setPatientId] = useState(null);
+    // update user info with current authenticated user info
+    // also get organization info from user, update organization info
+    useEffect(() => {
+        if (auth().currentUser != null)
+            // update user info based on database info
+            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+                if (userSnapshot.val()) {
+                    setUserInfo(userSnapshot.val());
+                    if (userSnapshot.val().organization === undefined) {
+                        setOrgInfo(null);
+                    } else
+                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
+                            setOrgInfo(orgSnapshot.val());
+                        });
+                }
+            });
+        else
+            auth().signInAnonymously().then(() => {
+                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+            }).catch(error => {
+                console.error(error);
+            });
+    }, [isFocused]);
 
     /*
 
@@ -27,13 +58,19 @@ export const Patient = ({route, navigation}) => {
             <View style={format.testSelectBar}>
                 <TouchableOpacity
                     style={(selectedTest == 'COVID') ? buttons.covidSelectButton : buttons.unselectedButton}
-                    onPress={() => setSelectedTest('COVID')}
+                    onPress={() => {
+                        // change selected test and update the currently showing patient
+                        setSelectedTest('COVID');
+                    }}
                 >
                     <Text style={fonts.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={(selectedTest == 'Fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}
-                    onPress={() => setSelectedTest('Fibrinogen')}
+                    onPress={() => {
+                        // change selected test and update the currently showing patient
+                        setSelectedTest('Fibrinogen');
+                    }}
                 >
                     <Text style={fonts.selectButtonText}>Fibrinogen</Text>
                 </TouchableOpacity>
@@ -51,127 +88,313 @@ export const Patient = ({route, navigation}) => {
         const [patients, setPatients] = useState([]);
         const [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
 
-        const toggleViewPatientModal = (patientKey) => {
+        const toggleViewPatientModal = () => {
             // if we are re-showing this modal, update patient list in case it has changed
-            if(!viewPatientModalVisible) {
-                // if signed in to org, display all patients in org
-                // traverse all
-            }
+            // case 1: is connected to organization (covid)
+            //  - look in /users/patients/covid/
+            // case 2: is not connected to organization (covid)
+            //  - look in /organizations/orgKey/patients/covid/
+            // case 3: is connected to organization (fibrinogen)
+            //  - look in /users/patients/fibrinogen/
+            // case 4: is not connected to organization (fibrinogen)
+            //  - look in /organizations/orgKey/patients/fibrinogen/
+            if (!viewPatientModalVisible) {
+                let patients = null;
 
-            if (patientKey != null) {
-                /*
-                database().ref('patients/' + patientKey).once('value', function (patient) {
-                    //verify that org with add code exists
-                    if (patient.val()) {
-                        navigation.navigate('Patient', {
-                            navigation,
-                            patient_id: patientKey,
-                            patient_qr_id: patient.val().qrId.toString(),
-                            patient_name: patient.val().name,
-                            patient_email: patient.val().email,
-                            patient_phone: patient.val().phone.toString(),
-                            patient_street_address_1: patient.val().addressLine1,
-                            patient_street_address_2: patient.val().addressLine2,
-                            patient_city: patient.val().city,
-                            patient_state: patient.val().state,
-                            patient_country: patient.val().country,
-                            patient_zip: patient.val().zip.toString()
-                        });
+                if (selectedTest == 'COVID') {
+                    if (orgInfo === null) {
+                        patients = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').orderByChild('name');
+                    } else {
+                        patients = database().ref('/organizations/' + userInfo.organization + '/patients/covid/').orderByChild('name')
+                    }
+                } else if (selectedTest == 'Fibrinogen') {
+                    if (orgInfo === null) {
+                        patients = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('name');
+                    } else {
+                        patients = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').orderByChild('name')
+                    }
+                }
+
+                patients.once('value', function (snapshot) {
+                    if (snapshot.val()) {
+                        let patientList = [];
+                        snapshot.forEach(function (data) {patientList.push({key: data.key, label: data.val().name});});
+                        setPatients(patientList);
                     }
                 });
-
-                database().ref('patients/').once('value', function (patients) {
-                    let temp = [];
-
-                    patients.forEach(function (patient) {
-                        temp.push({key: patient.key, label: patient.val().name});
-                    });
-
-                    setPatients(temp);
-                });
-                 */
             }
 
             setViewPatientModalVisible(!viewPatientModalVisible);
         }
 
         const PatientSelectorButton = () => {
-            return (
-                <View style={format.selectPatientBarContainer}>
-                    <TouchableOpacity
-                        style={format.selectPatientBar}
-                        onPress={() => toggleViewPatientModal(null)}
-                    >
-                        <Text style={fonts.patientSelectText}>Select a patient</Text>
-                        <IconE
-                            name='chevron-down' size={26} style={{color: '#eee', paddingLeft: 10}}/>
-                    </TouchableOpacity>
+            const PatientUtilityBar = () => {
+                if(selectedTest == 'COVID') {
+                    if (patientDataCOVID !== null) {
+                        return (
+                            <View
+                                style={format.utilityPatientBarContainer}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>Export</Text>
+                                    <IconF
+                                        name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        navigation.navigate('Edit Patient COVID', {patientKey: patientKeyCOVID});
+                                    }}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>Edit</Text>
+                                    <IconA
+                                        name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>New</Text>
+                                    <IconF
+                                        name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    } else {
+                        return (
+                            <View
+                                style={format.utilityPatientBarContainer}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>New</Text>
+                                    <IconF
+                                        name='user-plus'
+                                        size={20}
+                                        style={{color: '#eee', marginTop: 6}}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    }
+                } else if(selectedTest == 'Fibrinogen') {
+                    if (patientDataFibrinogen !== null) {
+                        return (
+                            <View
+                                style={format.utilityPatientBarContainer}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>Export</Text>
+                                    <IconF
+                                        name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        navigation.navigate('Edit Patient Fibrinogen', {patientKey: patientKeyFibrinogen});
+                                    }}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>Edit</Text>
+                                    <IconA
+                                        name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>New</Text>
+                                    <IconF
+                                        name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    } else {
+                        return (
+                            <View
+                                style={format.utilityPatientBarContainer}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderColor: '#888',
+                                        borderWidth: 1,
+                                        borderRadius: 50,
+                                        padding: 15,
+                                        paddingTop: 3,
+                                        paddingBottom: 3
+                                    }}
+                                >
+                                    <Text style={fonts.mediumText}>New</Text>
+                                    <IconF
+                                        name='user-plus'
+                                        size={20}
+                                        style={{color: '#eee', marginTop: 6}}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    }
+                }
+            }
+
+            return(
+                <View>
+                        <TouchableOpacity
+                            onPress={() => toggleViewPatientModal()}
+                            style={format.selectPatientBarContainer}
+                        >
+                            <Text style={fonts.username}>{
+                                ((selectedTest == 'COVID') ?
+                                (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
+                                 :
+                                (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
+                            )
+
+                            }</Text>
+                            <IconE style={fonts.username}
+                                name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} size={34}
+                            />
+                        </TouchableOpacity>
+                    <PatientUtilityBar />
                 </View>
             );
         }
 
-        return(
-            <ModalSelector
-                data={patients}
-                visible={viewPatientModalVisible}
-                onCancel={() => {
-                    toggleViewPatientModal(null);
-                }}
-                customSelector={<PatientSelectorButton/>}
-                onChange={(option) => {
-                    toggleViewPatientModal(option.key);
-                }}
-                optionContainerStyle={{
-                    backgroundColor: '#111', border: 0
-                }}
-                optionTextStyle={{
-                    color: '#444', fontSize: 18, fontWeight: 'bold'
-                }}
-                optionStyle={{
-                    padding: 20,
-                    backgroundColor: '#eee',
-                    borderRadius: 100,
-                    margin: 5,
-                    marginBottom: 15,
-                    borderColor: '#222'
-                }}
-                cancelText={'Cancel'}
-                cancelStyle={styles.cancelButton}
-                cancelTextStyle={styles.testButtonText}
-                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                listType={'FLATLIST'}
-            />
-        );
-    }
+        return (
+            <View>
+                <ModalSelector
+                    data={patients}
+                    visible={viewPatientModalVisible}
+                    onCancel={() => {
+                        toggleViewPatientModal();
+                    }}
+                    customSelector={<View/>}
+                    onChange={async (option) => {
+                        // get patient ID for the appropriate test type
+                        if(selectedTest == 'COVID')
+                            setPatientKeyCOVID(option.key);
+                        else if(selectedTest == 'Fibrinogen')
+                            setPatientKeyFibrinogen(option.key);
 
-    const CreatePatientButton = () => {
-        if(selectedTest == 'COVID')
-        return(
-            <View style={format.selectPatientBarContainer}>
-                <TouchableOpacity
-                    style={format.selectPatientBar}
-                    onPress={() => navigation.navigate('Create Patient COVID')}
-                >
-                    <Text style={fonts.patientSelectText}>Create Patient</Text>
-                    <IconF
-                        name='user-plus' size={26} style={{color: '#eee', paddingLeft: 25}}/>
-                </TouchableOpacity>
+                        // get patient info for appropriate test type
+                        let patient = null;
+                        if (selectedTest == 'COVID') {
+                            if (orgInfo === null) {
+                                patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key);
+                            } else {
+                                patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + option.key);
+                            }
+                        } else if (selectedTest == 'Fibrinogen') {
+                            if (orgInfo === null) {
+                                patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
+                            } else {
+                                patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key);
+                            }
+                        }
+
+                        // update data for patient for appropriate test type
+                        await patient.once('value', function (patientSnapshot) {
+                            if(selectedTest == 'COVID') {
+                                setPatientKeyCOVID(patientSnapshot.key);
+                                setPatientDataCOVID(patientSnapshot.val());
+                            } else if(selectedTest == 'Fibrinogen') {
+                                setPatientKeyFibrinogen(patientSnapshot.key);
+                                setPatientDataFibrinogen(patientSnapshot.val());
+                            }
+                        });
+                    }}
+                    optionContainerStyle={{
+                        backgroundColor: '#111',
+                        border: 0
+                    }}
+                    optionTextStyle={{
+                        color: '#444',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}
+                    optionStyle={{
+                        padding: 20,
+                        backgroundColor: '#eee',
+                        borderRadius: 100,
+                        margin: 5,
+                        marginBottom: 15,
+                        borderColor: '#222'
+                    }}
+                    cancelText={'Cancel'}
+                    cancelStyle={styles.cancelButton}
+                    cancelTextStyle={styles.testButtonText}
+                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                    listType={'FLATLIST'}
+                />
+                <PatientSelectorButton/>
             </View>
         );
-        else
-            return(
-                <View style={format.selectPatientBarContainer}>
-                    <TouchableOpacity
-                        style={format.selectPatientBar}
-                        onPress={() => navigation.navigate('Create Patient Fibrinogen')}
-                    >
-                        <Text style={fonts.patientSelectText}>Create Patient</Text>
-                        <IconF
-                            name='user-plus' size={26} style={{color: '#eee', paddingLeft: 25}}/>
-                    </TouchableOpacity>
-                </View>
-            );
     }
 
     /*
@@ -181,17 +404,6 @@ export const Patient = ({route, navigation}) => {
      */
 
     const PatientPortal = () => {
-        const [patientQrId, setPatientQrId] = useState(null);
-        const [patientName, setPatientName] = useState(null);
-        const [patientEmail, setPatientEmail] = useState(null);
-        const [patientPhone, setPatientPhone] = useState(null);
-        const [patientStreetAddress1, setPatientStreetAddress1] = useState(null);
-        const [patientStreetAddress2, setPatientStreetAddress2] = useState(null);
-        const [patientCity, setPatientCity] = useState(null);
-        const [patientState, setPatientState] = useState(null);
-        const [patientCountry, setPatientCountry] = useState(null);
-        const [patientZip, setPatientZip] = useState(null);
-
         const [covidTests, setCovidTests] = useState(0);
         const [fibTests, setFibTests] = useState(0);
 
@@ -214,132 +426,83 @@ export const Patient = ({route, navigation}) => {
             }
         }
 
-        if(patientKey != null) {
+
             // patient has been selected
-            if(selectedTest == 'COVID')
-            return (
-                <View>
-                    <View style={styles.section}>
-                        <View style={styles.nameContainer}>
-                            <Text style={{textAlign: 'right'}}>
-                                <Icon
-                                    onPress={() => {
-                                        navigation.navigate('EditPatient', {
-                                            navigation,
-                                            patientKey,
-                                            patient_qr_id: patientQrId,
-                                            patient_name: patientName,
-                                            patient_phone: patientPhone,
-                                            patient_email: patientEmail,
-                                            patient_street_address_1: patientStreetAddress1,
-                                            patient_street_address_2: patientStreetAddress2,
-                                            patient_city: patientCity,
-                                            patient_state: patientState,
-                                            patient_country: patientCountry,
-                                            patient_zip: patientZip
-                                        })
-                                    }}
-                                    name='edit'
-                                    size={36}
-                                    color='#fff'
-                                />
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={styles.section}>
-                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Contact</Text>
-                            <Text style={styles.text}>{patientEmail}</Text>
-                            <Text style={styles.text}>{patientPhone}</Text>
-                        </View>
-                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Address</Text>
-                            <Text style={styles.text}>{patientStreetAddress1}</Text>
-                            <Text style={styles.text}>{patientStreetAddress2}</Text>
-                            <Text
-                                style={styles.text}>{patientCity + ', ' + patientState + ', ' + patientCountry + ', ' + patientZip}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.section}>
-                        <TouchableOpacity
-                            style={{flexDirection: 'row', flex: 1}}
-                        >
-                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 0.6, padding: 20}}>
-                                <Text style={styles.headingText}>COVID Tests</Text>
-                                <Text style={{
-                                    color: '#fff',
-                                    paddingTop: 6,
-                                    fontSize: 18,
-                                    textAlign: 'center'
-                                }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
+            if (patientKeyCOVID != null && patientDataCOVID != null && selectedTest == 'COVID')
+                return (
+                    <View>
+                        <View>
+                            <View style={{paddingLeft: 20, paddingRight: 20}}>
+                                <Text style={styles.sectionText}>Contact</Text>
+                                <Text style={styles.text}>{(patientDataCOVID.email === undefined) ? '' : patientDataCOVID.email}</Text>
+                                <Text style={styles.text}>{(patientDataCOVID.phone === undefined) ? '' : patientDataCOVID.phone}</Text>
                             </View>
-                            <View style={{padding: 10, alignItems: 'center', justifyContent: 'center', flex: 0.3}}>
-                                <View
-                                    style={{
-                                        backgroundColor: '#333',
-                                        padding: 20,
-                                        borderWidth: 1,
-                                        borderColor: '#555',
-                                        borderRadius: 1000,
-                                        width: 100,
-                                        height: 100,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
+                        </View>
+                        <View style={styles.section}>
+                            <TouchableOpacity
+                                style={{flexDirection: 'row', flex: 1}}
+                            >
+                                <View style={{alignItems: 'center', justifyContent: 'center', flex: 0.6, padding: 20}}>
+                                    <Text style={styles.headingText}>COVID Tests</Text>
                                     <Text style={{
-                                        color: '#eee',
-                                        textAlign: 'center',
-                                        fontWeight: 'bold',
-                                        fontSize: 30
-                                    }}>{covidTests.length}</Text>
+                                        color: '#fff',
+                                        paddingTop: 6,
+                                        fontSize: 18,
+                                        textAlign: 'center'
+                                    }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
                                 </View>
-                            </View>
-                        </TouchableOpacity>
+                                <View style={{padding: 10, alignItems: 'center', justifyContent: 'center', flex: 0.3}}>
+                                    <View
+                                        style={{
+                                            backgroundColor: '#333',
+                                            padding: 20,
+                                            borderWidth: 1,
+                                            borderColor: '#555',
+                                            borderRadius: 1000,
+                                            width: 100,
+                                            height: 100,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <Text style={{
+                                            color: '#eee',
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                            fontSize: 30
+                                        }}>{covidTests.length}</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            );
-            else return (
+                );
+            else if(patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest == 'Fibrinogen') return (
                 <View>
-                    <View style={styles.section}>
-                        <View style={styles.nameContainer}>
-                            <Text style={{textAlign: 'right'}}>
-                                <Icon
-                                    onPress={() => {
-                                        navigation.navigate('EditPatient', {
-                                            navigation,
-                                            patientKey,
-                                            patient_qr_id: patientQrId,
-                                            patient_name: patientName,
-                                            patient_phone: patientPhone,
-                                            patient_email: patientEmail,
-                                            patient_street_address_1: patientStreetAddress1,
-                                            patient_street_address_2: patientStreetAddress2,
-                                            patient_city: patientCity,
-                                            patient_state: patientState,
-                                            patient_country: patientCountry,
-                                            patient_zip: patientZip
-                                        })
-                                    }}
-                                    name='edit'
-                                    size={36}
-                                    color='#fff'
-                                />
-                            </Text>
+                    <View>
+                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                            <Text style={styles.sectionText}>Blood Type</Text>
+                            {(patientDataCOVID.bloodType === undefined) ?
+                                <Text style={styles.text}>Blood type has not been set</Text>
+                                :
+                                <Text style={styles.text}>{patientDataCOVID.bloodType}</Text>
+                            }
                         </View>
-                    </View>
-                    <View style={styles.section}>
-                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Contact</Text>
-                            <Text style={styles.text}>{patientEmail}</Text>
-                            <Text style={styles.text}>{patientPhone}</Text>
+                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                            <Text style={styles.sectionText}>Age</Text>
+                            {(patientDataCOVID.age === undefined) ?
+                                <Text style={styles.text}>Age has not been set</Text>
+                                :
+                                <Text style={styles.text}>{patientDataCOVID.age}</Text>
+                            }
                         </View>
-                        <View style={{flex: 0.5, paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Address</Text>
-                            <Text style={styles.text}>{patientStreetAddress1}</Text>
-                            <Text style={styles.text}>{patientStreetAddress2}</Text>
-                            <Text
-                                style={styles.text}>{patientCity + ', ' + patientState + ', ' + patientCountry + ', ' + patientZip}</Text>
+                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                            <Text style={styles.sectionText}>Age</Text>
+                            {(patientDataCOVID.age === undefined) ?
+                                <View />
+                                :
+                                <Text style={styles.text}>{patientDataCOVID.age}</Text>
+                            }
                         </View>
                     </View>
                     <View style={styles.section}>
@@ -381,19 +544,19 @@ export const Patient = ({route, navigation}) => {
                     </View>
                 </View>
             );
-        } else // patient has not yet been selected
-            return (
-                <View style={{padding: 25, paddingTop: 150, paddingBottom: 50}}>
-                    <Text style={fonts.heading}>To view a patient portal, select the test type and the patient or scan their QR code</Text>
-                </View>
-            );
+                else // patient has not yet been selected
+                    return (
+                        <View style={{padding: 25, paddingTop: 150, paddingBottom: 50}}>
+                            <Text style={fonts.heading}>To view a patient portal, select the test type and the patient or scan
+                                their QR code</Text>
+                        </View>
+                    );
     }
 
     return (
         <SafeAreaView style={format.page}>
             <TestSelectBar/>
-            <CreatePatientButton />
-            <PatientSelector />
+            <PatientSelector/>
             <PatientPortal/>
         </SafeAreaView>
     );
