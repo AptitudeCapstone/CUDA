@@ -230,5 +230,27 @@ export const buttons = StyleSheet.create({
         borderRadius: 50,
         borderColor: '#555',
         borderWidth: 1
+    },
+    bloodTypeSelectButton: {
+        padding: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: '#9c3a2f',
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 50,
+        borderColor: '#555',
+        borderWidth: 1
+    },
+    unselectedBloodTypeButton: {
+        padding: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: '#333',
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 50,
+        borderColor: '#555',
+        borderWidth: 1
     }
 });

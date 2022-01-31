@@ -6180,6 +6180,16 @@ react-native-vector-icons@^9.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
+react-native-wheel-picker@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-wheel-picker/-/react-native-wheel-picker-1.2.0.tgz#0503e37b3326856724501679bdf5697e0dd247a6"
+  integrity sha1-BQPjezMmhWckUBZ5vfVpfg3SR6Y=
+
+react-native-wheel-scrollview-picker@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-wheel-scrollview-picker/-/react-native-wheel-scrollview-picker-1.2.3.tgz#279b50dec33244a746a9ca765eb8526e103c1d72"
+  integrity sha512-A/R4Tv0lvECwF0u5nMCcq7vQML3nMpcWUxe5zmVh2UAWiwPc0CazZ3ZZyyy3VotDPr33pSB8ghOtyk/Gt6OrEA==
+
 react-native@^0.66.1:
   version "0.66.1"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.66.1.tgz#96defaf60579406321340ebe1dcea76a3c942806"

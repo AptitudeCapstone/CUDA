@@ -61,6 +61,7 @@ export const CreatePatientCOVID = ({navigation}) => {
                 if (snapshot.val()) {
                     let takenQRs = [];
 
+                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });
@@ -91,6 +92,7 @@ export const CreatePatientCOVID = ({navigation}) => {
                 if (snapshot.val()) {
                     let takenQRs = [];
 
+                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });

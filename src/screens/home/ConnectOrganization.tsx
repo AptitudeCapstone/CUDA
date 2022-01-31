@@ -15,6 +15,7 @@ export const ConnectOrganization = ({navigation}) => {
             database().ref('organizations/').orderByChild('addCode').equalTo(addCode).once('value', function (snapshot) {
                 //verify that org with add code exists
                 if (snapshot.val()) {
+                    // @ts-ignore
                     snapshot.forEach(function (organizationSnapshot) {
                         const currentUserID = auth().currentUser.uid;
                         database().ref('/users/' + currentUserID).update({
@@ -35,7 +36,6 @@ export const ConnectOrganization = ({navigation}) => {
                                 ]
                             );
                         });
-
                     });
                 } else {
                     Alert.alert('Error', 'No organization was found with this add code');

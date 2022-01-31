@@ -20,6 +20,7 @@ export const COVID = ({route, navigation}) => {
             //verify that org with add code exists
             if (snapshot.val()) {
                 let temp = [];
+                // @ts-ignore
                 snapshot.forEach(function (data) {
                     temp.push(data.val());
                 });

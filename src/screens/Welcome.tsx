@@ -486,6 +486,7 @@ export const Welcome = ({route, navigation}) => {
             database().ref('patients/').once('value', function (patients) {
                 let temp = [];
 
+                // @ts-ignore
                 patients.forEach(function (patient) {
                     temp.push({key: patient.key, label: patient.val().name});
                 });

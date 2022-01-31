@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TextInput, View} from 'react-native';
+import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Picker from 'react-native-wheel-picker';
 import {useIsFocused} from "@react-navigation/native";
-import {fonts, format} from '../../style/style';
+import {fonts, format, buttons} from '../../style/style';
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
 
@@ -57,6 +58,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 if (snapshot.val()) {
                     let takenQRs = [];
 
+                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });
@@ -81,6 +83,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 if (snapshot.val()) {
                     let takenQRs = [];
 
+                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });
@@ -98,6 +101,117 @@ export const CreatePatientFibrinogen = ({navigation}) => {
             });
         }
     }
+
+    const BloodTypeSelector = () => {
+        const [bloodType, setBloodType] = useState(null);
+
+        return(
+            <View>
+                <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
+                    <TouchableOpacity
+                        style={(bloodType == 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('A+')}
+                    >
+                        <Text style={fonts.selectButtonText}>A+</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('B+')}
+                    >
+                        <Text style={fonts.selectButtonText}>B+</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('AB+')}
+                    >
+                        <Text style={fonts.selectButtonText}>AB+</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('O+')}
+                    >
+                        <Text style={fonts.selectButtonText}>O+</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
+                    <TouchableOpacity
+                        style={(bloodType == 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('A-')}
+                    >
+                        <Text style={fonts.selectButtonText}>A-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('B-')}
+                    >
+                        <Text style={fonts.selectButtonText}>B-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('AB-')}
+                    >
+                        <Text style={fonts.selectButtonText}>AB-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={(bloodType == 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setBloodType('O-')}
+                    >
+                        <Text style={fonts.selectButtonText}>O-</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
+    const SexSelector = () => {
+        const [sex, setSex] = useState(null);
+
+        return(
+            <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
+                <TouchableOpacity
+                    style={(sex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    onPress={() => setSex('Male')}
+                >
+                    <Text style={fonts.selectButtonText}>Male</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={(sex == 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    onPress={() => setSex('Female')}
+                >
+                    <Text style={fonts.selectButtonText}>Female</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
+    const AgeSelector = () => {
+        const [age, setAge] = useState(null);
+
+        return(
+            <View>
+                <Text style={fonts.smallText}>{age}</Text>
+
+            </View>
+        )
+    }
+
+    const HeightSelector = () => {
+        return(
+            <View>
+
+            </View>
+        )
+    }
+
+    const WeightSelector = () => {
+        return(
+            <View>
+
+            </View>
+        )
+    }
+
+
 
     return (
         <SafeAreaView style={format.page}>
@@ -126,74 +240,22 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                     />
                 </View>
                 <Text style={fonts.subheading}>Blood Type</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Email address'
-                        placeholderTextColor='#bbb'
-                        keyboardType='email-address'
-                        onChangeText={(patientBloodType) => setPatientBloodType(patientBloodType)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                <BloodTypeSelector />
                 <Text style={fonts.subheading}>Sex</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Phone number'
-                        placeholderTextColor='#bbb'
-                        keyboardType='numeric'
-                        onChangeText={(patientSex) => setPatientSex(patientSex)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                <SexSelector />
                 <Text style={fonts.subheading}>Age</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Address line 1'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientAge) => setPatientAge(patientAge)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                <AgeSelector />
                 <Text style={fonts.subheading}>Height</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Address line 2 (e.g. Apt. #1)'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientHeight) => setPatientHeight(patientHeight)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                <HeightSelector />
                 <Text style={fonts.subheading}>Weight</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='City'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientWeight) => setPatientWeight(patientWeight)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
+                <WeightSelector />
+                <View style={buttons.submitButtonContainer}>
+                    <TouchableOpacity
+                        style={buttons.submitButton}
+                        onPress={register_user}
+                    >
+                        <Text style={buttons.submitButtonText}>Create Patient</Text>
+                    </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
         </SafeAreaView>

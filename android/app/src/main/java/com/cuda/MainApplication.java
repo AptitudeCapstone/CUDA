@@ -11,6 +11,13 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import com.zyu.ReactNativeWheelPickerPackage;
+
+protected List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+        new MainReactPackage(),
+        new ReactNativeWheelPickerPackage());
+}
 
 public class MainApplication extends Application implements ReactApplication {
 

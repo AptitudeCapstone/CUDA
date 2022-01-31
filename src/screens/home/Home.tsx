@@ -50,12 +50,12 @@ export const Home = ({route, navigation}) => {
 
      */
 
-    const [loggedIn, setloggedIn] = useState(false);
-    const [userInfo, setuserInfo] = useState([]);
+    const [userInfo, setUserInfo] = useState([]);
 
     const _signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
+            // @ts-ignore
             const {accessToken, idToken} = await GoogleSignin.signIn();
             const credential = auth.GoogleAuthProvider.credential(
                 idToken,
@@ -68,7 +68,7 @@ export const Home = ({route, navigation}) => {
                 });
                 database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                     if (userSnapshot.val()) {
-                        setuserInfo(userSnapshot.val());
+                        setUserInfo(userSnapshot.val());
                         if (userSnapshot.val().organization === undefined) {
                             console.log('userSnapshot.val()');
                             setOrgInfo(null);
@@ -89,7 +89,7 @@ export const Home = ({route, navigation}) => {
                     });
                     database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                         if (userSnapshot.val()) {
-                            setuserInfo(userSnapshot.val());
+                            setUserInfo(userSnapshot.val());
                             if (userSnapshot.val().organization === undefined) {
                                 console.log('userSnapshot.val()');
                                 setOrgInfo(null);
@@ -103,7 +103,6 @@ export const Home = ({route, navigation}) => {
                 });
             });
             setUserWindowVisible(false);
-            setloggedIn(true);
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 // user cancelled the login flow
@@ -125,8 +124,7 @@ export const Home = ({route, navigation}) => {
             await GoogleSignin.signOut();
             auth().signOut().then(() => {
                 Alert.alert('Signed out', 'You have been successfully signed out');
-                setloggedIn(false);
-                setuserInfo([]);
+                setUserInfo([]);
                 setOrgInfo(null);
                 setUserWindowVisible(false);
             });
@@ -143,12 +141,10 @@ export const Home = ({route, navigation}) => {
     };
 
     function onAuthStateChanged(user) {
-        console.log(user);
         if (user) {
-            setloggedIn(true);
             database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
-                    setuserInfo(userSnapshot.val());
+                    setUserInfo(userSnapshot.val());
                 }
             });
         }
@@ -164,7 +160,7 @@ export const Home = ({route, navigation}) => {
             // update user info based on database info
             database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
-                    setuserInfo(userSnapshot.val());
+                    setUserInfo(userSnapshot.val());
                     if (userSnapshot.val().organization === undefined) {
                         setOrgInfo(null);
                     } else
