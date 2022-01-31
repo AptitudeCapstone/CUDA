@@ -111,6 +111,15 @@ export const fonts = StyleSheet.create({
         paddingTop: 2,
         paddingBottom: 18
     },
+    subheadingSpaced: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        padding: 15,
+        paddingTop: 40,
+        paddingBottom: 30
+    },
     mediumText: {
         fontSize: 16,
         fontWeight: 'bold',

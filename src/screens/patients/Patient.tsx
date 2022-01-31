@@ -301,7 +301,6 @@ export const Patient = ({route, navigation}) => {
                     }
                 }
             }
-
             return(
                 <View>
                         <TouchableOpacity
@@ -426,18 +425,41 @@ export const Patient = ({route, navigation}) => {
             }
         }
 
-
             // patient has been selected
             if (patientKeyCOVID != null && patientDataCOVID != null && selectedTest == 'COVID')
                 return (
                     <View>
                         <View>
-                            <View style={{paddingLeft: 20, paddingRight: 20}}>
-                                <Text style={styles.sectionText}>Contact</Text>
-                                <Text style={styles.text}>{(patientDataCOVID.email === undefined) ? '' : patientDataCOVID.email}</Text>
-                                <Text style={styles.text}>{(patientDataCOVID.phone === undefined) ? '' : patientDataCOVID.phone}</Text>
-                            </View>
+                            {(patientDataCOVID.email !== undefined || patientDataCOVID.phone !== undefined) ?
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20,}}>
+                                    <Text style={styles.sectionText}>Email</Text>
+                                    {(patientDataCOVID.email !== undefined) ?
+                                        <Text
+                                            style={styles.text}>
+                                            {patientDataCOVID.email}
+                                        </Text>
+                                        :
+                                        <View />
+                                    }
+                                </View>
+                                :
+                                <View />
+                            }
                         </View>
+                        {(patientDataCOVID.email !== undefined || patientDataCOVID.phone !== undefined) ?
+                            <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <Text style={styles.sectionText}>Phone</Text>
+                                {(patientDataCOVID.phone !== undefined) ?
+                                    <Text style={styles.text}>
+                                        {patientDataCOVID.phone}
+                                    </Text>
+                                    :
+                                    <View/>
+                                }
+                            </View>
+                            :
+                            <View />
+                        }
                         <View style={styles.section}>
                             <TouchableOpacity
                                 style={{flexDirection: 'row', flex: 1}}
@@ -480,30 +502,74 @@ export const Patient = ({route, navigation}) => {
             else if(patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest == 'Fibrinogen') return (
                 <View>
                     <View>
-                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                        {(patientDataFibrinogen.bloodType !== undefined) ?
+                            (<View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <Text style={styles.sectionText}>Blood Type</Text>
-                            {(patientDataCOVID.bloodType === undefined) ?
-                                <Text style={styles.text}>Blood type has not been set</Text>
-                                :
-                                <Text style={styles.text}>{patientDataCOVID.bloodType}</Text>
-                            }
-                        </View>
-                        <View style={{paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Age</Text>
-                            {(patientDataCOVID.age === undefined) ?
-                                <Text style={styles.text}>Age has not been set</Text>
-                                :
-                                <Text style={styles.text}>{patientDataCOVID.age}</Text>
-                            }
-                        </View>
-                        <View style={{paddingLeft: 20, paddingRight: 20}}>
-                            <Text style={styles.sectionText}>Age</Text>
-                            {(patientDataCOVID.age === undefined) ?
-                                <View />
-                                :
-                                <Text style={styles.text}>{patientDataCOVID.age}</Text>
-                            }
-                        </View>
+                            <Text style={styles.text}>{patientDataFibrinogen.bloodType}</Text>
+                        </View>)
+                            :
+                            <View />
+                        }
+                        {(patientDataFibrinogen.age !== undefined) ?
+                            <View style={{
+                                margin: 20,
+                                marginTop: 5,
+                                marginBottom: 5,
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                borderColor: '#444',
+                                padding: 5,
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.sectionText}>Age</Text>
+                                <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
+                            </View>
+                            :
+                            <View />
+                        }
+                        {(patientDataFibrinogen.weight !== undefined) ?
+                            <View style={{
+                                margin: 20,
+                                marginTop: 5,
+                                marginBottom: 5,
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                borderColor: '#444',
+                                padding: 5,
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.sectionText}>Weight</Text>
+                                <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
+                            </View>
+                            :
+                            <View />
+                        }
+                        {(patientDataFibrinogen.height !== undefined) ?
+                            <View style={{
+                                margin: 20,
+                                marginTop: 5,
+                                marginBottom: 5,
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                borderColor: '#444',
+                                padding: 5,
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.sectionText}>Height</Text>
+                                <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
+                            </View>
+                            :
+                            <View />
+                        }
                     </View>
                     <View style={styles.section}>
                         <TouchableOpacity

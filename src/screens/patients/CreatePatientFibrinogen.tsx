@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import Picker from 'react-native-wheel-picker';
 import {useIsFocused} from "@react-navigation/native";
 import {fonts, format, buttons} from '../../style/style';
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
+import {Picker} from '@react-native-picker/picker';
 
 export const CreatePatientFibrinogen = ({navigation}) => {
     // text field values
@@ -18,12 +18,12 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     const isFocused = useIsFocused(),
         [userInfo, setUserInfo] = useState(null),
         [orgInfo, setOrgInfo] = useState(null),
-        [patientName, setPatientName] = useState(''),
-        [patientBloodType, setPatientBloodType] = useState(''),
-        [patientSex, setPatientSex] = useState(''),
-        [patientAge, setPatientAge] = useState(0),
-        [patientHeight, setPatientHeight] = useState(''),
-        [patientWeight, setPatientWeight] = useState('');
+        [patientName, setPatientName] = useState(null),
+        [patientBloodType, setPatientBloodType] = useState(null),
+        [patientSex, setPatientSex] = useState(null),
+        [patientAge, setPatientAge] = useState(null),
+        [patientHeight, setPatientHeight] = useState(null),
+        [patientWeight, setPatientWeight] = useState(null);
 
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
@@ -71,14 +71,18 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').push();
 
                 patientReference.update({
+                    qrId: qrId,
                     name: patientName,
-
+                    bloodType: patientBloodType,
+                    sex: patientSex,
+                    age: patientAge,
+                    height: patientHeight,
+                    weight: patientWeight
                 }).then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientReference.key));
             });
         } else {
             // find the next available QR ID and use that for the next patient
             database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
-
                 let qrId = 1;
                 if (snapshot.val()) {
                     let takenQRs = [];
@@ -92,69 +96,75 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                         qrId += 1;
                 }
 
-
                 const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').push();
 
                 patientReference.update({
+                    qrId: qrId,
                     name: patientName,
-                }).then(() => console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key));
+                    bloodType: patientBloodType,
+                    sex: patientSex,
+                    age: patientAge,
+                    height: patientHeight,
+                    weight: patientWeight
+                }).then(() => {
+                    console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key);
+                    navigation.navigate('Patient');
+                });
             });
         }
     }
 
     const BloodTypeSelector = () => {
-        const [bloodType, setBloodType] = useState(null);
-
         return(
             <View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(bloodType == 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('A+')}
+                        style={(patientBloodType == 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('A+')}
                     >
                         <Text style={fonts.selectButtonText}>A+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('B+')}
+                        style={(patientBloodType == 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('B+')}
                     >
                         <Text style={fonts.selectButtonText}>B+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('AB+')}
+                        style={(patientBloodType == 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('AB+')}
                     >
                         <Text style={fonts.selectButtonText}>AB+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('O+')}
+                        style={(patientBloodType == 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('O+')}
                     >
                         <Text style={fonts.selectButtonText}>O+</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(bloodType == 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('A-')}
+                        style={(patientBloodType == 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('A-')}
                     >
                         <Text style={fonts.selectButtonText}>A-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('B-')}
+                        style={(patientBloodType == 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('B-')}
                     >
                         <Text style={fonts.selectButtonText}>B-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('AB-')}
+                        style={(patientBloodType == 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('AB-')}
                     >
                         <Text style={fonts.selectButtonText}>AB-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(bloodType == 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                        onPress={() => setBloodType('O-')}
+                        style={(patientBloodType == 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        onPress={() => setPatientBloodType('O-')}
                     >
                         <Text style={fonts.selectButtonText}>O-</Text>
                     </TouchableOpacity>
@@ -164,19 +174,17 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     }
 
     const SexSelector = () => {
-        const [sex, setSex] = useState(null);
-
         return(
             <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                 <TouchableOpacity
-                    style={(sex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                    onPress={() => setSex('Male')}
+                    style={(patientSex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    onPress={() => setPatientSex('Male')}
                 >
                     <Text style={fonts.selectButtonText}>Male</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={(sex == 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
-                    onPress={() => setSex('Female')}
+                    style={(patientSex == 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    onPress={() => setPatientSex('Female')}
                 >
                     <Text style={fonts.selectButtonText}>Female</Text>
                 </TouchableOpacity>
@@ -185,33 +193,71 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     }
 
     const AgeSelector = () => {
-        const [age, setAge] = useState(null);
+        let ages = [];
+        for(let i = 0; i < 100; ++i)
+            ages.push(i);
 
         return(
-            <View>
-                <Text style={fonts.smallText}>{age}</Text>
-
-            </View>
+                <Picker
+                    itemStyle={{color: '#fff'}}
+                    selectedValue={patientAge}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setPatientAge(itemValue)
+                    }>
+                    {ages.map((prop, key) => {
+                        return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
+                    })}
+                </Picker>
         )
     }
+
+    const [feet, setFeet] = useState(null);
+    const [inch, setInch] = useState(null);
 
     const HeightSelector = () => {
-        return(
-            <View>
+        let feetChoices = [];
+        for(let i = 0; i <= 7; ++i)
+            feetChoices.push(i);
 
+        let inchChoices = [];
+        for(let i = 0; i <= 11; ++i)
+            inchChoices.push(i);
+
+        return(
+            <View style={{flexDirection: 'row'}}>
+                <Picker
+                    style={{flexDirection: 'row', flex: 1}}
+                    itemStyle={{color: '#fff', flexDirection: 'row', flex: 1}}
+                    selectedValue={feet}
+                    onValueChange={(itemValue, itemIndex) => {
+                        setFeet(itemValue);
+                        setPatientHeight(itemValue + 'ft. ' + inch + ' in.');
+                    }}>
+                    {feetChoices.map((prop, key) => {
+                        return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
+                    })}
+                </Picker>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={fonts.mediumText}>ft.</Text>
+                </View>
+                <Picker
+                    style={{flexDirection: 'row', flex: 1}}
+                    itemStyle={{color: '#fff', flexDirection: 'row', flex: 1}}
+                    selectedValue={inch}
+                    onValueChange={(itemValue, itemIndex) => {
+                        setInch(itemValue);
+                        setPatientHeight(feet + ' ft. ' + itemValue + ' in.');
+                    }}>
+                    {inchChoices.map((prop, key) => {
+                        return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
+                    })}
+                </Picker>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={fonts.mediumText}>in.</Text>
+                </View>
             </View>
         )
     }
-
-    const WeightSelector = () => {
-        return(
-            <View>
-
-            </View>
-        )
-    }
-
-
 
     return (
         <SafeAreaView style={format.page}>
@@ -225,7 +271,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 <Text style={fonts.heading}>Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text> </Text>
-                <Text style={fonts.subheading}>Name</Text>
+                <Text style={fonts.subheadingSpaced}>Name</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
@@ -239,16 +285,28 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                         blurOnSubmit={false}
                     />
                 </View>
-                <Text style={fonts.subheading}>Blood Type</Text>
+                <Text style={fonts.subheadingSpaced}>Blood Type</Text>
                 <BloodTypeSelector />
-                <Text style={fonts.subheading}>Sex</Text>
+                <Text style={fonts.subheadingSpaced}>Sex</Text>
                 <SexSelector />
-                <Text style={fonts.subheading}>Age</Text>
+                <Text style={fonts.subheadingSpaced}>Weight</Text>
+                <View style={format.textBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
+                        placeholder='Weight (lb.)'
+                        placeholderTextColor='#bbb'
+                        keyboardType='numeric'
+                        onChangeText={(patientWeight) => setPatientWeight(patientWeight + ' lb.')}
+                        numberOfLines={1}
+                        multiline={false}
+                        style={{padding: 25, color: '#fff'}}
+                        blurOnSubmit={false}
+                    />
+                </View>
+                <Text style={fonts.subheadingSpaced}>Age</Text>
                 <AgeSelector />
-                <Text style={fonts.subheading}>Height</Text>
+                <Text style={fonts.subheadingSpaced}>Height</Text>
                 <HeightSelector />
-                <Text style={fonts.subheading}>Weight</Text>
-                <WeightSelector />
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
