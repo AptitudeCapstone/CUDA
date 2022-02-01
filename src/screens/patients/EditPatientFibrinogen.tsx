@@ -1,20 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
+import {buttons, fonts, format} from '../../style/style';
 import {useIsFocused} from '@react-navigation/native';
-import {fonts, format, buttons} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-export const CreatePatientFibrinogen = ({navigation}) => {
+export const EditPatientFibrinogen = ({route, navigation}) => {
+    const {patientKey} = route.params;
+
     // text field values
-    // get current user and org info
-    // determines when page comes into focus
-    // case 1: is connected to organization
-    //  - upload to /users/patients/x
-    // case 2: is not connected to organization
-    //  - upload to /organizations/orgKey/patients/x
     const isFocused = useIsFocused(),
         [userInfo, setUserInfo] = useState(null),
         [orgInfo, setOrgInfo] = useState(null),
@@ -25,6 +21,13 @@ export const CreatePatientFibrinogen = ({navigation}) => {
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null);
 
+    // case 1: is connected to organization
+    //  - upload to /users/patients/x
+    // case 2: is not connected to organization
+    //  - upload to /organizations/orgKey/patients/x
+
+    // get current user and org info
+    // determines when page comes into focus
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
     useEffect(() => {
@@ -49,69 +52,49 @@ export const CreatePatientFibrinogen = ({navigation}) => {
             });
     }, [isFocused]);
 
-    const register_user = () => {
+    // add navigate to patient page after, and update patient that is selected
+
+    const update_patient = () => {
+        let patient = null;
         if (orgInfo === null) {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
-
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
-
-                    // @ts-ignore
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
-
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
-                }
-
-
-                const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').push();
-
-                patientReference.update({
-                    qrId: qrId,
-                    name: patientName,
-                    bloodType: patientBloodType,
-                    sex: patientSex,
-                    age: patientAge,
-                    height: patientHeight,
-                    weight: patientWeight
-                }).then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientReference.key));
-            });
+            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKey);
         } else {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
+            patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKey);
+        }
 
-                    // @ts-ignore
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
-
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
+        // first get current patient info
+        // if not empty, and not equal to current value, update the value
+        patient.once('value', function (patientSnapshot) {
+            console.log(patientSnapshot.val());
+            if (patientSnapshot.val()) {
+                if(patientName != patientSnapshot.val().name && patientName != null) {
+                    patient.update({name: patientName});
                 }
 
-                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').push();
+                if(patientBloodType != patientSnapshot.val().bloodType && patientBloodType != null) {
+                    patient.update({bloodType: patientBloodType});
+                }
 
-                patientReference.update({
-                    qrId: qrId,
-                    name: patientName,
-                    bloodType: patientBloodType,
-                    sex: patientSex,
-                    age: patientAge,
-                    height: patientHeight,
-                    weight: patientWeight
-                }).then(() => {
-                    console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key);
-                    navigation.navigate('Patient');
-                });
-            });
-        }
+                if(patientSex != patientSnapshot.val().sex && patientSex != null) {
+                    patient.update({sex: patientSex});
+                }
+
+                if(patientAge != patientSnapshot.val().age && patientAge != null) {
+                    patient.update({age: patientAge});
+                }
+
+                if(patientWeight != patientSnapshot.val().weight && patientWeight != null) {
+                    patient.update({weight: patientWeight});
+                }
+
+                if(patientHeight != patientSnapshot.val().height && patientHeight != null) {
+                    patient.update({height: patientHeight});
+                }
+            }
+        });
+
+        Alert.alert('Successfully applied changes', 'Returning to patient portal');
+        navigation.navigate('Patient');
     }
 
     const BloodTypeSelector = () => {
@@ -198,16 +181,16 @@ export const CreatePatientFibrinogen = ({navigation}) => {
             ages.push(i);
 
         return(
-                <Picker
-                    itemStyle={{color: '#fff'}}
-                    selectedValue={patientAge}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setPatientAge(itemValue)
-                    }>
-                    {ages.map((prop, key) => {
-                        return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
-                    })}
-                </Picker>
+            <Picker
+                itemStyle={{color: '#fff'}}
+                selectedValue={patientAge}
+                onValueChange={(itemValue, itemIndex) =>
+                    setPatientAge(itemValue)
+                }>
+                {ages.map((prop, key) => {
+                    return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
+                })}
+            </Picker>
         )
     }
 
@@ -259,7 +242,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
         )
     }
 
-    return (
+    return(
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
@@ -268,7 +251,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                     paddingBottom: 40
                 }}
             >
-                <Text style={fonts.heading}>Patient Info</Text>
+                <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text> </Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
@@ -310,9 +293,9 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={register_user}
+                        onPress={update_patient}
                     >
-                        <Text style={buttons.submitButtonText}>Create Patient</Text>
+                        <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>

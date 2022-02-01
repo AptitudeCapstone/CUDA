@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from "react-native-modal-selector-searchable";
 import {useIsFocused} from '@react-navigation/native';
@@ -9,6 +9,8 @@ import IconF from 'react-native-vector-icons/Feather';
 import {buttons, fonts, format} from '../../style/style';
 import database from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import {format as dateFormat, parseISO} from 'date-fns';
 
 
 export const Patient = ({route, navigation}) => {
@@ -37,6 +39,34 @@ export const Patient = ({route, navigation}) => {
                         database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
                             setOrgInfo(orgSnapshot.val());
                         });
+
+                    // get patient info for appropriate test type
+                    let patient = null;
+                    if (selectedTest == 'COVID') {
+                        if (orgInfo === null) {
+                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID);
+                        } else {
+                            patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID);
+                        }
+                    } else if (selectedTest == 'Fibrinogen') {
+                        if (orgInfo === null) {
+                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen);
+                        } else {
+                            patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen);
+                        }
+                    }
+
+                    // update data for patient for appropriate test type
+                    patient.once('value', function (patientSnapshot) {
+                        if(selectedTest == 'COVID') {
+                            setPatientKeyCOVID(patientSnapshot.key);
+                            setPatientDataCOVID(patientSnapshot.val());
+                        } else if(selectedTest == 'Fibrinogen') {
+                            setPatientKeyFibrinogen(patientSnapshot.key);
+                            setPatientDataFibrinogen(patientSnapshot.val());
+                        }
+                    });
+
                 }
             });
         else
@@ -396,6 +426,140 @@ export const Patient = ({route, navigation}) => {
         );
     }
 
+    const COVIDTests = () => {
+        let [covidTests, setCovidTests] = useState([]);
+
+        useEffect(() => {
+            database().ref('tests/covid/').orderByChild('date').once('value', function (snapshot) {
+                //verify that org with add code exists
+                if (snapshot.val()) {
+                    let temp = [];
+                    // @ts-ignore
+                    snapshot.forEach(function (data) {
+                        temp.push(data.val());
+                    });
+                    setCovidTests(temp);
+                }
+            })
+        }, []);
+
+        let listViewItemSeparator = () => {
+            return (
+                <View
+                    style={{
+                        marginLeft: '5%',
+                        marginRight: '5%',
+                        height: 0,
+                        width: '90%',
+                        backgroundColor: '#ccc'
+                    }}
+                />
+            );
+        };
+
+        let covidListItemView = (item) => {
+            const sqlDelete = () => {
+                database().ref('tests/covid/' + item.test_id)
+
+            }
+
+            const animatedDelete = () => {
+                Alert.alert(
+                    "Are your sure?",
+                    "This will permanently delete the test result",
+                    [
+                        {
+                            text: "Cancel"
+                        },
+                        {
+                            text: "Confirm",
+                            onPress: () => {
+                                sqlDelete();
+                                const height = new Animated.Value(70);
+                                Animated.timing(height, {
+                                    toValue: 0,
+                                    duration: 350,
+                                    useNativeDriver: false
+                                }).start(() => setCovidTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
+                            },
+                        },
+                    ]
+                );
+            }
+
+            const swipeRight = (progress, dragX) => {
+                const scale = dragX.interpolate({
+                    inputRange: [-200, 0],
+                    outputRange: [1, 0.5],
+                    extrapolate: 'clamp'
+                })
+                return (
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: 'red',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                        }}
+                        onPress={animatedDelete}
+                    >
+                        <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
+                            <Animated.Text
+                                style={{
+                                    marginLeft: 25,
+                                    marginRight: 25,
+                                    fontSize: 15,
+                                    fontWeight: 'bold',
+                                    transform: [{scale}]
+                                }}
+                            >
+                                Delete
+                            </Animated.Text>
+                        </Animated.View>
+                    </TouchableOpacity>
+                )
+            }
+
+            return (
+                <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
+                    <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
+                        <View
+                            key={item.test_id}
+                            style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
+                        >
+                            <View style={{
+                                backgroundColor: '#353535',
+                                padding: 20,
+                                paddingBottom: 10,
+                                flex: 1,
+                                borderTopLeftRadius: 15,
+                                borderTopRightRadius: 15
+                            }}>
+                                <Text
+                                    style={styles.timeText}>{dateFormat(parseISO(item.test_time), 'MMM d @ hh:mm:ss aaaa')}</Text>
+                            </View>
+                            <View style={{padding: 20}}>
+                                <Text style={styles.text}>{(item.test_result == 0) ? 'Negative' : 'Positive'}</Text>
+                            </View>
+                        </View>
+                    </Animated.View>
+                </Swipeable>
+            );
+    }
+
+        return (
+            <SafeAreaView style={styles.page}>
+                <View style={{flex: 1, backgroundColor: '#222'}}>
+                    <FlatList
+                        data={covidTests}
+                        ItemSeparatorComponent={listViewItemSeparator}
+                        keyExtractor={(item, index) => item.test_id}
+                        renderItem={({item}) => covidListItemView(item)}
+                    />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     /*
 
         PATIENT PORTAL FOR COVID AND FIBRINOGEN
@@ -497,78 +661,61 @@ export const Patient = ({route, navigation}) => {
                                 </View>
                             </TouchableOpacity>
                         </View>
+                        <COVIDTests />
                     </View>
                 );
             else if(patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest == 'Fibrinogen') return (
                 <View>
                     <View>
                         {(patientDataFibrinogen.bloodType !== undefined) ?
-                            (<View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                            (
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <Text style={styles.sectionText}>Blood Type</Text>
                             <Text style={styles.text}>{patientDataFibrinogen.bloodType}</Text>
-                        </View>)
+                        </View>
+                            )
+                            :
+                            <View />
+                        }
+                        {(patientDataFibrinogen.sex !== undefined) ?
+                            (
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.sectionText}>Sex</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.sex}</Text>
+                                </View>
+                            )
                             :
                             <View />
                         }
                         {(patientDataFibrinogen.age !== undefined) ?
-                            <View style={{
-                                margin: 20,
-                                marginTop: 5,
-                                marginBottom: 5,
-                                borderRadius: 10,
-                                borderWidth: 1,
-                                borderColor: '#444',
-                                padding: 5,
-                                paddingLeft: 20,
-                                paddingRight: 20,
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}>
-                                <Text style={styles.sectionText}>Age</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
-                            </View>
+                            (
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.sectionText}>Age</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
+                                </View>
+                            )
                             :
                             <View />
                         }
                         {(patientDataFibrinogen.weight !== undefined) ?
-                            <View style={{
-                                margin: 20,
-                                marginTop: 5,
-                                marginBottom: 5,
-                                borderRadius: 10,
-                                borderWidth: 1,
-                                borderColor: '#444',
-                                padding: 5,
-                                paddingLeft: 20,
-                                paddingRight: 20,
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}>
-                                <Text style={styles.sectionText}>Weight</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
-                            </View>
+                            (
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.sectionText}>Weight</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
+                                </View>
+                            )
                             :
-                            <View />
+                                <View />
                         }
                         {(patientDataFibrinogen.height !== undefined) ?
-                            <View style={{
-                                margin: 20,
-                                marginTop: 5,
-                                marginBottom: 5,
-                                borderRadius: 10,
-                                borderWidth: 1,
-                                borderColor: '#444',
-                                padding: 5,
-                                paddingLeft: 20,
-                                paddingRight: 20,
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}>
-                                <Text style={styles.sectionText}>Height</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
-                            </View>
+                            (
+                                <View style={{margin: 20, marginTop: 5, marginBottom: 5, borderRadius: 10, borderWidth: 1, borderColor: '#444', padding: 5, paddingLeft: 20, paddingRight: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.sectionText}>Height</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
+                                </View>
+                            )
                             :
-                            <View />
+                                <View />
                         }
                     </View>
                     <View style={styles.section}>
@@ -624,6 +771,7 @@ export const Patient = ({route, navigation}) => {
             <TestSelectBar/>
             <PatientSelector/>
             <PatientPortal/>
+            <COVIDTests />
         </SafeAreaView>
     );
 }
@@ -694,5 +842,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#222',
         textAlign: 'center',
-    },
+    }
 });

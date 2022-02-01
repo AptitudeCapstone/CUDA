@@ -5,11 +5,6 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format, parseISO} from 'date-fns';
 import database from "@react-native-firebase/database";
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
-}, error => {
-    console.log('ERROR: ' + error)
-});
-
 export const COVID = ({route, navigation}) => {
     const {patient_id} = route.params;
 
@@ -46,15 +41,7 @@ export const COVID = ({route, navigation}) => {
     let covidListItemView = (item) => {
         const sqlDelete = () => {
             database().ref('tests/covid/' + item.test_id)
-            db.transaction(function (tx) {
-                tx.executeSql(
-                    'DELETE FROM table_tests WHERE test_id=' + item.test_id,
-                    [],
-                    (tx, results) => {
 
-                    }
-                );
-            });
         }
 
         const animatedDelete = () => {
