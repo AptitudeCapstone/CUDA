@@ -208,7 +208,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                         return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
                     })}
                 </Picker>
-        )
+        );
     }
 
     const [feet, setFeet] = useState(null);

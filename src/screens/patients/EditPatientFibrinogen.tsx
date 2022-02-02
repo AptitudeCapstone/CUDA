@@ -53,7 +53,6 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
     }, [isFocused]);
 
     // add navigate to patient page after, and update patient that is selected
-
     const update_patient = () => {
         let patient = null;
         if (orgInfo === null) {

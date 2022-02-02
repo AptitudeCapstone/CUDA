@@ -120,7 +120,7 @@ export const Home = ({route, navigation}) => {
     const signOut = async () => {
         // first sign out of registered account
         try {
-            await GoogleSignin.revokeAccess();
+            //await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
             auth().signOut().then(() => {
                 Alert.alert('Signed out', 'You have been successfully signed out');
