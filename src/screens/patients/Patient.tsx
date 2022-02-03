@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Animated, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from "react-native-modal-selector-searchable";
 import {useIsFocused} from '@react-navigation/native';
@@ -29,7 +29,7 @@ export const Patient = ({route, navigation}) => {
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
     useEffect(() => {
-        if (auth().currentUser != null)
+        if (auth().currentUser != null) {
             // update user info based on database info
             database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
@@ -59,10 +59,10 @@ export const Patient = ({route, navigation}) => {
 
                     // update data for patient for appropriate test type
                     patient.once('value', function (patientSnapshot) {
-                        if(selectedTest == 'COVID') {
+                        if (selectedTest == 'COVID') {
                             setPatientKeyCOVID(patientSnapshot.key);
                             setPatientDataCOVID(patientSnapshot.val());
-                        } else if(selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest == 'Fibrinogen') {
                             setPatientKeyFibrinogen(patientSnapshot.key);
                             setPatientDataFibrinogen(patientSnapshot.val());
                         }
@@ -70,7 +70,38 @@ export const Patient = ({route, navigation}) => {
 
                 }
             });
-        else
+
+            // get patient info for appropriate test type
+            let results = null;
+            if (selectedTest == 'COVID') {
+                if (orgInfo === null) {
+                    results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
+                } else {
+                    results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
+                }
+            } else if (selectedTest == 'Fibrinogen') {
+                if (orgInfo === null) {
+                    results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                } else {
+                    results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                }
+            }
+
+            results.orderByChild('date').once('value', function (snapshot) {
+                //verify that org with add code exists
+                if (snapshot.val()) {
+                    let temp = [];
+                    // @ts-ignore
+                    snapshot.forEach(function (data) {
+                        temp.push({key: data.key, result: data.val().result, time: data.val().time});
+                    });
+                    if(selectedTest == 'COVID')
+                        setCovidTests(temp);
+                    else
+                        setFibrinogenTests(temp);
+                }
+            })
+        } else
             auth().signInAnonymously().then(() => {
                 console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
             }).catch(error => {
@@ -399,14 +430,14 @@ export const Patient = ({route, navigation}) => {
                                 let temp = [];
                                 // @ts-ignore
                                 snapshot.forEach(function (data) {
-                                    temp.push({key: data.key, value: data.val()});
+                                    temp.push({key: data.key, result: data.val().result, time: data.val().time});
                                 });
                                 if(selectedTest == 'COVID')
                                     setCovidTests(temp);
                                 else
                                     setFibrinogenTests(temp);
                             }
-                        })
+                        });
 
                         // update data for patient for appropriate test type
                         await patient.once('value', function (patientSnapshot) {
@@ -466,24 +497,25 @@ export const Patient = ({route, navigation}) => {
             }
         }
 
-        let listViewItemSeparator = () => {
-            return (
-                <View
-                    style={{
-                        marginLeft: '5%',
-                        marginRight: '5%',
-                        height: 0,
-                        width: '90%',
-                        backgroundColor: '#ccc'
-                    }}
-                />
-            );
-        };
-
         let covidListItemView = (item) => {
-            const sqlDelete = () => {
-                database().ref('tests/covid/' + item.id)
+            const databaseDelete = (testKey) => {
+                let testResult = null;
 
+                if (selectedTest == 'COVID') {
+                    if (orgInfo === null) {
+                        testResult = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
+                    } else {
+                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
+                    }
+                } else if (selectedTest == 'Fibrinogen') {
+                    if (orgInfo === null) {
+                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
+                    } else {
+                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
+                    }
+                }
+
+                testResult.remove();
             }
 
             const animatedDelete = () => {
@@ -497,7 +529,7 @@ export const Patient = ({route, navigation}) => {
                         {
                             text: "Confirm",
                             onPress: () => {
-                                sqlDelete();
+                                databaseDelete(item.key);
                                 const height = new Animated.Value(70);
                                 Animated.timing(height, {
                                     toValue: 0,
@@ -546,153 +578,6 @@ export const Patient = ({route, navigation}) => {
                 <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
                     <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                         <View
-                            key={item.key}
-                            style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
-                        >
-                            <View style={{
-                                backgroundColor: '#353535',
-                                padding: 20,
-                                paddingBottom: 10,
-                                flex: 1,
-                                borderTopLeftRadius: 15,
-                                borderTopRightRadius: 15
-                            }}>
-                                {/*<Text
-                                    style={styles.timeText}>{dateFormat(parseISO(item.value), 'MMM d @ hh:mm:ss aaaa')}</Text>*/}
-                            </View>
-                            <View style={{padding: 20}}>
-                                <Text style={styles.text}>{(item.result == 0) ? 'Negative' : 'Positive'}</Text>
-                            </View>
-                        </View>
-                    </Animated.View>
-                </Swipeable>
-            );
-    }
-
-        return (
-            <View>
-                <View style={styles.section}>
-                    <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
-                        <Text style={styles.headingText}>Test Results</Text>
-                        <Text style={{
-                            color: '#fff',
-                            paddingTop: 6,
-                            fontSize: 18,
-                            textAlign: 'center'
-                        }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
-                    </View>
-                </View>
-                <View style={{flex: 1, backgroundColor: '#222'}}>
-                    <FlatList
-                        data={covidTests}
-                        ItemSeparatorComponent={listViewItemSeparator}
-                        renderItem={({item}) => covidListItemView(item)}
-                    />
-                </View>
-            </View>
-        );
-    }
-
-    const FibrinogenTests = () => {
-        const [lastFibLength, setLastFibLength] = useState(0);
-        const [lastFibUnits, setLastFibUnits] = useState('days');
-
-        const timeBetweenDates = (date2) => {
-            const currentDate = new Date();
-            let date = currentDate.getTime() - date2.getTime();
-            return {
-                years: Math.floor(date / (1000 * 60 * 60 * 24 * 365)),
-                months: Math.floor(date / (1000 * 60 * 60 * 24 * 30)),
-                weeks: Math.floor(date / (1000 * 60 * 60 * 24 * 7)),
-                days: Math.floor(date / (1000 * 60 * 60 * 24)),
-                hours: Math.floor(date / (1000 * 60 * 60)),
-                minutes: Math.floor(date / (1000 * 60)),
-                seconds: Math.floor(date / (1000)),
-            }
-        }
-
-        let listViewItemSeparator = () => {
-            return (
-                <View
-                    style={{
-                        marginLeft: '5%',
-                        marginRight: '5%',
-                        height: 0,
-                        width: '90%',
-                        backgroundColor: '#ccc'
-                    }}
-                />
-            );
-        };
-
-        let covidListItemView = (item) => {
-            console.log(item);
-            const sqlDelete = () => {
-                database().ref('tests/covid/' + item.test_id)
-
-            }
-
-            const animatedDelete = () => {
-                Alert.alert(
-                    "Are your sure?",
-                    "This will permanently delete the test result",
-                    [
-                        {
-                            text: "Cancel"
-                        },
-                        {
-                            text: "Confirm",
-                            onPress: () => {
-                                sqlDelete();
-                                const height = new Animated.Value(70);
-                                Animated.timing(height, {
-                                    toValue: 0,
-                                    duration: 350,
-                                    useNativeDriver: false
-                                }).start(() => setFibrinogenTests(prevState => prevState.filter(e => e.test_id !== item.test_id)))
-                            },
-                        },
-                    ]
-                );
-            }
-
-            const swipeRight = (progress, dragX) => {
-                const scale = dragX.interpolate({
-                    inputRange: [-200, 0],
-                    outputRange: [1, 0.5],
-                    extrapolate: 'clamp'
-                })
-                return (
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: 'red',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                        }}
-                        onPress={animatedDelete}
-                    >
-                        <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
-                            <Animated.Text
-                                style={{
-                                    marginLeft: 25,
-                                    marginRight: 25,
-                                    fontSize: 15,
-                                    fontWeight: 'bold',
-                                    transform: [{scale}]
-                                }}
-                            >
-                                Delete
-                            </Animated.Text>
-                        </Animated.View>
-                    </TouchableOpacity>
-                )
-            }
-
-            return (
-                <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
-                    <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
-                        <View
-                            key={item.test_id}
                             style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
                         >
                             <View style={{
@@ -704,20 +589,19 @@ export const Patient = ({route, navigation}) => {
                                 borderTopRightRadius: 15
                             }}>
                                 <Text
-                                    style={styles.timeText}>{dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}</Text>
+                                    style={fonts.mediumText}>{dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}</Text>
                             </View>
                             <View style={{padding: 20}}>
-                                <Text style={styles.text}>{(item.result == 0) ? 'Negative' : 'Positive'}</Text>
+                                <Text style={styles.text}>{(item.result !== undefined && item.result == 0) ? 'Negative' : 'Positive'}</Text>
                             </View>
                         </View>
                     </Animated.View>
                 </Swipeable>
             );
-        }
+    }
 
         return (
             <View>
-                <View style={styles.section}>
                     <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
                         <Text style={styles.headingText}>Test Results</Text>
                         <Text style={{
@@ -725,17 +609,9 @@ export const Patient = ({route, navigation}) => {
                             paddingTop: 6,
                             fontSize: 18,
                             textAlign: 'center'
-                        }}>{(fibrinogenTests.length > 0) ? 'Last test was ' + lastFibLength + ' ' + lastFibUnits + ' ago' : 'No test results have been recorded yet'}</Text>
+                        }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
                     </View>
-                </View>
-                <View style={{flex: 1, backgroundColor: '#222'}}>
-                    <FlatList
-                        data={fibrinogenTests}
-                        ItemSeparatorComponent={listViewItemSeparator}
-                        keyExtractor={(item, index) => index}
-                        renderItem={({item}) => covidListItemView(item)}
-                    />
-                </View>
+                {covidTests.map(test => covidListItemView(test))}
             </View>
         );
     }
@@ -785,7 +661,7 @@ export const Patient = ({route, navigation}) => {
                         {selectedTest == 'COVID' ?
                             <COVIDTests />
                             :
-                            <FibrinogenTests />
+                            <COVIDTests />
                         }
                     </View>
                 );
@@ -858,7 +734,9 @@ export const Patient = ({route, navigation}) => {
         <SafeAreaView style={format.page}>
             <TestSelectBar/>
             <PatientSelector/>
-            <PatientPortal/>
+            <ScrollView>
+                <PatientPortal/>
+            </ScrollView>
         </SafeAreaView>
     );
 }
