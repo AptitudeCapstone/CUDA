@@ -199,7 +199,7 @@ export const Fibrinogen = ({route, navigation}) => {
                 </View>
                 <View style={{flex: 0.6, padding: 15}}>
                     <LineChart
-                        data={(fibVals.length == 0) ? dataEmpty : data}
+                        data={(data.datasets.length == 0) ? dataEmpty : data}
                         width={screenWidth} // from react-native
                         height={400}
                         chartConfig={chartConfig}

@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Animated, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
-import ModalSelector from "react-native-modal-selector-searchable";
+import ModalSelector from 'react-native-modal-selector-searchable';
 import {useIsFocused} from '@react-navigation/native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
 import {buttons, fonts, format} from '../../style/style';
-import database from "@react-native-firebase/database";
-import auth from "@react-native-firebase/auth";
-import Swipeable from "react-native-gesture-handler/Swipeable";
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
+import {LineChart} from 'react-native-chart-kit';
 
 export const Patient = ({route, navigation}) => {
     // get current user and org info
@@ -96,9 +97,9 @@ export const Patient = ({route, navigation}) => {
                         temp.push({key: data.key, result: data.val().result, time: data.val().time});
                     });
                     if(selectedTest == 'COVID')
-                        setCovidTests(temp);
+                        setCovidTests(temp.reverse());
                     else
-                        setFibrinogenTests(temp);
+                        setFibrinogenTests(temp.reverse());
                 }
             })
         } else
@@ -123,6 +124,36 @@ export const Patient = ({route, navigation}) => {
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('COVID');
+                        // get patient info for appropriate test type
+                        let results = null;
+                        if (selectedTest == 'COVID') {
+                            if (orgInfo === null) {
+                                results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
+                            } else {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
+                            }
+                        } else if (selectedTest == 'Fibrinogen') {
+                            if (orgInfo === null) {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                            } else {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                            }
+                        }
+
+                        results.orderByChild('date').once('value', function (snapshot) {
+                            //verify that org with add code exists
+                            if (snapshot.val()) {
+                                let temp = [];
+                                // @ts-ignore
+                                snapshot.forEach(function (data) {
+                                    temp.push({key: data.key, result: data.val().result, time: data.val().time});
+                                });
+                                if(selectedTest == 'COVID')
+                                    setCovidTests(temp.reverse());
+                                else
+                                    setFibrinogenTests(temp.reverse());
+                            }
+                        })
                     }}
                 >
                     <Text style={fonts.selectButtonText}>COVID</Text>
@@ -132,6 +163,37 @@ export const Patient = ({route, navigation}) => {
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('Fibrinogen');
+
+                        // get patient info for appropriate test type
+                        let results = null;
+                        if (selectedTest == 'COVID') {
+                            if (orgInfo === null) {
+                                results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
+                            } else {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
+                            }
+                        } else if (selectedTest == 'Fibrinogen') {
+                            if (orgInfo === null) {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                            } else {
+                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                            }
+                        }
+
+                        results.orderByChild('date').once('value', function (snapshot) {
+                            //verify that org with add code exists
+                            if (snapshot.val()) {
+                                let temp = [];
+                                // @ts-ignore
+                                snapshot.forEach(function (data) {
+                                    temp.push({key: data.key, result: data.val().result, time: data.val().time});
+                                });
+                                if(selectedTest == 'COVID')
+                                    setCovidTests(temp.reverse());
+                                else
+                                    setFibrinogenTests(temp.reverse());
+                            }
+                        })
                     }}
                 >
                     <Text style={fonts.selectButtonText}>Fibrinogen</Text>
@@ -433,9 +495,9 @@ export const Patient = ({route, navigation}) => {
                                     temp.push({key: data.key, result: data.val().result, time: data.val().time});
                                 });
                                 if(selectedTest == 'COVID')
-                                    setCovidTests(temp);
+                                    setCovidTests(temp.reverse());
                                 else
-                                    setFibrinogenTests(temp);
+                                    setFibrinogenTests(temp.reverse());
                             }
                         });
 
@@ -479,6 +541,12 @@ export const Patient = ({route, navigation}) => {
         );
     }
 
+    /*
+
+        COVID TEST RESULTS
+
+     */
+
     const COVIDTests = () => {
         const [lastCovidLength, setLastCovidLength] = useState(0);
         const [lastCovidUnits, setLastCovidUnits] = useState('days');
@@ -497,22 +565,20 @@ export const Patient = ({route, navigation}) => {
             }
         }
 
-        let covidListItemView = (item) => {
+        let CovidListItemView = (props) => {
+            const [item, setItem] = useState(props.item);
+
+            useEffect(() => {
+                setItem(props.item);
+            }, [props.item]);
+
             const databaseDelete = (testKey) => {
                 let testResult = null;
 
-                if (selectedTest == 'COVID') {
-                    if (orgInfo === null) {
-                        testResult = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
-                    } else {
-                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
-                    }
-                } else if (selectedTest == 'Fibrinogen') {
-                    if (orgInfo === null) {
-                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
-                    } else {
-                        testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
-                    }
+                if (orgInfo === null) {
+                    testResult = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
+                } else {
+                    testResult = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/' + testKey);
                 }
 
                 testResult.remove();
@@ -575,6 +641,7 @@ export const Patient = ({route, navigation}) => {
             }
 
             return (
+                <View>
                 <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
                     <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                         <View
@@ -597,6 +664,7 @@ export const Patient = ({route, navigation}) => {
                         </View>
                     </Animated.View>
                 </Swipeable>
+                </View>
             );
     }
 
@@ -611,7 +679,198 @@ export const Patient = ({route, navigation}) => {
                             textAlign: 'center'
                         }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
                     </View>
-                {covidTests.map(test => covidListItemView(test))}
+                {covidTests.map(test => { return <CovidListItemView key={test.key} item={test} />})}
+            </View>
+        );
+    }
+
+    /*
+
+        FIBRINOGEN TEST RESULTS
+
+     */
+
+    const FibrinogenTests = () => {
+        const [lastFibrinogenLength, setLastFibrinogenLength] = useState(0);
+        const [lastFibrinogenUnits, setLastFibrinogenUnits] = useState('days');
+
+        const timeBetweenDates = (date2) => {
+            const currentDate = new Date();
+            let date = currentDate.getTime() - date2.getTime();
+            return {
+                years: Math.floor(date / (1000 * 60 * 60 * 24 * 365)),
+                months: Math.floor(date / (1000 * 60 * 60 * 24 * 30)),
+                weeks: Math.floor(date / (1000 * 60 * 60 * 24 * 7)),
+                days: Math.floor(date / (1000 * 60 * 60 * 24)),
+                hours: Math.floor(date / (1000 * 60 * 60)),
+                minutes: Math.floor(date / (1000 * 60)),
+                seconds: Math.floor(date / (1000)),
+            }
+        }
+
+        const screenWidth = Dimensions.get('window').width;
+
+        const chartConfig = {
+            backgroundGradientFrom: "#111",
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientTo: "#222",
+            backgroundGradientToOpacity: 0.2,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        };
+
+        const [chartData, setChartData] = useState({
+            labels: ['0'],
+            datasets: [{
+                data: [0]
+            }]
+        });
+
+        const emptyChartData = {
+            labels: ['0'],
+            datasets: [{
+                data: [0]
+            }]
+        };
+
+        useEffect(() => {
+            let tempLabels = [], tempDatasets = [];
+            for(let fibTest of fibrinogenTests) {
+                tempLabels.push(dateFormat(parseISO(fibTest.time), 'MMM d'));
+                tempDatasets.push(fibTest.result);
+            }
+
+            setChartData({
+                labels: tempLabels,
+                datasets: [{
+                    data: tempDatasets
+                }]
+            })
+
+        }, []);
+
+        let FibrinogenTestItem = (props) => {
+            const [item, setItem] = useState(props.item);
+
+            const databaseDelete = (testKey) => {
+                let testResult = null;
+
+                if (orgInfo === null) {
+                    testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
+                } else {
+                    testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
+                }
+
+                testResult.remove();
+            }
+
+            const animatedDelete = () => {
+                Alert.alert(
+                    "Are your sure?",
+                    "This will permanently delete the test result",
+                    [
+                        {
+                            text: "Cancel"
+                        },
+                        {
+                            text: "Confirm",
+                            onPress: () => {
+                                databaseDelete(item.key);
+                                const height = new Animated.Value(70);
+                                Animated.timing(height, {
+                                    toValue: 0,
+                                    duration: 350,
+                                    useNativeDriver: false
+                                }).start(() => setFibrinogenTests(prevState => prevState.filter(e => e.key !== item.key)))
+                            },
+                        },
+                    ]
+                );
+            }
+
+            const swipeRight = (progress, dragX) => {
+                const scale = dragX.interpolate({
+                    inputRange: [-200, 0],
+                    outputRange: [1, 0.5],
+                    extrapolate: 'clamp'
+                })
+                return (
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: 'red',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                        }}
+                        onPress={animatedDelete}
+                    >
+                        <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
+                            <Animated.Text
+                                style={{
+                                    marginLeft: 25,
+                                    marginRight: 25,
+                                    fontSize: 15,
+                                    fontWeight: 'bold',
+                                    transform: [{scale}]
+                                }}
+                            >
+                                Delete
+                            </Animated.Text>
+                        </Animated.View>
+                    </TouchableOpacity>
+                )
+            }
+
+            return (
+                <Swipeable renderRightActions={swipeRight} rightThreshold={-200}>
+                    <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
+                        <View
+                            style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}
+                        >
+                            <View style={{
+                                backgroundColor: '#353535',
+                                padding: 20,
+                                paddingBottom: 10,
+                                flex: 1,
+                                borderTopLeftRadius: 15,
+                                borderTopRightRadius: 15
+                            }}>
+                                <Text
+                                    style={fonts.mediumText}>{dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}</Text>
+                            </View>
+                            <View style={{padding: 20}}>
+                                <Text style={styles.text}>{item.result} mg/ml</Text>
+                            </View>
+                        </View>
+                    </Animated.View>
+                </Swipeable>
+            );
+        }
+
+        return (
+            <View>
+                <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
+                    <Text style={styles.headingText}>Test Results</Text>
+                    <Text style={{
+                        color: '#fff',
+                        paddingTop: 6,
+                        fontSize: 18,
+                        textAlign: 'center'
+                    }}>
+                        {(chartData != null && chartData.datasets.length > 0) ? 'Last test was ' + lastFibrinogenLength + ' ' + lastFibrinogenUnits + ' ago' : 'No test results have been recorded yet'}</Text>
+                </View>
+                {chartData !== null &&
+                <View style={{flex: 0.6, padding: 15}}>
+                    <LineChart
+                        data={(chartData.labels.length == 0) ? emptyChartData : chartData}
+                        width={screenWidth} // from react-native
+                        height={400}
+                        chartConfig={chartConfig}
+                        withInnerLines={false}
+                        withOuterLines={false}
+                        bezier
+                    />
+                </View>
+                }
+                {fibrinogenTests.map(test => { return <FibrinogenTestItem key={test.key} item={test} />})}
             </View>
         );
     }
@@ -658,11 +917,7 @@ export const Patient = ({route, navigation}) => {
                             :
                             <View />
                         }
-                        {selectedTest == 'COVID' ?
-                            <COVIDTests />
-                            :
-                            <COVIDTests />
-                        }
+                        <COVIDTests />
                     </View>
                 );
             else if(patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest == 'Fibrinogen') return (
@@ -718,6 +973,7 @@ export const Patient = ({route, navigation}) => {
                             :
                                 <View />
                         }
+                        <FibrinogenTests />
                     </View>
                 </View>
             );
