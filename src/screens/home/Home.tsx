@@ -136,7 +136,7 @@ export const Home = ({route, navigation}) => {
                 database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                     if (userSnapshot.val()) {
                         setUserInfo(userSnapshot.val());
-                        if (userSnapshot.val().organization === undefined) {
+                        if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
                             console.log('userSnapshot.val()');
                             setOrgInfo(null);
                         } else
@@ -157,7 +157,7 @@ export const Home = ({route, navigation}) => {
                     database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                         if (userSnapshot.val()) {
                             setUserInfo(userSnapshot.val());
-                            if (userSnapshot.val().organization === undefined) {
+                            if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
                                 console.log('userSnapshot.val()');
                                 setOrgInfo(null);
                             } else
@@ -191,20 +191,21 @@ export const Home = ({route, navigation}) => {
             await GoogleSignin.signOut();
             auth().signOut().then(() => {
                 Alert.alert('Signed out', 'You have been successfully signed out');
-                setUserInfo([]);
-                setOrgInfo(null);
-                setUserWindowVisible(false);
+                // then log in to anonymous (guest) account
+                auth().signInAnonymously().then(() => {
+                    console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
+
+
+                    setUserInfo([]);
+                    setOrgInfo(null);
+                    setUserWindowVisible(false);
+                }).catch(error => {
+                    console.error(error);
+                });
             });
         } catch (error) {
             console.error(error);
         }
-
-        // then log in to anonymous (guest) account
-        auth().signInAnonymously().then(() => {
-            console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-        }).catch(error => {
-            console.error(error);
-        });
     };
 
     function onAuthStateChanged(user) {
@@ -228,12 +229,17 @@ export const Home = ({route, navigation}) => {
             database().ref('users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
                 if (userSnapshot.val()) {
                     setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
+                    if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
                         setOrgInfo(null);
+                        console.log('user has no org');
                     } else
                         database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
                             setOrgInfo(orgSnapshot.val());
+                            console.log(orgSnapshot.val());
                         });
+                } else {
+                    setOrgInfo(null);
+                    console.log('user not registered');
                 }
             });
         else
@@ -313,7 +319,7 @@ export const Home = ({route, navigation}) => {
                 manager.startDeviceScan(null, scanOptions, (error, scannedDevice) => {
                     if (error) console.warn(error);
 
-                    console.log(scannedDevice.name);
+                    //console.log(scannedDevice.name);
 
                     // filter by name for 'raspberrypi'
                     if (scannedDevice != null && (scannedDevice.name == 'raspberrypi' || scannedDevice.name == 'pie123')) {
@@ -496,10 +502,10 @@ export const Home = ({route, navigation}) => {
 
     // used throughout pages to determine the currently synced organization
     const [orgWindowVisible, setOrgWindowVisible] = useState(false);
-    const [orgInfo, setOrgInfo] = useState([]);
+    const [orgInfo, setOrgInfo] = useState(null);
 
     const disconnectFromOrganization = () => {
-        database().ref('users/' + auth().currentUser.uid).update({
+        database().ref('/users/' + auth().currentUser.uid).update({
             organization: null
         }).then(r => {
                 Alert.alert('Disconnected', 'No longer syncing with ' + orgInfo.name)

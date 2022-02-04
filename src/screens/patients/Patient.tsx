@@ -30,7 +30,10 @@ export const Patient = ({route, navigation}) => {
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
     useEffect(() => {
-        let clearPatient = false;
+        setPatientDataCOVID(null);
+        setPatientKeyFibrinogen(null);
+        setPatientDataCOVID(null);
+        setPatientKeyFibrinogen(null);
 
         if (auth().currentUser != null) {
             // update user info based on database info
@@ -43,34 +46,8 @@ export const Patient = ({route, navigation}) => {
                         database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
                             setOrgInfo(orgSnapshot.val());
                         });
-
-                    // get patient info for appropriate test type
-                    let patient = null;
-                    if (selectedTest == 'COVID') {
-                        if (orgInfo === null) {
-                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID);
-                        } else {
-                            patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID);
-                        }
-                    } else if (selectedTest == 'Fibrinogen') {
-                        if (orgInfo === null) {
-                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen);
-                        } else {
-                            patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen);
-                        }
-                    }
-
-                    // update data for patient for appropriate test type
-                    patient.once('value', function (patientSnapshot) {
-                        if (selectedTest == 'COVID') {
-                            setPatientKeyCOVID(patientSnapshot.key);
-                            setPatientDataCOVID(patientSnapshot.val());
-                        } else if (selectedTest == 'Fibrinogen') {
-                            setPatientKeyFibrinogen(patientSnapshot.key);
-                            setPatientDataFibrinogen(patientSnapshot.val());
-                        }
-                    });
-
+                } else {
+                    setOrgInfo(null);
                 }
             });
 
@@ -486,7 +463,6 @@ export const Patient = ({route, navigation}) => {
                                 patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key);
                             }
                         }
-
 
                         results.orderByChild('date').once('value', function (snapshot) {
                             //verify that org with add code exists
