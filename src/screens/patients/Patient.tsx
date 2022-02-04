@@ -30,6 +30,8 @@ export const Patient = ({route, navigation}) => {
     // update user info with current authenticated user info
     // also get organization info from user, update organization info
     useEffect(() => {
+        let clearPatient = false;
+
         if (auth().currentUser != null) {
             // update user info based on database info
             database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
@@ -82,7 +84,7 @@ export const Patient = ({route, navigation}) => {
                 }
             } else if (selectedTest == 'Fibrinogen') {
                 if (orgInfo === null) {
-                    results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                    results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                 } else {
                     results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                 }
@@ -134,7 +136,7 @@ export const Patient = ({route, navigation}) => {
                             }
                         } else if (selectedTest == 'Fibrinogen') {
                             if (orgInfo === null) {
-                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                                results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             } else {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             }
@@ -174,7 +176,7 @@ export const Patient = ({route, navigation}) => {
                             }
                         } else if (selectedTest == 'Fibrinogen') {
                             if (orgInfo === null) {
-                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
+                                results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             } else {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             }
@@ -477,8 +479,8 @@ export const Patient = ({route, navigation}) => {
                             }
                         } else if (selectedTest == 'Fibrinogen') {
                             if (orgInfo === null) {
-                                results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key + '/results/');
-                                patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key);
+                                results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key + '/results/');
+                                patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
                             } else {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key + '/results/');
                                 patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + option.key);
@@ -548,23 +550,6 @@ export const Patient = ({route, navigation}) => {
      */
 
     const COVIDTests = () => {
-        const [lastCovidLength, setLastCovidLength] = useState(0);
-        const [lastCovidUnits, setLastCovidUnits] = useState('days');
-
-        const timeBetweenDates = (date2) => {
-            const currentDate = new Date();
-            let date = currentDate.getTime() - date2.getTime();
-            return {
-                years: Math.floor(date / (1000 * 60 * 60 * 24 * 365)),
-                months: Math.floor(date / (1000 * 60 * 60 * 24 * 30)),
-                weeks: Math.floor(date / (1000 * 60 * 60 * 24 * 7)),
-                days: Math.floor(date / (1000 * 60 * 60 * 24)),
-                hours: Math.floor(date / (1000 * 60 * 60)),
-                minutes: Math.floor(date / (1000 * 60)),
-                seconds: Math.floor(date / (1000)),
-            }
-        }
-
         let CovidListItemView = (props) => {
             const [item, setItem] = useState(props.item);
 
@@ -630,7 +615,8 @@ export const Patient = ({route, navigation}) => {
                                     marginRight: 25,
                                     fontSize: 15,
                                     fontWeight: 'bold',
-                                    transform: [{scale}]
+                                    transform: [{scale}],
+                                    color: '#fff'
                                 }}
                             >
                                 Delete
@@ -659,7 +645,7 @@ export const Patient = ({route, navigation}) => {
                                     style={fonts.mediumText}>{dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}</Text>
                             </View>
                             <View style={{padding: 20}}>
-                                <Text style={styles.text}>{(item.result !== undefined && item.result == 0) ? 'Negative' : 'Positive'}</Text>
+                                <Text style={fonts.mediumText}>{(item.result !== undefined && item.result == 0) ? 'Negative' : 'Positive'}</Text>
                             </View>
                         </View>
                     </Animated.View>
@@ -672,12 +658,14 @@ export const Patient = ({route, navigation}) => {
             <View>
                     <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
                         <Text style={styles.headingText}>Test Results</Text>
-                        <Text style={{
-                            color: '#fff',
-                            paddingTop: 6,
-                            fontSize: 18,
-                            textAlign: 'center'
-                        }}>{(covidTests.length > 0) ? 'Last test was ' + lastCovidLength + ' ' + lastCovidUnits + ' ago' : 'No test results have been recorded yet'}</Text>
+                        {(covidTests.length == 0) &&
+                            <Text style={{
+                                color: '#fff',
+                                paddingTop: 6,
+                                fontSize: 18,
+                                textAlign: 'center'
+                            }}>No test results have been recorded yet</Text>
+                        }
                     </View>
                 {covidTests.map(test => { return <CovidListItemView key={test.key} item={test} />})}
             </View>
@@ -691,23 +679,6 @@ export const Patient = ({route, navigation}) => {
      */
 
     const FibrinogenTests = () => {
-        const [lastFibrinogenLength, setLastFibrinogenLength] = useState(0);
-        const [lastFibrinogenUnits, setLastFibrinogenUnits] = useState('days');
-
-        const timeBetweenDates = (date2) => {
-            const currentDate = new Date();
-            let date = currentDate.getTime() - date2.getTime();
-            return {
-                years: Math.floor(date / (1000 * 60 * 60 * 24 * 365)),
-                months: Math.floor(date / (1000 * 60 * 60 * 24 * 30)),
-                weeks: Math.floor(date / (1000 * 60 * 60 * 24 * 7)),
-                days: Math.floor(date / (1000 * 60 * 60 * 24)),
-                hours: Math.floor(date / (1000 * 60 * 60)),
-                minutes: Math.floor(date / (1000 * 60)),
-                seconds: Math.floor(date / (1000)),
-            }
-        }
-
         const screenWidth = Dimensions.get('window').width;
 
         const chartConfig = {
@@ -740,9 +711,9 @@ export const Patient = ({route, navigation}) => {
             }
 
             setChartData({
-                labels: tempLabels,
+                labels: tempLabels.reverse(),
                 datasets: [{
-                    data: tempDatasets
+                    data: tempDatasets.reverse()
                 }]
             })
 
@@ -755,7 +726,7 @@ export const Patient = ({route, navigation}) => {
                 let testResult = null;
 
                 if (orgInfo === null) {
-                    testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
+                    testResult = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
                 } else {
                     testResult = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/'  + testKey);
                 }
@@ -809,7 +780,8 @@ export const Patient = ({route, navigation}) => {
                                     marginRight: 25,
                                     fontSize: 15,
                                     fontWeight: 'bold',
-                                    transform: [{scale}]
+                                    transform: [{scale}],
+                                    color: '#fff'
                                 }}
                             >
                                 Delete
@@ -837,7 +809,7 @@ export const Patient = ({route, navigation}) => {
                                     style={fonts.mediumText}>{dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}</Text>
                             </View>
                             <View style={{padding: 20}}>
-                                <Text style={styles.text}>{item.result} mg/ml</Text>
+                                <Text style={fonts.mediumText}>{item.result} mg/ml</Text>
                             </View>
                         </View>
                     </Animated.View>
@@ -849,13 +821,16 @@ export const Patient = ({route, navigation}) => {
             <View>
                 <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
                     <Text style={styles.headingText}>Test Results</Text>
-                    <Text style={{
-                        color: '#fff',
-                        paddingTop: 6,
-                        fontSize: 18,
-                        textAlign: 'center'
-                    }}>
-                        {(chartData != null && chartData.datasets.length > 0) ? 'Last test was ' + lastFibrinogenLength + ' ' + lastFibrinogenUnits + ' ago' : 'No test results have been recorded yet'}</Text>
+                    {fibrinogenTests.length == 0 &&
+                        <Text style={{
+                            color: '#fff',
+                            paddingTop: 6,
+                            fontSize: 18,
+                            textAlign: 'center'
+                        }}>
+                            No test results have been recorded yet
+                        </Text>
+                    }
                 </View>
                 {chartData !== null &&
                 <View style={{flex: 0.6, padding: 15}}>
@@ -882,6 +857,7 @@ export const Patient = ({route, navigation}) => {
      */
 
     const PatientPortal = () => {
+
             // patient has been selected
             if (patientKeyCOVID != null && patientDataCOVID != null && selectedTest == 'COVID')
                 return (

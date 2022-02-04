@@ -1,7 +1,6 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import {BleManager, Device} from "react-native-ble-plx";
-import {DeviceCard} from "../../components/DeviceCard";
+import {BleManager, Device, State} from "react-native-ble-plx";
 import {Base64} from '../../lib/base64';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
@@ -14,6 +13,74 @@ import {fonts, format, icons} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin, statusCodes,} from 'react-native-google-signin';
 import database from "@react-native-firebase/database";
+
+/*
+
+    DEVICE CARD
+
+ */
+
+const DeviceCard = ({navigation, device}) => {
+
+    const [isConnected, setIsConnected] = useState(false);
+
+    useEffect(() => {
+        // is the device connected?
+        device.isConnected().then(setIsConnected);
+    }, [device]);
+
+    let iconName = '';
+    if (device.rssi >= -50) {
+        iconName = 'signal-cellular-3';
+    } else if (device.rssi >= -75) {
+        iconName = 'signal-cellular-2';
+    } else if (device.rssi >= -85) {
+        iconName = 'signal-cellular-1';
+    }
+
+    return (
+        <TouchableOpacity
+            style={isConnected ? {
+                backgroundColor: '#333',
+                margin: 0,
+                textAlign: 'center',
+                alignItems: 'center',
+                padding: 16,
+                paddingBottom: 17,
+                borderWidth: 1,
+                borderRadius: 10,
+                borderColor: '#555'
+            } : {
+                margin: 0,
+                textAlign: 'center',
+                alignItems: 'center',
+                padding: 16,
+                paddingBottom: 13
+            }}
+            onPress={() => {if(!device.isConnected()) device.connect().catch(error => console.log(error))}}
+        >
+            <View style={{borderRadius: 5000, paddingBottom: 4}}>
+                <IconMCI name={iconName} size={30}
+                         color="#fff"/>
+            </View>
+            <Text style={{
+                fontSize: 14,
+                color: '#eee',
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+            }}>{device.name}</Text>
+        </TouchableOpacity>
+    );
+
+};
+
+/*
+
+    BLE CONNECTION
+
+ */
 
 const manager = new BleManager();
 
@@ -189,86 +256,116 @@ export const Home = ({route, navigation}) => {
         return subscriber; // unsubscribe on unmount
     }, []);
 
-
     /*
 
-        BLUETOOTH
+            BLUETOOTH
 
      */
 
-    // used to determine current bluetooth devices in range
     const [scannedDevices, dispatch] = useReducer(reducer, []);
-    const [isScanning, setIsScanning] = useState(false);
 
     // start to scan when page is open, destroy manager when done
     useEffect(() => {
-        scanDevices();
+        startDevicesScan();
 
         return () => {
             manager.destroy()
         };
     }, []);
 
-    // scan for BLE devices
-    const scanDevices = () => {
-        // toggle activity indicator on
-        setIsScanning(true);
+    async function waitUntilBluetoothReady() {
+        let {PoweredOn, PoweredOff, Unauthorized, Unsupported} = State;
+        console.log('LIB : Wait until bluetooth ready...');
+        return new Promise(async (resolve, reject) => {
+            manager.onStateChange(state => {
+                console.log('State changed : ', state);
+                if (state === PoweredOn) {
+                    resolve(true);
+                }
+            });
 
-        manager.startDeviceScan(null, null, (error, scannedDevice) => {
-            if (error) console.warn(error);
-
-            // filter by name for 'raspberrypi'
-            if (scannedDevice != null && scannedDevice.name == 'raspberrypi') {
-                // stop scanning
-                manager.stopDeviceScan();
-
-                // turn off activity indicator
-                setIsScanning(false);
-
-                // connect to device
-                scannedDevice
-                    .connect()
-                    .then((deviceData) => {
-                        manager.onDeviceDisconnected(
-                            deviceData.id,
-                            (connectionError, connectionData) => {
-                                if (connectionError) console.log(connectionError);
-
-                                console.log(connectionData);
-                                console.log('Device is disconnected. Restarting BLE device scan. ');
-                                setIsScanning(true);
-                                scanDevices();
-                            },
-                        );
-
-                        return scannedDevice.discoverAllServicesAndCharacteristics();
-                    })
-                    .then(async (deviceObject) => {
-                        console.log('deviceObject: ' + deviceObject);
-                        // subscribe for the readable service
-                        scannedDevice.monitorCharacteristicForService(
-                            '00000001-710e-4a5b-8d75-3e5b444bc3cf',
-                            '00000002-710e-4a5b-8d75-3e5b444bc3cf',
-                            (error, characteristic) => {
-                                if (error) {
-                                    console.log('Error in monitorCharacteristicForService');
-                                    console.log(error.message);
-                                    return;
-                                }
-
-                                //console.log(characteristic.uuid, decodeBleString(characteristic.value));
-                            },
-                        );
-                    })
-                    .catch((error) => {
-                        console.warn(error);
-                    });
-
-                // add to devices list using reducer
-                dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
+            // Verify if the state is already poweredOn before the listener was created
+            let crtState = await manager.state();
+            console.log('Base state', crtState);
+            if (crtState === PoweredOn) {
+                resolve(true);
+            }
+            else if (
+                crtState === PoweredOff ||
+                crtState === Unauthorized ||
+                crtState === Unsupported
+            ) {
+                reject(new Error('Bluetooth is not available :' + crtState));
             }
         });
-    };
+    }
+
+    let scannedDevice = null;
+
+    // scan for BLE devices
+    async function startDevicesScan() {
+        waitUntilBluetoothReady()
+            .then(() => {
+                console.log('LIB : Start scan...');
+                const scanOptions = {
+                    allowDuplicates: false,
+                };
+                manager.startDeviceScan(null, scanOptions, (error, scannedDevice) => {
+                    if (error) console.warn(error);
+
+                    console.log(scannedDevice.name);
+
+                    // filter by name for 'raspberrypi'
+                    if (scannedDevice != null && (scannedDevice.name == 'raspberrypi' || scannedDevice.name == 'pie123')) {
+
+                        // connect to device
+                        scannedDevice
+                            .connect()
+                            .then((deviceData) => {
+                                // stop scanning
+                                manager.stopDeviceScan();
+
+                                manager.onDeviceDisconnected(
+                                    deviceData.id,
+                                    (connectionError, connectionData) => {
+                                        if (connectionError) console.log(connectionError);
+
+                                        console.log(connectionData);
+                                        console.log('Device is disconnected. Restarting BLE device scan. ');
+                                        startDevicesScan();
+                                    },
+                                );
+
+                                return scannedDevice.discoverAllServicesAndCharacteristics();
+                            })
+                            .then(async (deviceObject) => {
+                                console.log('deviceObject: ' + deviceObject);
+                                // subscribe for the readable service
+                                scannedDevice.monitorCharacteristicForService(
+                                    'ab173c6c-8493-412d-897c-1974fa74fc13',
+                                    '04cb0eb1-8b58-44d0-91e4-080af33438be',
+                                    (error, characteristic) => {
+                                        if (error) {
+                                            console.log('Error in monitorCharacteristicForService');
+                                            console.log(error.message);
+                                            return;
+                                        }
+
+                                        console.log(characteristic.uuid, decodeBleString(characteristic.value));
+                                    },
+                                );
+                            })
+                            .catch((error) => {
+                                console.warn(error);
+                            });
+
+                        // add to devices list using reducer
+                        dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
+                    }
+                });
+            })
+            .catch(error => console.log(JSON.stringify(error)));
+    }
 
     const DeviceList = () => {
         if (scannedDevices.length == 0)
@@ -282,7 +379,7 @@ export const Home = ({route, navigation}) => {
                     </View>
                 </View>
             );
-        else return (
+            else return (
             <View style={format.deviceList}>
                 <FlatList
                     horizontal={true}

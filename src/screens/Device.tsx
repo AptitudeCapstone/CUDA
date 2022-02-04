@@ -24,11 +24,10 @@ export const DeviceScreen = ({route, navigation}) => {
     useEffect(() => {
         const getDeviceInformation = async () => {
             // connect to the device
-            const connectedDevice = await device.connect();
-            setIsConnected(true);
+            if(device) setIsConnected(true);
 
             // discover all device services and characteristics
-            const allServicesAndCharacteristics = await connectedDevice.discoverAllServicesAndCharacteristics();
+            const allServicesAndCharacteristics = await device.discoverAllServicesAndCharacteristics();
             // get the services only
             const discoveredServices = await allServicesAndCharacteristics.services();
             setServices(discoveredServices);
