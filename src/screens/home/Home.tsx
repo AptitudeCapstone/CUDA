@@ -67,9 +67,7 @@ const DeviceCard = ({navigation, device}) => {
                 fontSize: 14,
                 color: '#eee',
                 textAlign: 'center',
-                whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
             }}>{device.name}</Text>
         </TouchableOpacity>
     );
@@ -281,7 +279,7 @@ export const Home = ({route, navigation}) => {
 
     async function waitUntilBluetoothReady() {
         let {PoweredOn, PoweredOff, Unauthorized, Unsupported} = State;
-        console.log('LIB : Wait until bluetooth ready...');
+        console.log('Waiting until bluetooth is ready');
         return new Promise(async (resolve, reject) => {
             manager.onStateChange(state => {
                 console.log('State changed : ', state);
@@ -301,7 +299,7 @@ export const Home = ({route, navigation}) => {
                 crtState === Unauthorized ||
                 crtState === Unsupported
             ) {
-                reject(new Error('Bluetooth is not available :' + crtState));
+                reject(new Error('Bluetooth is not available: ' + crtState));
             }
         });
     }
@@ -312,7 +310,7 @@ export const Home = ({route, navigation}) => {
     async function startDevicesScan() {
         waitUntilBluetoothReady()
             .then(() => {
-                console.log('LIB : Start scan...');
+                console.log('Starting device scan');
                 const scanOptions = {
                     allowDuplicates: false,
                 };
@@ -346,6 +344,9 @@ export const Home = ({route, navigation}) => {
                             })
                             .then(async (deviceObject) => {
                                 console.log('deviceObject: ' + deviceObject);
+                                // add to devices list using reducer
+                                dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
+                                console.log('Connecting to ' + scannedDevice.name)
                                 // subscribe for the readable service
                                 scannedDevice.monitorCharacteristicForService(
                                     'ab173c6c-8493-412d-897c-1974fa74fc13',
@@ -364,9 +365,6 @@ export const Home = ({route, navigation}) => {
                             .catch((error) => {
                                 console.warn(error);
                             });
-
-                        // add to devices list using reducer
-                        dispatch({type: 'ADD_DEVICE', payload: scannedDevice});
                     }
                 });
             })
