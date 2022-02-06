@@ -13,8 +13,6 @@ import {CreatePatientCOVID} from './src/screens/patients/CreatePatientCOVID';
 import {CreatePatientFibrinogen} from './src/screens/patients/CreatePatientFibrinogen';
 import {EditPatientCOVID} from './src/screens/patients/EditPatientCOVID';
 import {EditPatientFibrinogen} from './src/screens/patients/EditPatientFibrinogen';
-import {DeviceScreen} from "./src/screens/Device";
-import {Welcome} from "./src/screens/Welcome";
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
