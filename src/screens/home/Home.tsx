@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TouchableOpacity, View, NativeModules, NativeEventEmitter, Platform, PermissionsAndroid } from 'react-native';
+import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TextInput, TouchableOpacity, View, NativeModules, NativeEventEmitter, Platform, PermissionsAndroid } from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
@@ -327,7 +327,7 @@ export const Home = ({route, navigation}) => {
                     switch (testMode) {
                         case 'write':
                             // ===== test write data
-                            const payload = '1';
+                            const payload = writeVal;
                             const payloadBytes = stringToBytes(payload);
                             console.log('payload:', payload);
 
@@ -350,6 +350,7 @@ export const Home = ({route, navigation}) => {
                                         const buffer = Buffer.from(res);
                                         const data = buffer.toString();
                                         console.log('data', data);
+                                        setReadVal(data);
                                         alert(`read value "${data}"`);
                                     }
                                 })
@@ -427,6 +428,10 @@ export const Home = ({route, navigation}) => {
 
     */
 
+    const [writeVal, setWriteVal] = useState('0');
+    const [readVal, setReadVal] = useState('none');
+    const [peripheral, setPeripheral] = useState(null);
+
     const DeviceCard = (device) => {
 
         let iconName = '';
@@ -457,7 +462,9 @@ export const Home = ({route, navigation}) => {
                     padding: 16,
                     paddingBottom: 13
                 }}
-                onPress={() => connectAndTestPeripheral(device)}
+                onPress={() => {
+                    setPeripheral(device);
+                }}
             >
                 <View style={{borderRadius: 5000, paddingBottom: 4}}>
                     {iconName != '' &&
@@ -482,6 +489,50 @@ export const Home = ({route, navigation}) => {
 
     };
 
+    const BluetoothTester = () => {
+        return (
+            <View style={{borderWidth: 1, borderColor: '#555', padding: 15, margin: 15, borderRadius: 10}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    style={(testMode !== 'read') ? buttons.unselectedButton : buttons.covidSelectButton}
+                    onPress={() => setTestMode('read')}
+                >
+                    <Text style={fonts.selectButtonText}>Read</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={(testMode !== 'write') ? buttons.unselectedButton : buttons.covidSelectButton}
+                    onPress={() => setTestMode('write')}
+                >
+                    <Text style={fonts.selectButtonText}>Write</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={(testMode !== 'notify') ? buttons.unselectedButton : buttons.covidSelectButton}
+                    onPress={() => setTestMode('notify')}
+                >
+                    <Text style={fonts.selectButtonText}>Notify</Text>
+                </TouchableOpacity>
+            </View>
+        {
+            testMode === 'write' &&
+            <TextInput
+                style={{margin: 15, padding: 15, color: '#eee', borderColor: '#555', borderWidth: 1, borderRadius: 10}}
+                onChangeText={(text) => setWriteVal(text)}
+            />
+        }
+        {
+            testMode === 'read' &&
+            <Text style={[fonts.username, {padding: 20, textAlign: 'center'}]}>Most recent value: {readVal}</Text>
+        }
+        <TouchableOpacity
+            style={[buttons.submitButton, {marginBottom: 10}]}
+            onPress={() => connectAndTestPeripheral(peripheral)}
+        >
+            <Text style={buttons.submitButtonText}>Send Request</Text>
+        </TouchableOpacity>
+            </View>
+    )
+    };
+
 
     const DeviceList = () => {
         if (list.length == 0)
@@ -504,14 +555,18 @@ export const Home = ({route, navigation}) => {
                 </View>
             );
             else return (
-            <View style={format.deviceList}>
-                <FlatList
-                    horizontal={true}
-                    data={list}
-                    renderItem={({item}) => DeviceCard(item)}
-                    keyExtractor={(item) => item.id}
-                />
+            <View>
+                <View style={format.deviceList}>
+                    <FlatList
+                        horizontal={true}
+                        data={list}
+                        renderItem={({item}) => DeviceCard(item)}
+                        keyExtractor={(item) => item.id}
+                    />
+                </View>
+                <BluetoothTester />
             </View>
+
         );
     }
 
