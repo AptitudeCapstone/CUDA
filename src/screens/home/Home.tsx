@@ -279,6 +279,10 @@ export const Home = ({route, navigation}) => {
         return item.name;
     };
 
+    const connectPeripheral = (peripheral) => {
+
+    };
+
     // connect to peripheral then test the communication
     const connectAndTestPeripheral = (peripheral) => {
         if (!peripheral) {
@@ -414,10 +418,10 @@ export const Home = ({route, navigation}) => {
         return () => {
             console.log('Unmount');
 
-            bleEmitter.removeListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
-            bleEmitter.removeListener('BleManagerStopScan', handleStopScan);
-            bleEmitter.removeListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
-            bleEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
+            bleEmitter.removeAllListeners('BleManagerDiscoverPeripheral');
+            bleEmitter.removeAllListeners('BleManagerStopScan');
+            bleEmitter.removeAllListeners('BleManagerDisconnectPeripheral');
+            bleEmitter.removeAllListeners('BleManagerDidUpdateValueForCharacteristic');
         };
     }, []);
 
@@ -431,63 +435,6 @@ export const Home = ({route, navigation}) => {
     const [writeVal, setWriteVal] = useState('0');
     const [readVal, setReadVal] = useState('none');
     const [peripheral, setPeripheral] = useState(null);
-
-    const DeviceCard = (device) => {
-
-        let iconName = '';
-        if (device.rssi >= -50) {
-            iconName = 'signal-cellular-3';
-        } else if (device.rssi >= -75) {
-            iconName = 'signal-cellular-2';
-        } else if (device.rssi >= -85) {
-            iconName = 'signal-cellular-1';
-        }
-
-        return (
-            <TouchableOpacity
-                style={device.connected ? {
-                    backgroundColor: '#333',
-                    margin: 0,
-                    textAlign: 'center',
-                    alignItems: 'center',
-                    padding: 16,
-                    paddingBottom: 17,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    borderColor: '#555'
-                } : {
-                    margin: 0,
-                    textAlign: 'center',
-                    alignItems: 'center',
-                    padding: 16,
-                    paddingBottom: 13
-                }}
-                onPress={() => {
-                    setPeripheral(device);
-                }}
-            >
-                <View style={{borderRadius: 5000, paddingBottom: 4}}>
-                    {iconName != '' &&
-                        <IconMCI name={iconName} size={30}
-                             color="#fff"/>
-                    }
-                </View>
-                <Text style={{
-                    fontSize: 14,
-                    color: '#eee',
-                    textAlign: 'center',
-                    overflow: 'hidden',
-                }}>{getPeripheralName(device)}</Text>
-                <Text style={{
-                    fontSize: 14,
-                    color: '#eee',
-                    textAlign: 'center',
-                    overflow: 'hidden',
-                }}>{device.id}</Text>
-            </TouchableOpacity>
-        );
-
-    };
 
     const BluetoothTester = () => {
         return (
@@ -516,7 +463,8 @@ export const Home = ({route, navigation}) => {
             testMode === 'write' &&
             <TextInput
                 style={{margin: 15, padding: 15, color: '#eee', borderColor: '#555', borderWidth: 1, borderRadius: 10}}
-                onChangeText={(text) => setWriteVal(text)}
+                onChangeText={setWriteVal}
+                value={writeVal}
             />
         }
         {
@@ -560,7 +508,57 @@ export const Home = ({route, navigation}) => {
                     <FlatList
                         horizontal={true}
                         data={list}
-                        renderItem={({item}) => DeviceCard(item)}
+                        renderItem={({item}) => {
+                            let iconName = '';
+                            if (item.rssi) {
+                                if (item.rssi >= -50) {
+                                    iconName = 'signal-cellular-3';
+                                } else if (item.rssi >= -75) {
+                                    iconName = 'signal-cellular-2';
+                                } else if (item.rssi >= -85) {
+                                    iconName = 'signal-cellular-1';
+                                }
+                            }
+
+                            return (
+                                <TouchableOpacity
+                                    style={item == peripheral ? {
+                                        backgroundColor: '#333',
+                                        margin: 0,
+                                        textAlign: 'center',
+                                        alignItems: 'center',
+                                        padding: 16,
+                                        paddingBottom: 17,
+                                        borderWidth: 1,
+                                        borderRadius: 10,
+                                        borderColor: '#555'
+                                    } : {
+                                        margin: 0,
+                                        textAlign: 'center',
+                                        alignItems: 'center',
+                                        padding: 16,
+                                        paddingBottom: 13
+                                    }}
+                                    onPress={() => {
+                                        setPeripheral(item);
+                                    }}
+                                >
+                                    <View style={{borderRadius: 5000, paddingBottom: 4}}>
+                                        {iconName != '' &&
+                                        <IconMCI name={iconName} size={30}
+                                                 color="#fff"/>
+                                        }
+                                    </View>
+                                    <Text style={{
+                                        fontSize: 14,
+                                        color: '#eee',
+                                        textAlign: 'center',
+                                        overflow: 'hidden',
+                                    }}>{getPeripheralName(item)}</Text>
+                                </TouchableOpacity>
+                            );
+
+                        }}
                         keyExtractor={(item) => item.id}
                     />
                 </View>
