@@ -46,6 +46,7 @@
 		4A1E8E03272BBD8200B3C447 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		4A3ECE1E278A8B63004F01AE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4A9E51972734C35B00E37C38 /* CUDA-logos-zoom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "CUDA-logos-zoom.jpg"; sourceTree = "<group>"; };
+		4ABB6F8227C42CE40079351F /* CUDA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = CUDA.entitlements; path = CUDA/CUDA.entitlements; sourceTree = "<group>"; };
 		52F99896CD163AB6DB0FAD3A /* Pods-CUDA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CUDA.release.xcconfig"; path = "Target Support Files/Pods-CUDA/Pods-CUDA.release.xcconfig"; sourceTree = "<group>"; };
 		618356590F1F42B7B25D6393 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		6958EEF84A774646A2C0CA4D /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -108,6 +109,7 @@
 		13B07FAE1A68108700A75B9A /* CUDA */ = {
 			isa = PBXGroup;
 			children = (
+				4ABB6F8227C42CE40079351F /* CUDA.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -549,6 +551,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CUDA/CUDA.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				ENABLE_BITCODE = NO;
@@ -565,8 +569,10 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.capstone.CUDA;
 				PRODUCT_NAME = CUDA;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -577,6 +583,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CUDA/CUDA.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				INFOPLIST_FILE = CUDA/Info.plist;
@@ -592,7 +600,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.capstone.CUDA;
 				PRODUCT_NAME = CUDA;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

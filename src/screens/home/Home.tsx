@@ -1,5 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, FlatList, SafeAreaView, Text, TextInput, TouchableOpacity, View, NativeModules, NativeEventEmitter, Platform, PermissionsAndroid } from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    SafeAreaView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    NativeModules,
+    NativeEventEmitter,
+    Platform,
+    PermissionsAndroid,
+    Switch
+} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
@@ -174,12 +188,24 @@ export const Home = ({route, navigation}) => {
 
     */
 
+    const scanInterval = 5.0;
+    const [scanEnabled, toggleScan] = useState(false);
     const [isScanning, setIsScanning] = useState(false);
     const peripherals = new Map();
     const [list, setList] = useState([]);
     const BleManagerModule = NativeModules.BleManager;
     const bleEmitter = new NativeEventEmitter(BleManagerModule);
     const [testMode, setTestMode] = useState('write');
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if(scanEnabled) {
+                startScan();
+                console.log('Refreshing device list')
+            } else console.log('Not scanning - disabled by switch');
+        }, scanInterval * 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     // start to scan peripherals
     const startScan = () => {
@@ -387,32 +413,32 @@ export const Home = ({route, navigation}) => {
         console.log('Mount');
 
         // initialize BLE modules
-        BleManager.start({ showAlert: false });
+        BleManager.start({showAlert: false}).then(r => {
+            // add ble listeners on mount
+            bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
+            bleEmitter.addListener('BleManagerStopScan', handleStopScan);
+            bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
+            bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
 
-        // add ble listeners on mount
-        bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
-        bleEmitter.addListener('BleManagerStopScan', handleStopScan);
-        bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
-        bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-
-        // check location permission only for android device
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r1) => {
-                if (r1) {
-                    console.log('Permission is OK');
-                    return;
-                }
-
-                PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r2) => {
-                    if (r2) {
-                        console.log('User accept');
-                        return
+            // check location permission only for android device
+            if (Platform.OS === 'android' && Platform.Version >= 23) {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r1) => {
+                    if (r1) {
+                        console.log('Permission is OK');
+                        return;
                     }
 
-                    console.log('User refuse');
+                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r2) => {
+                        if (r2) {
+                            console.log('User accept');
+                            return
+                        }
+
+                        console.log('User refuse');
+                    });
                 });
-            });
-        }
+            }
+        });
 
         // remove ble listeners on unmount
         return () => {
@@ -486,20 +512,35 @@ export const Home = ({route, navigation}) => {
         if (list.length == 0)
             return (
                 <View>
+                    <View style={{padding: 15, flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text style={fonts.username}>Scan for devices</Text>
+                        <Switch
+                            trackColor={{ false: "#444", true: "#5e9955" }}
+                            thumbColor={scanEnabled ? "#eeeeee" : "#eeeeee"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={(val) => toggleScan(val)}
+                            value={scanEnabled}
+                        />
+                    </View>
                 <View style={format.deviceList}>
+                    {isScanning &&
                     <View style={{flexDirection: 'row', paddingTop: 20, marginBottom: 16}}>
-                        <Text style={{color: '#eee', fontSize: 16, marginTop: 14, marginBottom: -4}}>Searching for CUDA devices</Text>
+                        <Text style={{color: '#eee', fontSize: 16, marginTop: 14, marginBottom: -4}}>Searching for CUDA
+                            devices</Text>
                         <Text style={{marginLeft: 15, marginTop: 8, marginBottom: 0}}>
                             <ActivityIndicator color={'white'} size={36}/>
                         </Text>
                     </View>
+                    }
                 </View>
+                    {/*
                     <TouchableOpacity
                         style={buttons.submitButton}
                         onPress={() => startScan()}
                     >
                         <Text style={buttons.submitButtonText}>Start Scan</Text>
                     </TouchableOpacity>
+                    */}
                 </View>
             );
             else return (
