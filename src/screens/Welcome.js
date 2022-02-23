@@ -130,7 +130,7 @@ export const Welcome = ({route, navigation}) => {
                                 if (error) {
                                     console.log('Error in monitorCharacteristicForService');
                                     console.log(error.message);
-                                    return;
+
                                 }
 
                                 //console.log(characteristic.uuid, decodeBleString(characteristic.value));

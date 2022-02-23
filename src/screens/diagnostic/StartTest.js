@@ -1,16 +1,21 @@
-// @ts-ignore
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-    ActivityIndicator, Alert, FlatList, SafeAreaView, Switch, Text, TextInput, TouchableOpacity, View, NativeModules,
+    Alert,
+    FlatList,
     NativeEventEmitter,
+    NativeModules,
+    PermissionsAndroid,
     Platform,
-    PermissionsAndroid
+    SafeAreaView,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
-import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
-import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalSelector from "react-native-modal-selector-searchable";
 import database from "@react-native-firebase/database";
@@ -18,6 +23,7 @@ import auth from "@react-native-firebase/auth";
 import {useIsFocused} from "@react-navigation/native";
 import BleManager from 'react-native-ble-manager';
 import {stringToBytes} from 'convert-string';
+
 const Buffer = require('buffer/').Buffer;
 
 
@@ -355,7 +361,8 @@ export const StartTest = ({navigation, route}) => {
                 }
                 {
                     testMode === 'read' &&
-                    <Text style={[fonts.username, {padding: 20, textAlign: 'center'}]}>Most recent value: {readVal}</Text>
+                    <Text style={[fonts.username, {padding: 20, textAlign: 'center'}]}>Most recent
+                        value: {readVal}</Text>
                 }
                 <TouchableOpacity
                     style={[buttons.submitButton, {marginBottom: 10}]}
@@ -369,7 +376,7 @@ export const StartTest = ({navigation, route}) => {
 
 
     const DeviceList = () => {
-return (
+        return (
             <View>
                 <View style={format.deviceList}>
                     <FlatList

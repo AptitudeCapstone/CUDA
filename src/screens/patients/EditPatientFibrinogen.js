@@ -66,27 +66,27 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
         patient.once('value', function (patientSnapshot) {
             console.log(patientSnapshot.val());
             if (patientSnapshot.val()) {
-                if(patientName != patientSnapshot.val().name && patientName != null) {
+                if (patientName != patientSnapshot.val().name && patientName != null) {
                     patient.update({name: patientName});
                 }
 
-                if(patientBloodType != patientSnapshot.val().bloodType && patientBloodType != null) {
+                if (patientBloodType != patientSnapshot.val().bloodType && patientBloodType != null) {
                     patient.update({bloodType: patientBloodType});
                 }
 
-                if(patientSex != patientSnapshot.val().sex && patientSex != null) {
+                if (patientSex != patientSnapshot.val().sex && patientSex != null) {
                     patient.update({sex: patientSex});
                 }
 
-                if(patientAge != patientSnapshot.val().age && patientAge != null) {
+                if (patientAge != patientSnapshot.val().age && patientAge != null) {
                     patient.update({age: patientAge});
                 }
 
-                if(patientWeight != patientSnapshot.val().weight && patientWeight != null) {
+                if (patientWeight != patientSnapshot.val().weight && patientWeight != null) {
                     patient.update({weight: patientWeight});
                 }
 
-                if(patientHeight != patientSnapshot.val().height && patientHeight != null) {
+                if (patientHeight != patientSnapshot.val().height && patientHeight != null) {
                     patient.update({height: patientHeight});
                 }
             }
@@ -97,7 +97,7 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
     }
 
     const BloodTypeSelector = () => {
-        return(
+        return (
             <View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
@@ -156,7 +156,7 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
     }
 
     const SexSelector = () => {
-        return(
+        return (
             <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                 <TouchableOpacity
                     style={(patientSex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
@@ -176,10 +176,10 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
 
     const AgeSelector = () => {
         let ages = [];
-        for(let i = 0; i < 100; ++i)
+        for (let i = 0; i < 100; ++i)
             ages.push(i);
 
-        return(
+        return (
             <Picker
                 itemStyle={{color: '#fff'}}
                 selectedValue={patientAge}
@@ -198,14 +198,14 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
 
     const HeightSelector = () => {
         let feetChoices = [];
-        for(let i = 0; i <= 7; ++i)
+        for (let i = 0; i <= 7; ++i)
             feetChoices.push(i);
 
         let inchChoices = [];
-        for(let i = 0; i <= 11; ++i)
+        for (let i = 0; i <= 11; ++i)
             inchChoices.push(i);
 
-        return(
+        return (
             <View style={{flexDirection: 'row'}}>
                 <Picker
                     style={{flexDirection: 'row', flex: 1}}
@@ -241,7 +241,7 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
         )
     }
 
-    return(
+    return (
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
@@ -268,9 +268,9 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
                     />
                 </View>
                 <Text style={fonts.subheadingSpaced}>Blood Type</Text>
-                <BloodTypeSelector />
+                <BloodTypeSelector/>
                 <Text style={fonts.subheadingSpaced}>Sex</Text>
-                <SexSelector />
+                <SexSelector/>
                 <Text style={fonts.subheadingSpaced}>Weight</Text>
                 <View style={format.textBox}>
                     <TextInput
@@ -286,9 +286,9 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
                     />
                 </View>
                 <Text style={fonts.subheadingSpaced}>Age</Text>
-                <AgeSelector />
+                <AgeSelector/>
                 <Text style={fonts.subheadingSpaced}>Height</Text>
-                <HeightSelector />
+                <HeightSelector/>
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}

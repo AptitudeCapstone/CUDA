@@ -56,7 +56,6 @@ export const EditPatientCOVID = ({route, navigation}) => {
     }, [isFocused]);
 
 
-
     const update_patient = () => {
         let patient = null;
         if (orgInfo === null) {
@@ -71,42 +70,44 @@ export const EditPatientCOVID = ({route, navigation}) => {
             console.log(patientSnapshot.val());
             if (patientSnapshot.val()) {
 
-                if(patientName != patientSnapshot.val().name && patientName != '') {
+                if (patientName != patientSnapshot.val().name && patientName != '') {
                     patient.update({name: patientName});
                 }
 
-                if(patientEmail != patientSnapshot.val().email && patientEmail != '') {
+                if (patientEmail != patientSnapshot.val().email && patientEmail != '') {
                     patient.update({email: patientEmail});
                 }
 
-                if(patientPhone != patientSnapshot.val().phone && patientPhone != '') {
+                if (patientPhone != patientSnapshot.val().phone && patientPhone != '') {
                     patient.update({phone: patientPhone});
                 }
 
-                if(patientStreetAddress1 != patientSnapshot.val().streetAddress1 && patientStreetAddress1 != '') {
+                if (patientStreetAddress1 != patientSnapshot.val().streetAddress1 && patientStreetAddress1 != '') {
                     patient.update({streetAddress1: patientStreetAddress1});
                 }
 
-                if(patientStreetAddress2 != patientSnapshot.val().streetAddress2 && patientStreetAddress2 != '') {
+                if (patientStreetAddress2 != patientSnapshot.val().streetAddress2 && patientStreetAddress2 != '') {
                     patient.update({streetAddress2: patientStreetAddress2});
                 }
 
-                if(patientCity != patientSnapshot.val().city && patientCity != '') {
+                if (patientCity != patientSnapshot.val().city && patientCity != '') {
                     patient.update({city: patientCity});
                 }
 
-                if(patientState != patientSnapshot.val().state && patientState != '') {
+                if (patientState != patientSnapshot.val().state && patientState != '') {
                     patient.update({state: patientState});
                 }
 
-                if(patientZip != patientSnapshot.val().zip && patientZip != '') {
+                if (patientZip != patientSnapshot.val().zip && patientZip != '') {
                     patient.update({zip: patientZip});
                 }
             }
-        }).then(r => {Alert.alert('Successfully applied changes', 'Returning to patient portal')});
+        }).then(r => {
+            Alert.alert('Successfully applied changes', 'Returning to patient portal')
+        });
     }
 
-    return(
+    return (
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}

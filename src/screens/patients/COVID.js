@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Animated, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {openDatabase} from 'react-native-sqlite-storage';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format, parseISO} from 'date-fns';
 import database from "@react-native-firebase/database";

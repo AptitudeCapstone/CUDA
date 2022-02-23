@@ -3,7 +3,7 @@ import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-nativ
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
 import {useIsFocused} from '@react-navigation/native';
-import {fonts, format, buttons} from '../../style/style';
+import {buttons, fonts, format} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
@@ -115,7 +115,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     }
 
     const BloodTypeSelector = () => {
-        return(
+        return (
             <View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
@@ -174,7 +174,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
     }
 
     const SexSelector = () => {
-        return(
+        return (
             <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                 <TouchableOpacity
                     style={(patientSex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
@@ -194,20 +194,20 @@ export const CreatePatientFibrinogen = ({navigation}) => {
 
     const AgeSelector = () => {
         let ages = [];
-        for(let i = 0; i < 100; ++i)
+        for (let i = 0; i < 100; ++i)
             ages.push(i);
 
-        return(
-                <Picker
-                    itemStyle={{color: '#fff'}}
-                    selectedValue={patientAge}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setPatientAge(itemValue)
-                    }>
-                    {ages.map((prop, key) => {
-                        return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
-                    })}
-                </Picker>
+        return (
+            <Picker
+                itemStyle={{color: '#fff'}}
+                selectedValue={patientAge}
+                onValueChange={(itemValue, itemIndex) =>
+                    setPatientAge(itemValue)
+                }>
+                {ages.map((prop, key) => {
+                    return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
+                })}
+            </Picker>
         );
     }
 
@@ -216,14 +216,14 @@ export const CreatePatientFibrinogen = ({navigation}) => {
 
     const HeightSelector = () => {
         let feetChoices = [];
-        for(let i = 0; i <= 7; ++i)
+        for (let i = 0; i <= 7; ++i)
             feetChoices.push(i);
 
         let inchChoices = [];
-        for(let i = 0; i <= 11; ++i)
+        for (let i = 0; i <= 11; ++i)
             inchChoices.push(i);
 
-        return(
+        return (
             <View style={{flexDirection: 'row'}}>
                 <Picker
                     style={{flexDirection: 'row', flex: 1}}
@@ -286,9 +286,9 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                     />
                 </View>
                 <Text style={fonts.subheadingSpaced}>Blood Type</Text>
-                <BloodTypeSelector />
+                <BloodTypeSelector/>
                 <Text style={fonts.subheadingSpaced}>Sex</Text>
-                <SexSelector />
+                <SexSelector/>
                 <Text style={fonts.subheadingSpaced}>Weight</Text>
                 <View style={format.textBox}>
                     <TextInput
@@ -304,9 +304,9 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                     />
                 </View>
                 <Text style={fonts.subheadingSpaced}>Age</Text>
-                <AgeSelector />
+                <AgeSelector/>
                 <Text style={fonts.subheadingSpaced}>Height</Text>
-                <HeightSelector />
+                <HeightSelector/>
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}

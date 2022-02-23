@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Alert,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import {Alert, SafeAreaView, Text, TouchableOpacity, View,} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
@@ -13,7 +7,7 @@ import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from "@react-navigation/native";
-import {fonts, format, icons, buttons} from '../../style/style';
+import {fonts, format, icons} from '../../style/style';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin, statusCodes,} from 'react-native-google-signin';
 import database from "@react-native-firebase/database";

@@ -79,9 +79,9 @@ export const format = StyleSheet.create({
 
 export const fonts = StyleSheet.create({
     username: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: '#eee',
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#eee',
     },
     organizationName: {
         fontSize: 24,
