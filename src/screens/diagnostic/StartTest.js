@@ -28,27 +28,6 @@ const Buffer = require('buffer/').Buffer;
 
 
 export const StartTest = ({navigation, route}) => {
-    const [scanEnabled, setScanEnabled] = useState(true);
-    const [isScanning, setIsScanning] = useState(false);
-    const scanInterval = 10.0;
-    const peripherals = new Map();
-    const BleManagerModule = NativeModules.BleManager;
-    const bleEmitter = new NativeEventEmitter(BleManagerModule);
-    const [testMode, setTestMode] = useState('write');
-    const [discoveredDevices, setDiscoveredDevices] = useState([]);
-    const [connectedDevices, setConnectedDevices] = useState([]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (scanEnabled) {
-                startScan();
-                console.log('Refreshing device list');
-                console.log(discoveredDevices.toString());
-            } else console.log('Not scanning - disabled by switch');
-        }, scanInterval * 1000);
-        return () => clearInterval(interval);
-    }, []);
-
     const isFocused = useIsFocused(),
         [value, setValue] = useState(null),
         [selectedTest, setSelectedTest] = useState('COVID'),
@@ -61,99 +40,145 @@ export const StartTest = ({navigation, route}) => {
 
     /*
 
-    BLUETOOTH
+        BLE
 
-*/
+    */
 
-// start to scan peripherals
-    const startScan = () => {
-        if (isScanning) {
+    // configurable settings
+    const autoConnectByName = true;
+    const scanInterval = 10.0;
+    // BLE objects
+    const BleManagerModule = NativeModules.BleManager;
+    const bleEmitter = new NativeEventEmitter(BleManagerModule);
+    // UI and control states
+    const [scanEnabled, setScanEnabled] = useState(true);
+    const [isScanning, setIsScanning] = useState(false);
+    const allPeripherals = new Map();
+    const [discoveredDevices, setDiscoveredDevices] = useState([]);
+    const connectedPeripherals = new Map();
+    const [connectedDevices, setConnectedDevices] = useState([]);
+    // for testing UI
+    const [testMode, setTestMode] = useState('write');
+
+    // HANDLER / HELPER FUNCTIONS
+
+    const connectPeripheral = (peripheral) => {
+        if (!peripheral) {
             return;
         }
 
-        // first, clear existing peripherals
-        peripherals.clear();
-        setDiscoveredDevices(Array.from(peripherals.values()));
-
-        // then re-scan it
-        BleManager.scan([], scanInterval, false)
-            .then(() => {
-                console.log('Scanning for BLE devices');
-                setIsScanning(true);
-            })
-            .catch((err) => {
-                console.error(err);
+        if (!isPeripheralConnected(peripheral)) {
+            BleManager.connect(peripheral.id).then(() => {
+                // update connected attribute
+                updatePeripheral(peripheral, (p) => {
+                    p.connected = true;
+                    return p;
+                });
+            }).catch(e => {
+                print('Error connecting: ' + e)
             });
-    };
+        }
+    }
 
-// handle discovered peripheral
+    const isPeripheralConnected = (peripheral) => {
+        let connected = false;
+
+        BleManager.isPeripheralConnected(
+            peripheral.id,
+            []
+        ).then((isConnected) => {
+            connected = isConnected;
+        });
+
+        return connected;
+    }
+
+    const subscribeToUpdates = (data) => {
+        console.log('Subscribing to updates on peripheral', data.peripheral);
+
+        BleManager.retrieveServices(data.peripheral).then((peripheralInfo) => {
+            const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13';
+            const characteristicUUID = '04cb0eb1-8b58-44d0-91e4-080af33438bb';
+
+            // start notifications on the peripheral
+            BleManager.startNotification(data.peripheral, serviceUUID, characteristicUUID).catch(error => {
+                console.log('Error subscribing', error);
+            });
+        });
+    }
+
+    // handle discovered peripheral
     const handleDiscoverPeripheral = (peripheral) => {
-        if (peripheral.name == 'raspberrypi' || peripheral.name == 'CUDA Tester') {
-            peripherals.set(peripheral.id, peripheral);
-            setDiscoveredDevices(Array.from(peripherals.values()));
+        if (peripheral.name === 'raspberrypi' || peripheral.name === 'CUDA Tester') {
+            // make a map of all discovered peripherals
+            allPeripherals.set(peripheral.id, peripheral);
+            setDiscoveredDevices(Array.from(allPeripherals.values()));
+            // if auto connect is on, connect to the device and update list of connected devices
+            if (autoConnectByName) {
+                if(!isPeripheralConnected(peripheral)) {
+                    connectPeripheral(peripheral);
+                }
+            }
         }
     };
 
-// handle stop scan event
+    const handleUpdateValueForCharacteristic = (update) => {
+        //console.log('received notification', update);
+
+
+        BleManager.read(update.peripheral, update.service, update.characteristic)
+            .then((res) => {
+                console.log('received update from ' + update.peripheral);
+                if (res) {
+                    const buffer = Buffer.from(res);
+                    const data = buffer.toString();
+                    console.log('updated value: ' + res.toString());
+                    setReadVal(res.toString());
+                    //alert(data);
+                }
+            }).catch((error) => {
+            alert(error);
+        });
+    }
+
+    // handle stop scan event
     const handleStopScan = () => {
-        console.log('Stopping BLE scan');
         setIsScanning(false);
     };
 
-// handle disconnected peripheral
-    const handleDisconnectedPeripheral = (data) => {
-        console.log('Disconnected from ' + data.peripheral);
+    const handleConnectedPeripheral = (peripheralID) => {
+        console.log('connected to peripheral', peripheralID);
+        subscribeToUpdates(peripheralID);
+    };
 
-        let peripheral = peripherals.get(data.peripheral);
+    // handle disconnected peripheral
+    const handleDisconnectedPeripheral = (data) => {
+        console.log('Disconnected from ', data);
+        /*
+        let peripheral = allPeripherals.get(data.peripheral);
         if (peripheral) {
             peripheral.connected = false;
-            peripherals.set(peripheral.id, peripheral);
-            setDiscoveredDevices(Array.from(peripherals.values()));
+            allPeripherals.set(peripheral.id, peripheral);
+            setDiscoveredDevices(Array.from(allPeripherals.values()));
         }
+
+         */
     };
 
-// handle update value for characteristic
-    const handleUpdateValueForCharacteristic = (data) => {
-        console.log(
-            'Update received for characteristic\n',
-            'Received data from: ' + data.peripheral,
-            'Characteristic: ' + data.characteristic,
-            'Data: ' + data.value,
-        );
-    };
 
-    // retrieve connected peripherals.
-    const retrieveConnectedPeripherals = () => {
-        BleManager.getConnectedPeripherals([]).then((results) => {
-            peripherals.clear();
-            setConnectedDevices(Array.from(peripherals.values()));
-
-            if (results.length === 0) {
-                console.log('No connected peripherals');
-            }
-
-            for (let i = 0; i < results.length; i++) {
-                let peripheral = results[i];
-                peripheral.connected = true;
-                peripherals.set(peripheral.id, peripheral);
-                setConnectedDevices(Array.from(peripherals.values()));
-            }
-        });
-    };
-
-// update stored peripherals
+    // update stored peripherals
     const updatePeripheral = (peripheral, callback) => {
-        let p = peripherals.get(peripheral.id);
+        let p = allPeripherals.get(peripheral.id);
         if (!p) {
             return;
         }
 
         p = callback(p);
-        peripherals.set(peripheral.id, p);
-        setDiscoveredDevices(Array.from(peripherals.values()));
+        allPeripherals.set(peripheral.id, p);
+        setDiscoveredDevices(Array.from(allPeripherals.values()));
     };
 
-// get advertised peripheral local name (if exists). default to peripheral name
+    // get advertised peripheral local name (if exists). default to peripheral name
     const getPeripheralName = (item) => {
         if (item.advertising) {
             if (item.advertising.localName) {
@@ -164,110 +189,61 @@ export const StartTest = ({navigation, route}) => {
         return item.name;
     };
 
-    const connectPeripheral = (peripheral) => {
+    /*
 
-    };
+        BLE ROUTINE
+        - SCAN ENABLED: TRUE
+            - UPDATE DISCOVERED PERIPHERALS LIST
+            - IF AUTO CONNECT BY NAME:
+                - CONNECT TO DEVICE, ALSO ADD TO CONNECTED PERIPHERALS LIST
 
-// connect to peripheral then test the communication
-    const connectAndTestPeripheral = (peripheral) => {
-        if (!peripheral) {
-            return;
-        }
+        - TAP DEVICE FROM CONNECTED LIST
+            - CONNECT TO DEVICE, ALSO ADD TO CONNECTED PERIPHERALS LIST
+            - SUBSCRIBE TO UPDATES FROM THE DEVICE
 
-        if (peripheral.connected) {
-            BleManager.disconnect(peripheral.id);
-            return;
-        }
+        - TEMP TESTING UI
+            - WRITE TO THE
 
-        // connect to selected peripheral
-        BleManager.connect(peripheral.id)
-            .then(() => {
-                console.log('Connected to ' + peripheral.id, peripheral);
 
-                // update connected attribute
-                updatePeripheral(peripheral, (p) => {
-                    p.connected = true;
-                    return p;
-                });
+     */
 
-                // retrieve peripheral services info
-                BleManager.retrieveServices(peripheral.id).then((peripheralInfo) => {
-                    console.log('Retrieved peripheral services', peripheralInfo);
-
-                    // test read current peripheral RSSI value
-                    BleManager.readRSSI(peripheral.id).then((rssi) => {
-                        console.log('Retrieved actual RSSI value', rssi);
-
-                        // update rssi value
-                        updatePeripheral(peripheral, (p) => {
-                            p.rssi = rssi;
-                            return p;
-                        });
-                    });
-
-                    // test read and write data to peripheral
-                    const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13';
-                    const charasteristicUUID = '04cb0eb1-8b58-44d0-91e4-080af33438bb';
-
-                    console.log('peripheral id:', peripheral.id);
-                    console.log('service:', serviceUUID);
-                    console.log('characteristic:', charasteristicUUID);
-
-                    switch (testMode) {
-                        case 'write':
-                            // ===== test write data
-                            const payload = writeVal;
-                            const payloadBytes = stringToBytes(payload);
-                            console.log('payload:', payload);
-
-                            BleManager.write(peripheral.id, serviceUUID, charasteristicUUID, payloadBytes)
-                                .then((res) => {
-                                    console.log('write response', res);
-                                    alert(`wrote value "${payload}"`);
-                                })
-                                .catch((error) => {
-                                    console.log('write err', error);
-                                });
-                            break;
-
-                        case 'read':
-                            // ===== test read data
-                            BleManager.read(peripheral.id, serviceUUID, charasteristicUUID)
-                                .then((res) => {
-                                    console.log('read response', res);
-                                    if (res) {
-                                        const buffer = Buffer.from(res);
-                                        const data = buffer.toString();
-                                        console.log('data', data);
-                                        setReadVal(data);
-                                        alert(`read value "${data}"`);
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.log('read err', error);
-                                    alert(error);
-                                });
-                            break;
-
-                        case 'notify':
-                            // ===== test subscribe notification
-                            BleManager.startNotification(peripheral.id, serviceUUID, charasteristicUUID)
-                                .then((res) => {
-                                    console.log('start notification response', res);
-                                });
-                            break;
-
-                        default:
-                            break;
-                    }
-                });
-            })
-            .catch((error) => {
-                console.log('Connection error', error);
+    /*
+    // periodically scans for new devices
+    useEffect(() => {
+        const interval = setInterval(() => {
+            BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
+                // Success code
+                console.log("Connected peripherals: " + peripheralsArray.length);
             });
+
+            if (scanEnabled) {
+                startScan();
+            }
+        }, scanInterval * 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+     */
+
+    // start to scan peripherals
+    const startScan = () => {
+        if (isScanning)
+            return;
+
+        // first, clear existing peripherals
+        allPeripherals.clear();
+        setDiscoveredDevices(Array.from(allPeripherals.values()));
+
+        // then re-scan it
+        BleManager.scan([], scanInterval, false)
+            .then(() => {
+                setIsScanning(true);
+            }).catch((err) => {
+                console.error(err);
+        });
     };
 
-// mount and onmount event handler
+    // mount and unmount event handler
     useEffect(() => {
         console.log('Initializing BLE');
 
@@ -277,21 +253,18 @@ export const StartTest = ({navigation, route}) => {
             bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
             bleEmitter.addListener('BleManagerStopScan', handleStopScan);
             bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
+            bleEmitter.addListener('BleManagerConnectPeripheral', handleConnectedPeripheral);
             bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
+
+            startScan();
 
             // check location permission only for android device
             if (Platform.OS === 'android' && Platform.Version >= 23) {
                 PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r1) => {
-                    if (r1) {
-                        //console.log('Permission is OK');
-                        return;
-                    }
+                    if (r1) return;
 
                     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r2) => {
-                        if (r2) {
-                            //console.log('User accept');
-                            return
-                        }
+                        if (r2) return;
 
                         console.log('User refuse');
                     });
@@ -366,7 +339,7 @@ export const StartTest = ({navigation, route}) => {
                 }
                 <TouchableOpacity
                     style={[buttons.submitButton, {marginBottom: 10}]}
-                    onPress={() => connectAndTestPeripheral(peripheral)}
+                    onPress={() => connectPeripheral(peripheral)}
                 >
                     <Text style={buttons.submitButtonText}>Send Request</Text>
                 </TouchableOpacity>
@@ -396,7 +369,7 @@ export const StartTest = ({navigation, route}) => {
 
                             return (
                                 <TouchableOpacity
-                                    style={item == peripheral ? {
+                                    style={item === peripheral ? {
                                         backgroundColor: '#333',
                                         margin: 0,
                                         alignItems: 'center',
@@ -416,7 +389,7 @@ export const StartTest = ({navigation, route}) => {
                                     }}
                                 >
                                     <View style={{borderRadius: 5000, paddingBottom: 4}}>
-                                        {iconName != '' &&
+                                        {iconName !== '' &&
                                         <IconMCI name={iconName} size={30}
                                                  color="#fff"/>
                                         }
@@ -457,13 +430,13 @@ export const StartTest = ({navigation, route}) => {
 
                     // get patient info for appropriate test type
                     let patient = null;
-                    if (selectedTest == 'COVID') {
+                    if (selectedTest === 'COVID') {
                         if (orgInfo === null) {
                             patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID);
                         } else {
                             patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID);
                         }
-                    } else if (selectedTest == 'Fibrinogen') {
+                    } else if (selectedTest === 'Fibrinogen') {
                         if (orgInfo === null) {
                             patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen);
                         } else {
@@ -473,10 +446,10 @@ export const StartTest = ({navigation, route}) => {
 
                     // update data for patient for appropriate test type
                     patient.once('value', function (patientSnapshot) {
-                        if (selectedTest == 'COVID') {
+                        if (selectedTest === 'COVID') {
                             setPatientKeyCOVID(patientSnapshot.key);
                             setPatientDataCOVID(patientSnapshot.val());
-                        } else if (selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest === 'Fibrinogen') {
                             setPatientKeyFibrinogen(patientSnapshot.key);
                             setPatientDataFibrinogen(patientSnapshot.val());
                         }
@@ -502,7 +475,7 @@ export const StartTest = ({navigation, route}) => {
         return (
             <View style={format.testSelectBar}>
                 <TouchableOpacity
-                    style={(selectedTest == 'COVID') ? buttons.covidSelectButton : buttons.unselectedButton}
+                    style={(selectedTest === 'COVID') ? buttons.covidSelectButton : buttons.unselectedButton}
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('COVID');
@@ -511,7 +484,7 @@ export const StartTest = ({navigation, route}) => {
                     <Text style={fonts.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={(selectedTest == 'Fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}
+                    style={(selectedTest === 'Fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('Fibrinogen');
@@ -546,13 +519,13 @@ export const StartTest = ({navigation, route}) => {
             if (!viewPatientModalVisible) {
                 let patients = null;
 
-                if (selectedTest == 'COVID') {
+                if (selectedTest === 'COVID') {
                     if (orgInfo === null) {
                         patients = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').orderByChild('name');
                     } else {
                         patients = database().ref('/organizations/' + userInfo.organization + '/patients/covid/').orderByChild('name')
                     }
-                } else if (selectedTest == 'Fibrinogen') {
+                } else if (selectedTest === 'Fibrinogen') {
                     if (orgInfo === null) {
                         patients = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('name');
                     } else {
@@ -583,7 +556,7 @@ export const StartTest = ({navigation, route}) => {
                     >
                         <Text style={fonts.username}>
                             {
-                                (selectedTest == 'COVID') ?
+                                (selectedTest === 'COVID') ?
                                     (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
                                     :
                                     (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
@@ -609,20 +582,20 @@ export const StartTest = ({navigation, route}) => {
                     customSelector={<View/>}
                     onChange={async (option) => {
                         // get patient ID for the appropriate test type
-                        if (selectedTest == 'COVID')
+                        if (selectedTest === 'COVID')
                             setPatientKeyCOVID(option.key);
-                        else if (selectedTest == 'Fibrinogen')
+                        else if (selectedTest === 'Fibrinogen')
                             setPatientKeyFibrinogen(option.key);
 
                         // get patient info for appropriate test type
                         let patient = null;
-                        if (selectedTest == 'COVID') {
+                        if (selectedTest === 'COVID') {
                             if (orgInfo === null) {
                                 patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key);
                             } else {
                                 patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + option.key);
                             }
-                        } else if (selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest === 'Fibrinogen') {
                             if (orgInfo === null) {
                                 patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
                             } else {
@@ -632,10 +605,10 @@ export const StartTest = ({navigation, route}) => {
 
                         // update data for patient for appropriate test type
                         await patient.once('value', function (patientSnapshot) {
-                            if (selectedTest == 'COVID') {
+                            if (selectedTest === 'COVID') {
                                 setPatientKeyCOVID(patientSnapshot.key);
                                 setPatientDataCOVID(patientSnapshot.val());
-                            } else if (selectedTest == 'Fibrinogen') {
+                            } else if (selectedTest === 'Fibrinogen') {
                                 setPatientKeyFibrinogen(patientSnapshot.key);
                                 setPatientDataFibrinogen(patientSnapshot.val());
                             }
@@ -661,7 +634,8 @@ export const StartTest = ({navigation, route}) => {
                     cancelText={'Cancel'}
                     searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
                     searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                    listType={'FLATLIST'}/>
+                    listType={'FLATLIST'}
+                />
                 <PatientSelectorButton/>
             </View>
         );
@@ -675,7 +649,7 @@ export const StartTest = ({navigation, route}) => {
 
     const log_result = () => {
         if (orgInfo === null) {
-            if (selectedTest == 'COVID') {
+            if (selectedTest === 'COVID') {
                 const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/').push();
                 const date = new Date();
                 testReference
@@ -684,7 +658,7 @@ export const StartTest = ({navigation, route}) => {
                         time: date.toISOString()
                     })
                     .then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
-            } else if (selectedTest == 'Fibrinogen') {
+            } else if (selectedTest === 'Fibrinogen') {
                 const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
                 const date = new Date();
                 testReference
@@ -697,7 +671,7 @@ export const StartTest = ({navigation, route}) => {
 
             Alert.alert('Success', 'Added test result to database');
         } else {
-            if (selectedTest == 'COVID') {
+            if (selectedTest === 'COVID') {
                 const testReference = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/').push();
                 const date = new Date();
                 testReference
@@ -706,7 +680,7 @@ export const StartTest = ({navigation, route}) => {
                         time: date.toISOString()
                     })
                     .then(() => console.log('Added entry for /organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
-            } else if (selectedTest == 'Fibrinogen') {
+            } else if (selectedTest === 'Fibrinogen') {
                 const testReference = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
                 const date = new Date();
                 testReference

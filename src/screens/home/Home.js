@@ -40,7 +40,7 @@ export const Home = ({route, navigation}) => {
                     if (userSnapshot.val()) {
                         setUserInfo(userSnapshot.val());
                         if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
-                            console.log('userSnapshot.val()');
+                            //console.log(userSnapshot.val());
                             setOrgInfo(null);
                         } else
                             database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
@@ -61,7 +61,7 @@ export const Home = ({route, navigation}) => {
                         if (userSnapshot.val()) {
                             setUserInfo(userSnapshot.val());
                             if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
-                                console.log('userSnapshot.val()');
+                                //console.log(userSnapshot.val());
                                 setOrgInfo(null);
                             } else
                                 database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
@@ -132,15 +132,15 @@ export const Home = ({route, navigation}) => {
                     setUserInfo(userSnapshot.val());
                     if (userSnapshot.val().organization === undefined || userSnapshot.val().organization === null) {
                         setOrgInfo(null);
-                        console.log('user has no org');
+                        //console.log('user has no org');
                     } else
                         database().ref('organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
                             setOrgInfo(orgSnapshot.val());
-                            console.log(orgSnapshot.val());
+                            //console.log(orgSnapshot.val());
                         });
                 } else {
                     setOrgInfo(null);
-                    console.log('user not registered');
+                    //console.log('user not registered');
                 }
             });
         else
