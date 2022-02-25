@@ -57,8 +57,12 @@ export const StartTest = ({navigation, route}) => {
     const [discoveredDevices, setDiscoveredDevices] = useState([]);
     const connectedPeripherals = new Map();
     const [connectedDevices, setConnectedDevices] = useState([]);
+    const [selectedPeripheralID, setSelectedPeripheralID] = useState([]);
     // for testing UI
     const [testMode, setTestMode] = useState('write');
+
+    const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13';
+    const characteristicUUID = '04cb0eb1-8b58-44d0-91e4-080af33438bb';
 
     // HANDLER / HELPER FUNCTIONS
 
@@ -93,19 +97,77 @@ export const StartTest = ({navigation, route}) => {
         return connected;
     }
 
-    const subscribeToUpdates = (data) => {
-        console.log('Subscribing to updates on peripheral', data.peripheral);
+    const subscribeToUpdates = (update) => {
+        console.log('Subscribing to updates on peripheral', update.peripheral);
 
-        BleManager.retrieveServices(data.peripheral).then((peripheralInfo) => {
-            const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13';
-            const characteristicUUID = '04cb0eb1-8b58-44d0-91e4-080af33438bb';
-
+        BleManager.retrieveServices(update.peripheral).then((peripheralInfo) => {
             // start notifications on the peripheral
-            BleManager.startNotification(data.peripheral, serviceUUID, characteristicUUID).catch(error => {
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438ba").catch(error => {
+                console.log('Error subscribing', error);
+            });
+
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438bb").catch(error => {
+                console.log('Error subscribing', error);
+            });
+
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438bc").catch(error => {
+                console.log('Error subscribing', error);
+            });
+
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438bd").catch(error => {
+                console.log('Error subscribing', error);
+            });
+
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438be").catch(error => {
+                console.log('Error subscribing', error);
+            });
+
+            BleManager.startNotification(update.peripheral, serviceUUID, "04cb0eb1-8b58-44d0-91e4-080af33438bf").catch(error => {
                 console.log('Error subscribing', error);
             });
         });
-    }
+    };
+
+    const sendRequest = (peripheralID, writeVal) => {
+        if(testMode === 'write') {
+            writePeripheral(peripheralID, writeVal);
+        } else if(testMode === 'read') {
+            readPeripheral(peripheralID);
+        } else {
+            subscribeToUpdates(peripheralID);
+        }
+    };
+
+    // write value to peripheral writePeripheral(peripheral, writeVal)
+    const writePeripheral = (peripheralID, writeVal) => {
+        // ===== test write data
+        const payload = writeVal.toString();
+        const payloadBytes = stringToBytes(payload);
+        console.log('writing payload:', payload);
+
+        BleManager.write(peripheralID, serviceUUID, characteristicUUID, payloadBytes)
+            .then((res) => {
+                console.log('write response', res);
+            })
+            .catch((error) => {
+                console.log('write err', error);
+            });
+    };
+
+    const readPeripheral = (peripheralID) => {
+        BleManager.read(peripheralID, serviceUUID, characteristicUUID)
+            .then((res) => {
+                if (res) {
+                    const buffer = Buffer.from(res);
+                    const data = buffer.toString();
+                    console.log('read value: ' + res + ' from device ' + peripheralID);
+                    setReadVal(res);
+                    //alert(data);
+                }
+            }).catch((error) => {
+            alert(error);
+        });
+    };
 
     // handle discovered peripheral
     const handleDiscoverPeripheral = (peripheral) => {
@@ -123,17 +185,15 @@ export const StartTest = ({navigation, route}) => {
     };
 
     const handleUpdateValueForCharacteristic = (update) => {
-        //console.log('received notification', update);
-
-
+        // BLE enforces 20 byte limit on notification values
+        // so, we perform a full read when an update occurs
         BleManager.read(update.peripheral, update.service, update.characteristic)
             .then((res) => {
-                console.log('received update from ' + update.peripheral);
                 if (res) {
                     const buffer = Buffer.from(res);
                     const data = buffer.toString();
-                    console.log('updated value: ' + res.toString());
-                    setReadVal(res.toString());
+                    console.log('updated value: ' + data + ' (from device ' + update.peripheral + ' on characteristic ' + update.characteristic + ')');
+                    setReadVal(data.toString());
                     //alert(data);
                 }
             }).catch((error) => {
@@ -207,7 +267,7 @@ export const StartTest = ({navigation, route}) => {
 
      */
 
-    /*
+
     // periodically scans for new devices
     useEffect(() => {
         const interval = setInterval(() => {
@@ -222,8 +282,6 @@ export const StartTest = ({navigation, route}) => {
         }, scanInterval * 1000);
         return () => clearInterval(interval);
     }, []);
-
-     */
 
     // start to scan peripherals
     const startScan = () => {
@@ -290,7 +348,7 @@ export const StartTest = ({navigation, route}) => {
 
     */
 
-    const [writeVal, setWriteVal] = useState('0');
+    const [writeVal, setWriteVal] = useState('test');
     const [readVal, setReadVal] = useState('none');
     const [peripheral, setPeripheral] = useState(null);
 
@@ -339,7 +397,7 @@ export const StartTest = ({navigation, route}) => {
                 }
                 <TouchableOpacity
                     style={[buttons.submitButton, {marginBottom: 10}]}
-                    onPress={() => connectPeripheral(peripheral)}
+                    onPress={() => sendRequest(selectedPeripheralID)}
                 >
                     <Text style={buttons.submitButtonText}>Send Request</Text>
                 </TouchableOpacity>
@@ -385,7 +443,7 @@ export const StartTest = ({navigation, route}) => {
                                         paddingBottom: 13
                                     }}
                                     onPress={() => {
-                                        setPeripheral(item);
+                                        setSelectedPeripheralID(item.id);
                                     }}
                                 >
                                     <View style={{borderRadius: 5000, paddingBottom: 4}}>
