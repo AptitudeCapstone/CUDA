@@ -44,7 +44,8 @@ export const format = StyleSheet.create({
     },
     testSelectBar: {
         flexDirection: 'row',
-        padding: 10,
+        padding: 30,
+        paddingTop: 30,
         justifyContent: 'center'
     },
     selectPatientBarContainer: {

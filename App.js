@@ -8,7 +8,7 @@ import {ForgotPassword} from './src/screens/home/ForgotPassword';
 import {ConnectOrganization} from './src/screens/home/ConnectOrganization';
 import {CreateOrganization} from './src/screens/home/CreateOrganization';
 import {Patient} from './src/screens/patients/Patient';
-import {StartTest} from './src/screens/diagnostic/StartTest';
+import {Monitor} from './src/screens/devices/Monitor';
 import {CreatePatientCOVID} from './src/screens/patients/CreatePatientCOVID';
 import {CreatePatientFibrinogen} from './src/screens/patients/CreatePatientFibrinogen';
 import {EditPatientCOVID} from './src/screens/patients/EditPatientCOVID';
@@ -17,7 +17,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconI from 'react-native-vector-icons/Ionicons';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Tab = createBottomTabNavigator();
@@ -152,14 +152,14 @@ const App = () => {
                 }}
             />
             <Tab.Screen
-                name='StartTest'
-                component={StartTest}
+                name='MonitorDevices'
+                component={Monitor}
                 options={{
-                    title: 'Start Test',
+                    title: 'Monitor Devices',
                     headerShown: false,
                     tabBarIcon: ({color}) => (
-                        <IconI
-                            name="water"
+                        <IconMI
+                            name="device-hub"
                             color={color}
                             size={26}
                         />
