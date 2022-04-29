@@ -47,7 +47,10 @@
     }
 
     if (@available(iOS 12.0, *)) {
+      bool providesAppSettingsValue = settings.providesAppNotificationSettings == true;
       bool provisionalValue = settings.authorizationStatus == UNAuthorizationStatusProvisional;
+
+      [result setValue:@(providesAppSettingsValue) forKey:@"providesAppSettings"];
       [result setValue:@(provisionalValue) forKey:@"provisional"];
 
       if (settings.criticalAlertSetting != UNNotificationSettingNotSupported) {
@@ -79,6 +82,7 @@
   bool criticalAlert = [options containsObject:@"criticalAlert"];
   bool carPlay = [options containsObject:@"carPlay"];
   bool provisional = [options containsObject:@"provisional"];
+  bool providesAppSettings = [options containsObject:@"providesAppSettings"];
 
   UNAuthorizationOptions types = UNAuthorizationOptionNone;
 
@@ -102,6 +106,9 @@
     if (provisional) {
       types += UNAuthorizationOptionProvisional;
     }
+    if (providesAppSettings) {
+      types += UNAuthorizationOptionProvidesAppNotificationSettings;
+    }
   }
 
   if (!alert &&
@@ -109,7 +116,8 @@
       !sound &&
       !criticalAlert &&
       !carPlay &&
-      !provisional) {
+      !provisional &&
+      !providesAppSettings) {
     types += UNAuthorizationOptionAlert;
     types += UNAuthorizationOptionBadge;
     types += UNAuthorizationOptionSound;

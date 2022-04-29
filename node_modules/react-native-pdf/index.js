@@ -278,7 +278,7 @@ export default class Pdf extends Component {
             .progress((received, total) => {
                 this.props.onLoadProgress && this.props.onLoadProgress(received / total);
                 if (this._mounted) {
-                    this.setState({progress: Math.floor(received / total)});
+                    this.setState({progress: received / total});
                 }
             });
 
@@ -397,7 +397,7 @@ export default class Pdf extends Component {
                             >
                                 {this.props.renderActivityIndicator
                                     ? this.props.renderActivityIndicator(this.state.progress)
-                                    : <Text>{`${this.state.progress}%`}</Text>}
+                                    : <Text>{`${(this.state.progress * 100).toFixed(2)}%`}</Text>}
                             </View>):(
                                 Platform.OS === "android" || Platform.OS === "windows"?(
                                         <PdfCustom
