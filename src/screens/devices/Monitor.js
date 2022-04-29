@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     Alert,
     FlatList,
@@ -22,9 +22,6 @@ import database from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
 import {useIsFocused} from "@react-navigation/native";
 import BleManager from 'react-native-ble-manager';
-import {stringToBytes} from 'convert-string';
-
-const Buffer = require('buffer/').Buffer;
 
 
 export const Monitor = ({navigation, route}) => {
@@ -35,13 +32,13 @@ export const Monitor = ({navigation, route}) => {
         [patientDataCOVID, setPatientDataCOVID] = useState(null),
         [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null),
         // configurable settings
-        scanInterval = 10.0,
+        scanInterval = 2.0,
         // BLE objects
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
         // UI and control states
-        [scanEnabled, setScanEnabled] = useState(true),
-        [autoConnectByName, setAutoConnectByName] = useState(true),
+        autoConnectByName = useRef(false),
+        [autoConnectSwitch, setAutoConnectSwitch] = useState(autoConnectByName),
         [isScanning, setIsScanning] = useState(false),
         discoveredPeripherals = new Map(),
         [discoveredDevices, setDiscoveredDevices] = useState([]),
@@ -52,53 +49,85 @@ export const Monitor = ({navigation, route}) => {
 
     /*
 
-        BLE
+            BLE
+
+            Single service with 6 characteristics
+            1. Pico status (as string)
+            2. Program task (unused right now) (as string)
+            3. Sensor type (as int)
+            4. Last result (as string)
+            5. Last result timestamp (as string)
 
      */
 
-    // Single service with 6 characteristics
-    //  1. state characteristic (0 = idle, 1 = test in progress)
-    const picoStatusUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BA";
-    //  2. program task (unused right now)
-    const programTaskUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BB";
-    //  4. sensor type (0 = no sensor, 1 = covid sensor, 2 = fibrinogen sensor)
-    const chipTypeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BD";
-    //  5. most recent result (numerical value of last result, 0 initially)
-    const lastResultUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BE";
-    //  6. test request (0 = empty request queue, 1 = test has been requested)
-    const lastResultTimeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BF";
 
-    // HANDLER / HELPER FUNCTIONS
+    const picoStatusUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BA",
+        programTaskUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BB",
+        chipTypeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BD",
+        lastResultUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BE",
+        lastResultTimeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BF",
+        characteristics = [
+            picoStatusUUID,
+            programTaskUUID,
+            chipTypeUUID,
+            lastResultUUID,
+            lastResultTimeUUID
+        ];
 
-    const isPeripheralConnected = (peripheral) => {
-        let connected = false;
+    /*
 
-        BleManager.isPeripheralConnected(peripheral.id, [])
-            .then((isConnected) => {
-                connected = isConnected;
-            });
+            BLUETOOTH HANDLER AND HELPER FUNCTIONS
 
-        return connected;
-    }
+     */
 
-    // get advertised peripheral local name (if exists). default to peripheral name
-    const getPeripheralName = (item) => {
-        if (item.advertising) {
-            if (item.advertising.localName) {
-                return item.advertising.localName;
+    // BLE mount and unmount event handler
+    useEffect(() => {
+        console.debug('Initializing BLE');
+
+        // Initialize BLE module
+        BleManager.start({showAlert: false}).then(r => {
+            // Add ble listeners on mount
+            bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
+            bleEmitter.addListener('BleManagerStopScan', handleStopScan);
+            bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
+            bleEmitter.addListener('BleManagerConnectPeripheral', handleConnectedPeripheral);
+            bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
+
+            scanDevices();
+
+            // Check location permissions for android devices
+            if (Platform.OS === 'android' && Platform.Version >= 23) {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r1) => {
+                    if (r1) return;
+
+                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r2) => {
+                        if (r2) return;
+                    });
+                });
             }
-        }
+        });
 
-        return item.name;
-    };
+        // Remove all BLE listeners on unmount
+        return () => {
+            console.debug('Releasing BLE');
+            bleEmitter.removeAllListeners('BleManagerDiscoverPeripheral');
+            bleEmitter.removeAllListeners('BleManagerStopScan');
+            bleEmitter.removeAllListeners('BleManagerDisconnectPeripheral');
+            bleEmitter.removeAllListeners('BleManagerDidUpdateValueForCharacteristic');
+        };
+    }, []);
 
+    // Device discovery handler
     const handleDiscoverPeripheral = (peripheral) => {
-        if (!connectedPeripherals.has(peripheral.id) && (peripheral.name === 'raspberrypi' || String(peripheral.name).includes('AMS-'))) {
-            // make a map of all discovered peripherals
+        if (!connectedPeripherals.has(peripheral.id)
+            && (peripheral.name === 'raspberrypi' || String(peripheral.name).includes('AMS-'))) {
+
+            // Update map of all discovered peripherals
             discoveredPeripherals.set(peripheral.id, peripheral);
-            setDiscoveredDevices(Array.from(discoveredPeripherals.values()));
-            // if auto connect is on, connect to the device and update list of connected devices
-            if (autoConnectByName) {
+            console.debug('BLE: Aptitude device discovered with name ' + getPeripheralName(peripheral));
+
+            // If auto connect is on, connect to the device and update list of connected devices
+            if (autoConnectByName.current) {
                 if(!isPeripheralConnected(peripheral)) {
                     connectPeripheral(peripheral);
                 }
@@ -113,81 +142,56 @@ export const Monitor = ({navigation, route}) => {
 
         if (!isPeripheralConnected(peripheral)) {
             BleManager.connect(peripheral.id).then(() => {
-                // add to connected peripherals
+                // Add device to map of connected peripherals
                 connectedPeripherals.set(peripheral.id, peripheral);
-                setConnectedDevices(Array.from(connectedPeripherals.values()));
-                // remove from discovered peripherals
+
+                // Remove device from map of discovered peripherals
                 discoveredPeripherals.delete(peripheral.id);
-                setDiscoveredDevices(Array.from(discoveredPeripherals.values()))
-            }).catch(e => {
-                print('Error connecting: ' + e)
+            }).catch(err => {
+                print('BLE: Error connecting to peripheral - ' + err)
             });
         }
     }
 
     const handleConnectedPeripheral = (peripheralID) => {
-        console.log('connected to peripheral', peripheralID);
         subscribeToUpdates(peripheralID);
+        console.debug('BLE: established connection with new device: ', peripheralID);
     };
 
     // handle disconnected peripheral
     const handleDisconnectedPeripheral = (data) => {
-        console.log('disconnected from ', data);
-
         let peripheral = connectedPeripherals.get(data.peripheral);
 
         if (peripheral) {
-            // add to discovered devices
+            // add to list of discovered devices
             discoveredPeripherals.set(peripheral.id, peripheral);
-            setDiscoveredDevices(Array.from(discoveredPeripherals.values()));
-            // remove from connected devices
+            // remove from list of connected devices
             connectedPeripherals.delete(peripheral.id);
-            setConnectedDevices(Array.from(connectedPeripherals.values()));
         }
-    };
 
-    const subscribeToUpdates = (update) => {
-        // retrieve services and start notifications on the peripheral for all 6 characteristics
-        console.log('Subscribing to updates on peripheral', update.peripheral);
-        BleManager.retrieveServices(update.peripheral).then((peripheralInfo) => {
-            BleManager.startNotification(update.peripheral, serviceUUID, picoStatusUUID)
-                .catch(error => {
-                    console.log('Error subscribing', error);
-                });
+        console.debug('BLE: Closed connection from ', data);
+    }
 
-            BleManager.startNotification(update.peripheral, serviceUUID, programTaskUUID)
-                .catch(error => {
-                    console.log('Error subscribing', error);
-                });
+    const toggleAutoConnect = () => {
+        let newState = !autoConnectByName.current;
+        setAutoConnectSwitch(newState);
+        autoConnectByName.current = newState;
+        console.debug('BLE: Auto-connect has been toggled to ' + newState);
+    }
 
+    // Scan for BLE devices
+    const scanDevices = () => {
+        console.debug('BLE: Attempting new scan with auto-connect set to ' + autoConnectByName.current);
 
-            BleManager.startNotification(update.peripheral, serviceUUID, chipTypeUUID)
-                .catch(error => {
-                    console.log('Error subscribing', error);
-                });
-
-            BleManager.startNotification(update.peripheral, serviceUUID, lastResultUUID)
-                .catch(error => {
-                    console.log('Error subscribing', error);
-                });
-
-            BleManager.startNotification(update.peripheral, serviceUUID, lastResultTimeUUID)
-                .catch(error => {
-                    console.log('Error subscribing', error);
-                });
-        });
-    };
-
-    // start to scan peripherals
-    const startScan = () => {
-        if (isScanning)
+        if (isScanning) {
+            console.debug('BLE: Scan in progress - cannot start new scan');
             return;
+        }
 
-        // first, clear existing peripherals
+        // Clear current map of discovered peripherals
         discoveredPeripherals.clear();
-        setDiscoveredDevices(Array.from(discoveredPeripherals.values()));
 
-        // then re-scan it
+        // Re-scan with the desired interval
         BleManager.scan([], scanInterval, false)
             .then(() => {
                 setIsScanning(true);
@@ -196,32 +200,64 @@ export const Monitor = ({navigation, route}) => {
         });
     };
 
-    // handle stop scan event
+    // Handle end of BLE device scan
     const handleStopScan = () => {
+        console.debug('BLE: Finished last scan');
         setIsScanning(false);
+        setDiscoveredDevices(Array.from(discoveredPeripherals.values()));
+        setConnectedDevices(Array.from(connectedPeripherals.values()));
     };
 
-    const start_test_on_selected_device = () => {
-        console.log('attempting to start test on device with id ' + selectedPeripheralID);
-        BleManager.write(selectedPeripheralID, serviceUUID, lastResultTimeUUID, stringToBytes('1'))
-            .then((res) => {
-                console.log('Sending test request to device ' + selectedPeripheralID.toString());
-            })
-            .catch((error) => {
-                console.log('Error sending test request to device ' + selectedPeripheralID.toString());
-                console.log(error);
+    // Periodically scan for new devices
+    useEffect(() => {
+        const interval = setInterval(() => {
+            scanDevices();
+        }, scanInterval * 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const isPeripheralConnected = (peripheral) => {
+        let connected = false;
+
+        BleManager.isPeripheralConnected(peripheral.id, [])
+            .then((isConnected) => {
+                connected = isConnected;
             });
+
+        return connected;
     }
 
+    // Get name of an advertised peripheral
+    const getPeripheralName = (item) => {
+        if (item.advertising && item.advertising.localName) {
+            return item.advertising.localName;
+        } else {
+            return item.name;
+        }
+    };
+
+    // Retrieve services and start notifications on the peripheral for all 6 characteristics
+    const subscribeToUpdates = (update) => {
+        BleManager.retrieveServices(update['peripheral']).then((peripheralInfo) => {
+            for(let charUUID of characteristics) {
+                BleManager.startNotification(update['peripheral'], serviceUUID, charUUID)
+                    .catch(error => {
+                        console.debug('BLE: Error subscribing', error);
+                    });
+            }
+
+            console.log('BLE: Subscribed to updates on peripheral', update['peripheral']);
+        });
+    };
+
+    // Characteristic update handler
     const handleUpdateValueForCharacteristic = (update) => {
-        // determine which characteristic update is being received
+        console.debug(update);
 
-        console.log(update);
-        //setReadVal(data.toString());
-
-        if(update && update.value) {
-            console.log('updated value received: ' + update.value + '\n' +
-                '        from device ' + update.peripheral + '\n' +
+        if (update && update.value) {
+            console.debug('BLE: characteristic update received' + '\n' +
+                '        with value of ' + update.value + '\n' +
+                '        from device ' + update['peripheral'] + '\n' +
                 '        on characteristic ' + update.characteristic);
 
             if (update.characteristic === chipTypeUUID) {
@@ -235,78 +271,15 @@ export const Monitor = ({navigation, route}) => {
                 }
             }
         } else {
-            console.log("Unrecognized bluetooth packet received");
+            console.debug("BLE: Unrecognized bluetooth packet received");
         }
-        
+    };
 
-        /*
-        BleManager.read(update.peripheral, update.service, update.characteristic)
-            .then((res) => {
-                if (res) {
-                    const buffer = Buffer.from(res);
-                    const data = buffer.toString();
-                    console.log('updated value: ' + data + ' (from device ' + update.peripheral + ' on characteristic ' + update.characteristic + ')');
-                    setReadVal(data.toString());
-                    //alert(data);
-                }
-            }).catch((error) => {
-            alert(error);
-        });
-
-         */
-    }
-
-    // periodically scans for new devices
-    useEffect(() => {
-        const interval = setInterval(() => {
+    /*
             BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
-                // Success code
-                console.log("connected peripherals: " + peripheralsArray.length);
+                console.debug("BLE: current connection count = " + peripheralsArray.length);
             });
-
-            if (scanEnabled) {
-                startScan();
-            }
-        }, scanInterval * 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // mount and unmount event handler
-    useEffect(() => {
-        console.log('Initializing BLE');
-
-        // initialize BLE modules
-        BleManager.start({showAlert: false}).then(r => {
-            // add ble listeners on mount
-            bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
-            bleEmitter.addListener('BleManagerStopScan', handleStopScan);
-            bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
-            bleEmitter.addListener('BleManagerConnectPeripheral', handleConnectedPeripheral);
-            bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-
-            startScan();
-
-            // check location permission only for android device
-            if (Platform.OS === 'android' && Platform.Version >= 23) {
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r1) => {
-                    if (r1) return;
-
-                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((r2) => {
-                        if (r2) return;
-                    });
-                });
-            }
-        });
-
-        // remove ble listeners on unmount
-        return () => {
-            console.log('Releasing BLE');
-            bleEmitter.removeAllListeners('BleManagerDiscoverPeripheral');
-            bleEmitter.removeAllListeners('BleManagerStopScan');
-            bleEmitter.removeAllListeners('BleManagerDisconnectPeripheral');
-            bleEmitter.removeAllListeners('BleManagerDidUpdateValueForCharacteristic');
-        };
-    }, []);
+             */
 
 
     /*
@@ -314,9 +287,6 @@ export const Monitor = ({navigation, route}) => {
         DEVICE LIST DISPLAY
 
     */
-
-    const [writeVal, setWriteVal] = useState('test'),
-        [readVal, setReadVal] = useState('none');
 
     const unconnectedDevice = (item) => {
         let iconName = '';
@@ -386,7 +356,7 @@ export const Monitor = ({navigation, route}) => {
                     setSelectedPeripheralID(item.id);
                 }}
             >
-                <View style={{borderRadius: 5000, paddingBottom: 4}}>
+                <View style={{paddingBottom: 4}}>
                     {iconName !== '' &&
                     <IconMCI name={iconName} size={30}
                              color="#fff"/>
@@ -409,6 +379,7 @@ export const Monitor = ({navigation, route}) => {
                     <FlatList
                         horizontal={true}
                         data={discoveredDevices}
+                        extraData={discoveredDevices}
                         renderItem={({item}) => unconnectedDevice(item)}
                         keyExtractor={(item) => item.id}
                     />
@@ -417,6 +388,7 @@ export const Monitor = ({navigation, route}) => {
                     <FlatList
                         horizontal={true}
                         data={connectedDevices}
+                        extraData={connectedDevices}
                         renderItem={({item}) => connectedDevice(item)}
                         keyExtractor={(item) => item.id}
                     />
@@ -570,30 +542,29 @@ export const Monitor = ({navigation, route}) => {
                 <ModalSelector
                     data={patients}
                     visible={viewPatientModalVisible}
-                    onCancel={() => {
-                        toggleViewPatientModal();
-                    }}
-                    customSelector={<View>
-                        <TouchableOpacity
-                            onPress={() => toggleViewPatientModal()}
-                            style={format.selectPatientBarContainer}
-                        >
-                            <Text style={fonts.username}>
-                                {
-                                    (selectedTest === 'COVID') ?
-                                        (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
-                                        :
-                                        (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
-                                }
-                            </Text>
-                            <IconE style={fonts.username}
-                                   name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} size={34}
-                            />
-                        </TouchableOpacity>
-                    </View>}
+                    onCancel={() => {toggleViewPatientModal()}}
+                    customSelector={
+                        <View>
+                            <TouchableOpacity
+                                onPress={() => toggleViewPatientModal()}
+                                style={format.selectPatientBarContainer}
+                            >
+                                <Text style={fonts.username}>
+                                    {
+                                        (selectedTest === 'COVID') ?
+                                            (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
+                                            :
+                                            (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
+                                    }
+                                </Text>
+                                <IconE style={fonts.username}
+                                       name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} size={34}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    }
                     onChange={(option) => {
                         database().ref('/users/' + auth().currentUser.uid).once('value').then(userSnapshot => {
-
                                 // get patient info for appropriate test type
                                 let patient = null;
                                 if (selectedTest === 'COVID') {
@@ -716,7 +687,6 @@ export const Monitor = ({navigation, route}) => {
 
                 }
             });
-
     }
 
     return (
@@ -724,33 +694,17 @@ export const Monitor = ({navigation, route}) => {
             <View style={{paddingTop: 15, marginBottom: -30}}>
                 <Text style={fonts.heading}>Monitor Devices</Text>
             </View>
-            <TestSelectBar/>
-            <PatientSelector/>
-            <View style={{paddingTop: 15, flexDirection: 'row', justifyContent: 'space-around'}}>
-                <Text style={fonts.username}>Bluetooth Scanning</Text>
+            <View style={{paddingTop: 15, flexDirection: 'row', justifyContent: 'center'}}>
+                <Text style={[fonts.subheading, {paddingRight: 25}]}>Automatic Pairing</Text>
                 <Switch
                     trackColor={{false: "#444", true: "#5e9955"}}
-                    thumbColor={scanEnabled ? "#eeeeee" : "#eeeeee"}
+                    thumbColor={autoConnectByName.current ? "#eeeeee" : "#eeeeee"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={(val) => {
-                        const newVal = !scanEnabled;
-                        setScanEnabled(val);
-                        console.log('is scanning: ' + newVal);
-                    }}
-                    value={scanEnabled}
-                />
-                <Text style={fonts.username}>Connect Automatically</Text>
-                <Switch
-                    trackColor={{false: "#444", true: "#5e9955"}}
-                    thumbColor={autoConnectByName ? "#eeeeee" : "#eeeeee"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={(val) => {
-                        const newVal = !autoConnectByName;
-                        setAutoConnectByName(val);
-                    }}
-                    value={scanEnabled}
+                    onValueChange={toggleAutoConnect}
+                    value={autoConnectByName.current}
                 />
             </View>
+            <PatientSelector/>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
                 style={{

@@ -95,7 +95,7 @@ export const fonts = StyleSheet.create({
         color: '#eee',
     },
     heading: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#eee',
