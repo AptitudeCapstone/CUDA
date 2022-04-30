@@ -76,6 +76,15 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
+    bigLayoutDeviceCard: {
+        backgroundColor: '#333',
+        margin: 0,
+        alignItems: 'center',
+        padding: 60,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#555'
+    }
 });
 
 export const fonts = StyleSheet.create({

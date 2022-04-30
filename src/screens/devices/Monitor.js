@@ -26,7 +26,8 @@ import {Buffer} from 'buffer';
 
 
 export const Monitor = ({navigation, route}) => {
-    const isFocused = useIsFocused(),
+    const bigLayout = Platform.isPad,
+        isFocused = useIsFocused(),
         [selectedTest, setSelectedTest] = useState('Fibrinogen'),
         [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
         [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
@@ -147,7 +148,7 @@ export const Monitor = ({navigation, route}) => {
     }
 
     const connectPeripheral = (peripheral) => {
-        if (peripheral) {
+        if (peripheral && !connectedPeripherals.has(peripheral['id'])) {
             BleManager.isPeripheralConnected(peripheral['id'], [])
                 .then((isConnected) => {
                     if(!isConnected) {
@@ -311,17 +312,9 @@ export const Monitor = ({navigation, route}) => {
 
         return (
             <TouchableOpacity
-                style={{
-                    backgroundColor: '#333',
-                    margin: 0,
-                    alignItems: 'center',
-                    padding: 60,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    borderColor: '#555'
-                }}
+                style={format.bigLayoutDeviceCard}
                 onPress={() => {
-                    setSelectedPeripheralID(item['id']);
+                    connectPeripheral(item);
                 }}
             >
                 <View style={{borderRadius: 5000, paddingBottom: 4}}>
@@ -368,19 +361,8 @@ export const Monitor = ({navigation, route}) => {
             lastResultTime = characteristic_values.get('lastResultTime', 'Fetching...');
 
         return (
-            <TouchableOpacity
-                style={{
-                    backgroundColor: '#333',
-                    margin: 0,
-                    alignItems: 'center',
-                    padding: 60,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    borderColor: '#555'
-                }}
-                onPress={() => {
-                    setSelectedPeripheralID(item['peripheral']['id']);
-                }}
+            <View
+                style={format.bigLayoutDeviceCard}
             >
                 <View style={{paddingBottom: 4}}>
                     {iconName !== '' &&
@@ -442,7 +424,7 @@ export const Monitor = ({navigation, route}) => {
                 }}>
                     Recorded at: {lastResultTime}
                 </Text>
-            </TouchableOpacity>
+            </View>
         );
     }
 
@@ -765,9 +747,6 @@ export const Monitor = ({navigation, route}) => {
 
     return (
         <SafeAreaView style={format.page}>
-            <View style={{paddingTop: 15, marginBottom: -30}}>
-                <Text style={fonts.heading}>Monitor Devices</Text>
-            </View>
             <View style={{paddingTop: 15, flexDirection: 'row', justifyContent: 'center'}}>
                 <Text style={[fonts.subheading, {paddingRight: 25}]}>Automatic Pairing</Text>
                 <Switch
