@@ -17,11 +17,12 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
-import ModalSelector from "react-native-modal-selector-searchable";
-import database from "@react-native-firebase/database";
-import auth from "@react-native-firebase/auth";
-import {useIsFocused} from "@react-navigation/native";
+import ModalSelector from 'react-native-modal-selector-searchable';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
+import {useIsFocused} from '@react-navigation/native';
 import BleManager from 'react-native-ble-manager';
+import {Buffer} from 'buffer';
 
 
 export const Monitor = ({navigation, route}) => {
@@ -31,48 +32,41 @@ export const Monitor = ({navigation, route}) => {
         [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
         [patientDataCOVID, setPatientDataCOVID] = useState(null),
         [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null),
-        // configurable settings
-        scanInterval = 2.0,
-        // BLE objects
+        [isScanning, setIsScanning] = useState(false),
+        [selectedPeripheralID, setSelectedPeripheralID] = useState([]),
+        [autoConnectSwitch, setAutoConnectSwitch] = useState(autoConnectByName),
+
+        /*
+
+                BLE
+
+                Single service with 6 characteristics
+                1. Pico status
+                2. Program task
+                3. Sensor type
+                4. Last result
+                5. Last result timestamp
+
+         */
+
+
+        scanInterval = 3.0, // BLE scan interval in seconds
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
-        // UI and control states
-        autoConnectByName = useRef(false),
-        [autoConnectSwitch, setAutoConnectSwitch] = useState(autoConnectByName),
-        [isScanning, setIsScanning] = useState(false),
+        serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
+        characteristics = {
+            picoStatus : '04CB0EB1-8B58-44D0-91E4-080AF33438BA',
+            programTask : '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
+            chipType : '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
+            lastResult : '04CB0EB1-8B58-44D0-91E4-080AF33438BE',
+            lastResultTime : '04CB0EB1-8B58-44D0-91E4-080AF33438BF'
+        },
+        charNameMap = Object.fromEntries(Object.entries(characteristics).map(a => a.reverse())),
         discoveredPeripherals = new Map(),
-        [discoveredDevices, setDiscoveredDevices] = useState([]),
         connectedPeripherals = new Map(),
-        [connectedDevices, setConnectedDevices] = useState([]),
-        [selectedPeripheralID, setSelectedPeripheralID] = useState([]),
-        serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13';
-
-    /*
-
-            BLE
-
-            Single service with 6 characteristics
-            1. Pico status (as string)
-            2. Program task (unused right now) (as string)
-            3. Sensor type (as int)
-            4. Last result (as string)
-            5. Last result timestamp (as string)
-
-     */
-
-
-    const picoStatusUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BA",
-        programTaskUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BB",
-        chipTypeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BD",
-        lastResultUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BE",
-        lastResultTimeUUID = "04CB0EB1-8B58-44D0-91E4-080AF33438BF",
-        characteristics = [
-            picoStatusUUID,
-            programTaskUUID,
-            chipTypeUUID,
-            lastResultUUID,
-            lastResultTimeUUID
-        ];
+        [discoveredList, setDiscoveredList] = useState([]),
+        [connectedList, setConnectedList] = useState([]),
+        autoConnectByName = useRef(false);
 
     /*
 
@@ -82,18 +76,16 @@ export const Monitor = ({navigation, route}) => {
 
     // BLE mount and unmount event handler
     useEffect(() => {
-        console.debug('Initializing BLE');
+        console.debug('BLE: Initializing');
 
         // Initialize BLE module
-        BleManager.start({showAlert: false}).then(r => {
+        BleManager.start({showAlert: false}).then(() => {
             // Add ble listeners on mount
             bleEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
             bleEmitter.addListener('BleManagerStopScan', handleStopScan);
             bleEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
             bleEmitter.addListener('BleManagerConnectPeripheral', handleConnectedPeripheral);
             bleEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-
-            scanDevices();
 
             // Check location permissions for android devices
             if (Platform.OS === 'android' && Platform.Version >= 23) {
@@ -109,104 +101,133 @@ export const Monitor = ({navigation, route}) => {
 
         // Remove all BLE listeners on unmount
         return () => {
-            console.debug('Releasing BLE');
             bleEmitter.removeAllListeners('BleManagerDiscoverPeripheral');
             bleEmitter.removeAllListeners('BleManagerStopScan');
             bleEmitter.removeAllListeners('BleManagerDisconnectPeripheral');
+            bleEmitter.removeAllListeners('BleManagerConnectPeripheral');
             bleEmitter.removeAllListeners('BleManagerDidUpdateValueForCharacteristic');
+            console.debug('BLE: Releasing all processes');
         };
     }, []);
 
     // Device discovery handler
     const handleDiscoverPeripheral = (peripheral) => {
-        if (!connectedPeripherals.has(peripheral.id)
-            && (peripheral.name === 'raspberrypi' || String(peripheral.name).includes('AMS-'))) {
+        if (!connectedPeripherals.has(peripheral['id']) && isAptitudeDevice(peripheral)) {
 
             // Update map of all discovered peripherals
-            discoveredPeripherals.set(peripheral.id, peripheral);
-            console.debug('BLE: Aptitude device discovered with name ' + getPeripheralName(peripheral));
+            discoveredPeripherals.set(peripheral['id'], peripheral);
+            //console.debug('BLE: Aptitude device discovered with name ' + peripheral['advertising']['localName']);
 
             // If auto connect is on, connect to the device and update list of connected devices
             if (autoConnectByName.current) {
-                if(!isPeripheralConnected(peripheral)) {
-                    connectPeripheral(peripheral);
-                }
+                BleManager.isPeripheralConnected(peripheral['id'], [])
+                    .then((isConnected) => {
+                        if(!isConnected) {
+                            connectPeripheral(peripheral);
+                        }
+                    });
             }
-        }
-    };
-
-    const connectPeripheral = (peripheral) => {
-        if (!peripheral) {
-            return;
-        }
-
-        if (!isPeripheralConnected(peripheral)) {
-            BleManager.connect(peripheral.id).then(() => {
-                // Add device to map of connected peripherals
-                connectedPeripherals.set(peripheral.id, peripheral);
-
-                // Remove device from map of discovered peripherals
-                discoveredPeripherals.delete(peripheral.id);
-            }).catch(err => {
-                print('BLE: Error connecting to peripheral - ' + err)
-            });
+        } else if (connectedPeripherals.has(peripheral['id'])) {
+            // update device info, like rssi
+            updatePeripheralInfo(peripheral['id'], peripheral);
+            //connectedPeripherals.get(peripheral['id'])['peripheral'] = peripheral;
         }
     }
 
-    const handleConnectedPeripheral = (peripheralID) => {
-        subscribeToUpdates(peripheralID);
-        console.debug('BLE: established connection with new device: ', peripheralID);
+    const updatePeripheralInfo = (peripheralID, peripheral) => {
+        connectedPeripherals.get(peripheralID)['peripheral'] = peripheral;
+        setConnectedList(Array.from(connectedPeripherals.values()));
+        //console.debug(connectedPeripherals.get(peripheralID)['peripheral']['rssi']);
+    }
+
+    const updateDeviceLists = () => {
+        // Update lists for UI re-render
+        setDiscoveredList(Array.from(discoveredPeripherals.values()));
+        setConnectedList(Array.from(connectedPeripherals.values()));
+    }
+
+    const connectPeripheral = (peripheral) => {
+        if (peripheral) {
+            BleManager.isPeripheralConnected(peripheral['id'], [])
+                .then((isConnected) => {
+                    if(!isConnected) {
+                        BleManager.connect(peripheral['id']).catch(err => {
+                            console.debug('BLE: Error connecting to peripheral - ' + err)
+                        });
+                    }
+                });
+        }
+    }
+
+    const handleConnectedPeripheral = (event) => {
+        BleManager.retrieveServices(event['peripheral']).then((peripheral) => {
+            // Add device to map of connected peripherals
+            connectedPeripherals.set(peripheral['id'], {
+                peripheral: peripheral,
+                // maps characteristic uuid to value
+                characteristic_values: new Map()
+            });
+
+                for(const [charName, charUUID] of Object.entries(characteristics)) {
+                    BleManager.read(peripheral['id'], serviceUUID, charUUID)
+                        .then(readData => {
+                            readData = decodeCharBuffer(readData);
+                            updateCharacteristicValue(peripheral['id'], charUUID, readData);
+                            //console.debug('BLE: Read ' + charName + ': ' + readData);
+                        }).catch(error => {
+                            console.debug('BLE: Error reading ', error);
+                        });
+
+                    BleManager.startNotification(peripheral['id'], serviceUUID, charUUID).catch(error => {
+                            console.debug('BLE: Error subscribing', error);
+                        });
+                }
+
+            // Remove device from map of discovered peripherals
+            discoveredPeripherals.delete(peripheral['id']);
+
+            updateDeviceLists();
+
+            //console.debug('BLE: Connected to ' + peripheral['advertising']['localName']);
+        });
     };
 
-    // handle disconnected peripheral
-    const handleDisconnectedPeripheral = (data) => {
-        let peripheral = connectedPeripherals.get(data.peripheral);
+    const handleDisconnectedPeripheral = (event) => {
+        const peripheral = connectedPeripherals.get(event['peripheral']);
 
         if (peripheral) {
             // add to list of discovered devices
-            discoveredPeripherals.set(peripheral.id, peripheral);
+            discoveredPeripherals.set(peripheral['id'], peripheral);
             // remove from list of connected devices
-            connectedPeripherals.delete(peripheral.id);
+            connectedPeripherals.delete(peripheral['id']);
         }
 
-        console.debug('BLE: Closed connection from ', data);
+        //console.debug('BLE: Closed connection from ', peripheral);
     }
 
+    const handleStopScan = () => {
+        setIsScanning(false);
+        updateDeviceLists();
+    };
+
     const toggleAutoConnect = () => {
-        let newState = !autoConnectByName.current;
+        const newState = !autoConnectByName.current;
         setAutoConnectSwitch(newState);
         autoConnectByName.current = newState;
-        console.debug('BLE: Auto-connect has been toggled to ' + newState);
+        //console.debug('BLE: Auto-connect has been toggled to ' + newState);
     }
 
     // Scan for BLE devices
     const scanDevices = () => {
-        console.debug('BLE: Attempting new scan with auto-connect set to ' + autoConnectByName.current);
-
-        if (isScanning) {
-            console.debug('BLE: Scan in progress - cannot start new scan');
-            return;
+        if (!isScanning) {
+            BleManager.scan([], scanInterval, false)
+                .then(() => {
+                    setIsScanning(true);
+                }).catch((err) => {
+                    console.error(err);
+                });
         }
-
-        // Clear current map of discovered peripherals
-        discoveredPeripherals.clear();
-
-        // Re-scan with the desired interval
-        BleManager.scan([], scanInterval, false)
-            .then(() => {
-                setIsScanning(true);
-            }).catch((err) => {
-                console.error(err);
-        });
-    };
-
-    // Handle end of BLE device scan
-    const handleStopScan = () => {
-        console.debug('BLE: Finished last scan');
-        setIsScanning(false);
-        setDiscoveredDevices(Array.from(discoveredPeripherals.values()));
-        setConnectedDevices(Array.from(connectedPeripherals.values()));
-    };
+    }
 
     // Periodically scan for new devices
     useEffect(() => {
@@ -216,70 +237,58 @@ export const Monitor = ({navigation, route}) => {
         return () => clearInterval(interval);
     }, []);
 
-    const isPeripheralConnected = (peripheral) => {
-        let connected = false;
-
-        BleManager.isPeripheralConnected(peripheral.id, [])
-            .then((isConnected) => {
-                connected = isConnected;
-            });
-
-        return connected;
+    const isAptitudeDevice = (peripheral) => {
+        return (peripheral &&
+            peripheral['advertising'] &&
+            peripheral['advertising']['localName'] &&
+            peripheral['advertising']['localName'].includes('AMS-') === true)
     }
 
-    // Get name of an advertised peripheral
-    const getPeripheralName = (item) => {
-        if (item.advertising && item.advertising.localName) {
-            return item.advertising.localName;
-        } else {
-            return item.name;
-        }
-    };
-
-    // Retrieve services and start notifications on the peripheral for all 6 characteristics
-    const subscribeToUpdates = (update) => {
-        BleManager.retrieveServices(update['peripheral']).then((peripheralInfo) => {
-            for(let charUUID of characteristics) {
-                BleManager.startNotification(update['peripheral'], serviceUUID, charUUID)
-                    .catch(error => {
-                        console.debug('BLE: Error subscribing', error);
-                    });
-            }
-
-            console.log('BLE: Subscribed to updates on peripheral', update['peripheral']);
-        });
-    };
+    const decodeCharBuffer = (charBuffer) => Buffer.from(charBuffer).toString('ascii');
 
     // Characteristic update handler
     const handleUpdateValueForCharacteristic = (update) => {
-        console.debug(update);
-
-        if (update && update.value) {
+        if (update && update['value']) {
+            /*
             console.debug('BLE: characteristic update received' + '\n' +
-                '        with value of ' + update.value + '\n' +
+                '        with value of ' + update['value'] + '\n' +
                 '        from device ' + update['peripheral'] + '\n' +
-                '        on characteristic ' + update.characteristic);
+                '        on characteristic ' + update['characteristic']);
+             */
 
-            if (update.characteristic === chipTypeUUID) {
-                const data = update.value[0].toString();
-                if (data === "-1") {
-                    Alert.alert("Chip removal detected", "If a test was in progress, please wait before inserting the chip again");
-                } else if (data === "7") {
-                    Alert.alert("Chip insertion detected", "Please wait while COVID testing begins");
-                } else {
-                    Alert.alert("Chip insertion detected", "Please insert the sample into the collector and wait");
-                }
+            const readData = decodeCharBuffer(update['value']);
+
+            updateCharacteristicValue(update['peripheral'], update['characteristic'], readData);
+            //connectedPeripherals.get(update['peripheral'])['characteristic_values'].set(update['characteristic'], readData);
+
+            setConnectedList(Array.from(connectedPeripherals.values()));
+
+            switch(update['characteristic']) {
+                case characteristics['chipType']:
+                    const data = update['value'][0].toString();
+                    if (data === "-1") {
+                        Alert.alert("Chip removal detected", "If a test was in progress, please wait before inserting the chip again");
+                    } else if (data === "7") {
+                        Alert.alert("Chip insertion detected", "Please wait while COVID testing begins");
+                    } else {
+                        Alert.alert("Chip insertion detected", "Please insert the sample into the collector and wait");
+                    }
+                    break;
+                default:
+                    break;
             }
+
         } else {
             console.debug("BLE: Unrecognized bluetooth packet received");
         }
     };
 
-    /*
-            BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
-                console.debug("BLE: current connection count = " + peripheralsArray.length);
-            });
-             */
+    const updateCharacteristicValue = (peripheralID, charUUID, value) => {
+        const charName = charNameMap[charUUID];
+        connectedPeripherals.get(peripheralID)['characteristic_values'].set(charName, value);
+        setConnectedList(Array.from(connectedPeripherals.values()));
+        //console.debug(connectedPeripherals.get(peripheralID)['characteristic_values']);
+    }
 
 
     /*
@@ -290,52 +299,12 @@ export const Monitor = ({navigation, route}) => {
 
     const unconnectedDevice = (item) => {
         let iconName = '';
-        if (item.rssi) {
-            if (item.rssi >= -50) {
+        if (item['rssi']) {
+            if (item['rssi'] >= -50) {
                 iconName = 'signal-cellular-3';
-            } else if (item.rssi >= -75) {
+            } else if (item['rssi'] >= -75) {
                 iconName = 'signal-cellular-2';
-            } else if (item.rssi >= -85) {
-                iconName = 'signal-cellular-1';
-            }
-        }
-
-        return (
-            <TouchableOpacity
-                style={{
-                    margin: 0,
-                    alignItems: 'center',
-                    padding: 16,
-                    paddingBottom: 13
-                }}
-                onPress={() => {
-                    setSelectedPeripheralID(item.id);
-                }}
-            >
-                <View style={{borderRadius: 5000, paddingBottom: 4}}>
-                    {iconName !== '' &&
-                    <IconMCI name={iconName} size={30}
-                             color="#fff"/>
-                    }
-                </View>
-                <Text style={{
-                    fontSize: 14,
-                    color: '#eee',
-                    textAlign: 'center',
-                    overflow: 'hidden',
-                }}>{getPeripheralName(item)}</Text>
-            </TouchableOpacity>
-        );
-    }
-
-    const connectedDevice = (item) => {
-        let iconName = '';
-        if (item.rssi) {
-            if (item.rssi >= -50) {
-                iconName = 'signal-cellular-3';
-            } else if (item.rssi >= -75) {
-                iconName = 'signal-cellular-2';
-            } else if (item.rssi >= -85) {
+            } else if (item['rssi'] >= -85) {
                 iconName = 'signal-cellular-1';
             }
         }
@@ -346,14 +315,71 @@ export const Monitor = ({navigation, route}) => {
                     backgroundColor: '#333',
                     margin: 0,
                     alignItems: 'center',
-                    padding: 16,
-                    paddingBottom: 17,
+                    padding: 60,
                     borderWidth: 1,
                     borderRadius: 10,
                     borderColor: '#555'
                 }}
                 onPress={() => {
-                    setSelectedPeripheralID(item.id);
+                    setSelectedPeripheralID(item['id']);
+                }}
+            >
+                <View style={{borderRadius: 5000, paddingBottom: 4}}>
+                    {iconName !== '' &&
+                    <IconMCI name={iconName} size={30}
+                             color="#fff"/>
+                    }
+                </View>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 10,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>{item['advertising']['localName']}</Text>
+                <Text style={{
+                    fontSize: 14,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>Ready to connect</Text>
+            </TouchableOpacity>
+        );
+    }
+
+    const connectedDevice = (item) => {
+        let iconName = '';
+        const rssi = item['peripheral']['rssi']
+        if (rssi) {
+            if (rssi >= -50) {
+                iconName = 'signal-cellular-3';
+            } else if (rssi >= -75) {
+                iconName = 'signal-cellular-2';
+            } else if (rssi >= -85) {
+                iconName = 'signal-cellular-1';
+            }
+        }
+
+        const characteristic_values = item['characteristic_values'],
+            picoStatus = characteristic_values.get('picoStatus', 'Fetching...'),
+            programTask = characteristic_values.get('programTask', 'Fetching...'),
+            chipType = characteristic_values.get('chipType', 'Fetching...'),
+            lastResult = characteristic_values.get('lastResult', 'Fetching...'),
+            lastResultTime = characteristic_values.get('lastResultTime', 'Fetching...');
+
+        return (
+            <TouchableOpacity
+                style={{
+                    backgroundColor: '#333',
+                    margin: 0,
+                    alignItems: 'center',
+                    padding: 60,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: '#555'
+                }}
+                onPress={() => {
+                    setSelectedPeripheralID(item['peripheral']['id']);
                 }}
             >
                 <View style={{paddingBottom: 4}}>
@@ -363,11 +389,59 @@ export const Monitor = ({navigation, route}) => {
                     }
                 </View>
                 <Text style={{
-                    fontSize: 14,
+                    fontSize: 24,
+                    padding: 10,
                     color: '#eee',
                     textAlign: 'center',
                     overflow: 'hidden',
-                }}>{getPeripheralName(item)}</Text>
+                }}>
+                    {item['peripheral']['advertising']['localName']}
+                </Text>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 4,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>
+                    Pico Status: {picoStatus}
+                </Text>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 4,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>
+                    Program Task: {programTask}
+                </Text>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 4,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>
+                    Chip Type: {chipType}
+                </Text>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 4,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>
+                    Last Result: {lastResult}
+                </Text>
+                <Text style={{
+                    fontSize: 18,
+                    padding: 4,
+                    color: '#eee',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}>
+                    Recorded at: {lastResultTime}
+                </Text>
             </TouchableOpacity>
         );
     }
@@ -378,19 +452,19 @@ export const Monitor = ({navigation, route}) => {
                 <View style={format.deviceList}>
                     <FlatList
                         horizontal={true}
-                        data={discoveredDevices}
-                        extraData={discoveredDevices}
+                        data={discoveredList}
+                        extraData={discoveredList}
                         renderItem={({item}) => unconnectedDevice(item)}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item['id']}
                     />
                 </View>
                 <View style={format.deviceList}>
                     <FlatList
                         horizontal={true}
-                        data={connectedDevices}
-                        extraData={connectedDevices}
+                        data={connectedList}
+                        extraData={connectedList}
                         renderItem={({item}) => connectedDevice(item)}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item['peripheral']['id']}
                     />
                 </View>
             </View>
@@ -565,21 +639,21 @@ export const Monitor = ({navigation, route}) => {
                     }
                     onChange={(option) => {
                         database().ref('/users/' + auth().currentUser.uid).once('value').then(userSnapshot => {
-                                // get patient info for appropriate test type
-                                let patient = null;
-                                if (selectedTest === 'COVID') {
-                                    if (userSnapshot.val()['organization']) {
-                                        patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + option.key);
-                                    } else {
-                                        patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key);
-                                    }
-                                } else if (selectedTest === 'Fibrinogen') {
-                                    if (userSnapshot.val()['organization']) {
-                                        patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + option.key);
-                                    } else {
-                                        patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
-                                    }
+                            // get patient info for appropriate test type
+                            let patient = null;
+                            if (selectedTest === 'COVID') {
+                                if (userSnapshot.val()['organization']) {
+                                    patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + option.key);
+                                } else {
+                                    patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key);
                                 }
+                            } else if (selectedTest === 'Fibrinogen') {
+                                if (userSnapshot.val()['organization']) {
+                                    patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + option.key);
+                                } else {
+                                    patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
+                                }
+                            }
 
                             // update data for patient for appropriate test type
                             patient.once('value').then(patientSnapshot => {
@@ -631,62 +705,62 @@ export const Monitor = ({navigation, route}) => {
      */
 
     const log_result = (testResultValue) => {
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    console.log('printing user info');
-                    console.log(userSnapshot.val());
-                    console.log('printing patient key fibrinogen');
-                    console.log(patientKeyFibrinogen);
+        // update user info based on database info
+        database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
+            if (userSnapshot.val()) {
+                console.log('printing user info');
+                console.log(userSnapshot.val());
+                console.log('printing patient key fibrinogen');
+                console.log(patientKeyFibrinogen);
 
-                    if (userSnapshot.val()['organization']) {
-                        if (selectedTest === 'COVID') {
-                            const testReference = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID + '/results/').push();
-                            const date = new Date();
-                            testReference
-                                .set({
-                                    result: testResultValue,
-                                    time: date.toISOString()
-                                })
-                                .then(() => console.log('Added entry for /organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
-                        } else if (selectedTest === 'Fibrinogen') {
-                            const testReference = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
-                            const date = new Date();
-                            testReference
-                                .set({
-                                    result: testResultValue,
-                                    time: date.toISOString()
-                                })
-                                .then(() => console.log('Added entry for /organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/' + testReference.key));
-                        }
-
-                        Alert.alert('Success', 'Added test result to database');
-                    } else {
-                        if (selectedTest === 'COVID') {
-                            const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/').push();
-                            const date = new Date();
-                            testReference
-                                .set({
-                                    result: testResultValue,
-                                    time: date.toISOString()
-                                })
-                                .then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
-                        } else if (selectedTest === 'Fibrinogen') {
-                            const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
-                            const date = new Date();
-                            testReference
-                                .set({
-                                    result: testResultValue,
-                                    time: date.toISOString()
-                                })
-                                .then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/' + testReference.key));
-                        }
-
-                        Alert.alert('Success', 'Added test result to database');
+                if (userSnapshot.val()['organization']) {
+                    if (selectedTest === 'COVID') {
+                        const testReference = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID + '/results/').push();
+                        const date = new Date();
+                        testReference
+                            .set({
+                                result: testResultValue,
+                                time: date.toISOString()
+                            })
+                            .then(() => console.log('Added entry for /organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
+                    } else if (selectedTest === 'Fibrinogen') {
+                        const testReference = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
+                        const date = new Date();
+                        testReference
+                            .set({
+                                result: testResultValue,
+                                time: date.toISOString()
+                            })
+                            .then(() => console.log('Added entry for /organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/' + testReference.key));
                     }
 
+                    Alert.alert('Success', 'Added test result to database');
+                } else {
+                    if (selectedTest === 'COVID') {
+                        const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/').push();
+                        const date = new Date();
+                        testReference
+                            .set({
+                                result: testResultValue,
+                                time: date.toISOString()
+                            })
+                            .then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/' + testReference.key));
+                    } else if (selectedTest === 'Fibrinogen') {
+                        const testReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/').push();
+                        const date = new Date();
+                        testReference
+                            .set({
+                                result: testResultValue,
+                                time: date.toISOString()
+                            })
+                            .then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/' + testReference.key));
+                    }
+
+                    Alert.alert('Success', 'Added test result to database');
                 }
-            });
+
+            }
+        });
     }
 
     return (
@@ -698,10 +772,10 @@ export const Monitor = ({navigation, route}) => {
                 <Text style={[fonts.subheading, {paddingRight: 25}]}>Automatic Pairing</Text>
                 <Switch
                     trackColor={{false: "#444", true: "#5e9955"}}
-                    thumbColor={autoConnectByName.current ? "#eeeeee" : "#eeeeee"}
+                    thumbColor={autoConnectSwitch ? "#eeeeee" : "#eeeeee"}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={toggleAutoConnect}
-                    value={autoConnectByName.current}
+                    value={autoConnectSwitch}
                 />
             </View>
             <PatientSelector/>
