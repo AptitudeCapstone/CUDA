@@ -56,11 +56,11 @@ export const Monitor = ({navigation, route}) => {
         bleEmitter = new NativeEventEmitter(BleManagerModule),
         serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
         characteristics = {
-            picoStatus : '04CB0EB1-8B58-44D0-91E4-080AF33438BA',
-            programTask : '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
-            chipType : '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
-            lastResult : '04CB0EB1-8B58-44D0-91E4-080AF33438BE',
-            lastResultTime : '04CB0EB1-8B58-44D0-91E4-080AF33438BF'
+            picoStatus: '04CB0EB1-8B58-44D0-91E4-080AF33438BA',
+            programTask: '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
+            chipType: '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
+            lastResult: '04CB0EB1-8B58-44D0-91E4-080AF33438BE',
+            lastResultTime: '04CB0EB1-8B58-44D0-91E4-080AF33438BF'
         },
         charNameMap = Object.fromEntries(Object.entries(characteristics).map(a => a.reverse())),
         discoveredPeripherals = new Map(),
@@ -123,7 +123,7 @@ export const Monitor = ({navigation, route}) => {
             if (autoConnectByName.current) {
                 BleManager.isPeripheralConnected(peripheral['id'], [])
                     .then((isConnected) => {
-                        if(!isConnected) {
+                        if (!isConnected) {
                             connectPeripheral(peripheral);
                         }
                     });
@@ -151,7 +151,7 @@ export const Monitor = ({navigation, route}) => {
         if (peripheral && !connectedPeripherals.has(peripheral['id'])) {
             BleManager.isPeripheralConnected(peripheral['id'], [])
                 .then((isConnected) => {
-                    if(!isConnected) {
+                    if (!isConnected) {
                         BleManager.connect(peripheral['id']).catch(err => {
                             console.debug('BLE: Error connecting to peripheral - ' + err)
                         });
@@ -165,24 +165,23 @@ export const Monitor = ({navigation, route}) => {
             // Add device to map of connected peripherals
             connectedPeripherals.set(peripheral['id'], {
                 peripheral: peripheral,
-                // maps characteristic uuid to value
                 characteristic_values: new Map()
             });
 
-                for(const [charName, charUUID] of Object.entries(characteristics)) {
-                    BleManager.read(peripheral['id'], serviceUUID, charUUID)
-                        .then(readData => {
-                            readData = decodeCharBuffer(readData);
-                            updateCharacteristicValue(peripheral['id'], charUUID, readData);
-                            //console.debug('BLE: Read ' + charName + ': ' + readData);
-                        }).catch(error => {
-                            console.debug('BLE: Error reading ', error);
-                        });
+            for (const [charName, charUUID] of Object.entries(characteristics)) {
+                BleManager.read(peripheral['id'], serviceUUID, charUUID)
+                    .then(readData => {
+                        readData = decodeCharBuffer(readData);
+                        updateCharacteristicValue(peripheral['id'], charUUID, readData);
+                        //console.debug('BLE: Read ' + charName + ': ' + readData);
+                    }).catch(error => {
+                    console.debug('BLE: Error reading ', error);
+                });
 
-                    BleManager.startNotification(peripheral['id'], serviceUUID, charUUID).catch(error => {
-                            console.debug('BLE: Error subscribing', error);
-                        });
-                }
+                BleManager.startNotification(peripheral['id'], serviceUUID, charUUID).catch(error => {
+                    console.debug('BLE: Error subscribing', error);
+                });
+            }
 
             // Remove device from map of discovered peripherals
             discoveredPeripherals.delete(peripheral['id']);
@@ -225,8 +224,8 @@ export const Monitor = ({navigation, route}) => {
                 .then(() => {
                     setIsScanning(true);
                 }).catch((err) => {
-                    console.error(err);
-                });
+                console.error(err);
+            });
         }
     }
 
@@ -264,7 +263,7 @@ export const Monitor = ({navigation, route}) => {
 
             setConnectedList(Array.from(connectedPeripherals.values()));
 
-            switch(update['characteristic']) {
+            switch (update['characteristic']) {
                 case characteristics['chipType']:
                     const data = update['value'][0].toString();
                     if (data === "-1") {
@@ -299,11 +298,9 @@ export const Monitor = ({navigation, route}) => {
     */
 
     const unconnectedDevice = (item) => {
-        let iconName = '';
+        let iconName = 'signal-cellular-3';
         if (item['rssi']) {
-            if (item['rssi'] >= -50) {
-                iconName = 'signal-cellular-3';
-            } else if (item['rssi'] >= -75) {
+            if (item['rssi'] >= -75) {
                 iconName = 'signal-cellular-2';
             } else if (item['rssi'] >= -85) {
                 iconName = 'signal-cellular-1';
@@ -341,24 +338,23 @@ export const Monitor = ({navigation, route}) => {
     }
 
     const connectedDevice = (item) => {
-        let iconName = '';
-        const rssi = item['peripheral']['rssi']
+        let iconName = 'signal-cellular-3';
+        const rssi = item['peripheral']['rssi'];
         if (rssi) {
-            if (rssi >= -50) {
-                iconName = 'signal-cellular-3';
-            } else if (rssi >= -75) {
+            if (rssi >= -75) {
                 iconName = 'signal-cellular-2';
             } else if (rssi >= -85) {
                 iconName = 'signal-cellular-1';
             }
         }
 
-        const characteristic_values = item['characteristic_values'],
-            picoStatus = characteristic_values.get('picoStatus', 'Fetching...'),
-            programTask = characteristic_values.get('programTask', 'Fetching...'),
-            chipType = characteristic_values.get('chipType', 'Fetching...'),
-            lastResult = characteristic_values.get('lastResult', 'Fetching...'),
-            lastResultTime = characteristic_values.get('lastResultTime', 'Fetching...');
+        const deviceName = item['peripheral']['name'],
+            characteristicValues = item['characteristic_values'],
+            picoStatus = characteristicValues.get('picoStatus', 'Fetching...'),
+            programTask = characteristicValues.get('programTask', 'Fetching...'),
+            chipType = characteristicValues.get('chipType', 'Fetching...'),
+            lastResult = characteristicValues.get('lastResult', 'Fetching...'),
+            lastResultTime = characteristicValues.get('lastResultTime', 'Fetching...');
 
         return (
             <View
@@ -377,7 +373,7 @@ export const Monitor = ({navigation, route}) => {
                     textAlign: 'center',
                     overflow: 'hidden',
                 }}>
-                    {item['peripheral']['advertising']['localName']}
+                    {deviceName}
                 </Text>
                 <Text style={{
                     fontSize: 18,
@@ -474,14 +470,14 @@ export const Monitor = ({navigation, route}) => {
                     // get patient info for appropriate test type
                     let patient = null;
                     if (selectedTest === 'COVID') {
-                        if (userSnapshot.val()['organization'] ) {
-                            patient = database().ref('/organizations/' + userSnapshot.val()['organization']  + '/patients/covid/' + patientKeyCOVID);
+                        if (userSnapshot.val()['organization']) {
+                            patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID);
                         } else {
                             patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID);
                         }
                     } else if (selectedTest === 'Fibrinogen') {
-                        if (userSnapshot.val()['organization'] ) {
-                            patient = database().ref('/organizations/' + userSnapshot.val()['organization']  + '/patients/fibrinogen/' + patientKeyFibrinogen);
+                        if (userSnapshot.val()['organization']) {
+                            patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen);
                         } else {
                             patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen);
                         }
@@ -598,7 +594,9 @@ export const Monitor = ({navigation, route}) => {
                 <ModalSelector
                     data={patients}
                     visible={viewPatientModalVisible}
-                    onCancel={() => {toggleViewPatientModal()}}
+                    onCancel={() => {
+                        toggleViewPatientModal()
+                    }}
                     customSelector={
                         <View>
                             <TouchableOpacity
