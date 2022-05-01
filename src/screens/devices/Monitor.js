@@ -12,7 +12,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View, StyleSheet
+    View, StyleSheet, Image
 } from 'react-native';
 import {buttons, fonts, format, deviceCard} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
@@ -26,8 +26,11 @@ import {Buffer} from 'buffer';
 import DropDownPicker from 'react-native-dropdown-picker';
 import IconF from "react-native-vector-icons/Feather";
 import IconA from "react-native-vector-icons/AntDesign";
+import FastImage from 'react-native-fast-image';
+import AnimatedPlayer, {IAnimatedPlayerReference} from 'react-native-animated-webp';
+import animatedImage from './tCardInsert_2.webp';
 
-const dummyPeripheralList = [
+const dummyUnconnectedPeripheralList = [
     {
         id: "fakeID1",
         rssi: -50,
@@ -62,8 +65,47 @@ const dummyPeripheralList = [
     }
 ]
 
+const dummyConnectedPeripheralList = [
+    {
+        id: "fakeID1",
+        rssi: -50,
+        advertising: {
+            localName: "Dummy Device 1",
+        },
+        name: "Dummy Device 1",
+        characteristic_values: {
+
+        }
+    },
+    {
+        id: "fakeID2",
+        rssi: -50,
+        advertising: {
+            localName: "Dummy Device 2",
+        },
+        name: "Dummy Device 2"
+    },
+    {
+        id: "fakeID3",
+        rssi: -50,
+        advertising: {
+            localName: "Dummy Device 3",
+        },
+        name: "Dummy Device 3"
+    },
+    {
+        id: "fakeID4",
+        rssi: -50,
+        advertising: {
+            localName: "Dummy Device 4",
+        },
+        name: "Dummy Device 4"
+    }
+]
+
 
 export const Monitor = ({navigation, route}) => {
+    const playerRef = useRef();
     const scanInterval = 3.0, // BLE scan interval in seconds
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
@@ -91,7 +133,7 @@ export const Monitor = ({navigation, route}) => {
         [isScanning, setIsScanning] = useState(false),
         [autoConnectSwitch, setAutoConnectSwitch] = useState(autoConnectByName.current),
         dimensions = useWindowDimensions(),
-        [viewPatientModalVisible, setViewPatientModalVisible] = useState(false);
+        [viewPeripheralsModal, setViewPeripheralsModal] = useState(false);
 
 
 
@@ -228,9 +270,11 @@ export const Monitor = ({navigation, route}) => {
         })));
 
         setPeripheralsList(
-            Array.from(connectedPeripherals.values()).concat(Array.from(a))
+            Array.from(connectedPeripherals.values())
         );
 
+        // to get all peripherals
+        //Array.from(connectedPeripherals.values()).concat(Array.from(a))
     }
 
     const connectPeripheral = (peripheral) => {
@@ -239,6 +283,19 @@ export const Monitor = ({navigation, route}) => {
                 .then((isConnected) => {
                     if (!isConnected) {
                         BleManager.connect(peripheral['id']).catch(err => {
+                            console.debug('BLE: Error connecting to peripheral - ' + err)
+                        });
+                    }
+                });
+        }
+    }
+
+    const connectPeripheralByID = (peripheralID) => {
+        if (!connectedPeripherals.has(peripheralID)) {
+            BleManager.isPeripheralConnected(peripheralID, [])
+                .then((isConnected) => {
+                    if (!isConnected) {
+                        BleManager.connect(peripheralID).catch(err => {
                             console.debug('BLE: Error connecting to peripheral - ' + err)
                         });
                     }
@@ -351,35 +408,6 @@ export const Monitor = ({navigation, route}) => {
         updateDeviceList();
     }
 
-    const unconnectedPeripheral = (item) => {
-        let iconName = 'signal-cellular-3';
-        if (item['rssi']) {
-            if (item['rssi'] >= -75) {
-                iconName = 'signal-cellular-2';
-            } else if (item['rssi'] >= -85) {
-                iconName = 'signal-cellular-1';
-            }
-        }
-
-        return (
-            <TouchableOpacity
-                style={
-                    [deviceCard.bigLayoutDeviceCard, {
-                        width: dimensions.width * 0.25,
-                        marginLeft: dimensions.width * 0.125,
-                        marginRight: dimensions.width * 0.125,
-                    }]}
-                onPress={() => connectPeripheral(item)}
-            >
-                    <View style={{borderRadius: 5000, paddingBottom: 4}}>
-                        <IconMCI name={iconName} size={30} color="#fff"/>
-                    </View>
-                    <Text style={deviceCard.deviceNameText}>{item['name']}</Text>
-                    <Text style={deviceCard.characteristicText}>Ready to connect</Text>
-            </TouchableOpacity>
-        );
-    }
-
     const connectedPeripheral = (item) => {
         let iconName = 'signal-cellular-3';
         const rssi = item['peripheral']['rssi'];
@@ -399,43 +427,109 @@ export const Monitor = ({navigation, route}) => {
             lastResult = characteristicValues.get('lastResult', 'Fetching...'),
             lastResultTime = characteristicValues.get('lastResultTime', 'Fetching...');
 
+
+        const selectedPatient = "Noah";
+
+        let cardStyle = {
+            width: dimensions.width * 0.5,
+            marginLeft: dimensions.width * 0.25,
+            marginRight: dimensions.width * 0.25,
+        };
+        if(connectedPeripherals.size > 1) {
+            cardStyle = {
+                width: dimensions.width * 0.25,
+                marginLeft: dimensions.width * 0.125,
+                marginRight: dimensions.width * 0.125,
+            }
+        }
+
         return (
-            <View style={deviceCard.bigLayoutDeviceCard}
-            >
-                <View style={{background: 'red', flex: 1}}>
-                    <View style={{paddingBottom: 4}}>
-                        <IconMCI name={iconName} size={30} color="#fff"/>
+            <View style={[deviceCard.container, cardStyle]}>
+                <View style={deviceCard.device}>
+                    <View style={{
+                        paddingHorizontal: 30,
+                        paddingVertical: 15,
+                        borderTopRightRadius: 40,
+                        borderTopLeftRadius: 40,
+                        borderLeftWidth: 1,
+                        borderRightWidth: 1,
+                        borderTopWidth: 1,
+                        borderColor: '#555',
+                        backgroundColor: '#222',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                    }}>
+                        <Text style={deviceCard.nameText}>{name}</Text>
+                        <View style={{paddingTop: 7}}><IconMCI name={iconName} size={30} color="#fff"/></View>
                     </View>
-                    <Text style={deviceCard.deviceNameText}>
-                        {name}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Pico Status: {picoStatus}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Program Task: {programTask}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Chip Type: {chipType}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Last Result: {lastResult}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Recorded at: {lastResultTime}
-                    </Text>
-                    <Text style={deviceCard.characteristicText}>
-                        Selected Patient:
-                    </Text>
+                    <View style={{
+                        borderBottomRightRadius: 40,
+                        borderBottomLeftRadius: 40,
+                        borderLeftWidth: 1,
+                        borderRightWidth: 1,
+                        borderBottomWidth: 1,
+                        borderColor: '#555',
+                        backgroundColor: '#333',
+                    }}>
+                        {
+                            chipType === "-1" &&
+                            <Text style={deviceCard.characteristicText}>Insert a chip to begin testing</Text>
+                        }
+
+                        {
+                            selectedPatient !== null &&
+                            <Text style={deviceCard.characteristicText}>Selected Patient: {selectedPatient}</Text>
+                        }
+                        {
+                            lastResult !== "-1" &&
+                            <Text style={deviceCard.characteristicText}>Last result was {lastResult} recorded at {lastResultTime}</Text>
+                        }
+                        {/*
+                        <Text style={deviceCard.characteristicText}>Pico Status: {picoStatus}</Text>
+                        <Text style={deviceCard.characteristicText}>Program Task: {programTask}</Text>
+                        */}
+                    </View>
                 </View>
+                {
+                    /*
+                    chipType === "-1" &&
+                    <View style={{alignSelf: 'center', width: 200, height: 200,}}>
+                        <Image
+                            style={{
+                                flex: 1,
+                                width: null,
+                                height: null,
+                                resizeMode: 'contain',
+                                borderRadius: 1000,
+                                borderWidth: 1,
+                                borderColor: '#555'
+                            }}
+                            source={require('./grayCardInsert.gif')} />
+                    </View>
+
+                     */
+                }
+                {
+                    selectedPatient === null &&
+                    <TouchableOpacity style={deviceCard.button}>
+                        <Text style={deviceCard.buttonText}>Select patient for next test result</Text>
+                    </TouchableOpacity>
+                }
+                {
+                    selectedPatient !== null &&
+                    <TouchableOpacity style={deviceCard.button}>
+                        <Text style={deviceCard.buttonText}>Change patient for next test result</Text>
+                    </TouchableOpacity>
+                }
+                <TouchableOpacity style={deviceCard.button}>
+                    <Text style={deviceCard.buttonText}>Disconnect</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 
-    const [viewPatientModal, setViewPatientModal] = useState(false);
-
     const toggleViewPatientModal = () => {
-        setViewPatientModal(!viewPatientModal);
+        setViewPeripheralsModal(!viewPeripheralsModal);
     }
 
     const PeripheralList = () => {
@@ -443,43 +537,29 @@ export const Monitor = ({navigation, route}) => {
                 <FlatList
                     horizontal={true}
                     data={
-                        dummyPeripheralList
-                        //peripheralsList
+                        //dummyPeripheralList
+                        peripheralsList
                     }
                     extraData={peripheralsList}
-                    renderItem={({item}) => {
-                        return (item.hasOwnProperty('peripheral') ?
-                            connectedPeripheral(item) :
-                            unconnectedPeripheral(item))}
-                    }
-                    keyExtractor={(item) => {
-                        return(item.hasOwnProperty('peripheral') ?
-                            item['peripheral']['id'] :
-                            item['id'])}
-                    }
+                    renderItem={({item}) => connectedPeripheral(item)}
+                    keyExtractor={(item) => item['peripheral']['id']}
                 />
 
         );
     }
 
-    const data = [
-        {
-            key: 0,
-            label: 'apples'
-        },
-        {
-            key: 1,
-            label: 'oranges'
-        }
-    ];
-
-
+    if(!playerRef.current?.isPlaying) {
+        playerRef.current?.play(() => console.log('playing gif'));
+    }
 
     return (
         <SafeAreaView style={format.page}>
             <ModalSelector
                 data={modalPeripheralsList}
-                onChange={(option)=>{ alert(`${option.label} (${option.key}) nom nom nom`) }}
+                onChange={(option) => {
+                    connectPeripheralByID(option.key);
+                    setViewPeripheralsModal(false);
+                }}
                 optionContainerStyle={{
                     backgroundColor: '#111',
                     border: 0
@@ -511,7 +591,7 @@ export const Monitor = ({navigation, route}) => {
                     fontSize: 18,
                     fontWeight: 'bold'
                 }}
-                visible={viewPatientModal}
+                visible={viewPeripheralsModal}
                 onCancel={() => {
                     toggleViewPatientModal();
                 }}
@@ -543,10 +623,17 @@ export const Monitor = ({navigation, route}) => {
                         Select a device to monitor
                     </Text>
                     <IconE style={fonts.username}
-                           name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} size={34}
+                           name={viewPeripheralsModal ? 'chevron-up' : 'chevron-down'} size={34}
                     />
                 </TouchableOpacity>
             </View>
+            <AnimatedPlayer
+                style={{width: 500, height: 500}}
+                ref={playerRef}
+                animatedSource={require('./tCardInsert_2.webp')}
+                autoPlay={true}
+                loop={true}
+            />
             <PeripheralList/>
         </SafeAreaView>
     );

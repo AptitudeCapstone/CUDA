@@ -71,28 +71,20 @@ export const format = StyleSheet.create({
 });
 
 export const deviceCard = StyleSheet.create({
-    listStyle: {
-        backgroundColor: 'blue',
+    container: {
+        marginTop: 'auto',
+        marginBottom: 'auto',
     },
-    listContainer: {
-
-        backgroundColor: 'white'
+    device: {
+        marginBottom: 25,
     },
-    bigLayoutDeviceCard: {
-        marginTop: '15%',
-        marginBottom: '15%',
-        height: '70%',
-        backgroundColor: '#333',
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: '#555',
-    },
-    deviceNameText: {
+    nameText: {
         fontSize: 24,
         padding: 10,
         color: '#eee',
         textAlign: 'center',
         overflow: 'hidden',
+        fontWeight: 'bold'
     },
     characteristicText: {
         fontSize: 18,
@@ -100,6 +92,21 @@ export const deviceCard = StyleSheet.create({
         color: '#eee',
         textAlign: 'center',
         overflow: 'hidden',
+    },
+    button: {
+        padding: 20,
+        backgroundColor: '#333',
+        borderRadius: 40,
+        margin: 5,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#555',
+    },
+    buttonText: {
+        color: '#eee',
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center'
     }
 });
 

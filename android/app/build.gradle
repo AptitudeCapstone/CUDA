@@ -201,11 +201,12 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.penfeizhou.android.animation:glide-plugin:2.17.0'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     implementation(project(":react-native-community_google-signin"))
 
