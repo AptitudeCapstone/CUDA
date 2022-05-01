@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import {
     Alert,
     useWindowDimensions,
@@ -103,9 +103,68 @@ const dummyConnectedPeripheralList = [
     }
 ]
 
+const makeCancelable = (promise) => {
+    let hasCanceled_ = false;
+    const wrappedPromise = new Promise((resolve, reject) => {
+        promise.then(
+            val => hasCanceled_ ? reject({isCanceled: true}) : resolve(val),
+            error => hasCanceled_ ? reject({isCanceled: true}) : reject(error)
+        );
+    });
+
+    return {
+        promise: wrappedPromise,
+        cancel() {
+            hasCanceled_ = true;
+        },
+    };
+};
+
+const ChipAnimation: React.FC = () => {
+    const playerRef = useRef();
+    const [aaa, setAAA] = useState(false);
+
+    useEffect(() => {
+        if(aaa) {
+            const cancelablePromise = makeCancelable(playerRef.current?.play());
+            cancelablePromise.promise.then(() => setAAA(false));
+            return() => cancelablePromise.cancel();
+        }
+    }, [aaa]);
+
+    return (
+        <AnimatedPlayer
+            ref={playerRef}
+        style={{width: 250, height: 250}}
+        animatedSource={animatedImage}
+        autoPlay={false}
+        loop={true}
+        thumbnailSource={animatedImage}/>
+    )
+}
+
+/*
+const ChipAnimation: React.FC = () => {
+    const playerRef = useRef();
+
+    useEffect(() => {
+        playerRef.current?.play();
+    }, []);
+
+        return(
+    <AnimatedPlayer
+        style={{width: 250, height: 250}}
+        animatedSource={require('./tCardInsert_2.webp')}
+        autoPlay={false}
+        loop={true}
+        thumbnailSource={require('./tCardInsert_2.webp')}/>)
+
+}
+ */
+
+
 
 export const Monitor = ({navigation, route}) => {
-    const playerRef = useRef();
     const scanInterval = 3.0, // BLE scan interval in seconds
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
@@ -443,6 +502,12 @@ export const Monitor = ({navigation, route}) => {
             }
         }
 
+
+        let gifStyle = {width: 0, height: 0}
+        if(chipType === "-1") {
+            gifStyle = {alignSelf: 'center', width: 250, height: 250,}
+        }
+
         return (
             <View style={[deviceCard.container, cardStyle]}>
                 <View style={deviceCard.device}>
@@ -471,6 +536,7 @@ export const Monitor = ({navigation, route}) => {
                         borderColor: '#555',
                         backgroundColor: '#333',
                     }}>
+                        <ChipAnimation />
                         {
                             chipType === "-1" &&
                             <Text style={deviceCard.characteristicText}>Insert a chip to begin testing</Text>
@@ -548,9 +614,6 @@ export const Monitor = ({navigation, route}) => {
         );
     }
 
-    if(!playerRef.current?.isPlaying) {
-        playerRef.current?.play(() => console.log('playing gif'));
-    }
 
     return (
         <SafeAreaView style={format.page}>
@@ -627,13 +690,6 @@ export const Monitor = ({navigation, route}) => {
                     />
                 </TouchableOpacity>
             </View>
-            <AnimatedPlayer
-                style={{width: 500, height: 500}}
-                ref={playerRef}
-                animatedSource={require('./tCardInsert_2.webp')}
-                autoPlay={true}
-                loop={true}
-            />
             <PeripheralList/>
         </SafeAreaView>
     );
