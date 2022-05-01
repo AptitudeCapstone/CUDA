@@ -9,14 +9,6 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    deviceList: {
-        justifyContent: 'space-around',
-        alignContent: 'center',
-        textAlign: 'center',
-        flexDirection: 'row',
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
     horizontalBar: {
         padding: 15,
         paddingBottom: 5,
@@ -76,14 +68,38 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
+});
+
+export const deviceCard = StyleSheet.create({
+    listStyle: {
+        backgroundColor: 'blue',
+    },
+    listContainer: {
+
+        backgroundColor: 'white'
+    },
     bigLayoutDeviceCard: {
+        marginTop: '15%',
+        marginBottom: '15%',
+        height: '70%',
         backgroundColor: '#333',
-        margin: 0,
-        alignItems: 'center',
-        padding: 60,
         borderWidth: 1,
         borderRadius: 10,
-        borderColor: '#555'
+        borderColor: '#555',
+    },
+    deviceNameText: {
+        fontSize: 24,
+        padding: 10,
+        color: '#eee',
+        textAlign: 'center',
+        overflow: 'hidden',
+    },
+    characteristicText: {
+        fontSize: 18,
+        padding: 4,
+        color: '#eee',
+        textAlign: 'center',
+        overflow: 'hidden',
     }
 });
 

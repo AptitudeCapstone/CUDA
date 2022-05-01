@@ -137,21 +137,6 @@ const App = () => {
                 }}
             />
             <Tab.Screen
-                name='PatientData'
-                component={PatientStack}
-                options={{
-                    title: 'Patient Data',
-                    headerShown: false,
-                    tabBarIcon: ({color}) => (
-                        <IconFo
-                            name="graph-bar"
-                            color={color}
-                            size={26}
-                        />
-                    ),
-                }}
-            />
-            <Tab.Screen
                 name='MonitorDevices'
                 component={Monitor}
                 options={{
@@ -160,6 +145,21 @@ const App = () => {
                     tabBarIcon: ({color}) => (
                         <IconMI
                             name="device-hub"
+                            color={color}
+                            size={26}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name='PatientData'
+                component={PatientStack}
+                options={{
+                    title: 'View Data',
+                    headerShown: false,
+                    tabBarIcon: ({color}) => (
+                        <IconFo
+                            name="graph-bar"
                             color={color}
                             size={26}
                         />
