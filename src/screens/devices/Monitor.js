@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     Alert,
     useWindowDimensions,
@@ -23,149 +23,18 @@ import auth from '@react-native-firebase/auth';
 import {useIsFocused} from '@react-navigation/native';
 import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
-import DropDownPicker from 'react-native-dropdown-picker';
 import IconF from "react-native-vector-icons/Feather";
 import IconA from "react-native-vector-icons/AntDesign";
 import FastImage from 'react-native-fast-image';
 import AnimatedPlayer, {IAnimatedPlayerReference} from 'react-native-animated-webp';
 import animatedImage from './tCardInsert_2.webp';
 
-const dummyUnconnectedPeripheralList = [
-    {
-        id: "fakeID1",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 1",
-        },
-        name: "Dummy Device 1"
-    },
-    {
-        id: "fakeID2",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 2",
-        },
-        name: "Dummy Device 2"
-    },
-    {
-        id: "fakeID3",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 3",
-        },
-        name: "Dummy Device 3"
-    },
-    {
-        id: "fakeID4",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 4",
-        },
-        name: "Dummy Device 4"
-    }
-]
-
-const dummyConnectedPeripheralList = [
-    {
-        id: "fakeID1",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 1",
-        },
-        name: "Dummy Device 1",
-        characteristic_values: {
-
-        }
-    },
-    {
-        id: "fakeID2",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 2",
-        },
-        name: "Dummy Device 2"
-    },
-    {
-        id: "fakeID3",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 3",
-        },
-        name: "Dummy Device 3"
-    },
-    {
-        id: "fakeID4",
-        rssi: -50,
-        advertising: {
-            localName: "Dummy Device 4",
-        },
-        name: "Dummy Device 4"
-    }
-]
-
-const makeCancelable = (promise) => {
-    let hasCanceled_ = false;
-    const wrappedPromise = new Promise((resolve, reject) => {
-        promise.then(
-            val => hasCanceled_ ? reject({isCanceled: true}) : resolve(val),
-            error => hasCanceled_ ? reject({isCanceled: true}) : reject(error)
-        );
-    });
-
-    return {
-        promise: wrappedPromise,
-        cancel() {
-            hasCanceled_ = true;
-        },
-    };
-};
-
-const ChipAnimation: React.FC = () => {
-    const playerRef = useRef();
-    const [aaa, setAAA] = useState(false);
-
-    useEffect(() => {
-        if(aaa) {
-            const cancelablePromise = makeCancelable(playerRef.current?.play());
-            cancelablePromise.promise.then(() => setAAA(false));
-            return() => cancelablePromise.cancel();
-        }
-    }, [aaa]);
-
-    return (
-        <AnimatedPlayer
-            ref={playerRef}
-        style={{width: 250, height: 250}}
-        animatedSource={animatedImage}
-        autoPlay={false}
-        loop={true}
-        thumbnailSource={animatedImage}/>
-    )
-}
-
-/*
-const ChipAnimation: React.FC = () => {
-    const playerRef = useRef();
-
-    useEffect(() => {
-        playerRef.current?.play();
-    }, []);
-
-        return(
-    <AnimatedPlayer
-        style={{width: 250, height: 250}}
-        animatedSource={require('./tCardInsert_2.webp')}
-        autoPlay={false}
-        loop={true}
-        thumbnailSource={require('./tCardInsert_2.webp')}/>)
-
-}
- */
-
-
 
 export const Monitor = ({navigation, route}) => {
-    const scanInterval = 3.0, // BLE scan interval in seconds
+    const bigLayout = Platform.isPad,
+        isFocused = useIsFocused(),
+        dimensions = useWindowDimensions(),
+        scanInterval = 3.0, // BLE scan interval in seconds
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
         serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
@@ -182,72 +51,8 @@ export const Monitor = ({navigation, route}) => {
         [modalPeripheralsList, setModalPeripheralsList] = useState([]),
         [peripheralsList, setPeripheralsList] = useState([]),
         autoConnectByName = useRef(false),
-        bigLayout = Platform.isPad,
-        isFocused = useIsFocused(),
-        [selectedTest, setSelectedTest] = useState('Fibrinogen'),
-        [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
-        [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
-        [patientDataCOVID, setPatientDataCOVID] = useState(null),
-        [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null),
         [isScanning, setIsScanning] = useState(false),
-        [autoConnectSwitch, setAutoConnectSwitch] = useState(autoConnectByName.current),
-        dimensions = useWindowDimensions(),
         [viewPeripheralsModal, setViewPeripheralsModal] = useState(false);
-
-
-
-    /*
-
-            USER AUTHENTICATION, DATABASE RETRIEVAL
-
-     */
-
-
-    // update user info with current authenticated user info
-    // also get organization info from user, update organization info
-    useEffect(() => {
-        if (auth().currentUser != null)
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    console.log('printing user info');
-                    console.log(userSnapshot.val());
-
-                    // get patient info for appropriate test type
-                    let patient = null;
-                    if (selectedTest === 'COVID') {
-                        if (userSnapshot.val()['organization']) {
-                            patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/covid/' + patientKeyCOVID);
-                        } else {
-                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID);
-                        }
-                    } else if (selectedTest === 'Fibrinogen') {
-                        if (userSnapshot.val()['organization']) {
-                            patient = database().ref('/organizations/' + userSnapshot.val()['organization'] + '/patients/fibrinogen/' + patientKeyFibrinogen);
-                        } else {
-                            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen);
-                        }
-                    }
-
-                    // update data for patient for appropriate test type
-                    patient.once('value', function (patientSnapshot) {
-                        if (selectedTest === 'COVID') {
-                            setPatientKeyCOVID(patientSnapshot.key);
-                            setPatientDataCOVID(patientSnapshot.val());
-                        } else if (selectedTest === 'Fibrinogen') {
-                            setPatientKeyFibrinogen(patientSnapshot.key);
-                            setPatientDataFibrinogen(patientSnapshot.val());
-                        }
-                    });
-                }
-            });
-        else
-            auth().signInAnonymously().then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            }).catch(error => {
-                console.error(error);
-            });
-    }, [isFocused]);
 
     /*
 
@@ -322,18 +127,16 @@ export const Monitor = ({navigation, route}) => {
     }
 
     const updateDeviceList = () => {
-        const a = Array.from(discoveredPeripherals.values());
-        setModalPeripheralsList(Array.from(a).map(item => ({
-            key: item['id'],
-            label: item['name']
-        })));
-
-        setPeripheralsList(
-            Array.from(connectedPeripherals.values())
+        setModalPeripheralsList(
+            Array.from(discoveredPeripherals.values())
+                .map(item => (
+                    {
+                        key: item['id'],
+                        label: item['name']
+                    }))
         );
 
-        // to get all peripherals
-        //Array.from(connectedPeripherals.values()).concat(Array.from(a))
+        setPeripheralsList(Array.from(connectedPeripherals.values()));
     }
 
     const connectPeripheral = (peripheral) => {
@@ -401,12 +204,6 @@ export const Monitor = ({navigation, route}) => {
         setIsScanning(false);
         updateDeviceList();
     };
-
-    const toggleAutoConnect = () => {
-        const newState = !autoConnectByName.current;
-        setAutoConnectSwitch(newState);
-        autoConnectByName.current = newState;
-    }
 
     const scanPeripherals = () => {
         if (!isScanning) {
@@ -485,6 +282,12 @@ export const Monitor = ({navigation, route}) => {
             chipType = characteristicValues.get('chipType', 'Fetching...'),
             lastResult = characteristicValues.get('lastResult', 'Fetching...'),
             lastResultTime = characteristicValues.get('lastResultTime', 'Fetching...');
+
+        const [selectedTest, setSelectedTest] = useState('Fibrinogen'),
+            [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
+            [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
+            [patientDataCOVID, setPatientDataCOVID] = useState(null),
+            [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null);
 
 
         const selectedPatient = "Noah";

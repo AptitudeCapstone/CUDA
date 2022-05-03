@@ -4,20 +4,17 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
 import database from "@react-native-firebase/database";
-
+import {useUserAuth} from "../../contexts/UserContext";
 
 export const EditAccount = ({navigation, route}) => {
     const [name, setName] = useState(null);
     const [newPassword, setNewPassword] = useState(null);
     const [newEmail, setNewEmail] = useState(null);
     const [showEmailPass, setShowEmailPass] = useState(true);
-
-    const user = auth().currentUser;
-
+    const {user} = useUserAuth();
     useEffect(() => {
-        setShowEmailPass(user.providerData[0].providerId != 'google.com');
-    });
-
+        setShowEmailPass(user.providerData[0].providerId !== 'google.com');
+    }, []);
 
     const edit_user = () => {
         if (newPassword != null) {

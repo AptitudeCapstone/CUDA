@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import {Home} from './src/screens/home/Home';
 import {CreateAccount} from './src/screens/home/CreateAccount';
@@ -19,7 +19,9 @@ import IconFo from 'react-native-vector-icons/Foundation';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { UserProvider } from "./src/contexts/UserContext.js";
+import auth from "@react-native-firebase/auth";
+import database from "@react-native-firebase/database";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -99,75 +101,77 @@ const PatientStack = () => {
 
 const App = () => {
     return (
-        <NavigationContainer>
-        <Tab.Navigator
-            initialRouteName='HomeStack'
-            screenOptions={{
-                tabBarActiveTintColor: "#fff",
-                tabBarInactiveTintColor: "#ccc",
-                tabBarActiveBackgroundColor: "#222",
-                tabBarInactiveBackgroundColor: "#222",
-                tabBarStyle: [
-                    {
-                        display: 'flex',
-                        backgroundColor: '#222',
+        <UserProvider>
+            <NavigationContainer>
+                <Tab.Navigator
+                    initialRouteName='HomeStack'
+                    screenOptions={{
+                        tabBarActiveTintColor: "#fff",
+                        tabBarInactiveTintColor: "#ccc",
+                        tabBarActiveBackgroundColor: "#222",
+                        tabBarInactiveBackgroundColor: "#222",
+                        tabBarStyle: [
+                            {
+                                display: 'flex',
+                                backgroundColor: '#222',
+                                paddingBottom: 30,
+                            }, null
+                        ],
+                        paddingTop: 10,
                         paddingBottom: 30,
-                    }, null
-                ],
-                paddingTop: 10,
-                paddingBottom: 30,
-                safeAreaInsets: {
-                    bottom: 0,
-                },
-            }}
-        >
-            <Tab.Screen
-                name='HomeStack'
-                component={HomeStack}
-                options={{
-                    title: 'Home',
-                    headerShown: false,
-                    tabBarIcon: ({color}) => (
-                        <IconMCI
-                            name="home-outline"
-                            color={color}
-                            size={26}
-                        />
-                    ),
-                }}
-            />
-            <Tab.Screen
-                name='MonitorDevices'
-                component={Monitor}
-                options={{
-                    title: 'Monitor Devices',
-                    headerShown: false,
-                    tabBarIcon: ({color}) => (
-                        <IconMI
-                            name="device-hub"
-                            color={color}
-                            size={26}
-                        />
-                    ),
-                }}
-            />
-            <Tab.Screen
-                name='PatientData'
-                component={PatientStack}
-                options={{
-                    title: 'View Data',
-                    headerShown: false,
-                    tabBarIcon: ({color}) => (
-                        <IconFo
-                            name="graph-bar"
-                            color={color}
-                            size={26}
-                        />
-                    ),
-                }}
-            />
-        </Tab.Navigator>
-    </NavigationContainer>
+                        safeAreaInsets: {
+                            bottom: 0,
+                        },
+                    }}
+                >
+                    <Tab.Screen
+                        name='HomeStack'
+                        component={HomeStack}
+                        options={{
+                            title: 'Home',
+                            headerShown: false,
+                            tabBarIcon: ({color}) => (
+                                <IconMCI
+                                    name="home-outline"
+                                    color={color}
+                                    size={26}
+                                />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name='MonitorDevices'
+                        component={Monitor}
+                        options={{
+                            title: 'Monitor Devices',
+                            headerShown: false,
+                            tabBarIcon: ({color}) => (
+                                <IconMI
+                                    name="device-hub"
+                                    color={color}
+                                    size={26}
+                                />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name='PatientData'
+                        component={PatientStack}
+                        options={{
+                            title: 'View Data',
+                            headerShown: false,
+                            tabBarIcon: ({color}) => (
+                                <IconFo
+                                    name="graph-bar"
+                                    color={color}
+                                    size={26}
+                                />
+                            ),
+                        }}
+                    />
+                </Tab.Navigator>
+            </NavigationContainer>
+        </UserProvider>
     );
 };
 

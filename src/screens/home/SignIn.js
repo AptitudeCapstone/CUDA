@@ -1,33 +1,23 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
+import {useUserAuth} from "../../contexts/UserContext";
 
 export const SignIn = ({navigation, route}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const {logIn} = useUserAuth();
 
-    const sign_in = () => {
-        const credential = auth.EmailAuthProvider.credential(email, password);
-        auth().currentUser.linkWithCredential(credential).then(r => {
+    const handleLogIn = async () => {
+        try {
+            console.log('attempting to log in with email/password');
+            await logIn(email, password);
             Alert.alert('Signed In', 'You have been successfully signed in');
             navigation.navigate('Home');
-        }).catch(error => {
-            if (error.code === 'auth/wrong-password')
-                Alert.alert('Error', 'Password is incorrect');
-            else if (error.code === 'user-not-found')
-                Alert.alert('Error', 'Account was not found with that email');
-            else {
-                auth().signInWithCredential(credential).then(r => {
-                    // account exists, merge data to account and delete old user
-                    // TO DO...
-
-                    Alert.alert('Signed In', 'You have been successfully signed in');
-                    navigation.navigate('Home');
-                });
-            }
-        });
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
     }
 
     return (
@@ -70,7 +60,7 @@ export const SignIn = ({navigation, route}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={sign_in}
+                        onPress={handleLogIn}
                     >
                         <Text style={buttons.submitButtonText}>Sign In</Text>
                     </TouchableOpacity>

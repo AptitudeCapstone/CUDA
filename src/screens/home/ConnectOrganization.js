@@ -2,49 +2,19 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
-import database from '@react-native-firebase/database';
-import auth from '@react-native-firebase/auth';
+import {useUserAuth} from "../../contexts/UserContext";
 
 export const ConnectOrganization = ({navigation}) => {
+    const { connectOrganization } = useUserAuth();
     const [addCode, setAddCode] = useState(-1);
 
-    const connect_organization = () => {
-        // transaction to search org with add code, create user associated with that org
-
-        if (addCode >= 0) {
-            database().ref('organizations/').orderByChild('addCode').equalTo(addCode).once('value', function (snapshot) {
-                //verify that org with add code exists
-                if (snapshot.val()) {
-                    // @ts-ignore
-                    snapshot.forEach(function (organizationSnapshot) {
-                        const currentUserID = auth().currentUser.uid;
-                        database().ref('/users/' + currentUserID).update({
-                            organization: organizationSnapshot.key
-                        }).then(r => {
-                            Alert.alert(
-                                'Organization Found',
-                                'Attempting to sync data with ' + organizationSnapshot.val().name,
-                                [
-                                    {
-                                        text: 'Continue',
-                                        onPress: () => navigation.navigate('Home')
-                                    },
-                                    {
-                                        text: 'Cancel',
-                                        style: 'cancel',
-                                    },
-                                ]
-                            );
-                        });
-                    });
-                } else {
-                    Alert.alert('Error', 'No organization was found with this add code');
-                }
-            })
-        } else {
-            Alert.alert('Please enter a valid add code');
+    const handleConnectOrganization = async () => {
+        try {
+            await connectOrganization(addCode);
+        } catch (error) {
+            Alert.alert('Error', error.message);
         }
-    };
+    }
 
     return (
         <SafeAreaView style={format.page}>
@@ -76,7 +46,7 @@ export const ConnectOrganization = ({navigation}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={connect_organization}
+                        onPress={handleConnectOrganization}
                     >
                         <Text style={buttons.submitButtonText}>Connect and Sync</Text>
                     </TouchableOpacity>

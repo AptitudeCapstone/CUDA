@@ -1,42 +1,21 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
-import database from "@react-native-firebase/database";
-
+import {useUserAuth} from "../../contexts/UserContext";
 
 export const CreateAccount = ({navigation, route}) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const {signUp} = useUserAuth();
 
-    const register_user = () => {
-        if (password.length >= 6) {
-            var credential = auth.EmailAuthProvider.credential(email, password);
-            auth().currentUser.linkWithCredential(credential).then(function (userCredentials) {
-                if (userCredentials.user) {
-                    userCredentials.user.updateProfile({
-                        displayName: name
-                    }).then((s) => {
-                        const newReference = database().ref('/users/' + userCredentials.user.uid);
-                        newReference.set({organization: null});
-                        navigation.navigate('Home');
-                    })
-                }
-            }).catch(error => {
-                if (error.code === 'auth/email-already-in-use') {
-                    Alert.alert('Error', 'That email address is already in use');
-                }
-
-                if (error.code === 'auth/invalid-email') {
-                    Alert.alert('Error', 'That email address is invalid');
-                }
-
-                console.error(error);
-            });
-        } else {
-            Alert.alert('Error', 'Please use at least 6 characters for your pasword');
+    const handleSignUp = async () => {
+        try {
+            console.log('attempting to log in with google');
+            await signUp(name, email, password);
+        } catch (error) {
+            Alert.alert('Error', error.message);
         }
     }
 
@@ -94,10 +73,7 @@ export const CreateAccount = ({navigation, route}) => {
                     </View>
                 </View>
                 <View style={buttons.submitButtonContainer}>
-                    <TouchableOpacity
-                        style={buttons.submitButton}
-                        onPress={register_user}
-                    >
+                    <TouchableOpacity style={buttons.submitButton} onPress={handleSignUp}>
                         <Text style={buttons.submitButtonText}>Create Account</Text>
                     </TouchableOpacity>
                 </View>
