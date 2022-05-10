@@ -18,7 +18,7 @@ export const CreateOrganization = ({navigation}) => {
     const [zip, setZip] = useState(0);
 
     const register_organization = () => {
-        if (name != '' && (addCode == 0 || addCode >= 1000) && ownerEmail1 != '') {
+        if (name !== '' && (addCode === 0 || addCode >= 1000) && ownerEmail1 !== '') {
             const newReference = database().ref('/organizations').push();
             const orgID = newReference.key;
 
@@ -49,7 +49,7 @@ export const CreateOrganization = ({navigation}) => {
                     ', country: ' + country +
                     ', zip: ' + zip));
         } else
-            Alert.alert('Please complete the required fields');
+            Alert.alert('Error', 'Please complete the required fields');
     };
 
     return (

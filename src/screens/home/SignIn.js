@@ -3,21 +3,54 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
 import {useUserAuth} from "../../contexts/UserContext";
+import auth from "@react-native-firebase/auth";
 
 export const SignIn = ({navigation, route}) => {
+    const userInfo = useUserAuth();
+    const userAuth = userInfo.userAuth;
+    const userStatus = userInfo.user.status;
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {logIn} = useUserAuth();
 
     const handleLogIn = async () => {
         try {
-            console.log('attempting to log in with email/password');
+            console.log('Attempting to log in with email/password');
             await logIn(email, password);
             Alert.alert('Signed In', 'You have been successfully signed in');
             navigation.navigate('Home');
         } catch (error) {
             Alert.alert('Error', error.message);
         }
+    }
+
+    //  log in via email, password
+    //      if an account with this credential exists, link them
+    //      else, log in
+    const logIn = async (email, password) => {
+        if(userStatus !== 'anonymous-signed-in') {
+            throw new Error("No anonymous sign in detected - this should not happen");
+        }
+
+        const credential = auth.EmailAuthProvider.credential(email, password);
+        // first, attempt to link anonymous/google/apple user to existing
+        userAuth.linkWithCredential(credential)
+            .catch(error => {
+                if (error.code === 'auth/wrong-password')
+                    throw new Error('Password is incorrect');
+                else if (error.code === 'auth/user-not-found')
+                    throw new Error('Account was not found with that email');
+                else {
+                    // account exists
+                    auth().signInWithCredential(credential)
+                        .catch(error => {
+                            if (error.code === 'auth/wrong-password')
+                                throw new Error('Password is incorrect');
+                            else if (error.code === 'auth/user-not-found')
+                                throw new Error('Account was not found with that email');
+                        });
+                }
+            });
     }
 
     return (

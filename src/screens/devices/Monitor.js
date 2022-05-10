@@ -276,18 +276,14 @@ export const Monitor = ({navigation, route}) => {
         }
 
         const name = item['peripheral']['name'],
-            characteristicValues = item['characteristic_values'],
-            picoStatus = characteristicValues.get('picoStatus', 'Fetching...'),
-            programTask = characteristicValues.get('programTask', 'Fetching...'),
-            chipType = characteristicValues.get('chipType', 'Fetching...'),
-            lastResult = characteristicValues.get('lastResult', 'Fetching...'),
-            lastResultTime = characteristicValues.get('lastResultTime', 'Fetching...');
+            characteristicValues = item['characteristic_values'];
 
-        const [selectedTest, setSelectedTest] = useState('Fibrinogen'),
-            [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
-            [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
-            [patientDataCOVID, setPatientDataCOVID] = useState(null),
-            [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null);
+        console.log(item);
+        const picoStatus = characteristicValues['picoStatus'],
+            programTask = characteristicValues['programTask'],
+            chipType = characteristicValues['chipType'],
+            lastResult = characteristicValues['lastResult'],
+            lastResultTime = characteristicValues['lastResultTime'];
 
 
         const selectedPatient = "Noah";
@@ -339,7 +335,7 @@ export const Monitor = ({navigation, route}) => {
                         borderColor: '#555',
                         backgroundColor: '#333',
                     }}>
-                        <ChipAnimation />
+
                         {
                             chipType === "-1" &&
                             <Text style={deviceCard.characteristicText}>Insert a chip to begin testing</Text>

@@ -20,8 +20,6 @@ import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider } from "./src/contexts/UserContext.js";
-import auth from "@react-native-firebase/auth";
-import database from "@react-native-firebase/database";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 

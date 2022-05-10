@@ -1,40 +1,44 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import auth from '@react-native-firebase/auth';
 import {buttons, fonts, format} from '../../style/style';
-import database from "@react-native-firebase/database";
 import {useUserAuth} from "../../contexts/UserContext";
 
 export const EditAccount = ({navigation, route}) => {
+    const userInfo = useUserAuth();
+
     const [name, setName] = useState(null);
     const [newPassword, setNewPassword] = useState(null);
     const [newEmail, setNewEmail] = useState(null);
     const [showEmailPass, setShowEmailPass] = useState(true);
-    const {user} = useUserAuth();
+
     useEffect(() => {
-        setShowEmailPass(user.providerData[0].providerId !== 'google.com');
+        JSON.stringify(userInfo, null, 2);
+        setShowEmailPass(userInfo.userAuth.providerData[0].providerId !== 'google.com');
     }, []);
 
-    const edit_user = () => {
+    const handleEditUser = async () => {
+        try {
+            console.log('Attempting to edit user info');
+            await editUser();
+            Alert.alert('Success', 'Your information has been updated');
+            navigation.navigate('Home');
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
+    }
+
+    const editUser = async () => {
         if (newPassword != null) {
-            user.updatePassword(newPassword).catch((error) => {
-                console.log(error);
-            });
+            await userInfo.userAuth.updatePassword(newPassword);
         }
 
         if (newEmail != null) {
-            user.updateEmail(newEmail).catch((error) => {
-                console.log(error);
-            });
+            await userInfo.userAuth.updateEmail(newEmail);
         }
 
         if (name != null) {
-            database().ref('users/' + auth().currentUser.uid).update({
-                displayName: name
-            }).catch((error) => {
-                console.log(error);
-            });
+            await userInfo.userData.ref.update({displayName: name});
         }
     }
 
@@ -93,7 +97,7 @@ export const EditAccount = ({navigation, route}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={edit_user}
+                        onPress={handleEditUser}
                     >
                         <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>

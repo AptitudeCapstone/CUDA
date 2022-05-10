@@ -7,11 +7,19 @@ import {buttons, fonts, format} from '../../style/style';
 export const ForgotPassword = ({navigation, route}) => {
     const [email, setEmail] = useState('');
 
-    const send_email = () => {
-        auth().sendPasswordResetEmail(email).then(r => {
-            Alert.alert('Recovery Email Sent', 'Please check your email for instructions');
+    const handleSendEmail = async () => {
+        try {
+            console.log('Attempting to edit user info');
+            await sendEmail();
+            Alert.alert('Recovery email Sent', 'Please check your email for instructions');
             navigation.navigate('Sign In');
-        })
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
+    }
+
+    const sendEmail = async () => {
+        await auth().sendPasswordResetEmail(email);
     }
 
     return (
@@ -41,7 +49,7 @@ export const ForgotPassword = ({navigation, route}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={send_email}
+                        onPress={handleSendEmail}
                     >
                         <Text style={buttons.submitButtonText}>Send Recovery Email</Text>
                     </TouchableOpacity>

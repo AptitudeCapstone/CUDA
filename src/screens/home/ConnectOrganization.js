@@ -3,9 +3,10 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style/style';
 import {useUserAuth} from "../../contexts/UserContext";
+import database from "@react-native-firebase/database";
 
 export const ConnectOrganization = ({navigation}) => {
-    const { connectOrganization } = useUserAuth();
+    const userInfo = useUserAuth();
     const [addCode, setAddCode] = useState(-1);
 
     const handleConnectOrganization = async () => {
@@ -15,6 +16,37 @@ export const ConnectOrganization = ({navigation}) => {
             Alert.alert('Error', error.message);
         }
     }
+
+    const connectOrganization = async (addCode) => {
+        // transaction to search org with add code, create user associated with that org
+        if (addCode >= 0 && addCode.toString().length >= 4) {
+            database().ref('organizations/')
+                .orderByChild('addCode').equalTo(addCode)
+                .once('value',
+                    (snapshot) => {
+                        if (snapshot.exists()) {
+                            snapshot.forEach((snapshot) => {
+                                // organization with add code exists
+                                userInfo.userData.ref.update({
+                                    organization: snapshot.key
+                                }).then(() => {
+                                    console.log('org: ' + snapshot.val());
+                                    console.debug(JSON.stringify(snapshot.val(), null, 2));
+                                    Alert.alert('Success', 'Synced with ' + snapshot.val().name)
+                                    navigation.navigate('Home');
+                                    return true;
+                                });
+                            })
+                        } else {
+                            Alert.alert('Error', 'No organization found. Please re-enter your add code. ');
+                        }
+                    }).catch(() => {
+                Alert.alert('Error', 'No organization found. Please re-enter your add code. ');
+                    });
+        } else {
+            throw new Error('Please enter a valid add code');
+        }
+    };
 
     return (
         <SafeAreaView style={format.page}>

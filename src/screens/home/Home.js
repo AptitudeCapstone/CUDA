@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Alert, SafeAreaView, Text, TouchableOpacity, View,} from 'react-native';
+import React, {useState} from 'react';
+import {ActivityIndicator, Alert, SafeAreaView, Text, TouchableOpacity, View,} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
@@ -8,16 +8,11 @@ import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
 import {fonts, format, icons} from '../../style/style';
 import {useUserAuth} from '../../contexts/UserContext';
+import auth from "@react-native-firebase/auth";
+import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
 
 export const Home = ({route, navigation}) => {
-    const {
-        user,
-        userInfo,
-        orgInfo,
-        logOut,
-        logInGoogle,
-        disconnectFromOrganization
-    } = useUserAuth();
+    const userInfo = useUserAuth();
 
     const [userWindowVisible, setUserWindowVisible] = useState(false);
     const [orgWindowVisible, setOrgWindowVisible] = useState(false);
@@ -26,43 +21,71 @@ export const Home = ({route, navigation}) => {
         try {
             console.log('attempting to log in with google');
             await logInGoogle();
-        } catch (error) {
-            Alert.alert('Error', error.message);
-        }
-    }
-
-    const handleLogOut = async () => {
-        try {
-            await logOut();
             setUserWindowVisible(false);
         } catch (error) {
             Alert.alert('Error', error.message);
         }
     }
 
-    const handleDisconnectFromOrganization = async () => {
+    const logInGoogle = async () => {
+        GoogleSignin.configure({
+            webClientId: "141405103878-rsc5n2819h3b7fors0u0oadthfv4dmde.apps.googleusercontent.com",
+        });
+
         try {
-            await disconnectFromOrganization();
+            await GoogleSignin.hasPlayServices();
+            const {idToken} = await GoogleSignin.signIn();
+            const credential = auth.GoogleAuthProvider.credential(idToken);
+            userInfo.userAuth.linkWithCredential(credential)
+                .catch(() => {
+                    auth().signInWithCredential(credential);
+                });
+            return true;
         } catch (error) {
-            Alert.alert('Error', error.message);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                return true;
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                return true;
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                throw new Error('Google play services are unavailable, try another login method.');
+            }
         }
     }
 
-    const toggleUserWindow = () => {
-        // close other window before opening
-        if (orgWindowVisible) {
-            setOrgWindowVisible(false);
-        }
+    //  log out the current user
+    const logOut = async () => {
+        setUserWindowVisible(false);
+        GoogleSignin.signOut()
+            .then(() => {
+                auth().signOut()
+                    .catch(() => {
+                        console.error('Error signing out');
+                    });
+            }).catch(err => {
+                auth().signOut()
+                    .catch(() => {
+                        console.error('Error signing out');
+                    });
+        });
+    }
 
+    const disconnectFromOrganization = () => {
+        userInfo.userData.ref.update({organization: null})
+            .then(() => {
+                setOrgWindowVisible(false);
+                Alert.alert('Disconnect Successful', 'Data is no longer being synced');
+            }).catch(() => {
+                Alert.alert('Error', 'A problem was encountered while disconnecting');
+            });
+    }
+
+    const toggleUserWindow = () => {
+        setOrgWindowVisible(false);
         setUserWindowVisible(!userWindowVisible);
     }
 
     const toggleOrgWindow = () => {
-        // close other window before opening
-        if (userWindowVisible) {
-            setUserWindowVisible(false);
-        }
-
+        setUserWindowVisible(false);
         setOrgWindowVisible(!orgWindowVisible)
     }
 
@@ -77,33 +100,37 @@ export const Home = ({route, navigation}) => {
     }
 
     const editAccount = () => {
+        setUserWindowVisible(false);
         navigation.navigate('Edit Account');
     }
 
     const navConnectOrganization = () => {
+        setOrgWindowVisible(false);
         navigation.navigate('Connect Organization')
     }
 
     const navCreateOrganization = () => {
+        setOrgWindowVisible(false);
         navigation.navigate('Create Organization')
     }
 
     const UserButtons = () => {
         if (userWindowVisible) {
-            if (user != null && !user.isAnonymous)
+            if (userInfo.userData.status === 'registered-user-signed-in')
                 return (
                     <View>
                         <TouchableOpacity style={format.horizontalSubBar} onPress={editAccount}>
                             <Text style={fonts.mediumLink}>Edit Account</Text>
                             <IconA style={icons.linkIcon} name='edit' size={20}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={format.horizontalSubBar} onPress={handleLogOut}>
+                        <TouchableOpacity style={format.horizontalSubBar} onPress={logOut}>
                             <Text style={fonts.mediumLink}>Logout</Text>
                             <IconMI style={icons.linkIcon} name='logout' size={20}/>
                         </TouchableOpacity>
                     </View>
                 );
-            else return (
+            else if(userInfo.userData.status === 'anonymous-signed-in')
+                return (
                 <View>
                     <TouchableOpacity style={format.horizontalSubBar} onPress={handleLogInGoogle}>
                         <Text style={fonts.mediumLink}>Sign in with Google</Text>
@@ -119,11 +146,12 @@ export const Home = ({route, navigation}) => {
                     </TouchableOpacity>
                 </View>
             );
-        } else return <View/>;
+            else return <View />;
+        } else return <View />;
     }
 
     const UserBar = () => {
-        if (user && user.isAnonymous)
+        if (userInfo.userData.status === 'anonymous-signed-in')
             return (
                 <TouchableOpacity style={format.horizontalBar} onPress={toggleUserWindow}>
                     <Text style={fonts.username}>
@@ -131,21 +159,26 @@ export const Home = ({route, navigation}) => {
                     </Text>
                 </TouchableOpacity>
             );
-        else if(user)
+        else if (userInfo.userData.status === 'registered-user-signed-in')
             return (
                 <TouchableOpacity style={format.horizontalBar} onPress={toggleUserWindow}>
                     <Text style={fonts.username}>
-                        {userInfo && userInfo.displayName} <IconE name={userWindowVisible ? 'chevron-up' : 'chevron-down'} size={34}/>
+                        {userInfo.user?.displayName} <IconE name={userWindowVisible ? 'chevron-up' : 'chevron-down'}
+                                                      size={34}/>
                     </Text>
                 </TouchableOpacity>
             );
         else
-            return <View />;
+            return (
+                <Text style={{margin: 15, marginBottom: 5}}>
+                    <ActivityIndicator size={34}/>
+                </Text>
+            );
     }
 
     const OrganizationWindow = () => {
         if (orgWindowVisible) {
-            if (orgInfo === null)
+            if (userInfo.user?.organization === null || userInfo.user?.organization === undefined)
                 return (
                     <View>
                         <TouchableOpacity style={format.horizontalSubBar} onPress={navConnectOrganization}>
@@ -163,12 +196,9 @@ export const Home = ({route, navigation}) => {
             else
                 return (
                     <View>
-                        <View style={format.horizontalSubBar}>
-                            <Text style={fonts.mediumLink}>Add code: {orgInfo.addCode}</Text>
-                        </View>
-                        <TouchableOpacity style={format.horizontalSubBar} onPress={handleDisconnectFromOrganization}>
+                        <TouchableOpacity style={format.horizontalSubBar} onPress={disconnectFromOrganization}>
                             <Text style={fonts.mediumLink}>
-                                Disconnect from {orgInfo.name} <IconMCI name='database-minus' size={24} />
+                                Disconnect from current organization <IconMCI name='database-minus' size={24} />
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -178,7 +208,7 @@ export const Home = ({route, navigation}) => {
     }
 
     const OrganizationBar = () => {
-        if (orgInfo === null)
+        if (userInfo.user?.organization === null || userInfo.user?.organization === undefined)
             return (
                 <TouchableOpacity style={format.horizontalBar} onPress={toggleOrgWindow}>
                     <IconMCI style={icons.smallIcon} name='database' size={30}/>
