@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-import {Home} from './src/screens/home/Home';
 import {CreateAccount} from './src/screens/home/CreateAccount';
 import {SignIn} from './src/screens/home/SignIn';
 import {EditAccount} from './src/screens/home/EditAccount';
@@ -16,54 +15,50 @@ import {EditPatientFibrinogen} from './src/screens/patients/EditPatientFibrinoge
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import IconFo from 'react-native-vector-icons/Foundation';
-import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider } from "./src/contexts/UserContext.js";
-const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const HomeStack = () => {
+const screenOptions = {headerShown: false};
+
+const UserStack = () => {
     return(
         <Stack.Navigator>
             <Stack.Screen
-                name='Home'
-                component={Home}
-                options={{headerShown: false}}
-            />
-            <Stack.Screen
                 name='Create Account'
                 component={CreateAccount}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Sign In'
                 component={SignIn}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Edit Account'
                 component={EditAccount}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Forgot Password'
                 component={ForgotPassword}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Create Organization'
                 component={CreateOrganization}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Connect Organization'
                 component={ConnectOrganization}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
         </Stack.Navigator>
     );
-}
+};
 
 const PatientStack = () => {
     return(
@@ -71,27 +66,49 @@ const PatientStack = () => {
             <Stack.Screen
                 name='Patient'
                 component={Patient}
-                options={{headerShown: false}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Create Patient COVID'
                 component={CreatePatientCOVID}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Create Patient Fibrinogen'
                 component={CreatePatientFibrinogen}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Edit Patient COVID'
                 component={EditPatientCOVID}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
             />
             <Stack.Screen
                 name='Edit Patient Fibrinogen'
                 component={EditPatientFibrinogen}
-                options={{title: '', headerTintColor: '#fff', headerStyle: {backgroundColor: '#222'}}}
+                options={screenOptions}
+            />
+            <Stack.Screen
+                name='User Stack'
+                component={UserStack}
+                options={screenOptions}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const MonitorTab = () => {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen
+                name='MonitorDevices'
+                component={Monitor}
+                options={screenOptions}
+            />
+            <Stack.Screen
+                name='User Stack'
+                component={UserStack}
+                options={screenOptions}
             />
         </Stack.Navigator>
     );
@@ -102,20 +119,23 @@ const App = () => {
         <UserProvider>
             <NavigationContainer>
                 <Tab.Navigator
-                    initialRouteName='HomeStack'
+                    initialRouteName='MonitorTab'
                     screenOptions={{
+                        headerShown: false,
                         tabBarActiveTintColor: "#fff",
                         tabBarInactiveTintColor: "#ccc",
-                        tabBarActiveBackgroundColor: "#222",
-                        tabBarInactiveBackgroundColor: "#222",
+                        tabBarActiveBackgroundColor: '#131313',
+                        tabBarInactiveBackgroundColor: '#131313',
                         tabBarStyle: [
                             {
+                                borderTopColor: '#555',
                                 display: 'flex',
-                                backgroundColor: '#222',
+                                backgroundColor: '#131313',
                                 paddingBottom: 30,
+                                paddingTop: 15
                             }, null
                         ],
-                        paddingTop: 10,
+                        paddingTop: 15,
                         paddingBottom: 30,
                         safeAreaInsets: {
                             bottom: 0,
@@ -123,23 +143,8 @@ const App = () => {
                     }}
                 >
                     <Tab.Screen
-                        name='HomeStack'
-                        component={HomeStack}
-                        options={{
-                            title: 'Home',
-                            headerShown: false,
-                            tabBarIcon: ({color}) => (
-                                <IconMCI
-                                    name="home-outline"
-                                    color={color}
-                                    size={26}
-                                />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name='MonitorDevices'
-                        component={Monitor}
+                        name='MonitorTab'
+                        component={MonitorTab}
                         options={{
                             title: 'Monitor Devices',
                             headerShown: false,

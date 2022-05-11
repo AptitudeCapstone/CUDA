@@ -3,26 +3,43 @@ import {StyleSheet} from 'react-native';
 export const format = StyleSheet.create({
     page: {
         backgroundColor: '#222',
-        flex: 1
+        flex: 1,
+        padding: 25
     },
     pageHeader: {
+        paddingVertical: 15,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        paddingHorizontal: 40,
+        backgroundColor: '#131313',
+        borderBottomColor: '#555',
+        borderBottomWidth: 1
+    },
+    modalContent: {
+        background: 'red'
+    },
+    iconButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        borderWidth: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        borderColor: 'rgba(255, 255, 255, 0.4)',
+        borderRadius: 15
     },
     horizontalBar: {
         padding: 15,
         paddingBottom: 5,
     },
     horizontalSubBar: {
-        padding: 8,
-        paddingLeft: 15,
-        paddingRight: 15,
-        backgroundColor: '#444',
-        borderRadius: 5,
+        padding: 15,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#888',
+        borderColor: 'rgba(255, 255, 255, 0.3)',
         margin: 5,
-        flexDirection: 'row',
         justifyContent: 'center'
     },
     textBox: {
@@ -116,15 +133,25 @@ export const fonts = StyleSheet.create({
         fontWeight: 'bold',
         color: '#eee',
     },
+    iconButtonText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#eee',
+        marginHorizontal: 10
+    },
+    iconButtonIcon: {
+        color: '#eee',
+        marginHorizontal: 10
+    },
     organizationName: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#eee',
     },
     mediumLink: {
-        fontSize: 16,
+        fontSize: 18,
         textAlign: 'center',
-        color: '#eee',
+        color: '#fff',
     },
     heading: {
         fontSize: 28,

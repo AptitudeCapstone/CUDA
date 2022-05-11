@@ -12,6 +12,7 @@ import auth from '@react-native-firebase/auth';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
+import {UserPageHeader} from "../../components/UserModal";
 
 export const Patient = ({route, navigation}) => {
     // get current user and org info
@@ -1031,6 +1032,7 @@ export const Patient = ({route, navigation}) => {
 
     return (
         <SafeAreaView style={format.page}>
+            <UserPageHeader navigation={navigation}/>
             <TestSelectBar/>
             <PatientSelector/>
             <ScrollView>

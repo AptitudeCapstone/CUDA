@@ -12,7 +12,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View, StyleSheet, Image
+    View
 } from 'react-native';
 import {buttons, fonts, format, deviceCard} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
@@ -28,6 +28,7 @@ import IconA from "react-native-vector-icons/AntDesign";
 import FastImage from 'react-native-fast-image';
 import AnimatedPlayer, {IAnimatedPlayerReference} from 'react-native-animated-webp';
 import animatedImage from './tCardInsert_2.webp';
+import {UserPageHeader} from "../../components/UserModal";
 
 
 export const Monitor = ({navigation, route}) => {
@@ -293,7 +294,7 @@ export const Monitor = ({navigation, route}) => {
             marginLeft: dimensions.width * 0.25,
             marginRight: dimensions.width * 0.25,
         };
-        if(connectedPeripherals.size > 1) {
+        if (connectedPeripherals.size > 1) {
             cardStyle = {
                 width: dimensions.width * 0.25,
                 marginLeft: dimensions.width * 0.125,
@@ -303,7 +304,7 @@ export const Monitor = ({navigation, route}) => {
 
 
         let gifStyle = {width: 0, height: 0}
-        if(chipType === "-1") {
+        if (chipType === "-1") {
             gifStyle = {alignSelf: 'center', width: 250, height: 250,}
         }
 
@@ -347,7 +348,8 @@ export const Monitor = ({navigation, route}) => {
                         }
                         {
                             lastResult !== "-1" &&
-                            <Text style={deviceCard.characteristicText}>Last result was {lastResult} recorded at {lastResultTime}</Text>
+                            <Text style={deviceCard.characteristicText}>Last result was {lastResult} recorded
+                                at {lastResultTime}</Text>
                         }
                         {/*
                         <Text style={deviceCard.characteristicText}>Pico Status: {picoStatus}</Text>
@@ -399,23 +401,47 @@ export const Monitor = ({navigation, route}) => {
 
     const PeripheralList = () => {
         return (
-                <FlatList
-                    horizontal={true}
-                    data={
-                        //dummyPeripheralList
-                        peripheralsList
-                    }
-                    extraData={peripheralsList}
-                    renderItem={({item}) => connectedPeripheral(item)}
-                    keyExtractor={(item) => item['peripheral']['id']}
-                />
+            <FlatList
+                horizontal={true}
+                data={
+                    //dummyPeripheralList
+                    peripheralsList
+                }
+                extraData={peripheralsList}
+                renderItem={({item}) => connectedPeripheral(item)}
+                keyExtractor={(item) => item['peripheral']['id']}
+            />
 
         );
     }
 
 
     return (
-        <SafeAreaView style={format.page}>
+        <SafeAreaView style={{backgroundColor: '#222', flex: 1,}}>
+            <UserPageHeader navigation={navigation} />
+            <View style={format.page}>
+            <TouchableOpacity
+                onPress={() => toggleViewPatientModal()}
+                style={{
+                    marginBottom: 20,
+                    marginTop: 10,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginLeft: 20,
+                    marginRight: 20,
+                    padding: 14,
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: '#888',
+                    zIndex: -1
+                }}
+            >
+                <Text style={fonts.username}>Select a device to monitor</Text>
+                <IconE style={fonts.username} name={viewPeripheralsModal ? 'chevron-up' : 'chevron-down'}
+                       size={34}/>
+            </TouchableOpacity>
             <ModalSelector
                 data={modalPeripheralsList}
                 onChange={(option) => {
@@ -457,39 +483,14 @@ export const Monitor = ({navigation, route}) => {
                 onCancel={() => {
                     toggleViewPatientModal();
                 }}
-                customSelector={<View />}
+                customSelector={<View/>}
                 searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
                 searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
                 listType={'FLATLIST'}
                 renderItem={<View/>}
             />
-            <View>
-                <TouchableOpacity
-                    onPress={() => toggleViewPatientModal()}
-                    style={{
-                        marginBottom: 20,
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginLeft: 20,
-                        marginRight: 20,
-                        padding: 14,
-                        paddingLeft: 20,
-                        paddingRight: 20,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        borderColor: '#888'
-                    }}
-                >
-                    <Text style={fonts.username}>
-                        Select a device to monitor
-                    </Text>
-                    <IconE style={fonts.username}
-                           name={viewPeripheralsModal ? 'chevron-up' : 'chevron-down'} size={34}
-                    />
-                </TouchableOpacity>
+            <PeripheralList />
             </View>
-            <PeripheralList/>
         </SafeAreaView>
     );
 }
