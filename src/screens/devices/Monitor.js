@@ -1,8 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-    Alert,
     useWindowDimensions,
-    FlatList,
     NativeEventEmitter,
     NativeModules,
     PermissionsAndroid,
@@ -12,15 +10,15 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {fonts, format, deviceCard} from '../../style/style';
+import {fonts, format, deviceCard, modal} from '../../style';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
 import FastImage from 'react-native-fast-image';
-import { CountdownCircleTimer, useCountdown } from 'react-native-countdown-circle-timer'
-import {UserPageHeader} from "../../components/UserModal";
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
+import HeaderBar from '../../components/HeaderBar';
 
 /*
 const ChipAnimation = () => {
@@ -30,7 +28,7 @@ const ChipAnimation = () => {
             <FastImage
                 ref={playerRef}
                 style={{alignSelf: 'center', width: 200, height: 200, marginHorizontal: -20, marginVertical: -20}}
-                source={require('./tCardInsert_2.webp')}
+                source={require('./card-animation.webp')}
             />
 
     );
@@ -38,10 +36,9 @@ const ChipAnimation = () => {
 
 
  */
-export const Monitor = ({navigation, route}) => {
+const Monitor = ({navigation, route}) => {
     const bigLayout = Platform.isPad,
         dimensions = useWindowDimensions(),
-
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
         serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
@@ -57,13 +54,13 @@ export const Monitor = ({navigation, route}) => {
         connectedPeripherals = new Map(),
         discoveredPeripheralsList = useRef([]),
         connectedPeripheralsList = useRef([]),
-        [mList, setLazyDiscoveredList] = useState([]),
-        [cList, setLazyConnectedList] = useState([]),
+        [lazyDiscoveredList, setLazyDiscoveredList] = useState([]),
+        [lazyConnectedList, setLazyConnectedList] = useState([]),
         autoConnectByName = useRef(false),
-
-        [availablePeripheralsModalVisible, setAvailablePeripheralsModalVisible] = useState(false),
-        [connectedPeripheralsModalVisible, setConnectedPeripheralsModalVisible] = useState(false),
+        [discoveredPeripheralsModal, setDiscoveredPeripheralsModal] = useState(false),
+        [connectedPeripheralsModal, setConnectedPeripheralsModal] = useState(false),
         [selectedPeripheral, setSelectedPeripheral] = useState(null);
+
     /*
 
          BLE
@@ -370,30 +367,10 @@ export const Monitor = ({navigation, route}) => {
         return (
             <View style={[deviceCard.container, cardStyle]}>
                 <View style={deviceCard.device}>
-                    <View style={{
-                        paddingHorizontal: 30,
-                        paddingVertical: 10,
-                        borderTopRightRadius: 40,
-                        borderTopLeftRadius: 40,
-                        borderLeftWidth: 1,
-                        borderRightWidth: 1,
-                        borderTopWidth: 1,
-                        borderColor: '#555',
-                        backgroundColor: '#222',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between'
-                    }}>
+                    <View style={deviceCard.header}>
                         <Text style={deviceCard.nameText}>{name}</Text>
                     </View>
-                    <View style={{
-                        borderBottomRightRadius: 40,
-                        borderBottomLeftRadius: 40,
-                        borderLeftWidth: 1,
-                        borderRightWidth: 1,
-                        borderBottomWidth: 1,
-                        borderColor: '#555',
-                        backgroundColor: '#333',
-                    }}>
+                    <View style={deviceCard.body}>
                         {
                             (deviceState === "Waiting for chip") &&
                             <View>
@@ -470,172 +447,93 @@ export const Monitor = ({navigation, route}) => {
         );
     }
 
-    const toggleViewAvailablePeripheralsModal = () => {
-        setAvailablePeripheralsModalVisible(!availablePeripheralsModalVisible);
-    }
+    const toggleDiscoveredModal = () => setDiscoveredPeripheralsModal(!discoveredPeripheralsModal);
+    const toggleConnectedModal = () => setConnectedPeripheralsModal(!connectedPeripheralsModal);
 
-    const toggleViewConnectedPeripheralsModal = () => {
-        setConnectedPeripheralsModalVisible(!connectedPeripheralsModalVisible);
-    }
 
     return (
         <SafeAreaView style={{backgroundColor: '#222', flex: 1,}}>
-            <UserPageHeader navigation={navigation} />
+            <HeaderBar navigation={navigation} />
             <View style={format.page}>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <View style={{flexGrow: 0.5}}>
-                        <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>Connectable Devices</Text>
-                <TouchableOpacity
-                    onPress={toggleViewAvailablePeripheralsModal}
-                    style={{
-                        marginBottom: 20,
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginLeft: 20,
-                        marginRight: 20,
-                        padding: 14,
-                        paddingLeft: 20,
-                        paddingRight: 20,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        borderColor: '#888',
-                        zIndex: -1,
-                    }}
-                >
-                    <Text style={fonts.username}>
-                        {discoveredPeripheralsList.current.length}
-                        {(discoveredPeripheralsList.current.length > 1 || discoveredPeripheralsList.current.length == 0)
-                            ? ' connectable devices' : ' connectable device'}
-                    </Text>
-                    <IconE style={fonts.username} name={availablePeripheralsModalVisible ? 'chevron-up' : 'chevron-down'}
-                           size={34}/>
-                </TouchableOpacity>
-                    </View>
-                {
-                    connectedPeripheralsList.current.length > 0 &&
-                    <View style={{flexGrow: 0.5}}>
-                        <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>Devices to view</Text>
-                    <TouchableOpacity
-                        onPress={toggleViewConnectedPeripheralsModal}
-                        style={{
-                            marginBottom: 20,
-                            marginTop: 10,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            marginLeft: 20,
-                            marginRight: 20,
-                            padding: 14,
-                            paddingLeft: 20,
-                            paddingRight: 20,
-                            borderWidth: 1,
-                            borderRadius: 10,
-                            borderColor: '#888',
-                            zIndex: -1,
-                        }}
-                    >
-                        <Text style={fonts.username}>{connectedPeripheralsList.current.length}
-                            {connectedPeripheralsList.current.length > 1 ? ' connected devices' : ' connected device'}
+                        <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>
+                            Connectable Devices
                         </Text>
-                        <IconE style={fonts.username}
-                               name={connectedPeripheralsModalVisible ? 'chevron-up' : 'chevron-down'}
-                               size={34}/>
-                    </TouchableOpacity>
+                        <TouchableOpacity  onPress={toggleDiscoveredModal}  style={format.modalSelector}>
+                            <Text style={fonts.username}>
+                                {discoveredPeripheralsList.current.length}
+                                {
+                                    (discoveredPeripheralsList.current.length > 1 ||
+                                     discoveredPeripheralsList.current.length === 0)
+                                     ? ' connectable devices' : ' connectable device'
+                                }
+                            </Text>
+                            <IconE style={fonts.username} size={34}
+                                   name={discoveredPeripheralsModal ? 'chevron-up' : 'chevron-down'}/>
+                        </TouchableOpacity>
                     </View>
-                }
+                    {
+                        (connectedPeripheralsList.current.length > 0) &&
+                        <View style={{flexGrow: 0.5}}>
+                            <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>
+                                Device to Monitor
+                            </Text>
+                            <TouchableOpacity  onPress={toggleConnectedModal}  style={format.modalSelector}>
+                                <Text style={fonts.username}>
+                                    {connectedPeripheralsList.current.length}
+                                    {connectedPeripheralsList.current.length > 1 ? ' connected devices' : ' connected device'}
+                                </Text>
+                                <IconE style={fonts.username} size={34}
+                                       name={connectedPeripheralsModal ? 'chevron-up' : 'chevron-down'} />
+                            </TouchableOpacity>
+                        </View>
+                    }
                 </View>
                 <ModalSelector
-                    data={discoveredPeripheralsList.current}
-                    onChange={(option) => {
-                        connectPeripheralByID(option.key);
-                        setAvailablePeripheralsModalVisible(false);
+                    onChange={(selectedItem) => {
+                        connectPeripheralByID(selectedItem.key);
+                        setDiscoveredPeripheralsModal(false);
                     }}
-                    optionContainerStyle={{
-                        backgroundColor: '#111',
-                        border: 0
-                    }}
-                    optionTextStyle={{
-                        color: '#444',
-                        fontSize: 18,
-                        fontWeight: 'bold'
-                    }}
-                    optionStyle={{
-                        padding: 20,
-                        backgroundColor: '#eee',
-                        borderRadius: 100,
-                        margin: 5,
-                        marginBottom: 15,
-                        borderColor: '#222'
-                    }}
+                    renderItem={<View />}
+                    customSelector={<View />}
+                    visible={discoveredPeripheralsModal}
+                    data={lazyDiscoveredList}
+                    onCancel={() => toggleDiscoveredModal()}
                     cancelText={'Cancel'}
-                    cancelStyle={{
-                        padding: 20,
-                        backgroundColor: '#eee',
-                        borderRadius: 100,
-                        margin: 5,
-                        marginBottom: 15,
-                        borderColor: '#222'
-                    }}
-                    cancelTextStyle={{
-                        color: '#444',
-                        fontSize: 18,
-                        fontWeight: 'bold'
-                    }}
-                    visible={availablePeripheralsModalVisible}
-                    onCancel={() => {
-                        toggleViewAvailablePeripheralsModal();
-                    }}
-                    customSelector={<View/>}
-                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                    renderItem={<View/>}
+                    searchText={'Search by device name'}
+                    overlayStyle={modal.overlay}
+                    optionContainerStyle={modal.container}
+                    optionTextStyle={modal.optionText}
+                    optionStyle={modal.option}
+                    cancelStyle={modal.cancelOption}
+                    cancelTextStyle={modal.cancelText}
+                    searchStyle={modal.searchBar}
+                    initValueTextStyle={modal.searchText}
+                    searchTextStyle={modal.searchText}
                 />
                 <ModalSelector
-                    data={connectedPeripheralsList.current}
-                    onChange={(option) => {
-                        setSelectedPeripheral(option);
-                        setConnectedPeripheralsModalVisible(false);
+                    onChange={(selectedItem) => {
+                        setSelectedPeripheral(selectedItem);
+                        setConnectedPeripheralsModal(false);
                     }}
-                    keyExtractor= {item => 'connected_' + item.id}
-                    optionContainerStyle={{
-                        backgroundColor: '#111',
-                        border: 0
-                    }}
-                    optionTextStyle={{
-                        color: '#444',
-                        fontSize: 18,
-                        fontWeight: 'bold'
-                    }}
-                    optionStyle={{
-                        padding: 20,
-                        backgroundColor: '#eee',
-                        borderRadius: 100,
-                        margin: 5,
-                        marginBottom: 15,
-                        borderColor: '#222'
-                    }}
+                    renderItem={<View />}
+                    customSelector={<View />}
+                    visible={connectedPeripheralsModal}
+                    data={lazyConnectedList}
+                    onCancel={() => toggleConnectedModal()}
                     cancelText={'Cancel'}
-                    cancelStyle={{
-                        padding: 20,
-                        backgroundColor: '#eee',
-                        borderRadius: 100,
-                        margin: 5,
-                        marginBottom: 15,
-                        borderColor: '#222'
-                    }}
-                    cancelTextStyle={{
-                        color: '#444',
-                        fontSize: 18,
-                        fontWeight: 'bold'
-                    }}
-                    visible={connectedPeripheralsModalVisible}
-                    onCancel={() => {
-                        toggleViewConnectedPeripheralsModal();
-                    }}
-                    customSelector={<View/>}
-                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                    renderItem={<View/>}
+                    searchText={'Search by device name'}
+                    keyExtractor= {item => 'connected_' + item.id}
+                    overlayStyle={modal.overlay}
+                    optionContainerStyle={modal.container}
+                    optionTextStyle={modal.optionText}
+                    optionStyle={modal.option}
+                    cancelStyle={modal.cancelOption}
+                    cancelTextStyle={modal.cancelText}
+                    searchStyle={modal.searchBar}
+                    initValueTextStyle={modal.searchText}
+                    searchTextStyle={modal.searchText}
                 />
                 {
                     selectedPeripheral !== null &&
@@ -645,3 +543,5 @@ export const Monitor = ({navigation, route}) => {
         </SafeAreaView>
     );
 }
+
+export default Monitor;

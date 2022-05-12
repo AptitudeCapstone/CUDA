@@ -1,10 +1,82 @@
 import {StyleSheet} from 'react-native';
 
+export const modal = StyleSheet.create({
+    overlay: {
+        backgroundColor: 'rgba(0, 0, 0, 0.9)'
+    },
+    container: {
+        backgroundColor: 'rgba(0, 0, 0, 0.0)',
+        marginHorizontal: -12,
+    },
+    option: {
+        marginHorizontal: -8,
+        marginVertical: 12,
+    },
+    optionText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#eee',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.6)',
+        borderRadius: 15,
+        marginVertical: -6,
+        paddingVertical: 18,
+        paddingHorizontal: 16,
+    },
+    cancelOption: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: 'rgba(0, 0, 0, 0.0)',
+        borderColor: 'rgba(255, 255, 255, 0.6)',
+        borderWidth: 1,
+        borderRadius: 15,
+        margin: 5,
+        marginBottom: 15,
+    },
+    cancelText: {
+        color: '#eee',
+        fontSize: 24,
+        fontWeight: 'bold',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+    },
+    searchBar: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.6)',
+        borderRadius: 15,
+        marginVertical: 15,
+    },
+    searchText: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        fontSize: 24,
+        color: '#eee',
+        alignSelf: 'center'
+    }
+});
+
 export const format = StyleSheet.create({
     page: {
         backgroundColor: '#222',
         flex: 1,
         padding: 25
+    },
+    modalSelector: {
+        marginBottom: 20,
+        marginTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginLeft: 20,
+        marginRight: 20,
+        padding: 14,
+        paddingLeft: 20,
+        paddingRight: 20,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#888',
+        zIndex: -1,
     },
     pageHeader: {
         paddingVertical: 15,
@@ -14,9 +86,6 @@ export const format = StyleSheet.create({
         backgroundColor: '#131313',
         borderBottomColor: '#555',
         borderBottomWidth: 1
-    },
-    modalContent: {
-        background: 'red'
     },
     iconButton: {
         paddingVertical: 12,
@@ -94,6 +163,28 @@ export const deviceCard = StyleSheet.create({
     },
     device: {
         marginBottom: 25,
+    },
+    header: {
+        paddingHorizontal: 30,
+        paddingVertical: 10,
+        borderTopRightRadius: 40,
+        borderTopLeftRadius: 40,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderTopWidth: 1,
+        borderColor: '#555',
+        backgroundColor: '#222',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    body: {
+        borderBottomRightRadius: 40,
+        borderBottomLeftRadius: 40,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#555',
+        backgroundColor: '#333',
     },
     nameText: {
         fontSize: 24,

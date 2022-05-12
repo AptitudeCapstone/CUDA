@@ -6100,6 +6100,11 @@ react-native-modal-selector-searchable@^2.1.4:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-modalize@^2.0.13:
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/react-native-modalize/-/react-native-modalize-2.0.13.tgz#51517cddd726ddbc19c080d15e7721ade4ee7a66"
+  integrity sha512-BMJlpTnpeDVp5LbbE6kdO+3+yLzowRvPgcIu1QCCM+//uY7oON4VcL8ISilSgAfOYeNQc6vhaD5chVtmpTl/dw==
+
 react-native-pdf@^6.4.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.5.0.tgz#3418c9a3a95aa6a52463093f242ea3f5d943a5d7"

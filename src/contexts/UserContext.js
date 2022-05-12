@@ -30,7 +30,7 @@ export const UserProvider: React.FC = ({children}) => {
     // unsubscribe from update on previous user, subscribe to new user updates
     useEffect( () => {
         if (initializing) return;
-        updateUserInfo();
+        updateUserInfo().catch((error) => console.log('unsubscribe error:' + error.message));
     }, [userAuth]);
 
     const updateUserInfo = async () => {

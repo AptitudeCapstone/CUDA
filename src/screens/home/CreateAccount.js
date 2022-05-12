@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import {useUserAuth} from "../../contexts/UserContext";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
 
-export const CreateAccount = ({navigation, route}) => {
+const CreateAccount = ({navigation, route}) => {
     const userInfo = useUserAuth();
     const userAuth = userInfo.userAuth;
-    const userStatus = userInfo.user.status;
+    const userStatus = userInfo.userData.status;
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -126,3 +126,5 @@ export const CreateAccount = ({navigation, route}) => {
         </SafeAreaView>
     );
 }
+
+export default CreateAccount;

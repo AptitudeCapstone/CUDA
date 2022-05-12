@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 
-export const ForgotPassword = ({navigation, route}) => {
+const ForgotPassword = ({navigation, route}) => {
     const [email, setEmail] = useState('');
 
     const handleSendEmail = async () => {
@@ -58,3 +58,5 @@ export const ForgotPassword = ({navigation, route}) => {
         </SafeAreaView>
     );
 }
+
+export default ForgotPassword;

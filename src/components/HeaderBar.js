@@ -4,9 +4,9 @@ import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import IconMI from 'react-native-vector-icons/MaterialIcons';
+import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
-import {fonts, format, icons} from '../style/style';
+import {fonts, format, icons} from '../style';
 import {useUserAuth} from '../contexts/UserContext';
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
@@ -14,10 +14,11 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from "react-native-gesture-handler";
 
 
-export const UserPageHeader = () => {
+const HeaderBar = ({navigation, route}) => {
+    console.log(navigation);
+    console.log(route);
     const userInfo = useUserAuth();
     const modalRef = useRef(null);
-    const window = useWindowDimensions();
 
         const handleLogInGoogle = async () => {
             try {
@@ -81,39 +82,29 @@ export const UserPageHeader = () => {
             });
         }
 
-        const toggleUserWindow = () => {
-            //setOrgWindowVisible(false);
-            //setUserWindowVisible(!userWindowVisible);
+        const signIn = () => {
+            modalRef.current.close();
+            navigation.navigate('User Stack', {screen: 'Sign in'});
         }
 
-        const toggleOrgWindow = () => {
-            //setUserWindowVisible(false);
-            //setOrgWindowVisible(!orgWindowVisible);
+        const createAccount = () => {
+            modalRef.current.close();
+            navigation.navigate('User Stack', {screen: 'Create Account'});
         }
 
-        const signIn = ({navigation}) => {
-            //setUserWindowVisible(false);
-            navigation.navigate('Sign In');
+        const editAccount = () => {
+            modalRef.current.close();
+            navigation.navigate('User Stack', {screen: 'Edit Account'});
         }
 
-        const createAccount = ({navigation}) => {
-            //setUserWindowVisible(false);
-            navigation.navigate('Create Account');
+        const navConnectOrganization = () => {
+            modalRef.current.close();
+            navigation.navigate('User Stack', {screen: 'Connect Organization'});
         }
 
-        const editAccount = ({navigation}) => {
-            //setUserWindowVisible(false);
-            navigation.navigate('Edit Account');
-        }
-
-        const navConnectOrganization = ({navigation}) => {
-            //setOrgWindowVisible(false);
-            navigation.navigate('Connect Organization');
-        }
-
-        const navCreateOrganization = ({navigation}) => {
-            //setOrgWindowVisible(false);
-            navigation.navigate('Create Organization');
+        const navCreateOrganization = () => {
+            modalRef.current.close();
+            navigation.navigate('User Stack', {screen: 'Create Organization'});
         }
 
     return (
@@ -123,10 +114,12 @@ export const UserPageHeader = () => {
                     <View>
                         <Image style={{flex: 0.75,  aspectRatio: 1,  height: null, resizeMode: 'contain', width: null,}}
                                resizeMode="contain"
-                               source={require('../logo-better.png')} />
+                               source={require('../img/aptitude-logo.png')} />
                     </View>
-                    <Text style={[fonts.username, {paddingLeft: 20, paddingBottom: 12, color: '#eee'}]}>Aptitude Medical Systems</Text>
                 </View>
+                <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
+                    <Text style={fonts.iconButtonText}>Usage Guide</Text>
+                </TouchableOpacity>
                 {
                     (userInfo.userData.status === 'anonymous-signed-in') &&
                     <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
@@ -231,3 +224,5 @@ export const UserPageHeader = () => {
         </View>
     );
 }
+
+export default HeaderBar;

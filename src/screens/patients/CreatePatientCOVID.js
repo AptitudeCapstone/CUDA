@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import {useIsFocused} from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
 
-export const CreatePatientCOVID = ({navigation}) => {
+const CreatePatientCOVID = ({navigation}) => {
     // text field values
     const [patientName, setPatientName] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
@@ -115,7 +115,7 @@ export const CreatePatientCOVID = ({navigation}) => {
                     zip: patientZip
                 }).then(() => {
                     console.log('Added entry for /organizations/' + userInfo.organization + '/patients/covid/' + patientReference.key);
-                    navigation.navigate('Patient');
+                    navigation.navigate('View Data');
                 });
             });
         }
@@ -252,3 +252,5 @@ export const CreatePatientCOVID = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+export default CreatePatientCOVID;

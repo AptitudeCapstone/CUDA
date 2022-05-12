@@ -4,7 +4,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format, parseISO} from 'date-fns';
 import database from "@react-native-firebase/database";
 
-export const COVID = ({route, navigation}) => {
+const COVID = ({route, navigation}) => {
     const {patient_id} = route.params;
 
     let [covidTests, setCovidTests] = useState([]);
@@ -223,3 +223,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 });
+
+export default COVID;

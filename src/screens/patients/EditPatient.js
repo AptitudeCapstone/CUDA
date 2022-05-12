@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
 
-export const EditPatient = ({route, navigation}) => {
+const EditPatient = ({route, navigation}) => {
 
     const {
         patient_id,
@@ -587,3 +587,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
+
+export default EditPatient;

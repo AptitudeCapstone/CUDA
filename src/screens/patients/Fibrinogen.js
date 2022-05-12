@@ -15,12 +15,12 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {LineChart} from "react-native-chart-kit";
 import {format, parseISO} from 'date-fns';
 
-var db = openDatabase({name: 'PatientDatabase.db'}, () => {
+const db = openDatabase({name: 'PatientDatabase.db'}, () => {
 }, error => {
     console.log('ERROR: ' + error)
 });
 
-export const Fibrinogen = ({route, navigation}) => {
+const Fibrinogen = ({route, navigation}) => {
     const {patient_id} = route.params;
 
     let [fibTests, setFibTests] = useState([]);
@@ -296,3 +296,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 });
+
+export default Fibrinogen;

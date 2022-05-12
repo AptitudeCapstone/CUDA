@@ -2,9 +2,9 @@ import React, {Alert, useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 
-export const CreateOrganization = ({navigation}) => {
+const CreateOrganization = ({navigation}) => {
     const [name, setName] = useState('');
     const [addCode, setAddCode] = useState(-1);
     const [ownerEmail1, setOwnerEmail1] = useState('');
@@ -36,18 +36,21 @@ export const CreateOrganization = ({navigation}) => {
                     country: country,
                     zip: zip
                 })
-                .then(() => console.log('Set /organizations/' + orgID +
-                    ' to name: ' + name +
-                    ', addCode: ' + addCode +
-                    ', ownerEmail1: ' + ownerEmail1 +
-                    ', ownerEmail2: ' + ownerEmail2 +
-                    ', ownerEmail3: ' + ownerEmail3 +
-                    ', streetAddress1: ' + streetAddress1 +
-                    ', streetAddress2: ' + streetAddress2 +
-                    ', city: ' + city +
-                    ', state: ' + state +
-                    ', country: ' + country +
-                    ', zip: ' + zip));
+                .then(() => {
+                    console.log('Set /organizations/' + orgID +
+                                ' to name: ' + name +
+                                ', addCode: ' + addCode +
+                                ', ownerEmail1: ' + ownerEmail1 +
+                                ', ownerEmail2: ' + ownerEmail2 +
+                                ', ownerEmail3: ' + ownerEmail3 +
+                                ', streetAddress1: ' + streetAddress1 +
+                                ', streetAddress2: ' + streetAddress2 +
+                                ', city: ' + city +
+                                ', state: ' + state +
+                                ', country: ' + country +
+                                ', zip: ' + zip);
+                    navigation.back();
+                });
         } else
             Alert.alert('Error', 'Please complete the required fields');
     };
@@ -56,10 +59,7 @@ export const CreateOrganization = ({navigation}) => {
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}
+                style={{paddingTop: 40, paddingBottom: 40}}
             >
                 <View>
                     <Text style={fonts.heading}>New Organization</Text>
@@ -232,3 +232,5 @@ export const CreateOrganization = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+export default CreateOrganization;
