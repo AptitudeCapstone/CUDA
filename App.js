@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {CreateAccount} from './src/screens/home/CreateAccount';
 import {SignIn} from './src/screens/home/SignIn';
@@ -18,6 +18,7 @@ import IconFo from 'react-native-vector-icons/Foundation';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider } from "./src/contexts/UserContext.js";
+import BleManager from 'react-native-ble-manager';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -115,6 +116,25 @@ const MonitorTab = () => {
 }
 
 const App = () => {
+    const [isScanning, setIsScanning] = useState(false),
+        scanInterval = 3.0; // BLE scan interval in seconds
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            scanPeripherals();
+        }, scanInterval * 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const scanPeripherals = () => {
+        if (!isScanning) {
+            BleManager.scan([], scanInterval, false)
+                .then(()=> {setIsScanning(false)}).catch((err) => {
+                console.error(err);
+            });
+        }
+    }
+
     return (
         <UserProvider>
             <NavigationContainer>

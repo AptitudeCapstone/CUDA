@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
     Alert,
     useWindowDimensions,
@@ -8,34 +8,40 @@ import {
     PermissionsAndroid,
     Platform,
     SafeAreaView,
-    Switch,
     Text,
-    TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
-import {buttons, fonts, format, deviceCard} from '../../style/style';
+import {fonts, format, deviceCard} from '../../style/style';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import database from '@react-native-firebase/database';
-import auth from '@react-native-firebase/auth';
-import {useIsFocused} from '@react-navigation/native';
 import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
-import IconF from "react-native-vector-icons/Feather";
-import IconA from "react-native-vector-icons/AntDesign";
 import FastImage from 'react-native-fast-image';
-import AnimatedPlayer, {IAnimatedPlayerReference} from 'react-native-animated-webp';
-import animatedImage from './tCardInsert_2.webp';
+import { CountdownCircleTimer, useCountdown } from 'react-native-countdown-circle-timer'
 import {UserPageHeader} from "../../components/UserModal";
 
+/*
+const ChipAnimation = () => {
+    const playerRef = useRef();
 
+    return (
+            <FastImage
+                ref={playerRef}
+                style={{alignSelf: 'center', width: 200, height: 200, marginHorizontal: -20, marginVertical: -20}}
+                source={require('./tCardInsert_2.webp')}
+            />
+
+    );
+};
+
+
+ */
 export const Monitor = ({navigation, route}) => {
     const bigLayout = Platform.isPad,
-        isFocused = useIsFocused(),
         dimensions = useWindowDimensions(),
-        scanInterval = 3.0, // BLE scan interval in seconds
+
         BleManagerModule = NativeModules.BleManager,
         bleEmitter = new NativeEventEmitter(BleManagerModule),
         serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
@@ -49,24 +55,27 @@ export const Monitor = ({navigation, route}) => {
         charNameMap = Object.fromEntries(Object.entries(characteristics).map(a => a.reverse())),
         discoveredPeripherals = new Map(),
         connectedPeripherals = new Map(),
-        [modalPeripheralsList, setModalPeripheralsList] = useState([]),
-        [peripheralsList, setPeripheralsList] = useState([]),
+        discoveredPeripheralsList = useRef([]),
+        connectedPeripheralsList = useRef([]),
+        [mList, setLazyDiscoveredList] = useState([]),
+        [cList, setLazyConnectedList] = useState([]),
         autoConnectByName = useRef(false),
-        [isScanning, setIsScanning] = useState(false),
-        [viewPeripheralsModal, setViewPeripheralsModal] = useState(false);
 
+        [availablePeripheralsModalVisible, setAvailablePeripheralsModalVisible] = useState(false),
+        [connectedPeripheralsModalVisible, setConnectedPeripheralsModalVisible] = useState(false),
+        [selectedPeripheral, setSelectedPeripheral] = useState(null);
     /*
 
-                BLE
+         BLE
 
-                Single service with 6 characteristics
-                1. Pico status
-                2. Program task
-                3. Sensor type
-                4. Last result
-                5. Last result timestamp
+         Single service with 6 characteristics
+         1. Pico status
+         2. Program task
+         3. Sensor type
+         4. Last result
+         5. Last result timestamp
 
-         */
+    */
 
     /*
 
@@ -124,21 +133,60 @@ export const Monitor = ({navigation, route}) => {
 
     const updatePeripheralInfo = (peripheralID, peripheral) => {
         connectedPeripherals.get(peripheralID)['peripheral'] = peripheral;
-        updateDeviceList();
+        updatePeripheralLists();
     }
 
-    const updateDeviceList = () => {
-        setModalPeripheralsList(
-            Array.from(discoveredPeripherals.values())
-                .map(item => (
-                    {
-                        key: item['id'],
-                        label: item['name']
-                    }))
-        );
+    const updatePeripheralLists = () => {
+        const mostRecentDiscovered = Array.from(discoveredPeripherals.values())
+                        .map(item => (
+                            {
+                                key: item['id'],
+                                label: item['name']
+                            }));
+        if (JSON.stringify(discoveredPeripheralsList.current) !== JSON.stringify(mostRecentDiscovered)) {
+            console.debug('important values changed, updating lazy discovered peripherals list');
+            console.debug('prev: ', discoveredPeripheralsList.current);
+            console.debug('next: ', mostRecentDiscovered);
+            discoveredPeripheralsList.current = mostRecentDiscovered;
+            updateLazyDiscoveredList();
+        }
 
-        setPeripheralsList(Array.from(connectedPeripherals.values()));
+        const mostRecentConnected = Array.from(connectedPeripherals.values())
+                                        .map(item => (
+                                            {
+                                                key: item['peripheral']['id'],
+                                                label: item['peripheral']['name'],
+                                                name: item['peripheral']['name'],
+                                                characteristic_values: item['characteristic_values']
+                                            }));
+        if(JSON.stringify(connectedPeripheralsList.current) !== JSON.stringify(mostRecentConnected)) {
+            console.debug('important values changed, updating lazy connected peripherals list');
+            console.debug('prev: ', connectedPeripheralsList.current);
+            console.debug('next: ', mostRecentConnected);
+            connectedPeripheralsList.current = mostRecentConnected;
+            updateLazyConnectedList();
+        }
     }
+
+    const updateLazyDiscoveredList = useCallback(
+        () => {
+            console.log('updated lazy discovered list');
+            setLazyDiscoveredList(discoveredPeripheralsList.current);
+        },
+        [discoveredPeripheralsList.current],
+    );
+
+    const updateLazyConnectedList = useCallback(
+        () => {
+            console.log('updated lazy connected list');
+            setLazyConnectedList(connectedPeripheralsList.current);
+
+            if(connectedPeripheralsList.current.length === 1) {
+                setSelectedPeripheral(connectedPeripheralsList.current[0]);
+            }
+        },
+        [connectedPeripheralsList.current],
+    );
 
     const connectPeripheral = (peripheral) => {
         if (peripheral && !connectedPeripherals.has(peripheral['id'])) {
@@ -188,7 +236,7 @@ export const Monitor = ({navigation, route}) => {
                 });
             }
 
-            updateDeviceList();
+            updatePeripheralLists();
         });
     };
 
@@ -202,27 +250,8 @@ export const Monitor = ({navigation, route}) => {
     }
 
     const handleStopScan = () => {
-        setIsScanning(false);
-        updateDeviceList();
+        updatePeripheralLists();
     };
-
-    const scanPeripherals = () => {
-        if (!isScanning) {
-            BleManager.scan([], scanInterval, false)
-                .then(() => {
-                    setIsScanning(true);
-                }).catch((err) => {
-                console.error(err);
-            });
-        }
-    }
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            scanPeripherals();
-        }, scanInterval * 1000);
-        return () => clearInterval(interval);
-    }, []);
 
     const nameMatchesCUDA = (peripheral) => {
         return (peripheral &&
@@ -235,12 +264,15 @@ export const Monitor = ({navigation, route}) => {
 
     const handleUpdateValueForCharacteristic = (update) => {
         if (update && update['value']) {
+
             updateCharacteristicValue(update['peripheral'],
                 update['characteristic'],
                 decodeCharBuffer(update['value']));
-            updateDeviceList();
+
+            updatePeripheralLists();
 
             // Define additional behavior on characteristic updates
+            /*
             switch (update['characteristic']) {
                 case characteristics['chipType']:
                     const data = update['value'][0].toString();
@@ -255,6 +287,7 @@ export const Monitor = ({navigation, route}) => {
                 default:
                     break;
             }
+             */
         } else {
             console.debug("BLE: Unrecognized bluetooth packet received");
         }
@@ -262,58 +295,84 @@ export const Monitor = ({navigation, route}) => {
 
     const updateCharacteristicValue = (peripheralID, charUUID, value) => {
         connectedPeripherals.get(peripheralID)['characteristic_values'].set(charNameMap[charUUID], value);
-        updateDeviceList();
     }
 
-    const connectedPeripheral = (item) => {
-        let iconName = 'signal-cellular-3';
-        const rssi = item['peripheral']['rssi'];
-        if (rssi) {
-            if (rssi >= -75) {
-                iconName = 'signal-cellular-2';
-            } else if (rssi >= -85) {
-                iconName = 'signal-cellular-1';
+    const deviceStateFromCharacteristics = (characteristicValues) => {
+        const picoStatus = characteristicValues.get('picoStatus'),
+            programTask = characteristicValues.get('programTask'),
+            chipType = characteristicValues.get('chipType'),
+            lastResult = characteristicValues.get('lastResult'),
+            lastResultTime = characteristicValues.get('lastResultTime');
+
+        return "Fibrinogen measurement";
+
+        let deviceState = "";
+        if(chipType === "-1") {
+            deviceState = "Waiting for chip";
+        } else {
+            if(chipType === "7") {
+                // covid chip inserted
+                if(programTask === "Heating") {
+                    // display heating text
+                    deviceState = "Heating";
+                } else if(programTask === "COVID measurement") {
+                    // start covid (30 min) measurement animation if not already started
+                    deviceState = "COVID measurement";
+                } else {
+                    // display last result
+                    deviceState = "Finished COVID";
+                }
+
+            } else if(chipType === "6") {
+                // fibrinogen chip inserted
+                if(programTask === "Waiting for fluid fill") {
+                    // chip inserted but fluid fill not complete
+                    deviceState = "Waiting for fibrinogen fluid";
+                } else if(programTask === "Fibrinogen measurement") {
+                    // start fibrinogen (30 sec) measurement animation if not already started
+                    deviceState = "Fibrinogen measurement";
+                } else {
+                    // display last result
+                    deviceState = "Finished fibrinogen";
+                }
             }
+
+            deviceState = "";
         }
+        return deviceState;
+    }
 
-        const name = item['peripheral']['name'],
-            characteristicValues = item['characteristic_values'];
-
-        console.log(item);
-        const picoStatus = characteristicValues['picoStatus'],
-            programTask = characteristicValues['programTask'],
-            chipType = characteristicValues['chipType'],
-            lastResult = characteristicValues['lastResult'],
-            lastResultTime = characteristicValues['lastResultTime'];
-
-
+    const SelectedPeripheral = () => {
         const selectedPatient = "Noah";
+        const name = selectedPeripheral['name'];
+        const characteristicValues = selectedPeripheral['characteristic_values'];
+        const deviceState = deviceStateFromCharacteristics(characteristicValues);
 
-        let cardStyle = {
-            width: dimensions.width * 0.5,
-            marginLeft: dimensions.width * 0.25,
-            marginRight: dimensions.width * 0.25,
-        };
-        if (connectedPeripherals.size > 1) {
-            cardStyle = {
+        const picoStatus = characteristicValues.get('picoStatus'),
+            programTask = characteristicValues.get('programTask'),
+            chipType = characteristicValues.get('chipType'),
+            lastResult = characteristicValues.get('lastResult'),
+            lastResultTime = characteristicValues.get('lastResultTime'),
+            timeRemaining = characteristicValues.get('timeRemaining', 30);
+
+        const cardStyle = (connectedPeripherals.size > 1) ?
+            {
                 width: dimensions.width * 0.25,
                 marginLeft: dimensions.width * 0.125,
                 marginRight: dimensions.width * 0.125,
-            }
-        }
-
-
-        let gifStyle = {width: 0, height: 0}
-        if (chipType === "-1") {
-            gifStyle = {alignSelf: 'center', width: 250, height: 250,}
-        }
+            } :
+            {
+                width: dimensions.width * 0.5,
+                marginLeft: dimensions.width * 0.25,
+                marginRight: dimensions.width * 0.25,
+            };
 
         return (
             <View style={[deviceCard.container, cardStyle]}>
                 <View style={deviceCard.device}>
                     <View style={{
                         paddingHorizontal: 30,
-                        paddingVertical: 15,
+                        paddingVertical: 10,
                         borderTopRightRadius: 40,
                         borderTopLeftRadius: 40,
                         borderLeftWidth: 1,
@@ -325,7 +384,6 @@ export const Monitor = ({navigation, route}) => {
                         justifyContent: 'space-between'
                     }}>
                         <Text style={deviceCard.nameText}>{name}</Text>
-                        <View style={{paddingTop: 7}}><IconMCI name={iconName} size={30} color="#fff"/></View>
                     </View>
                     <View style={{
                         borderBottomRightRadius: 40,
@@ -336,58 +394,75 @@ export const Monitor = ({navigation, route}) => {
                         borderColor: '#555',
                         backgroundColor: '#333',
                     }}>
-
                         {
-                            chipType === "-1" &&
-                            <Text style={deviceCard.characteristicText}>Insert a chip to begin testing</Text>
+                            (deviceState === "Waiting for chip") &&
+                            <View>
+                                <Text>Insert the sample collector chip</Text>
+                            </View>
                         }
-
                         {
-                            selectedPatient !== null &&
+                            (deviceState === "Heating") &&
+                            <View>
+                                <Text>Please wait for the device to finish heating</Text>
+                            </View>
+                        }
+                        {
+                            (deviceState === "Waiting for fibrinogen fluid") &&
+                            <View>
+                                <Text>Insert the sample into the sample collector</Text>
+                            </View>
+                        }
+                        {
+                            (deviceState === "COVID measurement") &&
+                            <View>
+                                <Text>COVID test in progress</Text>
+                                <CountdownCircleTimer
+                                    isPlaying
+                                    duration={30}
+                                    initialTimeRemaining={timeRemaining}
+                                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                    colorsTime={[24, 16, 8, 0]}
+                                >
+                                    {({ remainingTime }) => <Text>{remainingTime}</Text>}
+                                </CountdownCircleTimer>
+                            </View>
+                        }
+                        {
+                            (deviceState === "Fibrinogen measurement") &&
+                            <View>
+                                <Text>Fibrinogen test in progress</Text>
+                                <CountdownCircleTimer
+                                    isPlaying
+                                    duration={60}
+                                    initialTimeRemaining={timeRemaining}
+                                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                    colorsTime={[48, 24, 16, 0]}
+                                >
+                                    {({ remainingTime }) => <Text>{remainingTime}</Text>}
+                                </CountdownCircleTimer>
+                            </View>
+                        }
+                        {
+                            (selectedPatient !== null) &&
                             <Text style={deviceCard.characteristicText}>Selected Patient: {selectedPatient}</Text>
                         }
                         {
-                            lastResult !== "-1" &&
-                            <Text style={deviceCard.characteristicText}>Last result was {lastResult} recorded
-                                at {lastResultTime}</Text>
+                            (lastResult !== "-1") &&
+                            <Text style={deviceCard.characteristicText}>
+                                Last result was {lastResult} recorded at {lastResultTime}
+                            </Text>
                         }
-                        {/*
-                        <Text style={deviceCard.characteristicText}>Pico Status: {picoStatus}</Text>
-                        <Text style={deviceCard.characteristicText}>Program Task: {programTask}</Text>
-                        */}
+                        {
+                            /*
+                                <Text style={deviceCard.characteristicText}>Pico Status: {picoStatus}</Text>
+                                <Text style={deviceCard.characteristicText}>Program Task: {programTask}</Text>
+                            */
+                        }
                     </View>
                 </View>
-                {
-                    /*
-                    chipType === "-1" &&
-                    <View style={{alignSelf: 'center', width: 200, height: 200,}}>
-                        <Image
-                            style={{
-                                flex: 1,
-                                width: null,
-                                height: null,
-                                resizeMode: 'contain',
-                                borderRadius: 1000,
-                                borderWidth: 1,
-                                borderColor: '#555'
-                            }}
-                            source={require('./grayCardInsert.gif')} />
-                    </View>
-
-                     */
-                }
-                {
-                    selectedPatient === null &&
-                    <TouchableOpacity style={deviceCard.button}>
-                        <Text style={deviceCard.buttonText}>Select patient for next test result</Text>
-                    </TouchableOpacity>
-                }
-                {
-                    selectedPatient !== null &&
-                    <TouchableOpacity style={deviceCard.button}>
-                        <Text style={deviceCard.buttonText}>Change patient for next test result</Text>
-                    </TouchableOpacity>
-                }
+                <TouchableOpacity style={deviceCard.button}>
+                    <Text style={deviceCard.buttonText}>Change patient for next test result</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={deviceCard.button}>
                     <Text style={deviceCard.buttonText}>Disconnect</Text>
                 </TouchableOpacity>
@@ -395,101 +470,177 @@ export const Monitor = ({navigation, route}) => {
         );
     }
 
-    const toggleViewPatientModal = () => {
-        setViewPeripheralsModal(!viewPeripheralsModal);
+    const toggleViewAvailablePeripheralsModal = () => {
+        setAvailablePeripheralsModalVisible(!availablePeripheralsModalVisible);
     }
 
-    const PeripheralList = () => {
-        return (
-            <FlatList
-                horizontal={true}
-                data={
-                    //dummyPeripheralList
-                    peripheralsList
-                }
-                extraData={peripheralsList}
-                renderItem={({item}) => connectedPeripheral(item)}
-                keyExtractor={(item) => item['peripheral']['id']}
-            />
-
-        );
+    const toggleViewConnectedPeripheralsModal = () => {
+        setConnectedPeripheralsModalVisible(!connectedPeripheralsModalVisible);
     }
-
 
     return (
         <SafeAreaView style={{backgroundColor: '#222', flex: 1,}}>
             <UserPageHeader navigation={navigation} />
             <View style={format.page}>
-            <TouchableOpacity
-                onPress={() => toggleViewPatientModal()}
-                style={{
-                    marginBottom: 20,
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginLeft: 20,
-                    marginRight: 20,
-                    padding: 14,
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    borderColor: '#888',
-                    zIndex: -1
-                }}
-            >
-                <Text style={fonts.username}>Select a device to monitor</Text>
-                <IconE style={fonts.username} name={viewPeripheralsModal ? 'chevron-up' : 'chevron-down'}
-                       size={34}/>
-            </TouchableOpacity>
-            <ModalSelector
-                data={modalPeripheralsList}
-                onChange={(option) => {
-                    connectPeripheralByID(option.key);
-                    setViewPeripheralsModal(false);
-                }}
-                optionContainerStyle={{
-                    backgroundColor: '#111',
-                    border: 0
-                }}
-                optionTextStyle={{
-                    color: '#444',
-                    fontSize: 18,
-                    fontWeight: 'bold'
-                }}
-                optionStyle={{
-                    padding: 20,
-                    backgroundColor: '#eee',
-                    borderRadius: 100,
-                    margin: 5,
-                    marginBottom: 15,
-                    borderColor: '#222'
-                }}
-                cancelText={'Cancel'}
-                cancelStyle={{
-                    padding: 20,
-                    backgroundColor: '#eee',
-                    borderRadius: 100,
-                    margin: 5,
-                    marginBottom: 15,
-                    borderColor: '#222'
-                }}
-                cancelTextStyle={{
-                    color: '#444',
-                    fontSize: 18,
-                    fontWeight: 'bold'
-                }}
-                visible={viewPeripheralsModal}
-                onCancel={() => {
-                    toggleViewPatientModal();
-                }}
-                customSelector={<View/>}
-                searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
-                searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
-                listType={'FLATLIST'}
-                renderItem={<View/>}
-            />
-            <PeripheralList />
+                <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+                    <View style={{flexGrow: 0.5}}>
+                        <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>Connectable Devices</Text>
+                <TouchableOpacity
+                    onPress={toggleViewAvailablePeripheralsModal}
+                    style={{
+                        marginBottom: 20,
+                        marginTop: 10,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginLeft: 20,
+                        marginRight: 20,
+                        padding: 14,
+                        paddingLeft: 20,
+                        paddingRight: 20,
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        borderColor: '#888',
+                        zIndex: -1,
+                    }}
+                >
+                    <Text style={fonts.username}>
+                        {discoveredPeripheralsList.current.length}
+                        {(discoveredPeripheralsList.current.length > 1 || discoveredPeripheralsList.current.length == 0)
+                            ? ' connectable devices' : ' connectable device'}
+                    </Text>
+                    <IconE style={fonts.username} name={availablePeripheralsModalVisible ? 'chevron-up' : 'chevron-down'}
+                           size={34}/>
+                </TouchableOpacity>
+                    </View>
+                {
+                    connectedPeripheralsList.current.length > 0 &&
+                    <View style={{flexGrow: 0.5}}>
+                        <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>Devices to view</Text>
+                    <TouchableOpacity
+                        onPress={toggleViewConnectedPeripheralsModal}
+                        style={{
+                            marginBottom: 20,
+                            marginTop: 10,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            marginLeft: 20,
+                            marginRight: 20,
+                            padding: 14,
+                            paddingLeft: 20,
+                            paddingRight: 20,
+                            borderWidth: 1,
+                            borderRadius: 10,
+                            borderColor: '#888',
+                            zIndex: -1,
+                        }}
+                    >
+                        <Text style={fonts.username}>{connectedPeripheralsList.current.length}
+                            {connectedPeripheralsList.current.length > 1 ? ' connected devices' : ' connected device'}
+                        </Text>
+                        <IconE style={fonts.username}
+                               name={connectedPeripheralsModalVisible ? 'chevron-up' : 'chevron-down'}
+                               size={34}/>
+                    </TouchableOpacity>
+                    </View>
+                }
+                </View>
+                <ModalSelector
+                    data={discoveredPeripheralsList.current}
+                    onChange={(option) => {
+                        connectPeripheralByID(option.key);
+                        setAvailablePeripheralsModalVisible(false);
+                    }}
+                    optionContainerStyle={{
+                        backgroundColor: '#111',
+                        border: 0
+                    }}
+                    optionTextStyle={{
+                        color: '#444',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}
+                    optionStyle={{
+                        padding: 20,
+                        backgroundColor: '#eee',
+                        borderRadius: 100,
+                        margin: 5,
+                        marginBottom: 15,
+                        borderColor: '#222'
+                    }}
+                    cancelText={'Cancel'}
+                    cancelStyle={{
+                        padding: 20,
+                        backgroundColor: '#eee',
+                        borderRadius: 100,
+                        margin: 5,
+                        marginBottom: 15,
+                        borderColor: '#222'
+                    }}
+                    cancelTextStyle={{
+                        color: '#444',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}
+                    visible={availablePeripheralsModalVisible}
+                    onCancel={() => {
+                        toggleViewAvailablePeripheralsModal();
+                    }}
+                    customSelector={<View/>}
+                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                    renderItem={<View/>}
+                />
+                <ModalSelector
+                    data={connectedPeripheralsList.current}
+                    onChange={(option) => {
+                        setSelectedPeripheral(option);
+                        setConnectedPeripheralsModalVisible(false);
+                    }}
+                    keyExtractor= {item => 'connected_' + item.id}
+                    optionContainerStyle={{
+                        backgroundColor: '#111',
+                        border: 0
+                    }}
+                    optionTextStyle={{
+                        color: '#444',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}
+                    optionStyle={{
+                        padding: 20,
+                        backgroundColor: '#eee',
+                        borderRadius: 100,
+                        margin: 5,
+                        marginBottom: 15,
+                        borderColor: '#222'
+                    }}
+                    cancelText={'Cancel'}
+                    cancelStyle={{
+                        padding: 20,
+                        backgroundColor: '#eee',
+                        borderRadius: 100,
+                        margin: 5,
+                        marginBottom: 15,
+                        borderColor: '#222'
+                    }}
+                    cancelTextStyle={{
+                        color: '#444',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}
+                    visible={connectedPeripheralsModalVisible}
+                    onCancel={() => {
+                        toggleViewConnectedPeripheralsModal();
+                    }}
+                    customSelector={<View/>}
+                    searchStyle={{padding: 25, marginBottom: 30, backgroundColor: '#ccc'}}
+                    searchTextStyle={{padding: 15, fontSize: 18, color: '#222'}}
+                    renderItem={<View/>}
+                />
+                {
+                    selectedPeripheral !== null &&
+                    <SelectedPeripheral />
+                }
             </View>
         </SafeAreaView>
     );
