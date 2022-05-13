@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../style/style';
-import {useUserAuth} from "../../contexts/UserContext";
 import auth from "@react-native-firebase/auth";
+import {buttons, fonts, format} from '../../style';
+import {useUserAuth} from '../../contexts/UserContext';
 
-export const SignIn = ({navigation, route}) => {
+const SignIn = ({navigation}) => {
     const userInfo = useUserAuth();
     const userAuth = userInfo.userAuth;
     const userStatus = userInfo.user.status;
@@ -111,3 +111,5 @@ export const SignIn = ({navigation, route}) => {
         </SafeAreaView>
     );
 }
+
+export default SignIn;

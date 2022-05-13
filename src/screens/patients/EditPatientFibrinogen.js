@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import {useIsFocused} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-export const EditPatientFibrinogen = ({route, navigation}) => {
+const EditPatientFibrinogen = ({route, navigation}) => {
     const {patientKey} = route.params;
 
     // text field values
@@ -93,7 +93,7 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
         });
 
         Alert.alert('Successfully applied changes', 'Returning to patient portal');
-        navigation.navigate('Patient');
+        navigation.navigate('View Data');
     }
 
     const BloodTypeSelector = () => {
@@ -301,3 +301,5 @@ export const EditPatientFibrinogen = ({route, navigation}) => {
         </SafeAreaView>
     );
 }
+
+export default EditPatientFibrinogen;

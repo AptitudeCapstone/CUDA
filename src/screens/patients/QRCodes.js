@@ -16,7 +16,7 @@ import RNQRGenerator from 'rn-qr-generator';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNShareFile from 'react-native-share-pdf';
 
-export const QRCodes = ({navigation}) => {
+const QRCodes = ({navigation}) => {
     const [numberOfCodes, setNumberOfCodes] = useState(0);
     const [pdfSource, setPDFSource] = useState('');
     const [shareSource, setShareSource] = useState(null);
@@ -250,3 +250,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
+export default QRCodes;

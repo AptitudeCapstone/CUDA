@@ -6,14 +6,15 @@ import {useIsFocused} from '@react-navigation/native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
+import HeaderBar from "../../components/HeaderBar";
 
-export const Patient = ({route, navigation}) => {
+const Patient = ({route, navigation}) => {
     // get current user and org info
     // determines when page comes into focus
     const isFocused = useIsFocused(),
@@ -53,13 +54,13 @@ export const Patient = ({route, navigation}) => {
 
             // get patient info for appropriate test type
             let results = null;
-            if (selectedTest == 'COVID') {
+            if (selectedTest === 'COVID') {
                 if (orgInfo === null) {
                     results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
                 } else {
                     results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
                 }
-            } else if (selectedTest == 'Fibrinogen') {
+            } else if (selectedTest === 'Fibrinogen') {
                 if (orgInfo === null) {
                     results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                 } else {
@@ -75,7 +76,7 @@ export const Patient = ({route, navigation}) => {
                     snapshot.forEach(function (data) {
                         temp.push({key: data.key, result: data.val().result, time: data.val().time});
                     });
-                    if (selectedTest == 'COVID')
+                    if (selectedTest === 'COVID')
                         setCovidTests(temp.reverse());
                     else
                         setFibrinogenTests(temp.reverse());
@@ -99,19 +100,19 @@ export const Patient = ({route, navigation}) => {
         return (
             <View style={format.testSelectBar}>
                 <TouchableOpacity
-                    style={(selectedTest == 'COVID') ? buttons.covidSelectButton : buttons.unselectedButton}
+                    style={(selectedTest === 'COVID') ? buttons.covidSelectButton : buttons.unselectedButton}
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('COVID');
                         // get patient info for appropriate test type
                         let results = null;
-                        if (selectedTest == 'COVID') {
+                        if (selectedTest === 'COVID') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
                             } else {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
                             }
-                        } else if (selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest === 'Fibrinogen') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             } else {
@@ -127,7 +128,7 @@ export const Patient = ({route, navigation}) => {
                                 snapshot.forEach(function (data) {
                                     temp.push({key: data.key, result: data.val().result, time: data.val().time});
                                 });
-                                if (selectedTest == 'COVID')
+                                if (selectedTest === 'COVID')
                                     setCovidTests(temp.reverse());
                                 else
                                     setFibrinogenTests(temp.reverse());
@@ -138,20 +139,20 @@ export const Patient = ({route, navigation}) => {
                     <Text style={fonts.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={(selectedTest == 'Fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}
+                    style={(selectedTest === 'Fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}
                     onPress={() => {
                         // change selected test and update the currently showing patient
                         setSelectedTest('Fibrinogen');
 
                         // get patient info for appropriate test type
                         let results = null;
-                        if (selectedTest == 'COVID') {
+                        if (selectedTest === 'COVID') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKeyCOVID + '/results/');
                             } else {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKeyCOVID + '/results/');
                             }
-                        } else if (selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest === 'Fibrinogen') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKeyFibrinogen + '/results/');
                             } else {
@@ -167,7 +168,7 @@ export const Patient = ({route, navigation}) => {
                                 snapshot.forEach(function (data) {
                                     temp.push({key: data.key, result: data.val().result, time: data.val().time});
                                 });
-                                if (selectedTest == 'COVID')
+                                if (selectedTest === 'COVID')
                                     setCovidTests(temp.reverse());
                                 else
                                     setFibrinogenTests(temp.reverse());
@@ -204,13 +205,13 @@ export const Patient = ({route, navigation}) => {
             if (!viewPatientModalVisible) {
                 let patients = null;
 
-                if (selectedTest == 'COVID') {
+                if (selectedTest === 'COVID') {
                     if (orgInfo === null) {
                         patients = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').orderByChild('name');
                     } else {
                         patients = database().ref('/organizations/' + userInfo.organization + '/patients/covid/').orderByChild('name')
                     }
-                } else if (selectedTest == 'Fibrinogen') {
+                } else if (selectedTest === 'Fibrinogen') {
                     if (orgInfo === null) {
                         patients = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('name');
                     } else {
@@ -234,7 +235,7 @@ export const Patient = ({route, navigation}) => {
 
         const PatientSelectorButton = () => {
             const PatientUtilityBar = () => {
-                if (selectedTest == 'COVID') {
+                if (selectedTest === 'COVID') {
                     if (patientDataCOVID !== null) {
                         return (
                             <View
@@ -319,7 +320,7 @@ export const Patient = ({route, navigation}) => {
                             </View>
                         )
                     }
-                } else if (selectedTest == 'Fibrinogen') {
+                } else if (selectedTest === 'Fibrinogen') {
                     if (patientDataFibrinogen !== null) {
                         return (
                             <View
@@ -414,7 +415,7 @@ export const Patient = ({route, navigation}) => {
                     >
                         <Text style={fonts.username}>
                             {
-                                (selectedTest == 'COVID') ?
+                                (selectedTest === 'COVID') ?
                                     (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
                                     :
                                     (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
@@ -440,15 +441,15 @@ export const Patient = ({route, navigation}) => {
                     customSelector={<View/>}
                     onChange={async (option) => {
                         // get patient ID for the appropriate test type
-                        if (selectedTest == 'COVID')
+                        if (selectedTest === 'COVID')
                             setPatientKeyCOVID(option.key);
-                        else if (selectedTest == 'Fibrinogen')
+                        else if (selectedTest === 'Fibrinogen')
                             setPatientKeyFibrinogen(option.key);
 
                         // get patient info for appropriate test type
                         let patient = null;
                         let results = null;
-                        if (selectedTest == 'COVID') {
+                        if (selectedTest === 'COVID') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key + '/results/');
                                 patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + option.key);
@@ -456,7 +457,7 @@ export const Patient = ({route, navigation}) => {
                                 results = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + option.key + '/results/');
                                 patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + option.key);
                             }
-                        } else if (selectedTest == 'Fibrinogen') {
+                        } else if (selectedTest === 'Fibrinogen') {
                             if (orgInfo === null) {
                                 results = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key + '/results/');
                                 patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + option.key);
@@ -474,7 +475,7 @@ export const Patient = ({route, navigation}) => {
                                 snapshot.forEach(function (data) {
                                     temp.push({key: data.key, result: data.val().result, time: data.val().time});
                                 });
-                                if (selectedTest == 'COVID')
+                                if (selectedTest === 'COVID')
                                     setCovidTests(temp.reverse());
                                 else
                                     setFibrinogenTests(temp.reverse());
@@ -483,10 +484,10 @@ export const Patient = ({route, navigation}) => {
 
                         // update data for patient for appropriate test type
                         await patient.once('value', function (patientSnapshot) {
-                            if (selectedTest == 'COVID') {
+                            if (selectedTest === 'COVID') {
                                 setPatientKeyCOVID(patientSnapshot.key);
                                 setPatientDataCOVID(patientSnapshot.val());
-                            } else if (selectedTest == 'Fibrinogen') {
+                            } else if (selectedTest === 'Fibrinogen') {
                                 setPatientKeyFibrinogen(patientSnapshot.key);
                                 setPatientDataFibrinogen(patientSnapshot.val());
                             }
@@ -625,7 +626,7 @@ export const Patient = ({route, navigation}) => {
                                 </View>
                                 <View style={{padding: 20}}>
                                     <Text
-                                        style={fonts.mediumText}>{(item.result !== undefined && item.result == 0) ? 'Negative' : 'Positive'}</Text>
+                                        style={fonts.mediumText}>{(item.result !== undefined && item.result === 0) ? 'Negative' : 'Positive'}</Text>
                                 </View>
                             </View>
                         </Animated.View>
@@ -638,7 +639,7 @@ export const Patient = ({route, navigation}) => {
             <View>
                 <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
                     <Text style={styles.headingText}>Test Results</Text>
-                    {(covidTests.length == 0) &&
+                    {(covidTests.length === 0) &&
                     <Text style={{
                         color: '#fff',
                         paddingTop: 6,
@@ -804,7 +805,7 @@ export const Patient = ({route, navigation}) => {
             <View>
                 <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
                     <Text style={styles.headingText}>Test Results</Text>
-                    {fibrinogenTests.length == 0 &&
+                    {fibrinogenTests.length === 0 &&
                     <Text style={{
                         color: '#fff',
                         paddingTop: 6,
@@ -818,7 +819,7 @@ export const Patient = ({route, navigation}) => {
                 {chartData !== null &&
                 <View style={{flex: 0.6, padding: 15}}>
                     <LineChart
-                        data={(chartData.labels.length == 0) ? emptyChartData : chartData}
+                        data={(chartData.labels.length === 0) ? emptyChartData : chartData}
                         width={screenWidth} // from react-native
                         height={400}
                         chartConfig={chartConfig}
@@ -844,7 +845,7 @@ export const Patient = ({route, navigation}) => {
     const PatientPortal = () => {
 
         // patient has been selected
-        if (patientKeyCOVID != null && patientDataCOVID != null && selectedTest == 'COVID')
+        if (patientKeyCOVID != null && patientDataCOVID != null && selectedTest === 'COVID')
             return (
                 <View>
                     <View>
@@ -903,7 +904,7 @@ export const Patient = ({route, navigation}) => {
                     <COVIDTests/>
                 </View>
             );
-        else if (patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest == 'Fibrinogen') return (
+        else if (patientKeyFibrinogen != null && patientDataFibrinogen != null && selectedTest === 'Fibrinogen') return (
             <View>
                 <View>
                     {(patientDataFibrinogen.bloodType !== undefined) ?
@@ -1031,6 +1032,7 @@ export const Patient = ({route, navigation}) => {
 
     return (
         <SafeAreaView style={format.page}>
+            <HeaderBar navigation={navigation}/>
             <TestSelectBar/>
             <PatientSelector/>
             <ScrollView>
@@ -1108,3 +1110,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     }
 });
+
+export default Patient;

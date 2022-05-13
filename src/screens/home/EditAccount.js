@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import {useUserAuth} from "../../contexts/UserContext";
 
-export const EditAccount = ({navigation, route}) => {
+const EditAccount = ({navigation, route}) => {
     const userInfo = useUserAuth();
 
     const [name, setName] = useState(null);
@@ -106,3 +106,5 @@ export const EditAccount = ({navigation, route}) => {
         </SafeAreaView>
     );
 }
+
+export default EditAccount;

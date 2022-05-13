@@ -3,11 +3,11 @@ import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-nativ
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
 import {useIsFocused} from '@react-navigation/native';
-import {buttons, fonts, format} from '../../style/style';
+import {buttons, fonts, format} from '../../style';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-export const CreatePatientFibrinogen = ({navigation}) => {
+const CreatePatientFibrinogen = ({navigation}) => {
     // text field values
     // get current user and org info
     // determines when page comes into focus
@@ -108,7 +108,7 @@ export const CreatePatientFibrinogen = ({navigation}) => {
                     weight: patientWeight
                 }).then(() => {
                     console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key);
-                    navigation.navigate('Patient');
+                    navigation.navigate('View Data');
                 });
             });
         }
@@ -319,3 +319,5 @@ export const CreatePatientFibrinogen = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+export default CreatePatientFibrinogen;

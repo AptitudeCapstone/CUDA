@@ -437,6 +437,9 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
+  - ReactNativeWebPFormat (1.1.2):
+    - React
+    - SDWebImageWebPCoder
   - RNCPicker (2.4.1):
     - React-Core
   - RNFastImage (8.5.11):
@@ -454,7 +457,7 @@ PODS:
     - Firebase/Database (= 8.15.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (1.10.3):
+  - RNGestureHandler (2.4.2):
     - React-Core
   - RNGoogleSignin (7.2.2):
     - GoogleSignIn (~> 6.1.0)
@@ -546,6 +549,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - ReactNativeWebPFormat (from `../node_modules/react-native-webp-format`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -673,6 +677,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  ReactNativeWebPFormat:
+    :path: "../node_modules/react-native-webp-format"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNFastImage:
@@ -768,12 +774,13 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
+  ReactNativeWebPFormat: 4275844b80c2c385a10ab64f50264d720f2d691c
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFBApp: d3a0f69a3cc67c609f962acf67f483a841ffc49f
   RNFBAuth: 647e3bac0592ad7f2adc2e5ba9764e918400566a
   RNFBDatabase: b0cfd1213a5d90aea03a66b9feab34ddfae37b96
-  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNGoogleSignin: d7f8368b82d94f1dec964785d496387ca7f19092
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
   RNQrGenerator: 34beaf1996de4a2f2122c7019dccd1717b22d8d7
