@@ -114,7 +114,7 @@ const HeaderBar = ({navigation, route}) => {
                     <View>
                         <Image style={{flex: 0.75,  aspectRatio: 1,  height: null, resizeMode: 'contain', width: null,}}
                                resizeMode="contain"
-                               source={require('../img/aptitude-logo.png')} />
+                               source={require('../resources/aptitude-logo.png')} />
                     </View>
                 </View>
                 <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>

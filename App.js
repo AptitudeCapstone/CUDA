@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserProvider } from "./src/contexts/UserContext.js";
-import BLEScanner from './src/bluetooth/BLEScanner';
-import TabNavigator from "./src/navigation/TabNavigator";
+import BLEScanner from './src/components/BLEScanner';
+import TabNavigator from "./src/components/navigation/TabNavigator";
 
 const App = () => (
         <>
