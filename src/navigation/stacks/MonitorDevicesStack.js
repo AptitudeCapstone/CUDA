@@ -1,4 +1,4 @@
-import Monitor from "../../screens/devices/Monitor";
+import Monitor from "../../screens/Monitor";
 import UserStack from "./UserStack";
 import React from "react";
 import {Stack, screenOptions} from '../NavigationOptions';

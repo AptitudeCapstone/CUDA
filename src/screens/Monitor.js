@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {fonts, format, deviceCard, modal} from '../../style';
+import {fonts, format, deviceCard, modal} from '../style';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalSelector from 'react-native-modal-selector-searchable';
@@ -18,7 +18,7 @@ import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
 import FastImage from 'react-native-fast-image';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import HeaderBar from '../../components/HeaderBar';
+import HeaderBar from '../components/HeaderBar';
 
 /*
 const ChipAnimation = () => {

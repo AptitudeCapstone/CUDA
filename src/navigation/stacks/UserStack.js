@@ -1,11 +1,11 @@
 import React from 'react';
 import {Stack, userScreenOptions} from '../NavigationOptions';
-import CreateAccount from '../../screens/home/CreateAccount';
-import SignIn from '../../screens/home/SignIn';
-import EditAccount from '../../screens/home/EditAccount';
-import ForgotPassword from '../../screens/home/ForgotPassword';
-import CreateOrganization from '../../screens/home/CreateOrganization';
-import ConnectOrganization from '../../screens/home/ConnectOrganization';
+import CreateAccount from '../../screens/user_management/CreateAccount';
+import SignIn from '../../screens/user_management/SignIn';
+import EditAccount from '../../screens/user_management/EditAccount';
+import ForgotPassword from '../../screens/user_management/ForgotPassword';
+import CreateOrganization from '../../screens/user_management/CreateOrganization';
+import ConnectOrganization from '../../screens/user_management/ConnectOrganization';
 
 const UserStack = () => {
     return(

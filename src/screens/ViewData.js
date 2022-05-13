@@ -6,15 +6,15 @@ import {useIsFocused} from '@react-navigation/native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
-import {buttons, fonts, format} from '../../style';
+import {buttons, fonts, format} from '../style';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
-import HeaderBar from "../../components/HeaderBar";
+import HeaderBar from "../components/HeaderBar";
 
-const Patient = ({route, navigation}) => {
+const ViewData = ({route, navigation}) => {
     // get current user and org info
     // determines when page comes into focus
     const isFocused = useIsFocused(),
@@ -38,19 +38,20 @@ const Patient = ({route, navigation}) => {
 
         if (auth().currentUser != null) {
             // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
+            database().ref('/users/' + auth().currentUser.uid).once('value',
+                (userSnapshot) => {
+                    if (userSnapshot.val()) {
+                        setUserInfo(userSnapshot.val());
+                        if (userSnapshot.val().organization === undefined) {
+                            setOrgInfo(null);
+                        } else
+                            database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
+                                setOrgInfo(orgSnapshot.val());
+                            });
+                    } else {
                         setOrgInfo(null);
-                    } else
-                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
-                            setOrgInfo(orgSnapshot.val());
-                        });
-                } else {
-                    setOrgInfo(null);
-                }
-            });
+                    }
+                });
 
             // get patient info for appropriate test type
             let results = null;
@@ -242,7 +243,7 @@ const Patient = ({route, navigation}) => {
                                 style={format.utilityPatientBarContainer}
                             >
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    onPress={() => navigation.navigate('Create ViewData COVID')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -259,7 +260,7 @@ const Patient = ({route, navigation}) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        navigation.navigate('Edit Patient COVID', {patientKey: patientKeyCOVID});
+                                        navigation.navigate('Edit ViewData COVID', {patientKey: patientKeyCOVID});
                                     }}
                                     style={{
                                         flexDirection: 'row',
@@ -276,7 +277,7 @@ const Patient = ({route, navigation}) => {
                                         name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    onPress={() => navigation.navigate('Create ViewData COVID')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -299,7 +300,7 @@ const Patient = ({route, navigation}) => {
                                 style={format.utilityPatientBarContainer}
                             >
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient COVID')}
+                                    onPress={() => navigation.navigate('Create ViewData COVID')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -327,7 +328,7 @@ const Patient = ({route, navigation}) => {
                                 style={format.utilityPatientBarContainer}
                             >
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    onPress={() => navigation.navigate('Create ViewData Fibrinogen')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -344,7 +345,7 @@ const Patient = ({route, navigation}) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        navigation.navigate('Edit Patient Fibrinogen', {patientKey: patientKeyFibrinogen});
+                                        navigation.navigate('Edit ViewData Fibrinogen', {patientKey: patientKeyFibrinogen});
                                     }}
                                     style={{
                                         flexDirection: 'row',
@@ -361,7 +362,7 @@ const Patient = ({route, navigation}) => {
                                         name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    onPress={() => navigation.navigate('Create ViewData Fibrinogen')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -384,7 +385,7 @@ const Patient = ({route, navigation}) => {
                                 style={format.utilityPatientBarContainer}
                             >
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Create Patient Fibrinogen')}
+                                    onPress={() => navigation.navigate('Create ViewData Fibrinogen')}
                                     style={{
                                         flexDirection: 'row',
                                         borderColor: '#888',
@@ -416,9 +417,9 @@ const Patient = ({route, navigation}) => {
                         <Text style={fonts.username}>
                             {
                                 (selectedTest === 'COVID') ?
-                                    (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
+                                    (patientDataCOVID === null) ? 'Select ViewData' : patientDataCOVID.name
                                     :
-                                    (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
+                                    (patientDataFibrinogen === null) ? 'Select ViewData' : patientDataFibrinogen.name
                             }
                         </Text>
                         <IconE style={fonts.username}
@@ -1111,4 +1112,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Patient;
+export default ViewData;

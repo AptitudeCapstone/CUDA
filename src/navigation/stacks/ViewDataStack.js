@@ -1,10 +1,10 @@
 import React from "react";
 import {Stack, screenOptions} from '../NavigationOptions';
-import Patient from "../../screens/patients/Patient";
-import CreatePatientCOVID from "../../screens/patients/CreatePatientCOVID";
-import CreatePatientFibrinogen from "../../screens/patients/CreatePatientFibrinogen";
-import EditPatientCOVID from "../../screens/patients/EditPatientCOVID";
-import EditPatientFibrinogen from "../../screens/patients/EditPatientFibrinogen";
+import ViewData from "../../screens/ViewData";
+import CreatePatientCOVID from "../../screens/patient_management/CreatePatientCOVID";
+import CreatePatientFibrinogen from "../../screens/patient_management/CreatePatientFibrinogen";
+import EditPatientCOVID from "../../screens/patient_management/EditPatientCOVID";
+import EditPatientFibrinogen from "../../screens/patient_management/EditPatientFibrinogen";
 import UserStack from "./UserStack";
 
 const ViewDataStack = () => {
@@ -13,7 +13,7 @@ const ViewDataStack = () => {
             <Stack.Screen
                 name='View Data'
                 title='View Data'
-                component={Patient}
+                component={ViewData}
                 options={screenOptions}
             />
             <Stack.Screen

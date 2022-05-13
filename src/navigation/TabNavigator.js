@@ -49,7 +49,7 @@ const TabNavigator = () => (
                 }}
             />
             <Tab.Screen
-                name='View Data'
+                name='ViewDataTab'
                 component={ViewDataStack}
                 options={{
                     title: 'View Data',
