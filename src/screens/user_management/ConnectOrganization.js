@@ -33,7 +33,7 @@ const ConnectOrganization = ({navigation}) => {
                                     console.log('org: ' + snapshot.val());
                                     console.debug(JSON.stringify(snapshot.val(), null, 2));
                                     Alert.alert('Success', 'Synced with ' + snapshot.val().name)
-                                    navigation.navigate('Home');
+                                    navigation.back();
                                     return true;
                                 });
                             })

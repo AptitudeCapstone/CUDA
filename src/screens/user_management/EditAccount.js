@@ -22,7 +22,7 @@ const EditAccount = ({navigation, route}) => {
             console.log('Attempting to edit user info');
             await editUser();
             Alert.alert('Success', 'Your information has been updated');
-            navigation.navigate('Home');
+            navigation.back();
         } catch (error) {
             Alert.alert('Error', error.message);
         }

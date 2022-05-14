@@ -14,9 +14,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from "react-native-gesture-handler";
 
 
-const HeaderBar = ({navigation, route}) => {
-    console.log(navigation);
-    console.log(route);
+const HeaderBar = ({navigation}) => {
     const userInfo = useUserAuth();
     const modalRef = useRef(null);
 

@@ -17,9 +17,9 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
 import FastImage from 'react-native-fast-image';
-import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import HeaderBar from '../components/HeaderBar';
-
+import {useUserAuth} from '../contexts/UserContext';
 /*
 const ChipAnimation = () => {
     const playerRef = useRef();
@@ -141,9 +141,9 @@ const Monitor = ({navigation, route}) => {
                                 label: item['name']
                             }));
         if (JSON.stringify(discoveredPeripheralsList.current) !== JSON.stringify(mostRecentDiscovered)) {
-            console.debug('important values changed, updating lazy discovered peripherals list');
-            console.debug('prev: ', discoveredPeripheralsList.current);
-            console.debug('next: ', mostRecentDiscovered);
+            //console.debug('important values changed, updating lazy discovered peripherals list');
+            //console.debug('prev: ', discoveredPeripheralsList.current);
+            //console.debug('next: ', mostRecentDiscovered);
             discoveredPeripheralsList.current = mostRecentDiscovered;
             updateLazyDiscoveredList();
         }
@@ -157,9 +157,9 @@ const Monitor = ({navigation, route}) => {
                                                 characteristic_values: item['characteristic_values']
                                             }));
         if(JSON.stringify(connectedPeripheralsList.current) !== JSON.stringify(mostRecentConnected)) {
-            console.debug('important values changed, updating lazy connected peripherals list');
-            console.debug('prev: ', connectedPeripheralsList.current);
-            console.debug('next: ', mostRecentConnected);
+            //console.debug('important values changed, updating lazy connected peripherals list');
+            //console.debug('prev: ', connectedPeripheralsList.current);
+            //console.debug('next: ', mostRecentConnected);
             connectedPeripheralsList.current = mostRecentConnected;
             updateLazyConnectedList();
         }
@@ -167,7 +167,7 @@ const Monitor = ({navigation, route}) => {
 
     const updateLazyDiscoveredList = useCallback(
         () => {
-            console.log('updated lazy discovered list');
+            //console.log('updated lazy discovered list');
             setLazyDiscoveredList(discoveredPeripheralsList.current);
         },
         [discoveredPeripheralsList.current],
@@ -175,7 +175,7 @@ const Monitor = ({navigation, route}) => {
 
     const updateLazyConnectedList = useCallback(
         () => {
-            console.log('updated lazy connected list');
+            //console.log('updated lazy connected list');
             setLazyConnectedList(connectedPeripheralsList.current);
 
             if(connectedPeripheralsList.current.length === 1) {

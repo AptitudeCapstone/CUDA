@@ -1,5 +1,5 @@
 import auth from '@react-native-firebase/auth';
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import database from "@react-native-firebase/database";
 
 const userAuthContext = createContext({
@@ -16,31 +16,42 @@ export const UserProvider: React.FC = ({children}) => {
     const [userAuth, setUserAuth] = useState(() => auth().currentUser);
     const [userData, setUserData] = useState({status: 'loading'});
     const [initializing, setInitializing] = useState(userAuth === null);
+    const [subscriptions, setSubscriptions] = useState([]);
 
-    // subscribe using the firebase auth 'on auth state changed' hook
+    // subscribe to firebase auth 'on auth state changed' hook
+    // when change happens, update userAuth accordingly
     useEffect(() => auth().onAuthStateChanged((user) => {
-        if(userData.ref) {
-            console.log('Unsubscribed');
-            userData.ref.off();
-        }
+        // we make a copy of all subscriptions so we can be sure
+        // to avoid memory leaks on previous realtime database subscriptions
+        let subs = subscriptions;
+        subs.forEach(sub => {
+            sub.off();
+            subs.pop();
+        });
+        setSubscriptions(subs);
+
         setUserAuth(user);
         if (initializing) setInitializing(false);
     }), []);
 
     // unsubscribe from update on previous user, subscribe to new user updates
     useEffect( () => {
-        if (initializing) return;
-        updateUserInfo().catch((error) => console.log('unsubscribe error:' + error.message));
+        updateUserInfo().catch((error) => console.log('Unsubscribe error:', error));
     }, [userAuth]);
 
     const updateUserInfo = async () => {
         if (userAuth === null || auth().currentUser === null) {
             setUserData({status: 'signed-out', user: null});
             await auth().signInAnonymously();
-            return (console.log('Signed out'));
+            return console.log('Signed out');
         } else {
-            console.log('userRef id is: ' + userAuth.uid);
-            const userDataRef = database().ref('/users/' + userAuth.uid);
+            const userPath = '/users/' + userAuth.uid;
+            const userDataRef = database().ref(userPath);
+
+            // append this subscription to current subscriptions
+            let prevSubs = subscriptions;
+            prevSubs.push(userDataRef);
+            setSubscriptions(prevSubs);
 
             return userDataRef.on('value',
                 (snapshot) => {
@@ -80,8 +91,6 @@ export const UserProvider: React.FC = ({children}) => {
         }
     }
 
-
-
     return (
         <userAuthContext.Provider
             value={{
@@ -89,7 +98,8 @@ export const UserProvider: React.FC = ({children}) => {
                 userData: userData,
                 userStatus: userData.status,       // convenience function
                 initializing,
-                userAuth: userAuth
+                userAuth: userAuth,
+                subscriptions: subscriptions
             }}
         >
             {children}

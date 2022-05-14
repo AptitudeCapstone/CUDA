@@ -154,6 +154,15 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
+    utilityBarButton: {
+        flexDirection: 'row',
+        borderColor: '#888',
+        borderWidth: 1,
+        borderRadius: 50,
+        padding: 15,
+        paddingTop: 3,
+        paddingBottom: 3
+    }
 });
 
 export const deviceCard = StyleSheet.create({
@@ -412,5 +421,12 @@ export const buttons = StyleSheet.create({
         borderRadius: 50,
         borderColor: '#555',
         borderWidth: 1
-    }
+    },
+    animatedText: {
+        marginLeft: 25,
+        marginRight: 25,
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#fff'
+    },
 });
