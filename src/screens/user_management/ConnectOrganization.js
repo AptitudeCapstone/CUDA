@@ -25,16 +25,13 @@ const ConnectOrganization = ({navigation}) => {
                 .once('value',
                     (snapshot) => {
                         if (snapshot.exists()) {
-                            snapshot.forEach((snapshot) => {
+                            snapshot.forEach((organization) => {
                                 // organization with add code exists
                                 userInfo.userData.ref.update({
-                                    organization: snapshot.key
+                                    organization: organization.key
                                 }).then(() => {
-                                    console.log('org: ' + snapshot.val());
-                                    console.debug(JSON.stringify(snapshot.val(), null, 2));
-                                    Alert.alert('Success', 'Synced with ' + snapshot.val().name)
-                                    navigation.back();
-                                    return true;
+                                    Alert.alert('Success', 'Synced with ' + organization.val().name)
+                                    navigation.goBack();
                                 });
                             })
                         } else {

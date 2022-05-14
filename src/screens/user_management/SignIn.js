@@ -18,7 +18,7 @@ const SignIn = ({navigation}) => {
             console.log('Attempting to log in with email/password');
             await logIn(email, password);
             Alert.alert('Signed In', 'You have been successfully signed in');
-            navigation.back();
+            navigation.goBack();
         } catch (error) {
             Alert.alert('Error', error.message);
         }

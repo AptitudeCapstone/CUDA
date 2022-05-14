@@ -19,7 +19,7 @@ const CreateAccount = ({navigation, route}) => {
         try {
             console.log('Attempting to sign up');
             await signUp(name, email, password);
-            navigation.back();
+            navigation.goBack();
         } catch (error) {
             Alert.alert('Error', error.message);
         }

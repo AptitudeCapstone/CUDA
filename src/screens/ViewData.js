@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from 'react-native-modal-selector-searchable';
@@ -12,15 +12,18 @@ import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
 import HeaderBar from "../components/HeaderBar";
 import useAuth from "../contexts/UserContext";
+import { useIsFocused } from '@react-navigation/native';
 
 const ViewData = ({navigation}) => {
-    const [selectedTest, setSelectedTest] = useState('covid'),
-        [patientsForSelectedTest, setPatientsForSelectedTest] = useState([]),
-        //[fibrinogenPatients, setFibrinogenPatients] = useState([]),
+    const isFocused = useIsFocused(),
+        [selectedTest, setSelectedTest] = useState('covid'),
         [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
         [patientKeyFibrinogen, setPatientKeyFibrinogen] = useState(null),
         [patientDataCOVID, setPatientDataCOVID] = useState(null),
         [patientDataFibrinogen, setPatientDataFibrinogen] = useState(null),
+        [selectedPatient, setSelectedPatient] = useState(null),
+        [covidPatients, setCovidPatients] = useState([]),
+        [fibrinogenPatients, setFibrinogenPatients] = useState([]),
         [patientCOVIDTests, setPatientCOVIDTests] = useState([]),
         [patientFibrinogenTests, setPatientFibrinogenTests] = useState([]),
         [viewPatientModalVisible, setViewPatientModalVisible] = useState(false),
@@ -32,82 +35,84 @@ const ViewData = ({navigation}) => {
             backgroundGradientTo: "#222",
             backgroundGradientToOpacity: 0.2,
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        };
-
-    const userInfo = useAuth();
-    const auth = userInfo.userAuth;
-    const user = userInfo.user;
-    const loginStatus = userInfo.loginStatus;
-    const organization = user?.organization;
-
-    const patientsPath = () =>
-            ((organization === undefined
-                ? '/users/' + auth.uid
-                : '/organizations/' + organization)
-            + '/patients/'),
-        patientTestPath = (testType, testKey) =>
-            testType + '/' + (testType === 'covid' ? patientKeyCOVID : patientKeyFibrinogen) + '/results/' + testKey,
-        testDBRef = (testType, testKey) =>
-            database().ref(patientsPath() + patientTestPath(testType, testKey)),
-        databaseDelete = (testType, testKey) =>
-            testDBRef(testType, testKey).remove()
+        },
+        userInfo = useAuth(),
+        auth = userInfo.userAuth,
+        loginStatus = userInfo.loginStatus,
+        organization = userInfo.user?.organization,
+        patientsPath = ((organization === undefined ?
+                    '/users/' + auth?.uid :
+                    '/organizations/' + organization) + '/patients/'),
+        patientTestsPath = patientsPath + '/' + selectedTest + '/results/',
+        patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey),
+        databaseDelete = (testKey) =>
+            patientTestDBRef(testKey).remove()
                 .then(() => console.log('entry removed'))
                 .catch(() => {throw new Error('problem removing item from database')});
 
-    const showAllResultsForTest = (testType) => {
-        database().ref(patientsPath()).once('value', (patientsSnapshot) => {
-            console.log('patients path:', patientsPath());
-            console.log('patients for current user: ', JSON.stringify(patientsSnapshot.val(), null, 2));
-        });
+    let modalData = [];
+    if(selectedTest === 'covid' && covidPatients.length > 0) {
+        modalData = covidPatients;
+    } else if(selectedTest === 'fibrinogen' && fibrinogenPatients.length > 0) {
+        modalData = fibrinogenPatients;
     }
 
-    // if logging out or changing organization, we need to unsubscribe from updates on the DB
-    // and subscribe to updates of new user
     useEffect(() => {
-        if(loginStatus !== 'registered-user' && loginStatus !== 'guest') {
+        if(!auth) {
+            setCovidPatients([]);
+            setFibrinogenPatients([]);
             return;
         }
 
-        return database().ref(patientsPath()).on('value',
+        const patientsRef = database().ref(patientsPath);
+        patientsRef.on('value',
             (patientsSnapshot) => {
-                console.log('Looking in DB for path:', patientsPath());
                 if (patientsSnapshot.exists()) {
-                    // display list of all patients
-                    console.log('Patients for current user / organization: ', JSON.stringify(patientsSnapshot.val(), null, 2));
+                    const p = patientsSnapshot.toJSON();
+                    const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
+                    setCovidPatients(c);
+                    const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
+                    setFibrinogenPatients(f);
                 } else {
-                    console.log('Patients database entry not found or is empty');
-
+                    setCovidPatients([]);
+                    setFibrinogenPatients([]);
                 }
             },
-            (error) => {
-                console.log('Error occurred while fetching database updates:', error)
-            }
+            (error) => console.error('Error fetching database updates:', error)
         );
-    }, [organization, loginStatus]);
 
-    const selectedPatientChanged = (patientOption) => console.log('selected patient' + patientOption);
+        return () => patientsRef.off();
+    }, [auth, organization, loginStatus, selectedTest, isFocused])
+
+    useEffect(() => {
+
+    }, [selectedPatient])
+
+    const selectedPatientChanged = (patientOption) => {
+        if(selectedTest === 'covid') {
+            setPatientKeyCOVID(patientOption.key);
+        } else if(selectedTest === 'fibrinogen') {
+            setPatientKeyFibrinogen(patientOption.key);
+        }
+    }
 
     const scale = (dragX) => dragX.interpolate({inputRange: [-200, 0],  outputRange: [1, 0.5],  extrapolate: 'clamp'});
 
-    const animatedDelete = (testType, item) =>
+    const animatedDelete = (item) =>
         Alert.alert("Are your sure?", "This will permanently delete the test result", [
             {text: "Cancel"},
             {
                 text: "Confirm",
                 onPress: () => {
-                    databaseDelete(testType, item.key)
-                        .then(() => {
-                            Animated.timing(new Animated.Value(70), {toValue: 0, duration: 350, useNativeDriver: false})
-                                .start(() => {
-                                    if (testType === 'fibrinogen')
-                                        setPatientFibrinogenTests(prevState => prevState.filter(e => e.key !== item.key));
-                                    else if (testType === 'covid')
-                                        setPatientCOVIDTests(prevState => prevState.filter(e => e.key !== item.key));
-                                })
-                        })
-                        .catch((error) => {
-                            Alert.alert('Error', error.message);
-                        });
+                    databaseDelete(item.key).then(() => {
+                        Animated.timing(new Animated.Value(70), {toValue: 0, duration: 350, useNativeDriver: false})
+                            .start(() => {
+                                if (selectedTest === 'fibrinogen')
+                                    setPatientFibrinogenTests(prevState => prevState.filter(e => e.key !== item.key));
+                                else if (selectedTest === 'covid')
+                                    setPatientCOVIDTests(prevState => prevState.filter(e => e.key !== item.key));
+                            })
+                    }).catch((error) => Alert.alert('Error', error.message));
                 }
             }]);
 
@@ -117,7 +122,7 @@ const ViewData = ({navigation}) => {
         const swipeRightAction = (progress, dragX) => (
             <TouchableOpacity
                 style={{backgroundColor: 'red', justifyContent: 'center', textAlign: 'center',}}
-                onPress={() => animatedDelete('covid', item)}>
+                onPress={() => animatedDelete(item)}>
                 <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
                     <Animated.Text style={[buttons.animatedText, {transform: [scale(dragX)]}]}>
                         Delete
@@ -149,9 +154,8 @@ const ViewData = ({navigation}) => {
         const {item, key} = props;
 
         const swipeRightAction = (progress, dragX) => (
-            <TouchableOpacity
-                style={{backgroundColor: 'red', justifyContent: 'center', textAlign: 'center',}}
-                onPress={() => animatedDelete('fibrinogen', item)}>
+            <TouchableOpacity onPress={() => animatedDelete(item)}
+                              style={{backgroundColor: 'red', justifyContent: 'center', textAlign: 'center',}}>
                 <Animated.View style={{backgroundColor: 'red', justifyContent: 'center'}}>
                     <Animated.Text style={[buttons.animatedText, {transform: [scale(dragX)]}]}>
                         Delete
@@ -170,9 +174,7 @@ const ViewData = ({navigation}) => {
                                 {dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}
                             </Text>
                         </View>
-                        <Text style={[fonts.mediumText, {padding: 20}]}>
-                            {item.result} mg/ml
-                        </Text>
+                        <Text style={[fonts.mediumText, {padding: 20}]}>{item.result} mg/ml</Text>
                     </View>
                 </Animated.View>
             </Swipeable>
@@ -194,34 +196,33 @@ const ViewData = ({navigation}) => {
                     <Text style={fonts.selectButtonText}>Fibrinogen</Text>
                 </TouchableOpacity>
             </View>
-            <ModalSelector
-                onChange={(option) => {selectedPatientChanged(option)}}
-                renderItem={<View />}
-                customSelector={<View />}
-                visible={viewPatientModalVisible}
-                data={patientsForSelectedTest}
-                onCancel={() => toggleViewPatientModal()}
-                cancelText={'Cancel'}
-                searchText={'Search patient by name'}
-                overlayStyle={modal.overlay}
-                optionContainerStyle={modal.container}
-                optionTextStyle={modal.optionText}
-                optionStyle={modal.option}
-                cancelStyle={modal.cancelOption}
-                cancelTextStyle={modal.cancelText}
-                searchStyle={modal.searchBar}
-                initValueTextStyle={modal.searchText}
-                searchTextStyle={modal.searchText}
-            />
+                <ModalSelector
+                    onChange={(option) => {selectedPatientChanged(option)}}
+                    renderItem={<View />}
+                    customSelector={<View />}
+                    visible={viewPatientModalVisible}
+                    data={modalData}
+                    keyExtractor={patient => patient[0]}
+                    labelExtractor={patient => patient[1]['name']}
+                    onCancel={() => toggleViewPatientModal()}
+                    cancelText={'Cancel'}
+                    searchText={'Search patient by name'}
+                    overlayStyle={modal.overlay}
+                    optionContainerStyle={modal.container}
+                    optionTextStyle={modal.optionText}
+                    optionStyle={modal.option}
+                    cancelStyle={modal.cancelOption}
+                    cancelTextStyle={modal.cancelText}
+                    searchStyle={modal.searchBar}
+                    initValueTextStyle={modal.searchText}
+                    searchTextStyle={modal.searchText}
+                />
             <TouchableOpacity onPress={() => toggleViewPatientModal()}
                               style={format.selectPatientBarContainer}>
                 <Text style={fonts.username}>
-                    {
-                        (selectedTest === 'covid') ?
-                            (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name
-                            :
-                            (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name
-                    }
+                    {(selectedTest === 'covid') ?
+                            (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name :
+                            (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name}
                 </Text>
                 <IconE style={fonts.username} size={34}
                        name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} />
@@ -229,21 +230,19 @@ const ViewData = ({navigation}) => {
             {
                 (selectedTest === 'covid' && patientDataCOVID !== null) &&
                 <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient COVID')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient COVID')}>
                         <Text style={fonts.mediumText}>Export</Text>
                         <IconF name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Edit Patient COVID', {patientKey: patientKeyCOVID})}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Edit Patient COVID',
+                                          {patientKey: patientKeyCOVID})}>
                         <Text style={fonts.mediumText}>Edit</Text>
                         <IconA name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient COVID')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient COVID')}>
                         <Text style={fonts.mediumText}>New</Text>
                         <IconF  name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
@@ -252,9 +251,8 @@ const ViewData = ({navigation}) => {
             {
                 (selectedTest === 'covid' && patientDataCOVID === null) &&
                 <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient COVID')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient COVID')}>
                         <Text style={fonts.mediumText}>New</Text>
                         <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}} />
                     </TouchableOpacity>
@@ -263,23 +261,19 @@ const ViewData = ({navigation}) => {
             {
                 (selectedTest === 'fibrinogen' && patientDataCOVID !== null) &&
                 <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient Fibrinogen')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
                         <Text style={fonts.mediumText}>Export</Text>
                         <IconF  name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate('Edit Patient Fibrinogen', {patientKey: patientKeyFibrinogen});
-                        }}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => {navigation.navigate('Edit Patient Fibrinogen',
+                                          {patientKey: patientKeyFibrinogen})}}>
                         <Text style={fonts.mediumText}>Edit</Text>
                         <IconA  name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient Fibrinogen')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
                         <Text style={fonts.mediumText}>New</Text>
                         <IconF  name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
@@ -288,9 +282,8 @@ const ViewData = ({navigation}) => {
             {
                 (selectedTest === 'fibrinogen' && patientDataCOVID === null) &&
                 <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Create Patient Fibrinogen')}
-                        style={format.utilityBarButton}>
+                    <TouchableOpacity style={format.utilityBarButton}
+                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
                         <Text style={fonts.mediumText}>New</Text>
                         <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}} />
                     </TouchableOpacity>
@@ -298,30 +291,20 @@ const ViewData = ({navigation}) => {
             }
             <ScrollView>
                 {   // covid patient has been selected
-                    (patientKeyCOVID !== null && patientDataCOVID !== null && selectedTest === 'covid') &&
+                    (patientKeyCOVID && patientDataCOVID && selectedTest === 'covid') &&
                     <>
                         {
-                            (patientDataCOVID.email !== undefined || patientDataCOVID.phone !== undefined) &&
+                            (patientDataCOVID.email) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Email</Text>
-                                {
-                                    (patientDataCOVID.email !== undefined) &&
-                                    <Text style={styles.text}>
-                                        {patientDataCOVID.email}
-                                    </Text>
-                                }
+                                 <Text style={styles.text}>{patientDataCOVID.email}</Text>
                             </View>
                         }
                         {
-                            (patientDataCOVID.email !== undefined || patientDataCOVID.phone !== undefined) &&
+                            (patientDataCOVID.phone) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Phone</Text>
-                                {
-                                    (patientDataCOVID.phone !== undefined) &&
-                                    <Text style={styles.text}>
-                                        {patientDataCOVID.phone}
-                                    </Text>
-                                }
+                                    <Text style={styles.text}>{patientDataCOVID.phone}</Text>
                             </View>
                         }
                         <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
@@ -334,22 +317,22 @@ const ViewData = ({navigation}) => {
                             }
                         </View>
                         {
-                            patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)
+                            <View />//patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)
                         }
                     </>
                 }
                 {   // fibrinogen patient selected
-                    (patientKeyFibrinogen !== null && patientDataFibrinogen !== null && selectedTest === 'fibrinogen') &&
+                    (patientKeyFibrinogen && patientDataFibrinogen && selectedTest === 'fibrinogen') &&
                     <>
                         {
-                            (patientDataFibrinogen.bloodType !== undefined) &&
+                            (patientDataFibrinogen.bloodType) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Blood Type</Text>
                                 <Text style={styles.text}>{patientDataFibrinogen.bloodType}</Text>
                             </View>
                         }
                         {
-                            (patientDataFibrinogen.sex !== undefined) &&
+                            (patientDataFibrinogen.sex) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Sex</Text>
                                 <Text style={styles.text}>{patientDataFibrinogen.sex}</Text>
@@ -357,21 +340,21 @@ const ViewData = ({navigation}) => {
 
                         }
                         {
-                            (patientDataFibrinogen.age !== undefined) &&
+                            (patientDataFibrinogen.age) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Age</Text>
                                 <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
                             </View>
                         }
                         {
-                            (patientDataFibrinogen.weight !== undefined) &&
+                            (patientDataFibrinogen.weight) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Weight</Text>
                                 <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
                             </View>
                         }
                         {
-                            (patientDataFibrinogen.height !== undefined) &&
+                            (patientDataFibrinogen.height) &&
                             <View style={styles.patientField}>
                                 <Text style={styles.sectionText}>Height</Text>
                                 <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
@@ -388,7 +371,7 @@ const ViewData = ({navigation}) => {
                             }
                         </View>
                         {
-                            (chartData !== null) &&
+                            (chartData) &&
                             <View style={{flex: 0.6, padding: 15}}>
                                 <LineChart
                                     data={chartData}
@@ -401,7 +384,7 @@ const ViewData = ({navigation}) => {
                             </View>
                         }
                         {
-                            patientFibrinogenTests.map(test => <FibrinogenTest key={test.key} item={test} />)
+                            <View />//patientFibrinogenTests.map(test => <FibrinogenTest key={test.key} item={test} />)
                         }
                     </>
                 }

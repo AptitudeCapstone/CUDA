@@ -49,7 +49,7 @@ const CreateOrganization = ({navigation}) => {
                                 ', state: ' + state +
                                 ', country: ' + country +
                                 ', zip: ' + zip);
-                    navigation.back();
+                    navigation.goBack();
                 });
         } else
             Alert.alert('Error', 'Please complete the required fields');

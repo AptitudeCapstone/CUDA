@@ -117,14 +117,14 @@ const HeaderBar = ({navigation}) => {
                     </TouchableOpacity>
                 }
                 {
-                    (userInfo.loginStatus === 'registered-user') &&
+                    (userInfo.loginStatus === 'registered') &&
                     <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
                         <Text style={fonts.iconButtonText}>Signed in as {userInfo.user?.displayName}</Text>
                         <IconFA style={fonts.iconButtonIcon} name='user-md' size={28}/>
                     </TouchableOpacity>
                 }
                 {
-                    (userInfo.loginStatus !== 'guest' && userInfo.loginStatus !== 'registered-user') &&
+                    (userInfo.loginStatus !== 'guest' && userInfo.loginStatus !== 'registered') &&
                     <Text style={{margin: 15, marginBottom: 5}}>
                         <ActivityIndicator size={34}/>
                     </Text>
@@ -160,7 +160,7 @@ const HeaderBar = ({navigation}) => {
                         <ScrollView style={{flex: 0.5}}>
                     <Text style={[fonts.username, {alignSelf: 'center', marginBottom: 20, color: '#eee'}]}>Manage Account</Text>
                         {
-                            (userInfo.loginStatus === 'registered-user') &&
+                            (userInfo.loginStatus === 'registered') &&
                             <View>
                                 <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={editAccount}>
                                     <Text style={fonts.iconButtonText}>Edit my account</Text>
