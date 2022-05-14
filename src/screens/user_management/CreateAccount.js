@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {buttons, fonts, format} from '../../style';
-import {useUserAuth} from "../../contexts/UserContext";
+import {useAuth} from "../../contexts/UserContext";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
 
 const CreateAccount = ({navigation, route}) => {
-    const userInfo = useUserAuth();
+    const userInfo = useAuth();
     const userAuth = userInfo.userAuth;
-    const userStatus = userInfo.userData.status;
+    const userStatus = userInfo.userData.loginStatus;
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -36,7 +36,7 @@ const CreateAccount = ({navigation, route}) => {
         //  * we assume this page is reached by an anonymous account *
         //  * this is because we create a guest account when         *
         //  * the user has not create an account or logged in        *
-        if(userStatus !== 'anonymous-signed-in') {
+        if(userStatus !== 'guest') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 

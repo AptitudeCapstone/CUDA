@@ -11,7 +11,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
 import HeaderBar from "../components/HeaderBar";
-import {useUserAuth} from "../contexts/UserContext";
+import useAuth from "../contexts/UserContext";
 
 const ViewData = ({navigation}) => {
     const [selectedTest, setSelectedTest] = useState('covid'),
@@ -34,17 +34,16 @@ const ViewData = ({navigation}) => {
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         };
 
-    const userInfo = useUserAuth();
-    const userAuth = userInfo.userAuth;
-    const userData = userInfo.user;
-    const userStatus = userInfo.user.status;
-
-    console.log(userInfo.subscriptions);
+    const userInfo = useAuth();
+    const auth = userInfo.userAuth;
+    const user = userInfo.user;
+    const loginStatus = userInfo.loginStatus;
+    const organization = user?.organization;
 
     const patientsPath = () =>
-            ((userData.organization === undefined
-                ? '/users/' + userAuth.uid
-                : '/organizations/' + userData.organization)
+            ((organization === undefined
+                ? '/users/' + auth.uid
+                : '/organizations/' + organization)
             + '/patients/'),
         patientTestPath = (testType, testKey) =>
             testType + '/' + (testType === 'covid' ? patientKeyCOVID : patientKeyFibrinogen) + '/results/' + testKey,
@@ -65,12 +64,13 @@ const ViewData = ({navigation}) => {
     // if logging out or changing organization, we need to unsubscribe from updates on the DB
     // and subscribe to updates of new user
     useEffect(() => {
-        if(userStatus !== 'registered-user-signed-in' && userStatus !== 'anonymous-signed-in') {
+        if(loginStatus !== 'registered-user' && loginStatus !== 'guest') {
             return;
         }
 
         return database().ref(patientsPath()).on('value',
             (patientsSnapshot) => {
+                console.log('Looking in DB for path:', patientsPath());
                 if (patientsSnapshot.exists()) {
                     // display list of all patients
                     console.log('Patients for current user / organization: ', JSON.stringify(patientsSnapshot.val(), null, 2));
@@ -83,9 +83,7 @@ const ViewData = ({navigation}) => {
                 console.log('Error occurred while fetching database updates:', error)
             }
         );
-    }, [userAuth, userData.organization, userStatus]);
-
-    //
+    }, [organization, loginStatus]);
 
     const selectedPatientChanged = (patientOption) => console.log('selected patient' + patientOption);
 

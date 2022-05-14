@@ -3,10 +3,10 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from "@react-native-firebase/auth";
 import {buttons, fonts, format} from '../../style';
-import {useUserAuth} from '../../contexts/UserContext';
+import {useAuth} from '../../contexts/UserContext';
 
 const SignIn = ({navigation}) => {
-    const userInfo = useUserAuth();
+    const userInfo = useAuth();
     const userAuth = userInfo.userAuth;
     const userStatus = userInfo.user.status;
 
@@ -28,7 +28,7 @@ const SignIn = ({navigation}) => {
     //      if an account with this credential exists, link them
     //      else, log in
     const logIn = async (email, password) => {
-        if(userStatus !== 'anonymous-signed-in') {
+        if(userStatus !== 'guest') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 

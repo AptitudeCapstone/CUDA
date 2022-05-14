@@ -1,35 +1,36 @@
 import auth from '@react-native-firebase/auth';
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import database from "@react-native-firebase/database";
 
 const userAuthContext = createContext({
     user: undefined,                // the current user's data
-    dataInfo: {status: "loading"},  // more information about the current user's data
-    dataStatus: "loading",          // the status of fetching the current user's data
+    dataInfo: {loginStatus: 'loading'},  // more information about the current user's data
+    loginStatus: 'loading',          // the status of fetching the current user's data
     initializing: true,             // the status of checking the user's auth session
     userAuth: undefined             // the current user object
 });
 
-export const useUserAuth = () => useContext(userAuthContext);
+export const useAuth = () => useContext(userAuthContext);
 
 export const UserProvider: React.FC = ({children}) => {
     const [userAuth, setUserAuth] = useState(() => auth().currentUser);
-    const [userData, setUserData] = useState({status: 'loading'});
+    const [userData, setUserData] = useState({loginStatus: 'loading'});
     const [initializing, setInitializing] = useState(userAuth === null);
     const [subscriptions, setSubscriptions] = useState([]);
 
-    // subscribe to firebase auth 'on auth state changed' hook
-    // when change happens, update userAuth accordingly
+    /*
+        - this useEffect subscribes to firebase auth 'on auth state changed' hook
+        so that when auth change happens, userAuth updates accordingly
+        - we make a copy of all subscriptions so we can be sure
+        to avoid memory leaks on previous realtime database subscriptions
+     */
     useEffect(() => auth().onAuthStateChanged((user) => {
-        // we make a copy of all subscriptions so we can be sure
-        // to avoid memory leaks on previous realtime database subscriptions
         let subs = subscriptions;
         subs.forEach(sub => {
             sub.off();
             subs.pop();
         });
         setSubscriptions(subs);
-
         setUserAuth(user);
         if (initializing) setInitializing(false);
     }), []);
@@ -41,7 +42,7 @@ export const UserProvider: React.FC = ({children}) => {
 
     const updateUserInfo = async () => {
         if (userAuth === null || auth().currentUser === null) {
-            setUserData({status: 'signed-out', user: null});
+            setUserData({loginStatus: 'signed-out', user: null});
             await auth().signInAnonymously();
             return console.log('Signed out');
         } else {
@@ -57,7 +58,7 @@ export const UserProvider: React.FC = ({children}) => {
                 (snapshot) => {
                     if (snapshot.exists()) {
                         setUserData({
-                            status: (userAuth.isAnonymous ? 'anonymous-signed-in' : 'registered-user-signed-in'),
+                            loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered-user'),
                             get user() {
                                 return snapshot.val()
                             },
@@ -74,7 +75,7 @@ export const UserProvider: React.FC = ({children}) => {
 
                         userDataRef.update(update).then(() => {
                             setUserData({
-                                status: (userAuth.isAnonymous ? 'anonymous-signed-in' : 'registered-user-signed-in'),
+                                loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered-user'),
                                 get user() {
                                     return snapshot.val()
                                 },
@@ -84,7 +85,7 @@ export const UserProvider: React.FC = ({children}) => {
                     }
                 },
                 (error) => setUserData({
-                    status: 'error',
+                    loginStatus: 'error',
                     user: null,
                     error
                 }));
@@ -94,15 +95,16 @@ export const UserProvider: React.FC = ({children}) => {
     return (
         <userAuthContext.Provider
             value={{
-                get user() {return userData.user}, // convenience function
+                get user() {return userData.user},  // convenience function
                 userData: userData,
-                userStatus: userData.status,       // convenience function
-                initializing,
+                loginStatus: userData.loginStatus,  // convenience function
                 userAuth: userAuth,
-                subscriptions: subscriptions
+                initializing,
             }}
         >
             {children}
         </userAuthContext.Provider>
     );
 }
+
+export default useAuth;

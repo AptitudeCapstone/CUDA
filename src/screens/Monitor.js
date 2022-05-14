@@ -19,7 +19,7 @@ import {Buffer} from 'buffer';
 import FastImage from 'react-native-fast-image';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import HeaderBar from '../components/HeaderBar';
-import {useUserAuth} from '../contexts/UserContext';
+import {useAuth} from '../contexts/UserContext';
 /*
 const ChipAnimation = () => {
     const playerRef = useRef();
