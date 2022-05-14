@@ -9,7 +9,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from "react-native-gesture-handler";
 import FastImage from 'react-native-fast-image';
 
-const HeaderBar = ({navigation}) => {
+const UserBar = ({navigation}) => {
     const userInfo = useAuth();
     const modalRef = useRef(null);
 
@@ -99,13 +99,6 @@ const HeaderBar = ({navigation}) => {
     return (
         <View>
             <View style={format.pageHeader}>
-                <View style={{flexDirection: 'row', paddingTop: 12}}>
-                    <View>
-                        <FastImage style={{flex: 0.75,  aspectRatio: 1,  height: null, resizeMode: 'contain', width: null,}}
-                               resizeMode="contain"
-                               source={require('../resources/aptitude-logo.png')} />
-                    </View>
-                </View>
                 <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
                     <Text style={fonts.iconButtonText}>Usage Guide</Text>
                 </TouchableOpacity>
@@ -218,4 +211,4 @@ const HeaderBar = ({navigation}) => {
     );
 }
 
-export default HeaderBar;
+export default UserBar;

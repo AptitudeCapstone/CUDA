@@ -63,7 +63,7 @@ export const UserProvider: React.FC = ({children}) => {
                             ref: userDataRef
                         });
                     } else {
-                        console.log('User DB entry not found - creating it');
+                        console.log('User database entry not found: creating one');
                         let update = {displayName: ''};
                         if (userAuth.displayName) {
                             update = {displayName: userAuth.displayName}

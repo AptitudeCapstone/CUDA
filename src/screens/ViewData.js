@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from 'react-native-modal-selector-searchable';
@@ -10,7 +10,7 @@ import database from '@react-native-firebase/database';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
-import HeaderBar from "../components/HeaderBar";
+import UserBar from "../components/UserBar";
 import useAuth from "../contexts/UserContext";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -43,6 +43,7 @@ const ViewData = ({navigation}) => {
         patientsPath = ((organization === undefined ?
                     '/users/' + auth?.uid :
                     '/organizations/' + organization) + '/patients/'),
+        patientsRef = database().ref(patientsPath),
         patientTestsPath = patientsPath + '/' + selectedTest + '/results/',
         patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey),
         databaseDelete = (testKey) =>
@@ -64,7 +65,6 @@ const ViewData = ({navigation}) => {
             return;
         }
 
-        const patientsRef = database().ref(patientsPath);
         patientsRef.on('value',
             (patientsSnapshot) => {
                 if (patientsSnapshot.exists()) {
@@ -185,7 +185,6 @@ const ViewData = ({navigation}) => {
 
     return (
         <SafeAreaView style={format.page}>
-            <HeaderBar navigation={navigation} />
             <View style={format.testSelectBar}>
                 <TouchableOpacity onPress={() => setSelectedTest('covid')}
                     style={(selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton}>
@@ -395,6 +394,7 @@ const ViewData = ({navigation}) => {
                     </Text>
                 }
             </ScrollView>
+            <UserBar navigation={navigation} />
         </SafeAreaView>
     );
 }

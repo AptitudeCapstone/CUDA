@@ -18,7 +18,7 @@ import BleManager from 'react-native-ble-manager';
 import {Buffer} from 'buffer';
 import FastImage from 'react-native-fast-image';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-import HeaderBar from '../components/HeaderBar';
+import UserBar from '../components/UserBar';
 import {useAuth} from '../contexts/UserContext';
 /*
 const ChipAnimation = () => {
@@ -135,11 +135,11 @@ const Monitor = ({navigation, route}) => {
 
     const updatePeripheralLists = () => {
         const mostRecentDiscovered = Array.from(discoveredPeripherals.values())
-                        .map(item => (
-                            {
-                                key: item['id'],
-                                label: item['name']
-                            }));
+                                        .map(item => (
+                                            {
+                                                key: item['id'],
+                                                label: item['name']
+                                            }));
         if (JSON.stringify(discoveredPeripheralsList.current) !== JSON.stringify(mostRecentDiscovered)) {
             //console.debug('important values changed, updating lazy discovered peripherals list');
             //console.debug('prev: ', discoveredPeripheralsList.current);
@@ -453,7 +453,6 @@ const Monitor = ({navigation, route}) => {
 
     return (
         <SafeAreaView style={{backgroundColor: '#222', flex: 1,}}>
-            <HeaderBar navigation={navigation} />
             <View style={format.page}>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <View style={{flexGrow: 0.5}}>
@@ -540,6 +539,7 @@ const Monitor = ({navigation, route}) => {
                     <SelectedPeripheral />
                 }
             </View>
+            <UserBar navigation={navigation} />
         </SafeAreaView>
     );
 }

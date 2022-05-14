@@ -1,10 +1,12 @@
 import React from 'react';
+import {Image} from "react-native";
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MonitorDevicesStack from './stacks/MonitorDevicesStack'
 import ViewDataStack from './stacks/ViewDataStack';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconFo from 'react-native-vector-icons/Foundation';
+import FastImage from "react-native-fast-image";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
@@ -13,21 +15,24 @@ const TabNavigator = () => (
             initialRouteName='MonitorTab'
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: "#fff",
+                tabBarActiveTintColor: '#dea75b',
                 tabBarInactiveTintColor: "#ccc",
                 tabBarActiveBackgroundColor: '#131313',
                 tabBarInactiveBackgroundColor: '#131313',
-                tabBarStyle: [
-                    {
-                        borderTopColor: '#555',
-                        display: 'flex',
+
+                tabBarLabelStyle: {
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                },
+                tabBarStyle: {
+                        borderTopWidth: 0,
+                        height: 75,
                         backgroundColor: '#131313',
-                        paddingBottom: 30,
-                        paddingTop: 15
-                    }, null
-                ],
-                paddingTop: 15,
-                paddingBottom: 30,
+                },
+                tabBarIconStyle: {
+                    height: 40,
+                    width: 40
+                },
                 safeAreaInsets: {
                     bottom: 0,
                 },
@@ -39,12 +44,11 @@ const TabNavigator = () => (
                 options={{
                     title: 'Monitor Devices',
                     headerShown: false,
-                    tabBarIcon: ({color}) => (
-                        <IconMI
-                            name="device-hub"
-                            color={color}
-                            size={26}
-                        />
+                    tabBarIcon: ({color, size}) => (
+                        <Image
+                            resizeMode='stretch'
+                            style={{width: size, height: size}}
+                            source={require('../../resources/aptitude-logo.png')} />
                     ),
                 }}
             />
@@ -58,7 +62,7 @@ const TabNavigator = () => (
                         <IconFo
                             name="graph-bar"
                             color={color}
-                            size={26}
+                            size={36}
                         />
                     ),
                 }}

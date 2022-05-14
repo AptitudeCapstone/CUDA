@@ -81,11 +81,11 @@ export const format = StyleSheet.create({
     pageHeader: {
         paddingVertical: 15,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         paddingHorizontal: 40,
         backgroundColor: '#131313',
-        borderBottomColor: '#555',
-        borderBottomWidth: 1
+        borderTopColor: '#555',
+        borderTopWidth: 1
     },
     iconButton: {
         paddingVertical: 12,
@@ -122,9 +122,9 @@ export const format = StyleSheet.create({
     },
     testSelectBar: {
         flexDirection: 'row',
-        padding: 30,
+        padding: 20,
         paddingTop: 30,
-        justifyContent: 'center'
+        justifyContent: 'space-between'
     },
     selectPatientBarContainer: {
         marginBottom: 20,
@@ -302,9 +302,9 @@ export const fonts = StyleSheet.create({
     },
     selectButtonText: {
         color: '#fff',
-        fontSize: 16,
-        padding: 4,
-        fontWeight: 'bold'
+        fontSize: 24,
+        fontWeight: 'bold',
+        alignSelf: 'center'
     },
     patientSelectText: {
         fontSize: 24,
@@ -368,37 +368,34 @@ export const buttons = StyleSheet.create({
         fontWeight: 'bold'
     },
     covidSelectButton: {
-        padding: 16,
-        paddingTop: 8,
-        paddingBottom: 8,
-        backgroundColor: '#3c499e',
-        marginLeft: 15,
-        marginRight: 15,
-        borderRadius: 50,
-        borderColor: '#555',
-        borderWidth: 1
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 10,
+        borderColor: '#666',
+        backgroundColor: '#333',
+        borderWidth: 1,
+        borderBottomColor: '#3c499e',
+        borderBottomWidth: 6,
+        flexGrow: 0.475,
     },
     fibrinogenSelectButton: {
-        padding: 16,
-        paddingTop: 8,
-        paddingBottom: 8,
-        backgroundColor: '#9c3a2f',
-        marginLeft: 15,
-        marginRight: 15,
-        borderRadius: 50,
-        borderColor: '#555',
-        borderWidth: 1
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 10,
+        borderColor: '#666',
+        backgroundColor: '#333',
+        borderWidth: 1,
+        borderBottomColor: '#9c3a2f',
+        borderBottomWidth: 6,
+        flexGrow: 0.475,
     },
     unselectedButton: {
-        padding: 16,
-        paddingTop: 8,
-        paddingBottom: 8,
-        backgroundColor: '#333',
-        marginLeft: 15,
-        marginRight: 15,
-        borderRadius: 50,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 10,
         borderColor: '#555',
-        borderWidth: 1
+        borderWidth: 1,
+        flexGrow: 0.475,
     },
     bloodTypeSelectButton: {
         padding: 16,
