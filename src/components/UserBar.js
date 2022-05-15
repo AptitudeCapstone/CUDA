@@ -1,7 +1,8 @@
 import React, {useRef} from 'react';
 import {ActivityIndicator, Alert, Text, TouchableOpacity, View} from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import {fonts, format, icons} from '../style';
+import IconE from 'react-native-vector-icons/Entypo';
+import {fonts, format, floating} from '../style';
 import {useAuth} from '../contexts/UserContext';
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
@@ -98,22 +99,20 @@ const UserBar = ({navigation}) => {
 
     return (
         <View>
-            <View style={format.pageHeader}>
-                <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
-                    <Text style={fonts.iconButtonText}>Usage Guide</Text>
+            <View style={floating.actionBar}>
+                <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
+                    <IconE style={floating.iconButtonIcon} name='help' size={28}/>
                 </TouchableOpacity>
                 {
                     (userInfo.loginStatus === 'guest') &&
-                    <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
-                        <Text style={fonts.iconButtonText}>My Account</Text>
-                        <IconFA style={fonts.iconButtonIcon} name='user-md' size={28}/>
+                    <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
+                        <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
                     </TouchableOpacity>
                 }
                 {
                     (userInfo.loginStatus === 'registered') &&
-                    <TouchableOpacity style={format.iconButton} onPress={() => modalRef.current?.open()}>
-                        <Text style={fonts.iconButtonText}>Signed in as {userInfo.user?.displayName}</Text>
-                        <IconFA style={fonts.iconButtonIcon} name='user-md' size={28}/>
+                    <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
+                        <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
                     </TouchableOpacity>
                 }
                 {

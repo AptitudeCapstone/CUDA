@@ -82,7 +82,7 @@ const ViewData = ({navigation}) => {
         );
 
         return () => patientsRef.off();
-    }, [auth, organization, loginStatus, selectedTest, isFocused])
+    }, [auth, organization, loginStatus, selectedTest, isFocused]);
 
     useEffect(() => {
 
@@ -184,7 +184,8 @@ const ViewData = ({navigation}) => {
     const toggleViewPatientModal = () => setViewPatientModalVisible(!viewPatientModalVisible);
 
     return (
-        <SafeAreaView style={format.page}>
+        <SafeAreaView style={{flex: 1,}}>
+            <View style={format.page}>
             <View style={format.testSelectBar}>
                 <TouchableOpacity onPress={() => setSelectedTest('covid')}
                     style={(selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton}>
@@ -242,7 +243,7 @@ const ViewData = ({navigation}) => {
                     </TouchableOpacity>
                     <TouchableOpacity style={format.utilityBarButton}
                                       onPress={() => navigation.navigate('Create Patient COVID')}>
-                        <Text style={fonts.mediumText}>New</Text>
+                        <Text style={fonts.mediumText}>New Patient</Text>
                         <IconF  name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
                     </TouchableOpacity>
                 </View>
@@ -394,6 +395,7 @@ const ViewData = ({navigation}) => {
                     </Text>
                 }
             </ScrollView>
+            </View>
             <UserBar navigation={navigation} />
         </SafeAreaView>
     );

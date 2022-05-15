@@ -22,16 +22,16 @@ const TabNavigator = () => (
 
                 tabBarLabelStyle: {
                     fontSize: 24,
-                    fontWeight: 'bold',
                 },
                 tabBarStyle: {
                         borderTopWidth: 0,
-                        height: 75,
+                        height: 90,
                         backgroundColor: '#131313',
                 },
                 tabBarIconStyle: {
                     height: 40,
-                    width: 40
+                    width: 40,
+                    color: '#dea75b'
                 },
                 safeAreaInsets: {
                     bottom: 0,
@@ -58,11 +58,11 @@ const TabNavigator = () => (
                 options={{
                     title: 'View Data',
                     headerShown: false,
-                    tabBarIcon: ({color}) => (
+                    tabBarIcon: () => (
                         <IconFo
                             name="graph-bar"
-                            color={color}
-                            size={36}
+                            color={'#d2792f'}
+                            size={30}
                         />
                     ),
                 }}

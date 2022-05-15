@@ -8,7 +8,7 @@ import {
     SafeAreaView,
     Text,
     TouchableOpacity,
-    View
+    View, FlatList
 } from 'react-native';
 import {fonts, format, deviceCard, modal} from '../style';
 import IconE from 'react-native-vector-icons/Entypo';
@@ -148,26 +148,37 @@ const Monitor = ({navigation, route}) => {
             updateLazyDiscoveredList();
         }
 
-        const mostRecentConnected = Array.from(connectedPeripherals.values())
-                                        .map(item => (
-                                            {
-                                                key: item['peripheral']['id'],
-                                                label: item['peripheral']['name'],
-                                                name: item['peripheral']['name'],
-                                                characteristic_values: item['characteristic_values']
-                                            }));
+        const mostRecentConnected = Array.from(connectedPeripherals.values());
         if(JSON.stringify(connectedPeripheralsList.current) !== JSON.stringify(mostRecentConnected)) {
-            //console.debug('important values changed, updating lazy connected peripherals list');
-            //console.debug('prev: ', connectedPeripheralsList.current);
-            //console.debug('next: ', mostRecentConnected);
+            console.debug('important values changed, updating lazy connected peripherals list');
+            console.debug('prev: ', connectedPeripheralsList.current);
+            console.debug('next: ', mostRecentConnected);
             connectedPeripheralsList.current = mostRecentConnected;
             updateLazyConnectedList();
+        } else {
+            // if we reach this, only the characteristic values are changing
+            // or there are no updates to process
+            //if(lazyConnectedList.length > 0) {
+                console.debug('\n\n\n');
+                console.debug('\n\n\n');
+                //console.debug('mostRecentConnected:', mostRecentConnected);
+                console.debug('connectedPeripherals:', connectedPeripherals);
+                console.debug('lazy connected list:', lazyConnectedList);
+
+
+                //console.debug('connectedPeripheralsList.current:', connectedPeripheralsList.current);
+                console.debug('\n\n\n');
+                console.debug('\n\n\n');
+            //}
+            //for(const peripheral in connectedPeripherals) {
+            //    console.log('ignored update on peripheral:', peripheral);
+            //}
+
         }
     }
 
     const updateLazyDiscoveredList = useCallback(
         () => {
-            //console.log('updated lazy discovered list');
             setLazyDiscoveredList(discoveredPeripheralsList.current);
         },
         [discoveredPeripheralsList.current],
@@ -175,16 +186,13 @@ const Monitor = ({navigation, route}) => {
 
     const updateLazyConnectedList = useCallback(
         () => {
-            //console.log('updated lazy connected list');
+            console.log('Set lazy list:', connectedPeripheralsList.current);
             setLazyConnectedList(connectedPeripheralsList.current);
-
-            if(connectedPeripheralsList.current.length === 1) {
-                setSelectedPeripheral(connectedPeripheralsList.current[0]);
-            }
         },
         [connectedPeripheralsList.current],
     );
 
+    // only used if auto-connect is enabled
     const connectPeripheral = (peripheral) => {
         if (peripheral && !connectedPeripherals.has(peripheral['id'])) {
             BleManager.isPeripheralConnected(peripheral['id'], [])
@@ -198,6 +206,7 @@ const Monitor = ({navigation, route}) => {
         }
     }
 
+    // connect using modal selector and device ID
     const connectPeripheralByID = (peripheralID) => {
         if (!connectedPeripherals.has(peripheralID)) {
             BleManager.isPeripheralConnected(peripheralID, [])
@@ -214,6 +223,10 @@ const Monitor = ({navigation, route}) => {
     const handleConnectedPeripheral = (event) => {
         BleManager.retrieveServices(event['peripheral']).then((peripheral) => {
             discoveredPeripherals.delete(peripheral['id']);
+
+            // strip rssi and other data that will cause unnecessary refreshes
+            // we would like only to receive characteristic updates
+
             connectedPeripherals.set(peripheral['id'], {
                 peripheral: peripheral,
                 characteristic_values: new Map()
@@ -225,8 +238,8 @@ const Monitor = ({navigation, route}) => {
                         readData = decodeCharBuffer(readData);
                         updateCharacteristicValue(peripheral['id'], charUUID, readData);
                     }).catch(error => {
-                    console.debug('BLE: Error reading ', error);
-                });
+                        console.debug('BLE: Error reading ', error);
+                    });
 
                 BleManager.startNotification(peripheral['id'], serviceUUID, charUUID).catch(error => {
                     console.debug('BLE: Error subscribing', error);
@@ -246,9 +259,7 @@ const Monitor = ({navigation, route}) => {
         }
     }
 
-    const handleStopScan = () => {
-        updatePeripheralLists();
-    };
+    const handleStopScan = () => updatePeripheralLists();
 
     const nameMatchesCUDA = (peripheral) => {
         return (peripheral &&
@@ -267,6 +278,8 @@ const Monitor = ({navigation, route}) => {
                 decodeCharBuffer(update['value']));
 
             updatePeripheralLists();
+
+            // use different function than updatePeripheralLists?
 
             // Define additional behavior on characteristic updates
             /*
@@ -339,10 +352,11 @@ const Monitor = ({navigation, route}) => {
         return deviceState;
     }
 
-    const SelectedPeripheral = () => {
+    const ConnectedPeripheral = ({peripheral}) => {
+        console.log(peripheral);
         const selectedPatient = "Noah";
-        const name = selectedPeripheral['name'];
-        const characteristicValues = selectedPeripheral['characteristic_values'];
+        const name = peripheral['peripheral']['name'];
+        const characteristicValues = peripheral['characteristic_values'];
         const deviceState = deviceStateFromCharacteristics(characteristicValues);
 
         const picoStatus = characteristicValues.get('picoStatus'),
@@ -450,14 +464,29 @@ const Monitor = ({navigation, route}) => {
     const toggleDiscoveredModal = () => setDiscoveredPeripheralsModal(!discoveredPeripheralsModal);
     const toggleConnectedModal = () => setConnectedPeripheralsModal(!connectedPeripheralsModal);
 
+    const PeripheralList = () => {
+        console.log('lazy connected list (src): ', lazyConnectedList);
+        return (
+            <FlatList
+                horizontal={true}
+                data={
+                    //dummyPeripheralList
+                    lazyConnectedList
+                }
+                extraData={lazyConnectedList}
+                renderItem={({item}) => <ConnectedPeripheral peripheral={item} />}
+                keyExtractor={(item) => item['peripheral']['id']}
+            />
+        );
+    }
 
     return (
-        <SafeAreaView style={{backgroundColor: '#222', flex: 1,}}>
+        <SafeAreaView style={{flex: 1,}}>
             <View style={format.page}>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                    <View style={{flexGrow: 0.5}}>
+                    <View style={{flexGrow: 0.95}}>
                         <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>
-                            Connectable Devices
+                            Connect new devices
                         </Text>
                         <TouchableOpacity  onPress={toggleDiscoveredModal}  style={format.modalSelector}>
                             <Text style={fonts.username}>
@@ -465,29 +494,13 @@ const Monitor = ({navigation, route}) => {
                                 {
                                     (discoveredPeripheralsList.current.length > 1 ||
                                      discoveredPeripheralsList.current.length === 0)
-                                     ? ' connectable devices' : ' connectable device'
+                                     ? ' available devices' : ' available device'
                                 }
                             </Text>
                             <IconE style={fonts.username} size={34}
                                    name={discoveredPeripheralsModal ? 'chevron-up' : 'chevron-down'}/>
                         </TouchableOpacity>
                     </View>
-                    {
-                        (connectedPeripheralsList.current.length > 0) &&
-                        <View style={{flexGrow: 0.5}}>
-                            <Text style={[fonts.username, {alignSelf: 'center', paddingVertical: 8}]}>
-                                Device to Monitor
-                            </Text>
-                            <TouchableOpacity  onPress={toggleConnectedModal}  style={format.modalSelector}>
-                                <Text style={fonts.username}>
-                                    {connectedPeripheralsList.current.length}
-                                    {connectedPeripheralsList.current.length > 1 ? ' connected devices' : ' connected device'}
-                                </Text>
-                                <IconE style={fonts.username} size={34}
-                                       name={connectedPeripheralsModal ? 'chevron-up' : 'chevron-down'} />
-                            </TouchableOpacity>
-                        </View>
-                    }
                 </View>
                 <ModalSelector
                     onChange={(selectedItem) => {
@@ -511,33 +524,7 @@ const Monitor = ({navigation, route}) => {
                     initValueTextStyle={modal.searchText}
                     searchTextStyle={modal.searchText}
                 />
-                <ModalSelector
-                    onChange={(selectedItem) => {
-                        setSelectedPeripheral(selectedItem);
-                        setConnectedPeripheralsModal(false);
-                    }}
-                    renderItem={<View />}
-                    customSelector={<View />}
-                    visible={connectedPeripheralsModal}
-                    data={lazyConnectedList}
-                    onCancel={() => toggleConnectedModal()}
-                    cancelText={'Cancel'}
-                    searchText={'Search by device name'}
-                    keyExtractor= {item => 'connected_' + item.id}
-                    overlayStyle={modal.overlay}
-                    optionContainerStyle={modal.container}
-                    optionTextStyle={modal.optionText}
-                    optionStyle={modal.option}
-                    cancelStyle={modal.cancelOption}
-                    cancelTextStyle={modal.cancelText}
-                    searchStyle={modal.searchBar}
-                    initValueTextStyle={modal.searchText}
-                    searchTextStyle={modal.searchText}
-                />
-                {
-                    selectedPeripheral !== null &&
-                    <SelectedPeripheral />
-                }
+                <PeripheralList />
             </View>
             <UserBar navigation={navigation} />
         </SafeAreaView>

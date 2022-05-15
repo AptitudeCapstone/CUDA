@@ -1,5 +1,30 @@
 import {StyleSheet} from 'react-native';
 
+export const floating = StyleSheet.create({
+    iconButtonIcon: {
+        color: '#eee',
+        alignSelf: 'center'
+    },
+    iconButton: {
+        width: 75,
+        height: 75,
+        alignContent: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        backgroundColor: '#131313',
+        borderColor: '#555',
+        borderRadius: 150,
+        marginTop: 15
+    },
+    actionBar: {
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        right: 30,
+        bottom: 30,
+    },
+});
+
 export const modal = StyleSheet.create({
     overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.9)'
@@ -68,8 +93,6 @@ export const format = StyleSheet.create({
         marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 20,
-        marginRight: 20,
         padding: 14,
         paddingLeft: 20,
         paddingRight: 20,
@@ -78,24 +101,14 @@ export const format = StyleSheet.create({
         borderColor: '#888',
         zIndex: -1,
     },
-    pageHeader: {
-        paddingVertical: 15,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingHorizontal: 40,
-        backgroundColor: '#131313',
-        borderTopColor: '#555',
-        borderTopWidth: 1
-    },
     iconButton: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
+        padding: 12,
         marginHorizontal: 20,
         flexDirection: 'row',
         justifyContent: 'center',
         borderWidth: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        borderColor: 'rgba(255, 255, 255, 0.4)',
+        backgroundColor: '#222',
+        borderColor: '#555',
         borderRadius: 15
     },
     horizontalBar: {
@@ -122,8 +135,7 @@ export const format = StyleSheet.create({
     },
     testSelectBar: {
         flexDirection: 'row',
-        padding: 20,
-        paddingTop: 30,
+        paddingBottom: 20,
         justifyContent: 'space-between'
     },
     selectPatientBarContainer: {
@@ -131,8 +143,6 @@ export const format = StyleSheet.create({
         marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 20,
-        marginRight: 20,
         padding: 14,
         paddingLeft: 20,
         paddingRight: 20,
@@ -149,8 +159,7 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
     },
     utilityPatientBarContainer: {
-        padding: 20,
-        paddingTop: 0,
+        paddingBottom: 20,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
@@ -158,7 +167,7 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         borderColor: '#888',
         borderWidth: 1,
-        borderRadius: 50,
+        borderRadius: 10,
         padding: 15,
         paddingTop: 3,
         paddingBottom: 3
