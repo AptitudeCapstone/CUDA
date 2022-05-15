@@ -13,7 +13,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4A1E8E04272BBD8200B3C447 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 4A1E8E03272BBD8200B3C447 /* fonts */; };
 		4A3ECE1F278A8B63004F01AE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A3ECE1E278A8B63004F01AE /* GoogleService-Info.plist */; };
-		4A9E51982734C35B00E37C38 /* CUDA-logos-zoom.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4A9E51972734C35B00E37C38 /* CUDA-logos-zoom.jpg */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		DCDF3B06D4A884EE8737B6AA /* libPods-CUDA-CUDATests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1E38588F18AE84DEEAFAFF /* libPods-CUDA-CUDATests.a */; };
 		DDDB9CF3D3ADD06E95FA837E /* libPods-CUDA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF7A08CA2FFFDD2A7D2995C1 /* libPods-CUDA.a */; };
@@ -45,7 +44,6 @@
 		3F1E38588F18AE84DEEAFAFF /* libPods-CUDA-CUDATests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CUDA-CUDATests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A1E8E03272BBD8200B3C447 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		4A3ECE1E278A8B63004F01AE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		4A9E51972734C35B00E37C38 /* CUDA-logos-zoom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "CUDA-logos-zoom.jpg"; sourceTree = "<group>"; };
 		4ABB6F8227C42CE40079351F /* CUDA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = CUDA.entitlements; path = CUDA/CUDA.entitlements; sourceTree = "<group>"; };
 		52F99896CD163AB6DB0FAD3A /* Pods-CUDA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CUDA.release.xcconfig"; path = "Target Support Files/Pods-CUDA/Pods-CUDA.release.xcconfig"; sourceTree = "<group>"; };
 		618356590F1F42B7B25D6393 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
@@ -114,7 +112,6 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				4A9E51972734C35B00E37C38 /* CUDA-logos-zoom.jpg */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -297,7 +294,6 @@
 				4A1E8E04272BBD8200B3C447 /* fonts in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				4A3ECE1F278A8B63004F01AE /* GoogleService-Info.plist in Resources */,
-				4A9E51982734C35B00E37C38 /* CUDA-logos-zoom.jpg in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
