@@ -9,6 +9,7 @@ import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-sign
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from "react-native-gesture-handler";
 import FastImage from 'react-native-fast-image';
+import { useWindowDimensions } from 'react-native';
 
 const UserBar = ({navigation}) => {
     const userInfo = useAuth();
@@ -97,6 +98,8 @@ const UserBar = ({navigation}) => {
         navigation.navigate('User Stack', {screen: 'Create Organization'});
     }
 
+    const { height, width } = useWindowDimensions();
+
     return (
         <View>
             <View style={floating.actionBar}>
@@ -124,6 +127,7 @@ const UserBar = ({navigation}) => {
             </View>
             <RBSheet
                 ref={modalRef}
+                height={height * 0.4}
                 customStyles={{
                     wrapper: {
                         backgroundColor: 'rgba(0, 0, 0, 0.1)'

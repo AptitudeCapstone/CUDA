@@ -176,8 +176,8 @@ export const format = StyleSheet.create({
 
 export const deviceCard = StyleSheet.create({
     container: {
-        marginTop: 'auto',
-        marginBottom: 'auto',
+        alignContent: 'center',
+        alignSelf: 'center',
     },
     device: {
         marginBottom: 25,
@@ -185,19 +185,38 @@ export const deviceCard = StyleSheet.create({
     header: {
         paddingHorizontal: 30,
         paddingVertical: 10,
-        borderTopRightRadius: 40,
-        borderTopLeftRadius: 40,
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
         borderLeftWidth: 1,
         borderRightWidth: 1,
         borderTopWidth: 1,
         borderColor: '#555',
         backgroundColor: '#222',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'center'
+    },
+    utilityBarContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingVertical: 10,
+    },
+    utilityBarButton: {
+        flexDirection: 'row',
+        flexGrow: 1,
+        marginHorizontal: 10,
+        justifyContent: 'space-around',
+        borderColor: '#888',
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 15,
+        paddingTop: 3,
+        paddingBottom: 3
     },
     body: {
-        borderBottomRightRadius: 40,
-        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 15,
+        borderBottomLeftRadius: 15,
+        paddingHorizontal: 25,
+        paddingBottom: 10,
         borderLeftWidth: 1,
         borderRightWidth: 1,
         borderBottomWidth: 1,
@@ -213,8 +232,8 @@ export const deviceCard = StyleSheet.create({
         fontWeight: 'bold'
     },
     characteristicText: {
-        fontSize: 18,
-        padding: 4,
+        fontSize: 20,
+        paddingVertical: 15,
         color: '#eee',
         textAlign: 'center',
         overflow: 'hidden',
