@@ -193,7 +193,7 @@ export const deviceCard = StyleSheet.create({
         borderColor: '#555',
         backgroundColor: '#222',
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'space-between'
     },
     utilityBarContainer: {
         flexDirection: 'row',

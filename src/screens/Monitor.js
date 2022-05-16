@@ -16,9 +16,9 @@ import FastImage from 'react-native-fast-image';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import UserBar from '../components/UserBar';
 import {useAuth} from '../contexts/UserContext';
-const Buffer = require("buffer").Buffer;
 import { BleManager } from 'react-native-ble-plx';
 import IconF from "react-native-vector-icons/Feather";
+const Buffer = require("buffer").Buffer;
 
 export const manager = new BleManager();
 
@@ -46,7 +46,7 @@ const Monitor = ({navigation}) => {
         [discoveredNamesArray, setDiscoveredNamesArray] = useState(() => []),
         [deviceCardsArray, setDeviceCardsArray] = useState(() => []),
         [showingDiscoveredList, setShowingDiscoveredList] = useState(() => false),
-        autoConnectByName = useRef(false),
+        autoConnectByName = useRef(true),
         playerRef = useRef();
 
     /*
@@ -65,37 +65,39 @@ const Monitor = ({navigation}) => {
         return () => subscription.remove();
     }, [manager]);
 
+    const jsonFromBytes = (bytes) => {
+        // decode base64 string
+        const b64buf = new Buffer(bytes, 'base64');
+        // encode as ascii, return
+        const str = b64buf.toString('ascii');
+        // parse as object
+        return JSON.parse(str);
+    }
+
     async function subscribeToAll(device) {
-        console.log('subbing to updates on device actions');
         device.monitorCharacteristicForService(serviceUUID,
             '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
             async (error, characteristic) => {
                 if (!error && characteristic.value) {
                     try {
-                        const resStatus = await device.readCharacteristicForService(serviceUUID,
+                        // read the other 2 characteristics when status update is received
+                        const status = await device.readCharacteristicForService(serviceUUID,
                             '04CB0EB1-8B58-44D0-91E4-080AF33438BD');
-                        const resData = await device.readCharacteristicForService(serviceUUID,
+                        const data = await device.readCharacteristicForService(serviceUUID,
                             '04CB0EB1-8B58-44D0-91E4-080AF33438Bb');
 
-                        // convert from base64 -> ascii -> json object as map
-                        let bytes = characteristic.value;
-                        let b64buf = new Buffer(bytes, 'base64');
-                        const actionStr = b64buf.toString('ascii');
-                        bytes = resStatus.value;
-                        b64buf = new Buffer(bytes, 'base64');
-                        const statusStr = b64buf.toString('ascii');
-                        bytes = resData.value;
-                        b64buf = new Buffer(bytes, 'base64');
-                        const dataStr = b64buf.toString('ascii');
+                        const update = {
+                            'action': jsonFromBytes(characteristic.value),
+                            'status': jsonFromBytes(status.value),
+                            'data': jsonFromBytes(data.value)
+                        };
 
-                        const deviceInfo = {'action': actionStr, 'status': statusStr, 'data': JSON.parse(dataStr)};
-                        //console.log(JSON.stringify({'id':device.id, 'name':device.name, 'info': jObj}, null, 4));
-                        updateConnectedReaders(device.id, device.name, deviceInfo);
+                        updateConnectedReaders(device.id, device.name, update);
                     } catch (error) {
                         console.debug(error);
                     }
                 } else {
-                    console.log(error.message)
+                    console.debug(error.message)
                 }
         });
     }
@@ -108,7 +110,7 @@ const Monitor = ({navigation}) => {
                 return device.discoverAllServicesAndCharacteristics();
             })
             .then((device) => {
-                console.log("Subscribing");
+                console.log("Subscribing to device actions");
                 return subscribeToAll(device);
             })
             .then(() => {
@@ -134,7 +136,7 @@ const Monitor = ({navigation}) => {
                     updateDiscoveredReaders(device.id, device.name,
                         '{"reader":"not connected"}',);
 
-                    if(autoConnectByName) {
+                    if(autoConnectByName.current) {
                         console.log("Found reader", device.name);
                         connectToDevice(device);
                     }
@@ -145,6 +147,7 @@ const Monitor = ({navigation}) => {
     const updateDiscoveredReaders = (id, name, status) => {
         let tObj = discoveredReaders;
         tObj[id] = {name: name, status: status};
+
         if(JSON.stringify(tObj[id]) !== JSON.stringify(discoveredReaders[id])) {
             setDiscoveredReaders(tObj);
         }
@@ -166,7 +169,6 @@ const Monitor = ({navigation}) => {
         console.log('newest connected readers data:',
             JSON.stringify(tObj, null, 4)
             , '\n\n\n');
-
          */
     }
 
@@ -195,143 +197,169 @@ const Monitor = ({navigation}) => {
 
     }
 
-    /*
-        covid heating
-        {"status":"ok","data":{"wifi":"client","bt":"running","pico":"waiting","heater":"ready","measurement":{"remainingTime":1800,"started":true,"reason":"Wait for Heating to 65"},"reader":"running"},"action":"status.getModuleStatus"}
-
-        covid running
-        {"status":"ok","data":{"wifi":"client","bt":"running","pico":"running","heater":"ready","measurement":{"remainingTime":1794.8793834239987,"started":true,"reason":null},"reader":"running"},"action":"status.getModuleStatus"}
-
-        covid finished
-
-     */
-
     const MemoDeviceCard = React.memo(DeviceCard, cardPropsAreEqual);
 
     function cardPropsAreEqual(prevCard, nextCard) {
-        return prevCard['action'] === nextCard['action']
-            && prevCard['data'] === nextCard['data'];
+        return (
+            prevCard['name'] === nextCard['name'] &&
+            prevCard['action'] === nextCard['action'] &&
+            prevCard['data'] === nextCard['data'] &&
+            prevCard['status'] === nextCard['status']
+        ) === true;
     }
+
+    const cardStyle = (connectedReaders.size > 1) ?
+        {
+            width: dimensions.width * 0.25,
+            marginLeft: dimensions.width * 0.125,
+            marginRight: dimensions.width * 0.125,
+        } :
+        {
+
+        };
 
     function DeviceCard (props) {
         const {name, action, status, data} = props;
-
-
         const selectedPatient = "Noah";
-        //console.log(action, status, data);
-        console.log('rending ' + name + '\n' +
-            JSON.stringify({'action':action,'status:':status,'data':data}, null, 4))
 
-        return <View />;
+        const err = (!name || !action || !status || !data || data['reader'] === '{}');
 
-        const cardStyle = (connectedReaders.size > 1) ?
-            {
-                width: dimensions.width * 0.25,
-                marginLeft: dimensions.width * 0.125,
-                marginRight: dimensions.width * 0.125,
-            } :
-            {
+        if(err) {
+            // reader is initializing, hasnt sent update yet, corrupt update received, etc.
+            return (
+                <View style={[deviceCard.container, cardStyle]}>
+                    <View style={deviceCard.device}>
+                        <View style={deviceCard.header}>
+                            <Text style={deviceCard.nameText}>{name}</Text>
+                            <ActivityIndicator size={'large'}/>
+                        </View>
+                        <View style={deviceCard.body}>
+                            <View style={deviceCard.utilityBarContainer}>
+                                <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                    <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                                    <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={deviceCard.characteristicText}>
+                                Attempting to reconnect
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            );
+        } else {
+            const infoStr = JSON.stringify({
+                    'action':action,
+                    'status:':status,
+                    'data':data},
+                null,
+                4);
 
-            };
+            console.log('rendering device card for device ' + name + ' with info: \n' +
+                infoStr
+            );
 
-        const ComponentForDeviceState = () => {
+            if(status === 'ok') {
+                const reader = data['reader'];
+                const {wifi, bt, pico, heater, measurement} = data;
+                const remainingTime = measurement?.remainingTime;
+                const chipType = measurement?.chipType;
+                const reason = measurement?.reason;
 
-            const reader = data['reader'];
-
-            if(reader === 'not connected' || reader === 'fetching data')
-                return;
-
-            const {wifi, bt, pico, heater, measurement} = data;
-            const remainingTime = measurement?.remainingTime;
-            const chipType = measurement?.chipType;
-            const reason = measurement?.reason;
-            //console.log(JSON.stringify(data, null, 4));
-
-            if(reader === 'idle') {
-                return(
-                    <Text style={deviceCard.characteristicText}>
-                        The device is ready and waiting for a sample
-                    </Text>
-                );
-            } else if(reader === 'running') {
-                if(remainingTime) {
-                    if(pico === 'waiting') {
-                        if(reason.toString().includes('Heating')) {
-                            return(
-                                <Text style={deviceCard.characteristicText}>
-                                    Please wait while the device warms up
-                                </Text>
+                if(reader === 'idle') {
+                    return (
+                        <View style={[deviceCard.container, cardStyle]}>
+                            <View style={deviceCard.device}>
+                                <View style={deviceCard.header}>
+                                    <Text style={deviceCard.nameText}>{name}</Text>
+                                    <IconA name='checkcircleo' size={34} style={{color: '#29c436', marginTop: 6}}/>
+                                </View>
+                                <View style={deviceCard.body}>
+                                    <View style={deviceCard.utilityBarContainer}>
+                                        <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                            <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                                            <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                            <Text style={fonts.mediumText}>Disconnect</Text>
+                                            <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Text style={deviceCard.characteristicText}>
+                                        The device is ready and waiting for a sample
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    );
+                } else if(reader === 'running') {
+                    if(remainingTime) {
+                        if(pico === 'waiting') {
+                            if(reason.toString().includes('Heating')) {
+                                return(
+                                    <Text style={deviceCard.characteristicText}>
+                                        Please wait while the device warms up
+                                    </Text>
+                                );
+                            }
+                        } else {
+                            return (
+                                <CountdownCircleTimer
+                                    isPlaying
+                                    duration={() => {
+                                        if (chipType === 0) {
+                                            return 0;
+                                        } else if (chipType === 6) {
+                                            return 30;
+                                        } else if (chipType === 7) {
+                                            return 1800;
+                                        } else {
+                                            return 1800;
+                                        }
+                                    }}
+                                    initialRemainingTime={remainingTime}
+                                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                    colorsTime={[48, 24, 16, 0]}
+                                >
+                                    {({remainingTime}) => <Text>{remainingTime}</Text>}
+                                </CountdownCircleTimer>
                             );
                         }
                     } else {
                         return (
-                            <CountdownCircleTimer
-                                isPlaying
-                                duration={() => {
-                                    if (chipType === 0) {
-                                        return 0;
-                                    } else if (chipType === 6) {
-                                        return 30;
-                                    } else if (chipType === 7) {
-                                        return 1800;
-                                    } else {
-                                        return 1800;
-                                    }
-                                }}
-                                initialRemainingTime={remainingTime}
-                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                                colorsTime={[48, 24, 16, 0]}
-                            >
-                                {({remainingTime}) => <Text>{remainingTime}</Text>}
-                            </CountdownCircleTimer>
+                            <Text style={deviceCard.characteristicText}>{'chip type: ' + chipType + ', \ntime remaining: ' +
+                            remainingTime + ', \npico status: ' + pico}</Text>
                         );
                     }
-                } else {
-                    return (
-                        <Text style={deviceCard.characteristicText}>{'chip type: ' + chipType + ', \ntime remaining: ' +
-                        remainingTime + ', \npico status: ' + pico}</Text>
-                    );
                 }
             } else {
-                ///console.log('reader state unrecognized:', reader);
-                ///console.log('reader state unrecognized:', reader);
-                ///console.log('reader state unrecognized:', reader);
-                ///console.log('reader state unrecognized:', reader);
-                ///console.log('reader state unrecognized:', reader);
-
+                // reader status is not ok (means error state on reader)
                 return (
-                    <View>
-                        <Text style={deviceCard.characteristicText}>
-                            Attempting to reconnect
-                        </Text>
-                        <ActivityIndicator style={{marginVertical: 20}} size={'large'}/>
+                    <View style={[deviceCard.container, cardStyle]}>
+                        <View style={deviceCard.device}>
+                            <View style={deviceCard.header}>
+                                <Text style={deviceCard.nameText}>{name}</Text>
+                            </View>
+                            <View style={deviceCard.body}>
+                                <View style={deviceCard.utilityBarContainer}>
+                                    <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                        <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                                        <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                        <Text style={fonts.mediumText}>Disconnect</Text>
+                                        <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text style={deviceCard.characteristicText}>
+                                    Error: {JSON.stringify(status)}
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 );
             }
         }
-
-        return (
-            <View style={[deviceCard.container, cardStyle]}>
-                <View style={deviceCard.device}>
-                    <View style={deviceCard.header}>
-                        <Text style={deviceCard.nameText}>{name}</Text>
-                    </View>
-                    <View style={deviceCard.body}>
-                        <View style={deviceCard.utilityBarContainer}>
-                            <TouchableOpacity style={deviceCard.utilityBarButton}>
-                                <Text style={fonts.mediumText}>Assign patient for next result</Text>
-                                <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={deviceCard.utilityBarButton}>
-                                <Text style={fonts.mediumText}>Disconnect</Text>
-                                <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
-                            </TouchableOpacity>
-                        </View>
-                        <ComponentForDeviceState />
-                    </View>
-                </View>
-            </View>
-        );
     }
 
     const toggleDiscoveredModal = () => setShowingDiscoveredList(!showingDiscoveredList);
@@ -342,7 +370,7 @@ const Monitor = ({navigation}) => {
                 data={deviceCardsArray}
                 extraData={deviceCardsArray}
                 renderItem={({item}) =>
-                    <DeviceCard
+                    <MemoDeviceCard
                         name={item['name']}
                         action={item['deviceInfo']['action']}
                         status={item['deviceInfo']['status']}
