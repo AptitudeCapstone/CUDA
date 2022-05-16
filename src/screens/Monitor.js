@@ -65,24 +65,39 @@ const Monitor = ({navigation}) => {
         return () => subscription.remove();
     }, [manager]);
 
-     async function subscribe(device) {
-            device.monitorCharacteristicForService(serviceUUID, '04CB0EB1-8B58-44D0-91E4-080AF33438BA', (error, characteristic) => {
+    async function subscribeToAll(device) {
+        console.log('subbing to updates on device actions');
+        device.monitorCharacteristicForService(serviceUUID,
+            '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
+            async (error, characteristic) => {
                 if (!error && characteristic.value) {
-                    // convert from base64 -> ascii -> json object as map
-                    const bytes = characteristic.value;
-                    const b64buf = new Buffer(bytes, 'base64');
-                    const aStr = b64buf.toString('ascii');
                     try {
-                        console.log('json str:', aStr);
-                        const jObj = JSON.parse(aStr);
-                        updateConnectedReaders(device.id, device.name, jObj);
-                    } catch(error) {
-                        console.debug('invalid json packet received')
+                        const resStatus = await device.readCharacteristicForService(serviceUUID,
+                            '04CB0EB1-8B58-44D0-91E4-080AF33438BD');
+                        const resData = await device.readCharacteristicForService(serviceUUID,
+                            '04CB0EB1-8B58-44D0-91E4-080AF33438Bb');
+
+                        // convert from base64 -> ascii -> json object as map
+                        let bytes = characteristic.value;
+                        let b64buf = new Buffer(bytes, 'base64');
+                        const actionStr = b64buf.toString('ascii');
+                        bytes = resStatus.value;
+                        b64buf = new Buffer(bytes, 'base64');
+                        const statusStr = b64buf.toString('ascii');
+                        bytes = resData.value;
+                        b64buf = new Buffer(bytes, 'base64');
+                        const dataStr = b64buf.toString('ascii');
+
+                        const deviceInfo = {'action': actionStr, 'status': statusStr, 'data': JSON.parse(dataStr)};
+                        //console.log(JSON.stringify({'id':device.id, 'name':device.name, 'info': jObj}, null, 4));
+                        updateConnectedReaders(device.id, device.name, deviceInfo);
+                    } catch (error) {
+                        console.debug(error);
                     }
                 } else {
                     console.log(error.message)
                 }
-            })
+        });
     }
 
     const connectToDevice = (device) => {
@@ -94,7 +109,7 @@ const Monitor = ({navigation}) => {
             })
             .then((device) => {
                 console.log("Subscribing");
-                return subscribe(device);
+                return subscribeToAll(device);
             })
             .then(() => {
                 console.log("Listening...");
@@ -116,19 +131,20 @@ const Monitor = ({navigation}) => {
                 }
 
                 if (device.name.includes('AMS-')) {
-                    updateDiscoveredReaders(device.id, device.name, '{"reader":"not connected"}');
+                    updateDiscoveredReaders(device.id, device.name,
+                        '{"reader":"not connected"}',);
 
                     if(autoConnectByName) {
-                        console.log("Found reader to reader", device.name);
+                        console.log("Found reader", device.name);
                         connectToDevice(device);
                     }
                 }
             });
     }
 
-    const updateDiscoveredReaders = (id, name, statuses) => {
+    const updateDiscoveredReaders = (id, name, status) => {
         let tObj = discoveredReaders;
-        tObj[id] = {name: name, statuses: statuses};
+        tObj[id] = {name: name, status: status};
         if(JSON.stringify(tObj[id]) !== JSON.stringify(discoveredReaders[id])) {
             setDiscoveredReaders(tObj);
         }
@@ -136,7 +152,8 @@ const Monitor = ({navigation}) => {
         let tArray = Array.from(Object.entries(discoveredReaders)
             .map((key, val) => (({
                 id: key,
-                name: val.name})))
+                name: val.name
+            })))
         );
 
         if(JSON.stringify(tArray) !== JSON.stringify(discoveredNamesArray)) {
@@ -153,30 +170,27 @@ const Monitor = ({navigation}) => {
          */
     }
 
-    const updateConnectedReaders = (id, name, statuses) => {
+    const updateConnectedReaders = (id, name, deviceInfo) => {
          // copy value of object and update it
         let tObj = connectedReaders;
-        tObj[id] = {name: name, statuses: statuses};
+        tObj[id] = {name: name, deviceInfo: deviceInfo};
         if(JSON.stringify(tObj[id]) !== JSON.stringify(connectedReaders[id])) {
             setConnectedReaders(tObj);
         }
 
-
-        console.log('newest connected readers data:',
-            JSON.stringify(tObj, null, 4)
-            , '\n\n\n================\n\n\n');
-
-        let tArray = Array.from(
-                        Object.entries(connectedReaders)
-                    .map(
-                        (item) => ({
-                        id: item[0],
-                        name: item[1]['name'],
-                        statuses: item[1]['statuses']}))
+        let tArray = Array.from(Object.entries(connectedReaders)
+                    .map((item) =>
+                        ({
+                            id: item[0],
+                            name: item[1]['name'],
+                            deviceInfo: item[1]['deviceInfo'],
+                        })
+                    )
         );
 
         if(JSON.stringify(tArray) !== JSON.stringify(deviceCardsArray)) {
             setDeviceCardsArray(tArray);
+            //console.log(JSON.stringify(tArray, null, 4));
         }
 
     }
@@ -200,10 +214,15 @@ const Monitor = ({navigation}) => {
     }
 
     function DeviceCard (props) {
-        const {name, statuses} = props;
-        const selectedPatient = "Noah";
-        const ref = useRef(null);
+        const {name, action, status, data} = props;
 
+
+        const selectedPatient = "Noah";
+        //console.log(action, status, data);
+        console.log('rending ' + name + '\n' +
+            JSON.stringify({'action':action,'status:':status,'data':data}, null, 4))
+
+        return <View />;
 
         const cardStyle = (connectedReaders.size > 1) ?
             {
@@ -216,84 +235,79 @@ const Monitor = ({navigation}) => {
             };
 
         const ComponentForDeviceState = () => {
-            const reader = statuses['reader'];
+
+            const reader = data['reader'];
 
             if(reader === 'not connected' || reader === 'fetching data')
                 return;
 
-            const {wifi, bt, pico, heater, measurement} = statuses;
+            const {wifi, bt, pico, heater, measurement} = data;
             const remainingTime = measurement?.remainingTime;
             const chipType = measurement?.chipType;
             const reason = measurement?.reason;
+            //console.log(JSON.stringify(data, null, 4));
 
-                console.log('\n\n\nwifi:', wifi);
-                console.log('bt:', bt);
-                console.log('pico:', pico);
-                console.log('heater:', heater);
-                console.log('remainingTime:', remainingTime);
-                console.log('chipType:', chipType);
-                console.log('reason:', reason);
-                console.log('reader:', reader);
-                console.log('\n\n\n');
-
-                //console.log(JSON.stringify(data, null, 4));
-                if(reader === 'idle') {
-                    return(
-                        <Text style={deviceCard.characteristicText}>
-                            The device is ready and waiting for a sample
-                        </Text>
-                    );
-                } else {
-
-                    if(remainingTime) {
-                        if(pico === 'waiting') {
-                            if(reason.toString().includes('Heating')) {
-                                return(
-                                    <Text style={deviceCard.characteristicText}>
-                                        Please wait while the device warms up
-                                    </Text>
-                                );
-                            }
-                        } else {
-                            return (
-                                <CountdownCircleTimer
-                                    isPlaying
-                                    duration={() => {
-                                        if (chipType === 0) {
-                                            return 0;
-                                        } else if (chipType === 6) {
-                                            return 300;
-                                        } else if (chipType === 7) {
-                                            return 1800;
-                                        } else {
-                                            return 1800;
-                                        }
-                                    }}
-                                    initialRemainingTime={remainingTime}
-                                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                                    colorsTime={[48, 24, 16, 0]}
-                                >
-                                    {({remainingTime}) => <Text>{remainingTime}</Text>}
-                                </CountdownCircleTimer>
+            if(reader === 'idle') {
+                return(
+                    <Text style={deviceCard.characteristicText}>
+                        The device is ready and waiting for a sample
+                    </Text>
+                );
+            } else if(reader === 'running') {
+                if(remainingTime) {
+                    if(pico === 'waiting') {
+                        if(reason.toString().includes('Heating')) {
+                            return(
+                                <Text style={deviceCard.characteristicText}>
+                                    Please wait while the device warms up
+                                </Text>
                             );
                         }
                     } else {
                         return (
-                            <Text style={deviceCard.characteristicText}>{'chip type: ' + chipType + ', \ntime remaining: ' +
-                            remainingTime + ', \npico status: ' + pico}</Text>
+                            <CountdownCircleTimer
+                                isPlaying
+                                duration={() => {
+                                    if (chipType === 0) {
+                                        return 0;
+                                    } else if (chipType === 6) {
+                                        return 30;
+                                    } else if (chipType === 7) {
+                                        return 1800;
+                                    } else {
+                                        return 1800;
+                                    }
+                                }}
+                                initialRemainingTime={remainingTime}
+                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                colorsTime={[48, 24, 16, 0]}
+                            >
+                                {({remainingTime}) => <Text>{remainingTime}</Text>}
+                            </CountdownCircleTimer>
                         );
                     }
+                } else {
+                    return (
+                        <Text style={deviceCard.characteristicText}>{'chip type: ' + chipType + ', \ntime remaining: ' +
+                        remainingTime + ', \npico status: ' + pico}</Text>
+                    );
                 }
+            } else {
+                ///console.log('reader state unrecognized:', reader);
+                ///console.log('reader state unrecognized:', reader);
+                ///console.log('reader state unrecognized:', reader);
+                ///console.log('reader state unrecognized:', reader);
+                ///console.log('reader state unrecognized:', reader);
 
-
-            return (
-                <View>
-                    <Text style={deviceCard.characteristicText}>
-                        Attempting to reconnect
-                    </Text>
-                    <ActivityIndicator size={'large'} />
-                </View>
-            );
+                return (
+                    <View>
+                        <Text style={deviceCard.characteristicText}>
+                            Attempting to reconnect
+                        </Text>
+                        <ActivityIndicator style={{marginVertical: 20}} size={'large'}/>
+                    </View>
+                );
+            }
         }
 
         return (
@@ -327,7 +341,14 @@ const Monitor = ({navigation}) => {
                 horizontal={true}
                 data={deviceCardsArray}
                 extraData={deviceCardsArray}
-                renderItem={({item}) => <DeviceCard name={item['name']} statuses={item['statuses']} />}
+                renderItem={({item}) =>
+                    <DeviceCard
+                        name={item['name']}
+                        action={item['deviceInfo']['action']}
+                        status={item['deviceInfo']['status']}
+                        data={item['deviceInfo']['data']}
+                    />
+                }
             />
         );
 
