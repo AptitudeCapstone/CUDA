@@ -6,23 +6,22 @@ import {
     Text,
     TouchableOpacity,
     View,
-    FlatList, ActivityIndicator, VirtualizedList, ScrollView, Alert
+    FlatList,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import {fonts, format, deviceCard, modal} from '../style';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconA from 'react-native-vector-icons/AntDesign';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import FastImage from 'react-native-fast-image';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import UserBar from '../components/UserBar';
 import {useAuth} from '../contexts/UserContext';
 import { BleManager } from 'react-native-ble-plx';
 import IconF from "react-native-vector-icons/Feather";
+
 const Buffer = require("buffer").Buffer;
-
 export const manager = new BleManager();
-
-
 
 const Monitor = ({navigation}) => {
     const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
@@ -34,30 +33,12 @@ const Monitor = ({navigation}) => {
         [discoveredNamesArray, setDiscoveredNamesArray] = useState(() => []),
         [showingDiscoveredList, setShowingDiscoveredList] = useState(() => false),
         [listUpdater, setListUpdater] = useState(() => false),
-        autoConnectByName = useRef(true),
-        bigLayout = Platform.isPad,
-        dimensions = useWindowDimensions();
-
-
-    /*
-         Reader advertisement data
-         -  Single BLE service
-            uuid: 'ab173c6c-8493-412d-897c-1974fa74fc13'
-            3 characteristics each with a descriptor: action, status, data
-         Routine:
-         -  Subscribes to actions characteristic updates
-            When update occurs, update device info with the most
-            recent value of all 3 characteristic values
-         Data format:
-         -  All are JSON-parseable strings
-         -  Characteristic values are  are received as base64
-    */
+        autoConnectByName = useRef(true);
 
     useEffect(() => {
         const subscription = manager.onStateChange((state) => {
             if (state === 'PoweredOn') {
-                manager.startDeviceScan(null,
-                    null, (error, device) => {
+                manager.startDeviceScan(null, null, (error, device) => {
                         if (error || !device || !device?.name) {
                             if(error) console.log(error.message);
                         } else if (device.name.includes('AMS-')) {
@@ -66,28 +47,23 @@ const Monitor = ({navigation}) => {
                                     try {
                                         // if device is not connected and matches the naming pattern
                                         // this is called every time it is scanned
-                                        if (connected) {
-                                            throw new Error('Peripheral already connected');
-                                        }
-
-                                        if (autoConnectByName.current) {
-                                            device.connect()
-                                                .then((device) => {
+                                        if (!connected) {
+                                            if (autoConnectByName.current) {
+                                                device.connect().then((device) => {
                                                     console.log('Automatically connecting to ', device.name);
                                                     return device.discoverAllServicesAndCharacteristics();
                                                 }).then((device) => {
-                                                    console.log('Attempting subscription to device action updates');
+                                                    console.log('Attempting subscription to action updates');
                                                     return subscribeToService(device);
                                                 });
-                                        } else {
-                                            console.log('Automatic connections disabled, adding to available devices:',
-                                                device.name);
-                                            updateDiscoveredReaders(device.id, device.name);
+                                            } else {
+                                                console.log('Adding to available devices:', device.name);
+                                                updateDiscoveredReaders(device.id, device.name);
+                                            }
                                         }
                                     } catch (error) {
                                         console.log('Device found or error connecting:', error)
                                     }
-
                                 })
                         }
                     });
@@ -98,9 +74,7 @@ const Monitor = ({navigation}) => {
     }, [manager]);
 
     const jsonFromBytes = (bytes) => {
-        /*  decode base64 string
-            encode as ascii
-            return parsed object */
+        // decode base64 string, encode as ascii, return parsed object
         const b64buf = new Buffer(bytes, 'base64');
         const str = b64buf.toString('ascii');
         return JSON.parse(str);
@@ -132,6 +106,7 @@ const Monitor = ({navigation}) => {
     }
 
     const connectToDeviceByID = (deviceID) => {
+        setShowingDiscoveredList(false);
         manager.connectToDevice(deviceID)
             .then((device) => {
                 return device.discoverAllServicesAndCharacteristics();
@@ -158,18 +133,9 @@ const Monitor = ({navigation}) => {
                         const action = jsonFromBytes(characteristic.value);
                         const status = jsonFromBytes(statusRes.value);
                         const data = jsonFromBytes(dataRes.value);
-                        const update = {'action': action, 'status': status, 'data': data};
-
-                        //console.log('update received:\n', JSON.stringify(update, null, 4));
-
-                        if(action === 'dataProcess.finishedTest') {
-                            Alert.alert('Test result received', JSON.stringify(update['data'], null, 4))
-                        }
-
-                        const tempConnectedReaders = new Map(connectedReaders);
-                        tempConnectedReaders[device.id] = {name: device.name, lastUpdate: update};
-                        setConnectedReaders(tempConnectedReaders);
-                        updateList();
+                        console.log('update received: ', action);
+                        //console.log(JSON.stringify(data, null, 4));
+                        handleUpdate(device, action, status, data);
                     } catch (error) {
                         console.debug(error);
                     }
@@ -179,49 +145,98 @@ const Monitor = ({navigation}) => {
             });
     }
 
-    const MemoDeviceCard = React.memo(DeviceCard,
-        (prevCard, nextCard) =>
-            (prevCard['name'] === nextCard['name'] &&
-            prevCard['lastUpdate'] === nextCard['lastUpdate']) === true
-    );
+    const handleUpdate = (device, action, status, data) => {
+        // update map of connected readers
+        const tempConnectedReaders = new Map(connectedReaders);
+        tempConnectedReaders[device.id] = {name: device.name, id: device.id,
+            lastStatus: status, lastAction: action, lastData: data};
 
-    const cardStyle = (connectedReaders.size > 1) ?
-        {
-            width: dimensions.width * 0.25,
-            marginLeft: dimensions.width * 0.125,
-            marginRight: dimensions.width * 0.125,
-        } : {};
+        switch(action) {
+            case 'dataProcess.finishedTest':
+                Alert.alert('Test result received', JSON.stringify(data, null, 4));
+                break;
+            case 'dataProcess.aborted':
+                Alert.alert('Test was aborted or result was bad', JSON.stringify(data, null, 4));
+                break;
+            case 'measurement.fluidPrefillError':
+                Alert.alert('Fibrinogen test collector was prefilled', JSON.stringify(data, null, 4));
+                break;
+            case 'measurement.testStarted':
+                Alert.alert('Test started', JSON.stringify(data, null, 4));
+            case 'measurementModule.abortTest':
+                Alert.alert('Test aborted', JSON.stringify(data, null, 4));
+                break;
+            case 'measurementModule.fluidFillChannels':
+                Alert.alert('Test aborted', JSON.stringify(data, null, 4));
+                break;
+            case 'measurementModule.abnormalScanChannels':
+                Alert.alert('Abnormal scan channels', JSON.stringify(data, null, 4));
+                break;
+            case 'status.reportStatus':
+                setConnectedReaders(tempConnectedReaders);
+                updateList();
+                break;
+            default:
+                Alert.alert('Unrecognized action received', action);
+        }
+    }
 
-    const ConnectedHeader = ({name}) => (
-        <View style={deviceCard.header}>
-            <View style={{flexDirection: 'row', alignContent: 'center'}}>
-                <IconA name='checkcircleo' size={34} style={{marginRight: 20, alignSelf: 'center', justifyContent: 'center', color: '#29c436',}}/>
-                <Text style={deviceCard.nameText}>{name}</Text>
-            </View>
-            <View style={deviceCard.utilityBarContainer}>
-                <TouchableOpacity style={deviceCard.utilityBarButton}>
-                    <Text style={fonts.mediumText}>Assign patient for next result</Text>
-                    <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
-                </TouchableOpacity>
-                <TouchableOpacity style={deviceCard.utilityBarButton}>
-                    <Text style={fonts.mediumText}>Disconnect</Text>
-                    <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+    const DeviceCard = React.memo(Card);
 
-    const DisconnectedHeader = ({name}) => (
-        <View style={deviceCard.header}>
-            <Text style={deviceCard.nameText}>{name}</Text>
-            <ActivityIndicator size={'large'} />
-        </View>
-    );
-
+    function Card (props) {
+        const dimensions = useWindowDimensions();
+        const {id, name, lastAction, lastStatus, lastData} = props;
+        if (lastStatus === 'ok') {
+            return (
+                <View style={[deviceCard.container, {flex: 1, justifyContent: 'center', margin: -22,}]}>
+                    <View style={{flexGrow: 1,padding:44,width: dimensions.width,}}>
+                        <View style={deviceCard.header}>
+                            <View style={{flexDirection: 'row', alignContent: 'center'}}>
+                                <IconA name='checkcircleo' size={34} style={{marginRight: 20, alignSelf: 'center', justifyContent: 'center', color: '#29c436',}}/>
+                                <Text style={deviceCard.nameText}>{name}</Text>
+                            </View>
+                            <View style={deviceCard.utilityBarContainer}>
+                                <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                    <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                                    <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <StatusOKBody style={{width: dimensions.width}} action={lastAction} data={lastData} />
+                    </View>
+                </View>
+            );
+        } else {
+            return (
+                <View style={[deviceCard.container, {flex: 1, justifyContent: 'center', margin: -22,}]}>
+                    <View style={{flexGrow: 1, padding: 44, width: dimensions.width,}}>
+                        <View style={deviceCard.header}>
+                            <Text style={deviceCard.nameText}>{name}</Text>
+                            <ActivityIndicator size={'large'}/>
+                        </View>
+                        <View style={deviceCard.body}>
+                            <View style={deviceCard.utilityBarContainer}>
+                                <TouchableOpacity style={deviceCard.utilityBarButton}>
+                                    <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                                    <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={deviceCard.characteristicText}>
+                                Error: {JSON.stringify({
+                                'action': lastAction,
+                                'status': lastStatus,
+                                'data': lastData
+                            })}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            );
+        }
+    }
 
     const StatusOKBody = ({action, data}) => {
-        console.log('drawing status ok body:\n, ' +
-            JSON.stringify({'action':action, 'data':data}));
+        //console.log('drawing status ok body: \n     ' + JSON.stringify({'action':action, 'data':data}, null, 4));
 
         if(action === 'status.reportStatus') {
             const {wifi, bt, pico, heater, measurement} = data;
@@ -232,23 +247,19 @@ const Monitor = ({navigation}) => {
             //console.log('status report update drawn for data:\n', JSON.stringify(data, null, 4));
 
             let component = <View />;
-            let colors = {
 
-            }
-
-            if(chipType === 0) {
-                component =
-                    <Text style={deviceCard.characteristicText}>
-                        The reader is waiting for a new sample
-                    </Text>;
+            if(pico === 'idle') {
+                if(!chipType || chipType === '0')
+                    component =
+                        <Text style={deviceCard.characteristicText}>The reader is waiting for a new sample</Text>;
+                else
+                    component =
+                        <Text style={deviceCard.characteristicText}>The sample can be removed</Text>;
             } else {
                 if(reason) {
                     if (pico === 'waiting') {
                         if(reason.toString().includes('Heating')) {
-                            component =
-                                <Text style={deviceCard.characteristicText}>
-                                    Please wait while the device warms up
-                                </Text>;
+                            component = <Text style={deviceCard.characteristicText}>Please wait while the device warms up</Text>;
                         } else if(reason.toString().includes('Fluid')) {
                             let abnormalChannels = [];
                             ['C1', 'C2', 'C3', 'C4'].forEach((channel) => {
@@ -256,18 +267,16 @@ const Monitor = ({navigation}) => {
                                     abnormalChannels.push(channel);
                                 }
                             });
-
-                            component =
-                                <View>
-                                    <Text style={deviceCard.characteristicText}>
-                                        The device is waiting due to fluid fill on channels:
-                                        {JSON.stringify(abnormalChannels)}
-                                    </Text>
-                                    <Text style={deviceCard.characteristicText}>
-                                        {chipType === 7 ? 'COVID' : 'Fibrinogen'} collector detected.
-                                        Please insert the capsule into the collector.
-                                    </Text>
-                                </View>;
+                            component = <>
+                                <Text style={deviceCard.characteristicText}>
+                                    The device is waiting due to fluid fill on the following channels:
+                                    {JSON.stringify(abnormalChannels)}
+                                </Text>
+                                <Text style={deviceCard.characteristicText}>
+                                    {chipType === 7 ? 'COVID' : 'Fibrinogen'} collector detected.
+                                    Please insert the capsule into the collector.
+                                </Text>
+                            </>;
                         } else if(reason.toString().includes('abnormal')) {
                             let abnormalChannels = [];
                             ['C1', 'C2', 'C3', 'C4'].forEach((channel) => {
@@ -275,54 +284,67 @@ const Monitor = ({navigation}) => {
                                     abnormalChannels.push(channel);
                                 }
                             });
-
-                            component =
-                                <Text style={deviceCard.characteristicText}>
-                                    The device is waiting due to abnormal channels:
-                                    {JSON.stringify(abnormalChannels)}
-                                </Text>;
+                            component = <Text style={deviceCard.characteristicText}>
+                                The device is waiting due to abnormal signals on the following channels:
+                                {JSON.stringify(abnormalChannels)}
+                            </Text>;
                         }
                     } else if(pico === 'error') {
-                        component =
-                            <Text style={deviceCard.characteristicText}>
-                                Pico error: {reason}
-                            </Text>;
+                        component = <Text style={deviceCard.characteristicText}>Pico error: {reason}</Text>;
                     } else if(pico === 'idle') {
-                        component =
-                            <Text style={deviceCard.characteristicText}>
-                                Sample can be removed
-                            </Text>;
+                        component = <Text style={deviceCard.characteristicText}>Sample can be removed</Text>;
                     }
                 } else {
                     if(pico === 'error')
+                        component = <Text style={deviceCard.characteristicText}>Pico error</Text>;
+                    else if(pico === 'running') {
+                        const Min = ({result}) =>
+                            (result[0] === '0' && result[1] !== '0') ?
+                                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#eee'}}>
+                                    {result[1]} min.
+                                </Text>
+                                :
+                                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#eee'}}>
+                                    {result[0] + result[1]} min.
+                                </Text>;
+
+                        const Sec = ({result}) =>
+                            (result[3] === '0' && result[4] !== '0') ?
+                                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#eee'}}>
+                                    {result[4]} sec.
+                                </Text>
+                                :
+                                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#eee'}}>
+                                    {result[3] + result[4]} sec.
+                                </Text>;
+
                         component =
-                            <Text style={deviceCard.characteristicText}>
-                                Pico error
-                            </Text>;
-                    else if(pico === 'running')
-                        component =
-                            <CountdownCircleTimer
-                                isPlaying
-                                duration={(chipType === 7) ? 1800 : 30}
-                                initialRemainingTime={remainingTime}
-                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                                colorsTime={[48, 24, 16, 0]}
-                            >
-                                {({remainingTime}) => <Text>{remainingTime}</Text>}
-                            </CountdownCircleTimer>
-                    else if(pico === 'idle') {
-                        component =
-                            <Text style={deviceCard.characteristicText}>
-                                Starting a new test
-                            </Text>;
+                            <View style={{justifyContent: 'center', alignSelf: 'center', marginVertical: 20}}>
+                                <CountdownCircleTimer
+                                    isPlaying
+                                    strokeWidth={15}
+                                    duration={(chipType === 7) ? 1800 : 30}
+                                    initialRemainingTime={remainingTime}
+                                    colors={['#42f560', '#34c94d', '#2ca340', '#166b25']}
+                                    colorsTime={(chipType === 7) ? [1460, 960, 480, 0] : [24, 16, 8, 0]}
+                                >
+                                    {({remainingTime}) => {
+                                        const result = new Date(remainingTime * 1000)
+                                            .toISOString().substr(14, 5);
+                                        return (<>
+                                            <Min result={result}/>
+                                            <Sec result={result}/>
+                                        </>);
+                                    }}
+                                </CountdownCircleTimer>
+                            </View>
                     }
                 }
             }
 
             return(
-                <View style={deviceCard.body}>
-                    {component}
-                </View>);
+                <View style={deviceCard.body}>{component}</View>
+            );
         } else if (action === 'dataProcess.finishedTest') {
             return(
                 <View style={deviceCard.body}>
@@ -340,68 +362,27 @@ const Monitor = ({navigation}) => {
         }
     }
 
-    function DeviceCard (props) {
-        const {name, lastUpdate} = props;
-        const {action, status, data} = lastUpdate;
-
-        if (status === 'ok') {
-                return (
-                    <View style={[deviceCard.container, {
-                        flex: 1,
-                        justifyContent: 'center',
-                        margin: -22,
-                    }]}>
-                        <View style={{flexGrow: 1,padding:44,width: dimensions.width,}}>
-                            <ConnectedHeader
-                                style={{width: dimensions.width}}
-                                name={name} />
-                            <StatusOKBody
-                                style={{width: dimensions.width}}
-                                action={action} data={data} />
-                        </View>
-                    </View>
-                );
-        }
-
-        return (
-            <View style={[deviceCard.container, {padding: 20, margin: 20, }]}>
-                <View style={[{width: dimensions.width * 0.8, height: dimensions.height * 0.66}]}>
-                    <DisconnectedHeader name={name} />
-                    <View style={deviceCard.body}>
-                        <View style={deviceCard.utilityBarContainer}>
-                            <TouchableOpacity style={deviceCard.utilityBarButton}>
-                                <Text style={fonts.mediumText}>Assign patient for next result</Text>
-                                <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={deviceCard.utilityBarButton}>
-                                <Text style={fonts.mediumText}>Disconnect</Text>
-                                <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={deviceCard.characteristicText}>
-                            Error: {JSON.stringify({
-                            'action': action,
-                            'status': status,
-                            'data': data
-                        })}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
     const toggleDiscoveredModal = () => setShowingDiscoveredList(!showingDiscoveredList);
 
     const numberAvailableDevicesStr = () => {
         if(discoveredNamesArray && discoveredNamesArray.length) {
             if(discoveredNamesArray.length === 1) {
                 return '1 available device';
+            } else if (discoveredNamesArray.length === 0) {
+                if(connectedReaders.size) {
+                    return 'All devices found are connected'
+                } else {
+                    return '0 available devices'
+                }
             } else {
-                return discoveredNamesArray.length.toString() + ' available devices'
+                return discoveredNamesArray.length.toString() + ' available devices';
             }
         } else {
-            return '0 available devices';
+            if(connectedReaders.size) {
+                return 'All devices found are connected'
+            } else {
+                return '0 available devices';
+            }
         }
     }
 
@@ -414,19 +395,14 @@ const Monitor = ({navigation}) => {
                             Connect new devices
                         </Text>
                         <TouchableOpacity  onPress={toggleDiscoveredModal}  style={format.modalSelector}>
-                            <Text style={fonts.username}>
-                                {numberAvailableDevicesStr()}
-                            </Text>
+                            <Text style={fonts.username}>{numberAvailableDevicesStr()}</Text>
                             <IconE style={fonts.username} size={34}
                                    name={showingDiscoveredList ? 'chevron-up' : 'chevron-down'}/>
                         </TouchableOpacity>
                     </View>
                 </View>
                 <ModalSelector
-                    onChange={(selectedItem) => {
-                        connectToDeviceByID(selectedItem.key);
-                        setShowingDiscoveredList(false);
-                    }}
+                    onChange={(selectedItem) => {connectToDeviceByID(selectedItem.key);}}
                     renderItem={<View />}
                     customSelector={<View />}
                     visible={showingDiscoveredList}
@@ -450,12 +426,10 @@ const Monitor = ({navigation}) => {
                     pagingEnabled={true}
                     decelerationRate={'fast'}
                     data={Object.values(connectedReaders)}
-                    keyExtractor={(item) => item.name}
-                    renderItem={
-                        ({item}) => {
-                        console.log(JSON.stringify(item));
-                        return <MemoDeviceCard name={item.name} lastUpdate={item.lastUpdate} />
-                        }}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({item}) => <DeviceCard id={item.id} name={item.name}
+                                                        lastAction={item.lastAction}
+                                                        lastStatus={item.lastStatus} lastData={item.lastData}/>}
                 />
             </View>
             <UserBar navigation={navigation} />
