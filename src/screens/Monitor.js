@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     useWindowDimensions,
     Platform,
@@ -6,7 +6,7 @@ import {
     Text,
     TouchableOpacity,
     View,
-    FlatList, ActivityIndicator, VirtualizedList, ScrollView
+    FlatList, ActivityIndicator, VirtualizedList, ScrollView, Alert
 } from 'react-native';
 import {fonts, format, deviceCard, modal} from '../style';
 import IconE from 'react-native-vector-icons/Entypo';
@@ -23,44 +23,27 @@ const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
 
 
-const ChipAnimation = () => {
-    const playerRef = useRef();
-
-    return (
-            <FastImage
-                ref={playerRef}
-                style={{alignSelf: 'center', width: 200, height: 200, marginHorizontal: -20, marginVertical: -20}}
-                source={require('../resources/card-animation.webp')}
-            />
-
-    );
-};
-
 
 const Monitor = ({navigation}) => {
-    const bigLayout = Platform.isPad,
-        dimensions = useWindowDimensions(),
-        serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
-        [discoveredReaders, setDiscoveredReaders] = useState(() => new Object),
-        [connectedReaders, setConnectedReaders] = useState(() => new Object),
+    const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
+        statusCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
+        dataCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
+        actionCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
+        [discoveredReaders, setDiscoveredReaders] = useState(new Map()),
+        [connectedReaders, setConnectedReaders] = useState(new Map()),
         [discoveredNamesArray, setDiscoveredNamesArray] = useState(() => []),
         [showingDiscoveredList, setShowingDiscoveredList] = useState(() => false),
-        autoConnectByName = useRef(false),
-        playerRef = useRef(),
-        [listUpdater, setListUpdater] = useState(() => false);
+        [listUpdater, setListUpdater] = useState(() => false),
+        autoConnectByName = useRef(true),
+        bigLayout = Platform.isPad,
+        dimensions = useWindowDimensions();
+
 
     /*
-
-         Bluetooth info
-
          Reader advertisement data
          -  Single BLE service
             uuid: 'ab173c6c-8493-412d-897c-1974fa74fc13'
-            3 characteristics each with a descriptor:
-             'action' - '04CB0EB1-8B58-44D0-91E4-080AF33438BF'
-             'status' - '04CB0EB1-8B58-44D0-91E4-080AF33438BD'
-             'data' - '04CB0EB1-8B58-44D0-91E4-080AF33438BB'
-
+            3 characteristics each with a descriptor: action, status, data
          Routine:
          -  Subscribes to actions characteristic updates
             When update occurs, update device info with the most
@@ -68,7 +51,6 @@ const Monitor = ({navigation}) => {
          Data format:
          -  All are JSON-parseable strings
          -  Characteristic values are  are received as base64
-
     */
 
     useEffect(() => {
@@ -76,11 +58,8 @@ const Monitor = ({navigation}) => {
             if (state === 'PoweredOn') {
                 manager.startDeviceScan(null,
                     null, (error, device) => {
-                        if (error) {
-                            console.log(error.message);
-                            return;
-                        } else if(!device || !device?.name) {
-                            return;
+                        if (error || !device || !device?.name) {
+                            if(error) console.log(error.message);
                         } else if (device.name.includes('AMS-')) {
                             device.isConnected()
                                 .then((connected) => {
@@ -152,36 +131,6 @@ const Monitor = ({navigation}) => {
         setDiscoveredNamesArray(tempDiscoveredArray);
     }
 
-    function isNewInfo(jsonObjA, jsonObjB) {
-        if(JSON.stringify(jsonObjA) === JSON.stringify(jsonObjB)) {
-            //console.log('duplicates detected:',
-            //    JSON.stringify(jsonObjA, null, 4),
-            //    '\n',
-            //    JSON.stringify(jsonObjB, null, 4));
-            return false;
-        } else {
-            //console.log('unique values detected:',
-            //    JSON.stringify(jsonObjA, null, 4),
-            //    '\n',
-            //    JSON.stringify(jsonObjB, null, 4));
-            return true;
-        }
-    }
-
-    const updateConnectedReaders = (id, name, deviceInfo) => {
-        // copy value of connected readers object and
-        // update it with the current update values
-        const oldInfo = connectedReaders[id];
-        const newInfo = {name: name, deviceInfo: deviceInfo};
-
-        if(isNewInfo(oldInfo, newInfo)) {
-            let tempConnectedReaders = connectedReaders;
-            tempConnectedReaders[id] = {name: name, deviceInfo: deviceInfo};
-            setConnectedReaders(tempConnectedReaders);
-            updateList();
-        }
-    }
-
     const connectToDeviceByID = (deviceID) => {
         manager.connectToDevice(deviceID)
             .then((device) => {
@@ -199,23 +148,28 @@ const Monitor = ({navigation}) => {
         removeFromDiscovered(device.id, device.name);
         device.monitorCharacteristicForService(
             serviceUUID,
-            '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
+            actionCharUUID,
             async (error, characteristic) => {
                 if (!error && characteristic.value) {
                     try {
                         // read the other 2 characteristics when status update is received
-                        const status = await device.readCharacteristicForService(serviceUUID,
-                            '04CB0EB1-8B58-44D0-91E4-080AF33438BD');
-                        const data = await device.readCharacteristicForService(serviceUUID,
-                            '04CB0EB1-8B58-44D0-91E4-080AF33438BB');
-                        const update = {
-                            'action': jsonFromBytes(characteristic.value),
-                            'status': jsonFromBytes(status.value),
-                            'data': jsonFromBytes(data.value)
-                        };
-                        //console.log('update received (' + update['action'] + '):\n',
-                        //    JSON.stringify(update['data'], null, 4));
-                        updateConnectedReaders(device.id, device.name, update);
+                        const statusRes = await device.readCharacteristicForService(serviceUUID, statusCharUUID);
+                        const dataRes = await device.readCharacteristicForService(serviceUUID, dataCharUUID);
+                        const action = jsonFromBytes(characteristic.value);
+                        const status = jsonFromBytes(statusRes.value);
+                        const data = jsonFromBytes(dataRes.value);
+                        const update = {'action': action, 'status': status, 'data': data};
+
+                        //console.log('update received:\n', JSON.stringify(update, null, 4));
+
+                        if(action === 'dataProcess.finishedTest') {
+                            Alert.alert('Test result received', JSON.stringify(update['data'], null, 4))
+                        }
+
+                        const tempConnectedReaders = new Map(connectedReaders);
+                        tempConnectedReaders[device.id] = {name: device.name, lastUpdate: update};
+                        setConnectedReaders(tempConnectedReaders);
+                        updateList();
                     } catch (error) {
                         console.debug(error);
                     }
@@ -225,31 +179,35 @@ const Monitor = ({navigation}) => {
             });
     }
 
-    const MemoDeviceCard = React.memo(DeviceCard, cardPropsAreEqual);
-
-    function cardPropsAreEqual(prevCard, nextCard) {
-        return (
-            prevCard['name'] === nextCard['name'] &&
-            prevCard['action'] === nextCard['action'] &&
-            prevCard['data'] === nextCard['data'] &&
-            prevCard['status'] === nextCard['status']
-        ) === true;
-    }
+    const MemoDeviceCard = React.memo(DeviceCard,
+        (prevCard, nextCard) =>
+            (prevCard['name'] === nextCard['name'] &&
+            prevCard['lastUpdate'] === nextCard['lastUpdate']) === true
+    );
 
     const cardStyle = (connectedReaders.size > 1) ?
         {
             width: dimensions.width * 0.25,
             marginLeft: dimensions.width * 0.125,
             marginRight: dimensions.width * 0.125,
-        } :
-        {
-
-        };
+        } : {};
 
     const ConnectedHeader = ({name}) => (
         <View style={deviceCard.header}>
-            <Text style={deviceCard.nameText}>{name}</Text>
-            <IconA name='checkcircleo' size={34} style={{color: '#29c436', marginTop: 6}}/>
+            <View style={{flexDirection: 'row', alignContent: 'center'}}>
+                <IconA name='checkcircleo' size={34} style={{marginRight: 20, alignSelf: 'center', justifyContent: 'center', color: '#29c436',}}/>
+                <Text style={deviceCard.nameText}>{name}</Text>
+            </View>
+            <View style={deviceCard.utilityBarContainer}>
+                <TouchableOpacity style={deviceCard.utilityBarButton}>
+                    <Text style={fonts.mediumText}>Assign patient for next result</Text>
+                    <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
+                </TouchableOpacity>
+                <TouchableOpacity style={deviceCard.utilityBarButton}>
+                    <Text style={fonts.mediumText}>Disconnect</Text>
+                    <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 
@@ -260,11 +218,12 @@ const Monitor = ({navigation}) => {
         </View>
     );
 
+
     const StatusOKBody = ({action, data}) => {
         console.log('drawing status ok body:\n, ' +
             JSON.stringify({'action':action, 'data':data}));
+
         if(action === 'status.reportStatus') {
-            const readerStatus = data['reader'];
             const {wifi, bt, pico, heater, measurement} = data;
             const remainingTime = measurement?.remainingTime;
             const chipType = measurement?.chipType;
@@ -272,94 +231,141 @@ const Monitor = ({navigation}) => {
 
             //console.log('status report update drawn for data:\n', JSON.stringify(data, null, 4));
 
-            let component = <View />
+            let component = <View />;
+            let colors = {
 
+            }
 
             if(chipType === 0) {
-                component = <Text style={deviceCard.characteristicText}>
-                                The device is ready and waiting for a sample
-                            </Text>;
+                component =
+                    <Text style={deviceCard.characteristicText}>
+                        The reader is waiting for a new sample
+                    </Text>;
             } else {
-                if (pico === 'waiting') {
-                    if (reason.toString().includes('Heating')) {
+                if(reason) {
+                    if (pico === 'waiting') {
+                        if(reason.toString().includes('Heating')) {
+                            component =
+                                <Text style={deviceCard.characteristicText}>
+                                    Please wait while the device warms up
+                                </Text>;
+                        } else if(reason.toString().includes('Fluid')) {
+                            let abnormalChannels = [];
+                            ['C1', 'C2', 'C3', 'C4'].forEach((channel) => {
+                                if(reason.toString().includes(channel)) {
+                                    abnormalChannels.push(channel);
+                                }
+                            });
+
+                            component =
+                                <View>
+                                    <Text style={deviceCard.characteristicText}>
+                                        The device is waiting due to fluid fill on channels:
+                                        {JSON.stringify(abnormalChannels)}
+                                    </Text>
+                                    <Text style={deviceCard.characteristicText}>
+                                        {chipType === 7 ? 'COVID' : 'Fibrinogen'} collector detected.
+                                        Please insert the capsule into the collector.
+                                    </Text>
+                                </View>;
+                        } else if(reason.toString().includes('abnormal')) {
+                            let abnormalChannels = [];
+                            ['C1', 'C2', 'C3', 'C4'].forEach((channel) => {
+                                if(reason.toString().includes(channel)) {
+                                    abnormalChannels.push(channel);
+                                }
+                            });
+
+                            component =
+                                <Text style={deviceCard.characteristicText}>
+                                    The device is waiting due to abnormal channels:
+                                    {JSON.stringify(abnormalChannels)}
+                                </Text>;
+                        }
+                    } else if(pico === 'error') {
                         component =
                             <Text style={deviceCard.characteristicText}>
-                                Please wait while the device warms up
+                                Pico error: {reason}
+                            </Text>;
+                    } else if(pico === 'idle') {
+                        component =
+                            <Text style={deviceCard.characteristicText}>
+                                Sample can be removed
                             </Text>;
                     }
-                } else if(pico === 'error') {
-                    if (reason) {
-                        component =
-                            <Text style={deviceCard.characteristicText}>
-                                Pico error: {reason.toString()}
-                            </Text>;
-                    } else
+                } else {
+                    if(pico === 'error')
                         component =
                             <Text style={deviceCard.characteristicText}>
                                 Pico error
                             </Text>;
-                } else if(pico === 'running' || pico === 'idle') {
-                    component =
-                        <CountdownCircleTimer
-                            isPlaying
-                            duration={() => {
-                                if (chipType === 0) {
-                                    return 0;
-                                } else if (chipType === 6) {
-                                    return 30;
-                                } else if (chipType === 7) {
-                                    return 1800;
-                                } else {
-                                    return 1800;
-                                }
-                            }}
-                            initialRemainingTime={remainingTime}
-                            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                            colorsTime={[48, 24, 16, 0]}
-                        >
-                            {({remainingTime}) => <Text>{remainingTime}</Text>}
-                        </CountdownCircleTimer>
+                    else if(pico === 'running')
+                        component =
+                            <CountdownCircleTimer
+                                isPlaying
+                                duration={(chipType === 7) ? 1800 : 30}
+                                initialRemainingTime={remainingTime}
+                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                colorsTime={[48, 24, 16, 0]}
+                            >
+                                {({remainingTime}) => <Text>{remainingTime}</Text>}
+                            </CountdownCircleTimer>
+                    else if(pico === 'idle') {
+                        component =
+                            <Text style={deviceCard.characteristicText}>
+                                Starting a new test
+                            </Text>;
+                    }
                 }
             }
 
             return(
                 <View style={deviceCard.body}>
-                    <View style={deviceCard.utilityBarContainer}>
-                        <TouchableOpacity style={deviceCard.utilityBarButton}>
-                            <Text style={fonts.mediumText}>Assign patient for next result</Text>
-                            <IconF name='user' size={20} style={{color: '#eee', marginTop: 6}}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={deviceCard.utilityBarButton}>
-                            <Text style={fonts.mediumText}>Disconnect</Text>
-                            <IconA name='disconnect' size={20} style={{color: '#eee', marginTop: 6}}/>
-                        </TouchableOpacity>
-                    </View>
                     {component}
                 </View>);
+        } else if (action === 'dataProcess.finishedTest') {
+            return(
+                <View style={deviceCard.body}>
+                    <Text style={deviceCard.characteristicText}>
+                        Result: {JSON.stringify(data, null, 4)}
+                    </Text>
+                </View>);
         } else {
-            console.log('unhandled action received:', action);
-
-            return <View />;
+            return(
+                <View style={deviceCard.body}>
+                    <Text style={deviceCard.characteristicText}>
+                        Unhandled action received: {action}
+                    </Text>
+                </View>);
         }
     }
 
     function DeviceCard (props) {
-        const {name, deviceInfo} = props;
-        const {action, status, data} = deviceInfo;
+        const {name, lastUpdate} = props;
+        const {action, status, data} = lastUpdate;
+
         if (status === 'ok') {
                 return (
-                    <View style={[deviceCard.container, cardStyle]}>
-                        <View style={deviceCard.device}>
-                            <ConnectedHeader name={name} />
-                            <StatusOKBody action={action} data={data} />
+                    <View style={[deviceCard.container, {
+                        flex: 1,
+                        justifyContent: 'center',
+                        margin: -22,
+                    }]}>
+                        <View style={{flexGrow: 1,padding:44,width: dimensions.width,}}>
+                            <ConnectedHeader
+                                style={{width: dimensions.width}}
+                                name={name} />
+                            <StatusOKBody
+                                style={{width: dimensions.width}}
+                                action={action} data={data} />
                         </View>
                     </View>
                 );
         }
 
         return (
-            <View style={[deviceCard.container, cardStyle]}>
-                <View style={deviceCard.device}>
+            <View style={[deviceCard.container, {padding: 20, margin: 20, }]}>
+                <View style={[{width: dimensions.width * 0.8, height: dimensions.height * 0.66}]}>
                     <DisconnectedHeader name={name} />
                     <View style={deviceCard.body}>
                         <View style={deviceCard.utilityBarContainer}>
@@ -384,8 +390,6 @@ const Monitor = ({navigation}) => {
             </View>
         );
     }
-
-    const numberOfConnectedDevices = () => { return connectedReaders.size }
 
     const toggleDiscoveredModal = () => setShowingDiscoveredList(!showingDiscoveredList);
 
@@ -441,14 +445,17 @@ const Monitor = ({navigation}) => {
                     searchTextStyle={modal.searchText}
                 />
                 <FlatList
+                    snapToAlignment={'top'}
+                    viewabilityConfig={{ itemVisiblePercentThreshold: 90 }}
+                    pagingEnabled={true}
+                    decelerationRate={'fast'}
                     data={Object.values(connectedReaders)}
-                    extraData={[connectedReaders, listUpdater]}
+                    keyExtractor={(item) => item.name}
                     renderItem={
                         ({item}) => {
                         console.log(JSON.stringify(item));
-                        return <DeviceCard name={item.name} deviceInfo={item.deviceInfo} />
+                        return <MemoDeviceCard name={item.name} lastUpdate={item.lastUpdate} />
                         }}
-                    keyExtractor={(item, index) => item.name}
                 />
             </View>
             <UserBar navigation={navigation} />

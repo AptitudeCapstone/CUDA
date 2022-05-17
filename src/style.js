@@ -14,10 +14,10 @@ export const floating = StyleSheet.create({
         backgroundColor: '#131313',
         borderColor: '#555',
         borderRadius: 150,
-        marginTop: 15
+        marginLeft: 15
     },
     actionBar: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'flex-end',
         position: 'absolute',
         right: 30,
@@ -176,11 +176,7 @@ export const format = StyleSheet.create({
 
 export const deviceCard = StyleSheet.create({
     container: {
-        alignContent: 'center',
-        alignSelf: 'center',
-    },
-    device: {
-        marginBottom: 25,
+
     },
     header: {
         paddingHorizontal: 30,
@@ -197,22 +193,22 @@ export const deviceCard = StyleSheet.create({
     },
     utilityBarContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-end',
         paddingVertical: 10,
     },
     utilityBarButton: {
         flexDirection: 'row',
-        flexGrow: 1,
-        marginHorizontal: 10,
+        marginHorizontal: 15,
+        paddingHorizontal: 15,
         justifyContent: 'space-around',
         borderColor: '#888',
         borderWidth: 1,
         borderRadius: 10,
-        padding: 15,
-        paddingTop: 3,
-        paddingBottom: 3
+        flexGrow: 0.1,
+        paddingVertical: 3
     },
     body: {
+        justifyContent: 'center',
         borderBottomRightRadius: 15,
         borderBottomLeftRadius: 15,
         paddingHorizontal: 25,
@@ -225,18 +221,18 @@ export const deviceCard = StyleSheet.create({
     },
     nameText: {
         fontSize: 24,
-        padding: 10,
+        alignSelf: 'center',
+        justifyContent: 'center',
         color: '#eee',
         textAlign: 'center',
         overflow: 'hidden',
         fontWeight: 'bold'
     },
     characteristicText: {
-        fontSize: 20,
-        paddingVertical: 15,
+        fontSize: 24,
+        paddingVertical: 30,
         color: '#eee',
         textAlign: 'center',
-        overflow: 'hidden',
     },
     button: {
         padding: 20,
