@@ -174,13 +174,119 @@ export const format = StyleSheet.create({
     }
 });
 
+export const collapsedDeviceCard = StyleSheet.create({
+    header: {
+        paddingHorizontal: 30,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#555',
+        backgroundColor: '#131313',
+        flexDirection: 'row',
+
+    },
+    leftBox: {
+        flexDirection: 'row',
+        marginVertical: 10,
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        margin: -22,
+    },
+    utilityBarContainerHorizontal:{
+        flexGrow: 1,
+        justifyContent: 'space-around',
+        alignItems: 'center'
+    },
+    utilityBarContainerVertical:{
+        flexGrow: 1,
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    utilityBarButton: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        borderColor: '#555',
+        backgroundColor: '#222',
+        marginVertical: 15,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        marginHorizontal: 30,
+        flexGrow: 0.1,
+    },
+    utilityButtonText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        padding: 8,
+        alignSelf: 'center',
+        justifyContent: 'center'
+    },
+    connectButton: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        borderColor: '#555',
+        backgroundColor: '#222',
+        marginVertical: 20,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        marginHorizontal: 30,
+        flexGrow: 1,
+    },
+    connectText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#eee',
+        padding: 8,
+        alignSelf: 'center',
+        justifyContent: 'center'
+    },
+    statusText: {
+        fontSize: 30,
+        paddingHorizontal: 30,
+        fontWeight: 'bold',
+        color: '#888',
+        alignContent: 'center',
+        justifyContent: 'center',
+        maxWidth: 400,
+    },
+    nameText: {
+        fontSize: 30,
+        paddingHorizontal: 30,
+        fontWeight: 'bold',
+        color: '#eee',
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    bigText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#eee',
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    tapText: {
+        fontSize: 28,
+        textAlign: 'center',
+        color: '#888',
+        alignSelf: 'center',
+        justifyContent: 'center'
+    }
+})
+
 export const deviceCard = StyleSheet.create({
     container: {
 
     },
     header: {
-        paddingHorizontal: 30,
-        paddingVertical: 10,
+        marginHorizontal: 30,
+        marginVertical: 10,
         borderTopRightRadius: 15,
         borderTopLeftRadius: 15,
         borderLeftWidth: 1,
@@ -193,18 +299,16 @@ export const deviceCard = StyleSheet.create({
     },
     utilityBarContainer: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        paddingVertical: 10,
+        flexGrow: 1,
+        justifyContent: 'space-around',
     },
     utilityBarButton: {
         flexDirection: 'row',
-        marginHorizontal: 15,
-        paddingHorizontal: 15,
         justifyContent: 'space-around',
         borderColor: '#888',
-        borderWidth: 1,
-        borderRadius: 10,
-        flexGrow: 0.1,
+        borderLeftWidth: 1,
+        borderBottomWidth: 1,
+        flexGrow: 1,
         paddingVertical: 3
     },
     body: {
@@ -217,7 +321,7 @@ export const deviceCard = StyleSheet.create({
         borderRightWidth: 1,
         borderBottomWidth: 1,
         borderColor: '#555',
-        backgroundColor: '#333',
+        backgroundColor: '#222',
     },
     nameText: {
         fontSize: 24,
