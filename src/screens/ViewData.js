@@ -184,15 +184,15 @@ const ViewData = ({navigation}) => {
     const toggleViewPatientModal = () => setViewPatientModalVisible(!viewPatientModalVisible);
 
     return (
-        <SafeAreaView style={{flex: 1,}}>
+        <SafeAreaView style={format.safeArea}>
             <View style={format.page}>
             <View style={format.testSelectBar}>
                 <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                    style={(selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton}>
+                    style={[{marginRight: 15}, (selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton]}>
                     <Text style={fonts.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                    style={(selectedTest === 'fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton}>
+                    style={[{marginLeft: 15}, (selectedTest === 'fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton]}>
                     <Text style={fonts.selectButtonText}>Fibrinogen</Text>
                 </TouchableOpacity>
             </View>

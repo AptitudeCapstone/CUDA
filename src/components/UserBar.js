@@ -11,8 +11,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import FastImage from 'react-native-fast-image';
 import { useWindowDimensions } from 'react-native';
 
-const UserBar = ({navigation}) => {
-    const userInfo = useAuth();
+const UserBar = ({navigation, userInfo}) => {
     const modalRef = useRef(null);
 
     const handleLogInGoogle = async () => {
@@ -151,7 +150,6 @@ const UserBar = ({navigation}) => {
                     }
                 }}
             >
-                <View>
                     <View style={{flexDirection: 'row'}}>
                         <ScrollView style={{flex: 0.5}}>
                     <Text style={[fonts.username, {alignSelf: 'center', marginBottom: 20, color: '#eee'}]}>Manage Account</Text>
@@ -208,7 +206,6 @@ const UserBar = ({navigation}) => {
                         }
                         </ScrollView>
                     </View>
-                </View>
             </RBSheet>
         </View>
     );

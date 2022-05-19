@@ -1,5 +1,7 @@
 import {StyleSheet} from 'react-native';
 
+const backgroundColor = '#222';
+
 export const floating = StyleSheet.create({
     iconButtonIcon: {
         color: '#eee',
@@ -14,10 +16,11 @@ export const floating = StyleSheet.create({
         backgroundColor: '#131313',
         borderColor: '#555',
         borderRadius: 150,
-        marginLeft: 15
+        marginLeft: 15,
+        marginTop: 15,
     },
     actionBar: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'flex-end',
         position: 'absolute',
         right: 30,
@@ -83,8 +86,12 @@ export const modal = StyleSheet.create({
 });
 
 export const format = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: backgroundColor
+    },
     page: {
-        backgroundColor: '#222',
+        backgroundColor: backgroundColor,
         flex: 1,
         padding: 25
     },
@@ -174,15 +181,13 @@ export const format = StyleSheet.create({
     }
 });
 
-export const collapsedDeviceCard = StyleSheet.create({
+export const device = StyleSheet.create({
     header: {
         paddingHorizontal: 30,
         borderRadius: 15,
         borderWidth: 1,
         borderColor: '#555',
         backgroundColor: '#131313',
-        flexDirection: 'row',
-
     },
     leftBox: {
         flexDirection: 'row',
@@ -191,15 +196,16 @@ export const collapsedDeviceCard = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        margin: -22,
     },
-    utilityBarContainerHorizontal:{
+    utilityBarContainerHorizontal: {
         flexGrow: 1,
+        flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center'
     },
-    utilityBarContainerVertical:{
+    utilityBarContainerVertical: {
         flexGrow: 1,
+        flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
     },
@@ -213,8 +219,6 @@ export const collapsedDeviceCard = StyleSheet.create({
         borderRadius: 10,
         paddingVertical: 5,
         paddingHorizontal: 15,
-        marginHorizontal: 30,
-        flexGrow: 0.1,
     },
     utilityButtonText: {
         fontSize: 20,
@@ -225,30 +229,8 @@ export const collapsedDeviceCard = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center'
     },
-    connectButton: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderColor: '#555',
-        backgroundColor: '#222',
-        marginVertical: 20,
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        marginHorizontal: 30,
-        flexGrow: 1,
-    },
-    connectText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#eee',
-        padding: 8,
-        alignSelf: 'center',
-        justifyContent: 'center'
-    },
     statusText: {
-        fontSize: 30,
+        fontSize: 24,
         paddingHorizontal: 30,
         fontWeight: 'bold',
         color: '#888',
@@ -277,83 +259,18 @@ export const collapsedDeviceCard = StyleSheet.create({
         color: '#888',
         alignSelf: 'center',
         justifyContent: 'center'
-    }
-})
-
-export const deviceCard = StyleSheet.create({
-    container: {
-
     },
-    header: {
-        marginHorizontal: 30,
-        marginVertical: 10,
-        borderTopRightRadius: 15,
-        borderTopLeftRadius: 15,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderTopWidth: 1,
-        borderColor: '#555',
-        backgroundColor: '#222',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    utilityBarContainer: {
-        flexDirection: 'row',
-        flexGrow: 1,
-        justifyContent: 'space-around',
-    },
-    utilityBarButton: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderColor: '#888',
-        borderLeftWidth: 1,
-        borderBottomWidth: 1,
-        flexGrow: 1,
-        paddingVertical: 3
-    },
-    body: {
-        justifyContent: 'center',
-        borderBottomRightRadius: 15,
-        borderBottomLeftRadius: 15,
-        paddingHorizontal: 25,
-        paddingBottom: 10,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: '#555',
-        backgroundColor: '#222',
-    },
-    nameText: {
-        fontSize: 24,
+    discoveredIcon: {
         alignSelf: 'center',
         justifyContent: 'center',
         color: '#eee',
-        textAlign: 'center',
-        overflow: 'hidden',
-        fontWeight: 'bold'
     },
-    characteristicText: {
-        fontSize: 24,
-        paddingVertical: 30,
-        color: '#eee',
-        textAlign: 'center',
-    },
-    button: {
-        padding: 20,
-        backgroundColor: '#333',
-        borderRadius: 40,
-        margin: 5,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#555',
-    },
-    buttonText: {
-        color: '#eee',
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center'
+    connectedIcon: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        color: '#1c9c27',
     }
-});
+})
 
 export const fonts = StyleSheet.create({
     username: {
