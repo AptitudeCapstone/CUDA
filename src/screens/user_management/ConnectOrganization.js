@@ -39,7 +39,7 @@ const ConnectOrganization = ({navigation}) => {
                         }
                     }).catch(() => {
                 Alert.alert('Error', 'No organization found. Please re-enter your add code. ');
-                    });
+            });
         } else {
             throw new Error('Please enter a valid add code');
         }

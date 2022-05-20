@@ -28,7 +28,7 @@ const SignIn = ({navigation}) => {
     //      if an account with this credential exists, link them
     //      else, log in
     const logIn = async (email, password) => {
-        if(userStatus !== 'guest') {
+        if (userStatus !== 'guest') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 

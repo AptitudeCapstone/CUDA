@@ -38,17 +38,17 @@ const CreateOrganization = ({navigation}) => {
                 })
                 .then(() => {
                     console.log('Set /organizations/' + orgID +
-                                ' to name: ' + name +
-                                ', addCode: ' + addCode +
-                                ', ownerEmail1: ' + ownerEmail1 +
-                                ', ownerEmail2: ' + ownerEmail2 +
-                                ', ownerEmail3: ' + ownerEmail3 +
-                                ', streetAddress1: ' + streetAddress1 +
-                                ', streetAddress2: ' + streetAddress2 +
-                                ', city: ' + city +
-                                ', state: ' + state +
-                                ', country: ' + country +
-                                ', zip: ' + zip);
+                        ' to name: ' + name +
+                        ', addCode: ' + addCode +
+                        ', ownerEmail1: ' + ownerEmail1 +
+                        ', ownerEmail2: ' + ownerEmail2 +
+                        ', ownerEmail3: ' + ownerEmail3 +
+                        ', streetAddress1: ' + streetAddress1 +
+                        ', streetAddress2: ' + streetAddress2 +
+                        ', city: ' + city +
+                        ', state: ' + state +
+                        ', country: ' + country +
+                        ', zip: ' + zip);
                     navigation.goBack();
                 });
         } else

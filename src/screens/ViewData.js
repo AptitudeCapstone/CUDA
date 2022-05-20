@@ -12,7 +12,7 @@ import {format as dateFormat, parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
 import UserBar from "../components/UserBar";
 import useAuth from "../contexts/UserContext";
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
 const ViewData = ({navigation}) => {
     const isFocused = useIsFocused(),
@@ -41,25 +41,27 @@ const ViewData = ({navigation}) => {
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
         patientsPath = ((organization === undefined ?
-                    '/users/' + auth?.uid :
-                    '/organizations/' + organization) + '/patients/'),
+            '/users/' + auth?.uid :
+            '/organizations/' + organization) + '/patients/'),
         patientsRef = database().ref(patientsPath),
         patientTestsPath = patientsPath + '/' + selectedTest + '/results/',
         patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey),
         databaseDelete = (testKey) =>
             patientTestDBRef(testKey).remove()
                 .then(() => console.log('entry removed'))
-                .catch(() => {throw new Error('problem removing item from database')});
+                .catch(() => {
+                    throw new Error('problem removing item from database')
+                });
 
     let modalData = [];
-    if(selectedTest === 'covid' && covidPatients.length > 0) {
+    if (selectedTest === 'covid' && covidPatients.length > 0) {
         modalData = covidPatients;
-    } else if(selectedTest === 'fibrinogen' && fibrinogenPatients.length > 0) {
+    } else if (selectedTest === 'fibrinogen' && fibrinogenPatients.length > 0) {
         modalData = fibrinogenPatients;
     }
 
     useEffect(() => {
-        if(!auth) {
+        if (!auth) {
             setCovidPatients([]);
             setFibrinogenPatients([]);
             return;
@@ -89,14 +91,14 @@ const ViewData = ({navigation}) => {
     }, [selectedPatient])
 
     const selectedPatientChanged = (patientOption) => {
-        if(selectedTest === 'covid') {
+        if (selectedTest === 'covid') {
             setPatientKeyCOVID(patientOption.key);
-        } else if(selectedTest === 'fibrinogen') {
+        } else if (selectedTest === 'fibrinogen') {
             setPatientKeyFibrinogen(patientOption.key);
         }
     }
 
-    const scale = (dragX) => dragX.interpolate({inputRange: [-200, 0],  outputRange: [1, 0.5],  extrapolate: 'clamp'});
+    const scale = (dragX) => dragX.interpolate({inputRange: [-200, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
 
     const animatedDelete = (item) =>
         Alert.alert("Are your sure?", "This will permanently delete the test result", [
@@ -135,8 +137,10 @@ const ViewData = ({navigation}) => {
             <Swipeable renderRightActions={swipeRightAction} rightThreshold={-200}>
                 <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                     <View style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}>
-                        <View style={{backgroundColor: '#353535', padding: 20, paddingBottom: 10,
-                            flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
+                        <View style={{
+                            backgroundColor: '#353535', padding: 20, paddingBottom: 10,
+                            flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15
+                        }}>
                             <Text style={fonts.mediumText}>
                                 {dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}
                             </Text>
@@ -166,10 +170,12 @@ const ViewData = ({navigation}) => {
 
         return (
             <Swipeable renderRightActions={swipeRightAction} rightThreshold={-200}>
-                <Animated.View  style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
+                <Animated.View style={{flex: 1, paddingLeft: 20, paddingRight: 20, marginTop: 20, marginBottom: 20}}>
                     <View style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}>
-                        <View style={{backgroundColor: '#353535', padding: 20, paddingBottom: 10,
-                            flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
+                        <View style={{
+                            backgroundColor: '#353535', padding: 20, paddingBottom: 10,
+                            flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15
+                        }}>
                             <Text style={fonts.mediumText}>
                                 {dateFormat(parseISO(item.time), 'MMM d @ hh:mm:ss aaaa')}
                             </Text>
@@ -186,20 +192,22 @@ const ViewData = ({navigation}) => {
     return (
         <SafeAreaView style={format.safeArea}>
             <View style={format.page}>
-            <View style={format.testSelectBar}>
-                <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                    style={[{marginRight: 15}, (selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton]}>
-                    <Text style={fonts.selectButtonText}>COVID</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                    style={[{marginLeft: 15}, (selectedTest === 'fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton]}>
-                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={format.testSelectBar}>
+                    <TouchableOpacity onPress={() => setSelectedTest('covid')}
+                                      style={[{marginRight: 15}, (selectedTest === 'covid') ? buttons.covidSelectButton : buttons.unselectedButton]}>
+                        <Text style={fonts.selectButtonText}>COVID</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
+                                      style={[{marginLeft: 15}, (selectedTest === 'fibrinogen') ? buttons.fibrinogenSelectButton : buttons.unselectedButton]}>
+                        <Text style={fonts.selectButtonText}>Fibrinogen</Text>
+                    </TouchableOpacity>
+                </View>
                 <ModalSelector
-                    onChange={(option) => {selectedPatientChanged(option)}}
-                    renderItem={<View />}
-                    customSelector={<View />}
+                    onChange={(option) => {
+                        selectedPatientChanged(option)
+                    }}
+                    renderItem={<View/>}
+                    customSelector={<View/>}
                     visible={viewPatientModalVisible}
                     data={modalData}
                     keyExtractor={patient => patient[0]}
@@ -217,186 +225,188 @@ const ViewData = ({navigation}) => {
                     initValueTextStyle={modal.searchText}
                     searchTextStyle={modal.searchText}
                 />
-            <TouchableOpacity onPress={() => toggleViewPatientModal()}
-                              style={format.selectPatientBarContainer}>
-                <Text style={fonts.username}>
-                    {(selectedTest === 'covid') ?
+                <TouchableOpacity onPress={() => toggleViewPatientModal()}
+                                  style={format.selectPatientBarContainer}>
+                    <Text style={fonts.username}>
+                        {(selectedTest === 'covid') ?
                             (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name :
                             (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name}
-                </Text>
-                <IconE style={fonts.username} size={34}
-                       name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'} />
-            </TouchableOpacity>
-            {
-                (selectedTest === 'covid' && patientDataCOVID !== null) &&
-                <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient COVID')}>
-                        <Text style={fonts.mediumText}>Export</Text>
-                        <IconF name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Edit Patient COVID',
-                                          {patientKey: patientKeyCOVID})}>
-                        <Text style={fonts.mediumText}>Edit</Text>
-                        <IconA name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient COVID')}>
-                        <Text style={fonts.mediumText}>New Patient</Text>
-                        <IconF  name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                </View>
-            }
-            {
-                (selectedTest === 'covid' && patientDataCOVID === null) &&
-                <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient COVID')}>
-                        <Text style={fonts.mediumText}>New</Text>
-                        <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}} />
-                    </TouchableOpacity>
-                </View>
-            }
-            {
-                (selectedTest === 'fibrinogen' && patientDataCOVID !== null) &&
-                <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                        <Text style={fonts.mediumText}>Export</Text>
-                        <IconF  name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => {navigation.navigate('Edit Patient Fibrinogen',
-                                          {patientKey: patientKeyFibrinogen})}}>
-                        <Text style={fonts.mediumText}>Edit</Text>
-                        <IconA  name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                        <Text style={fonts.mediumText}>New</Text>
-                        <IconF  name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
-                    </TouchableOpacity>
-                </View>
-            }
-            {
-                (selectedTest === 'fibrinogen' && patientDataCOVID === null) &&
-                <View style={format.utilityPatientBarContainer}>
-                    <TouchableOpacity style={format.utilityBarButton}
-                                      onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                        <Text style={fonts.mediumText}>New</Text>
-                        <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}} />
-                    </TouchableOpacity>
-                </View>
-            }
-            <ScrollView>
-                {   // covid patient has been selected
-                    (patientKeyCOVID && patientDataCOVID && selectedTest === 'covid') &&
-                    <>
-                        {
-                            (patientDataCOVID.email) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Email</Text>
-                                 <Text style={styles.text}>{patientDataCOVID.email}</Text>
-                            </View>
-                        }
-                        {
-                            (patientDataCOVID.phone) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Phone</Text>
-                                    <Text style={styles.text}>{patientDataCOVID.phone}</Text>
-                            </View>
-                        }
-                        <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
-                            <Text style={styles.headingText}>Test Results</Text>
-                            {
-                                (patientCOVIDTests.length === 0) &&
-                                <Text style={{color: '#fff', paddingTop: 6, fontSize: 18, textAlign: 'center'}}>
-                                    No test results have been recorded yet
-                                </Text>
-                            }
-                        </View>
-                        {
-                            <View />//patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)
-                        }
-                    </>
-                }
-                {   // fibrinogen patient selected
-                    (patientKeyFibrinogen && patientDataFibrinogen && selectedTest === 'fibrinogen') &&
-                    <>
-                        {
-                            (patientDataFibrinogen.bloodType) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Blood Type</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.bloodType}</Text>
-                            </View>
-                        }
-                        {
-                            (patientDataFibrinogen.sex) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Sex</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.sex}</Text>
-                            </View>
-
-                        }
-                        {
-                            (patientDataFibrinogen.age) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Age</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
-                            </View>
-                        }
-                        {
-                            (patientDataFibrinogen.weight) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Weight</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
-                            </View>
-                        }
-                        {
-                            (patientDataFibrinogen.height) &&
-                            <View style={styles.patientField}>
-                                <Text style={styles.sectionText}>Height</Text>
-                                <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
-                            </View>
-
-                        }
-                        <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
-                            <Text style={styles.headingText}>Test Results</Text>
-                            {
-                                (patientFibrinogenTests.length === 0) &&
-                                <Text style={{color: '#fff',  paddingTop: 6, fontSize: 18, textAlign: 'center'}}>
-                                    No test results have been recorded yet
-                                </Text>
-                            }
-                        </View>
-                        {
-                            (chartData) &&
-                            <View style={{flex: 0.6, padding: 15}}>
-                                <LineChart
-                                    data={chartData}
-                                    width={screenWidth}
-                                    height={400}
-                                    chartConfig={chartConfig}
-                                    withInnerLines={false}
-                                    withOuterLines={false}
-                                />
-                            </View>
-                        }
-                        {
-                            <View />//patientFibrinogenTests.map(test => <FibrinogenTest key={test.key} item={test} />)
-                        }
-                    </>
-                }
-                {   // no patient selection yet
-                    (patientKeyFibrinogen != null && patientDataFibrinogen != null) &&
-                    <Text style={[fonts.heading, {padding: 25, paddingTop: 150, paddingBottom: 50}]}>
-                        To view a patient portal, select the test type and the patient or scan their QR code
                     </Text>
+                    <IconE style={fonts.username} size={34}
+                           name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'}/>
+                </TouchableOpacity>
+                {
+                    (selectedTest === 'covid' && patientDataCOVID !== null) &&
+                    <View style={format.utilityPatientBarContainer}>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient COVID')}>
+                            <Text style={fonts.mediumText}>Export</Text>
+                            <IconF name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Edit Patient COVID',
+                                              {patientKey: patientKeyCOVID})}>
+                            <Text style={fonts.mediumText}>Edit</Text>
+                            <IconA name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient COVID')}>
+                            <Text style={fonts.mediumText}>New Patient</Text>
+                            <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                    </View>
                 }
-            </ScrollView>
+                {
+                    (selectedTest === 'covid' && patientDataCOVID === null) &&
+                    <View style={format.utilityPatientBarContainer}>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient COVID')}>
+                            <Text style={fonts.mediumText}>New</Text>
+                            <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                    </View>
+                }
+                {
+                    (selectedTest === 'fibrinogen' && patientDataCOVID !== null) &&
+                    <View style={format.utilityPatientBarContainer}>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
+                            <Text style={fonts.mediumText}>Export</Text>
+                            <IconF name='share' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => {
+                                              navigation.navigate('Edit Patient Fibrinogen',
+                                                  {patientKey: patientKeyFibrinogen})
+                                          }}>
+                            <Text style={fonts.mediumText}>Edit</Text>
+                            <IconA name='edit' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
+                            <Text style={fonts.mediumText}>New</Text>
+                            <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                    </View>
+                }
+                {
+                    (selectedTest === 'fibrinogen' && patientDataCOVID === null) &&
+                    <View style={format.utilityPatientBarContainer}>
+                        <TouchableOpacity style={format.utilityBarButton}
+                                          onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
+                            <Text style={fonts.mediumText}>New</Text>
+                            <IconF name='user-plus' size={20} style={{color: '#eee', marginTop: 6}}/>
+                        </TouchableOpacity>
+                    </View>
+                }
+                <ScrollView>
+                    {   // covid patient has been selected
+                        (patientKeyCOVID && patientDataCOVID && selectedTest === 'covid') &&
+                        <>
+                            {
+                                (patientDataCOVID.email) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Email</Text>
+                                    <Text style={styles.text}>{patientDataCOVID.email}</Text>
+                                </View>
+                            }
+                            {
+                                (patientDataCOVID.phone) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Phone</Text>
+                                    <Text style={styles.text}>{patientDataCOVID.phone}</Text>
+                                </View>
+                            }
+                            <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
+                                <Text style={styles.headingText}>Test Results</Text>
+                                {
+                                    (patientCOVIDTests.length === 0) &&
+                                    <Text style={{color: '#fff', paddingTop: 6, fontSize: 18, textAlign: 'center'}}>
+                                        No test results have been recorded yet
+                                    </Text>
+                                }
+                            </View>
+                            {
+                                <View/>//patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)
+                            }
+                        </>
+                    }
+                    {   // fibrinogen patient selected
+                        (patientKeyFibrinogen && patientDataFibrinogen && selectedTest === 'fibrinogen') &&
+                        <>
+                            {
+                                (patientDataFibrinogen.bloodType) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Blood Type</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.bloodType}</Text>
+                                </View>
+                            }
+                            {
+                                (patientDataFibrinogen.sex) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Sex</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.sex}</Text>
+                                </View>
+
+                            }
+                            {
+                                (patientDataFibrinogen.age) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Age</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.age}</Text>
+                                </View>
+                            }
+                            {
+                                (patientDataFibrinogen.weight) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Weight</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.weight}</Text>
+                                </View>
+                            }
+                            {
+                                (patientDataFibrinogen.height) &&
+                                <View style={styles.patientField}>
+                                    <Text style={styles.sectionText}>Height</Text>
+                                    <Text style={styles.text}>{patientDataFibrinogen.height}</Text>
+                                </View>
+
+                            }
+                            <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
+                                <Text style={styles.headingText}>Test Results</Text>
+                                {
+                                    (patientFibrinogenTests.length === 0) &&
+                                    <Text style={{color: '#fff', paddingTop: 6, fontSize: 18, textAlign: 'center'}}>
+                                        No test results have been recorded yet
+                                    </Text>
+                                }
+                            </View>
+                            {
+                                (chartData) &&
+                                <View style={{flex: 0.6, padding: 15}}>
+                                    <LineChart
+                                        data={chartData}
+                                        width={screenWidth}
+                                        height={400}
+                                        chartConfig={chartConfig}
+                                        withInnerLines={false}
+                                        withOuterLines={false}
+                                    />
+                                </View>
+                            }
+                            {
+                                <View/>//patientFibrinogenTests.map(test => <FibrinogenTest key={test.key} item={test} />)
+                            }
+                        </>
+                    }
+                    {   // no patient selection yet
+                        (patientKeyFibrinogen != null && patientDataFibrinogen != null) &&
+                        <Text style={[fonts.heading, {padding: 25, paddingTop: 150, paddingBottom: 50}]}>
+                            To view a patient portal, select the test type and the patient or scan their QR code
+                        </Text>
+                    }
+                </ScrollView>
             </View>
-            <UserBar navigation={navigation} />
+            <UserBar navigation={navigation}/>
         </SafeAreaView>
     );
 }

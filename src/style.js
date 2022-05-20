@@ -1,10 +1,61 @@
 import {StyleSheet} from 'react-native';
 
-const backgroundColor = '#222';
+export const backgroundColor = '#222';
+export const tabBarColor = '#131313';
+export const lightText = '#eee';
+
+export const tabNavigatorStyle = {
+    headerShown: false,
+    tabBarActiveTintColor: lightText,
+    tabBarInactiveTintColor: '#aaa',
+    tabBarActiveBackgroundColor: tabBarColor,
+    tabBarInactiveBackgroundColor: tabBarColor,
+
+    tabBarLabelStyle: {
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    tabBarStyle: {
+        borderTopWidth: 0,
+        height: 100,
+        padding: 10,
+        backgroundColor: tabBarColor,
+    },
+    tabBarIconStyle: {
+        height: 40,
+        width: 40,
+    },
+    safeAreaInsets: {
+        bottom: 0,
+    },
+};
+
+export const rbSheetStyle = {
+    wrapper: {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
+    },
+    draggableIcon: {
+        backgroundColor: '#000'
+    },
+    container: {
+        borderTopRightRadius: 25,
+        borderTopLeftRadius: 25,
+        padding: 15,
+        backgroundColor: '#131313',
+        borderTopColor: '#555',
+        borderLeftColor: '#555',
+        borderRightColor: '#555',
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        alignSelf: 'center',
+        width: '90%'
+    }
+};
 
 export const floating = StyleSheet.create({
     iconButtonIcon: {
-        color: '#eee',
+        color: lightText,
         alignSelf: 'center'
     },
     iconButton: {
@@ -13,14 +64,13 @@ export const floating = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        backgroundColor: '#131313',
+        backgroundColor: tabBarColor,
         borderColor: '#555',
         borderRadius: 150,
         marginLeft: 15,
         marginTop: 15,
     },
     actionBar: {
-        flexDirection: 'column',
         justifyContent: 'flex-end',
         position: 'absolute',
         right: 30,
@@ -43,7 +93,7 @@ export const modal = StyleSheet.create({
     optionText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.6)',
         borderRadius: 15,
@@ -62,7 +112,7 @@ export const modal = StyleSheet.create({
         marginBottom: 15,
     },
     cancelText: {
-        color: '#eee',
+        color: lightText,
         fontSize: 24,
         fontWeight: 'bold',
         paddingVertical: 8,
@@ -224,7 +274,7 @@ export const device = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#eee',
+        color: lightText,
         padding: 8,
         alignSelf: 'center',
         justifyContent: 'center'
@@ -242,14 +292,14 @@ export const device = StyleSheet.create({
         fontSize: 30,
         paddingHorizontal: 30,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
         alignContent: 'center',
         justifyContent: 'center',
     },
     bigText: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
         alignContent: 'center',
         justifyContent: 'center',
     },
@@ -263,7 +313,7 @@ export const device = StyleSheet.create({
     discoveredIcon: {
         alignSelf: 'center',
         justifyContent: 'center',
-        color: '#eee',
+        color: lightText,
     },
     connectedIcon: {
         alignSelf: 'center',
@@ -276,33 +326,33 @@ export const fonts = StyleSheet.create({
     username: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
     },
     iconButtonText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
         marginHorizontal: 10
     },
     iconButtonIcon: {
-        color: '#eee',
+        color: lightText,
         marginHorizontal: 10
     },
     organizationName: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
     },
     mediumLink: {
         fontSize: 18,
         textAlign: 'center',
-        color: '#fff',
+        color: lightText,
     },
     heading: {
         fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#eee',
+        color: lightText,
         padding: 15,
         paddingTop: 2,
         paddingBottom: 35,
@@ -311,7 +361,7 @@ export const fonts = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#eee',
+        color: lightText,
         padding: 15,
         paddingTop: 2,
         paddingBottom: 18
@@ -329,7 +379,7 @@ export const fonts = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#eee',
+        color: lightText,
         padding: 8
     },
     smallText: {
@@ -342,11 +392,11 @@ export const fonts = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 10,
         fontSize: 14,
-        color: '#fff',
+        color: lightText,
         textAlign: 'center',
     },
     selectButtonText: {
-        color: '#fff',
+        color: lightText,
         fontSize: 24,
         fontWeight: 'bold',
         alignSelf: 'center'
@@ -354,19 +404,19 @@ export const fonts = StyleSheet.create({
     patientSelectText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#eee',
+        color: lightText,
     },
 });
 
 export const icons = StyleSheet.create({
     smallIcon: {
-        color: '#eee',
+        color: lightText,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#eee',
     },
     linkIcon: {
-        color: '#eee',
+        color: lightText,
         marginLeft: 20
     }
 });
@@ -388,7 +438,7 @@ export const buttons = StyleSheet.create({
     },
     submitButtonText: {
         fontSize: 24,
-        color: '#fff',
+        color: lightText,
         textAlign: 'center',
         fontWeight: 'bold'
     },
@@ -408,7 +458,7 @@ export const buttons = StyleSheet.create({
     },
     forgotPasswordText: {
         fontSize: 20,
-        color: '#eee',
+        color: lightText,
         textAlign: 'center',
         fontWeight: 'bold'
     },
@@ -469,6 +519,6 @@ export const buttons = StyleSheet.create({
         marginRight: 25,
         fontSize: 15,
         fontWeight: 'bold',
-        color: '#fff'
+        color: lightText
     },
 });

@@ -7,38 +7,13 @@ import ViewDataStack from './stacks/ViewDataStack';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconE from 'react-native-vector-icons/Entypo';
 import FastImage from "react-native-fast-image";
+
 const Tab = createBottomTabNavigator();
+import {tabNavigatorStyle} from '../../style';
 
 const TabNavigator = () => (
     <NavigationContainer>
-        <Tab.Navigator
-            initialRouteName='MonitorTab'
-            screenOptions={{
-                headerShown: false,
-                tabBarActiveTintColor: '#eee',
-                tabBarInactiveTintColor: '#ccc',
-                tabBarActiveBackgroundColor: '#131313',
-                tabBarInactiveBackgroundColor: '#131313',
-
-                tabBarLabelStyle: {
-                    fontSize: 20,
-                    fontWeight: 'bold'
-                },
-                tabBarStyle: {
-                        borderTopWidth: 0,
-                        height: 100,
-                        padding: 10,
-                        backgroundColor: '#131313',
-                },
-                tabBarIconStyle: {
-                    height: 40,
-                    width: 40,
-                },
-                safeAreaInsets: {
-                    bottom: 0,
-                },
-            }}
-        >
+        <Tab.Navigator initialRouteName='MonitorTab' screenOptions={tabNavigatorStyle}>
             <Tab.Screen
                 name='MonitorTab'
                 component={MonitorDevicesStack}
@@ -49,7 +24,7 @@ const TabNavigator = () => (
                         <Image
                             resizeMode='stretch'
                             style={{width: size, height: size}}
-                            source={require('../../resources/aptitude-logo.png')} />
+                            source={require('../../resources/aptitude-logo.png')}/>
                     ),
                 }}
             />

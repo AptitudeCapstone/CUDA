@@ -2,17 +2,19 @@ import React, {useRef} from 'react';
 import {ActivityIndicator, Alert, Text, TouchableOpacity, View} from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconE from 'react-native-vector-icons/Entypo';
-import {fonts, format, floating} from '../style';
+import {fonts, format, floating, rbSheetStyle} from '../style';
 import {useAuth} from '../contexts/UserContext';
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from "react-native-gesture-handler";
-import FastImage from 'react-native-fast-image';
-import { useWindowDimensions } from 'react-native';
+import {useWindowDimensions} from 'react-native';
 
-const UserBar = ({navigation, userInfo}) => {
+const UserBar = ({navigation}) => {
     const modalRef = useRef(null);
+    const userInfo = useAuth();
+    const dimensions = useWindowDimensions();
+    const isLandscape = (dimensions.width > dimensions.height);
 
     const handleLogInGoogle = async () => {
         try {
@@ -97,62 +99,23 @@ const UserBar = ({navigation, userInfo}) => {
         navigation.navigate('User Stack', {screen: 'Create Organization'});
     }
 
-    const { height, width } = useWindowDimensions();
-
     return (
         <View>
-            <View style={floating.actionBar}>
+            <View style={[floating.actionBar, isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
                 <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
                     <IconE style={floating.iconButtonIcon} name='help' size={28}/>
                 </TouchableOpacity>
-                {
-                    (userInfo.loginStatus === 'guest') &&
-                    <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
-                        <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
-                    </TouchableOpacity>
-                }
-                {
-                    (userInfo.loginStatus === 'registered') &&
-                    <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
-                        <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
-                    </TouchableOpacity>
-                }
-                {
-                    (userInfo.loginStatus !== 'guest' && userInfo.loginStatus !== 'registered') &&
-                    <Text style={{margin: 15, marginBottom: 5}}>
-                        <ActivityIndicator size={34}/>
-                    </Text>
-                }
+                <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
+                    <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
+                </TouchableOpacity>
             </View>
-            <RBSheet
-                ref={modalRef}
-                height={height * 0.4}
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.1)'
-                    },
-                    draggableIcon: {
-                        backgroundColor: '#000'
-                    },
-                    container: {
-                        borderTopRightRadius: 25,
-                        borderTopLeftRadius: 25,
-                        padding: 15,
-                        backgroundColor: '#131313',
-                        borderTopColor: '#555',
-                        borderLeftColor: '#555',
-                        borderRightColor: '#555',
-                        borderTopWidth: 1,
-                        borderLeftWidth: 1,
-                        borderRightWidth: 1,
-                        alignSelf: 'center',
-                        width: '90%'
-                    }
-                }}
-            >
-                    <View style={{flexDirection: 'row'}}>
-                        <ScrollView style={{flex: 0.5}}>
-                    <Text style={[fonts.username, {alignSelf: 'center', marginBottom: 20, color: '#eee'}]}>Manage Account</Text>
+            <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
+                <View style={isLandscape ? {flexDirection: 'row', flex: 1} : {flexDirection: 'column', flex: 1}}>
+                <View  style={{flex: 1}}>
+                    <Text style={[fonts.username, {alignSelf: 'center', paddingBottom: 20, color: '#eee'}]}>
+                        Manage Account
+                    </Text>
+                    <ScrollView style={{flex: 0.5}}>
                         {
                             (userInfo.loginStatus === 'registered') &&
                             <View>
@@ -167,28 +130,35 @@ const UserBar = ({navigation, userInfo}) => {
                         {
                             (userInfo.loginStatus === 'guest') &&
                             <View>
-                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={handleLogInGoogle}>
+                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                                  onPress={handleLogInGoogle}>
                                     <Text style={fonts.iconButtonText}>Sign in with Google</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={signIn}>
                                     <Text style={fonts.iconButtonText}>Sign in with Email</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={createAccount}>
+                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                                  onPress={createAccount}>
                                     <Text style={fonts.iconButtonText}>Create Account</Text>
                                 </TouchableOpacity>
                             </View>
                         }
                         {
                             (userInfo.loginStatus === 'loading' || userInfo.loginStatus === 'signed-out') &&
-                            <ActivityIndicator style={{padding: 15}} size={'large'} />
+                            <ActivityIndicator style={{padding: 15}} size={'large'}/>
                         }
-                        </ScrollView>
-                        <ScrollView style={{flex: 0.5}}>
-                    <Text style={[fonts.username, {alignSelf: 'center', marginBottom: 20, color: '#eee'}]}>Manage Organization</Text>
+                    </ScrollView>
+                </View>
+                <View style={isLandscape ? {flex: 1} : {flex: 1, marginTop: 20}}>
+                    <Text style={[fonts.username, {alignSelf: 'center', paddingBottom: 20, color: '#eee'}]}>
+                        Manage Organization
+                    </Text>
+                    <ScrollView style={{flex: 0.5}}>
                         {
                             (!(userInfo.user?.organization === null || userInfo.user?.organization === undefined)) &&
                             <View>
-                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={disconnectFromOrganization}>
+                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                                  onPress={disconnectFromOrganization}>
                                     <Text style={fonts.iconButtonText}>Disconnect from current organization</Text>
                                 </TouchableOpacity>
                             </View>
@@ -196,16 +166,19 @@ const UserBar = ({navigation, userInfo}) => {
                         {
                             (userInfo.user?.organization === null || userInfo.user?.organization === undefined) &&
                             <View>
-                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={navConnectOrganization}>
+                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                                  onPress={navConnectOrganization}>
                                     <Text style={fonts.iconButtonText}>Connect to existing</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={navCreateOrganization}>
+                                <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                                  onPress={navCreateOrganization}>
                                     <Text style={fonts.iconButtonText}>Create new</Text>
                                 </TouchableOpacity>
                             </View>
                         }
-                        </ScrollView>
-                    </View>
+                    </ScrollView>
+                </View>
+                </View>
             </RBSheet>
         </View>
     );

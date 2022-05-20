@@ -38,7 +38,7 @@ export const UserProvider: React.FC = ({children}) => {
     }), []);
 
     // unsubscribe from update on previous user, subscribe to new user updates
-    useEffect( () => {
+    useEffect(() => {
         updateUserInfo().catch((error) => console.log('Unsubscribe error:', error));
     }, [userAuth]);
 
@@ -62,7 +62,9 @@ export const UserProvider: React.FC = ({children}) => {
                     if (snapshot.exists()) {
                         setUserData({
                             loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered'),
-                            get user() {return snapshot.val()},
+                            get user() {
+                                return snapshot.val()
+                            },
                             ref: userDataRef
                         });
                     } else {
@@ -77,7 +79,9 @@ export const UserProvider: React.FC = ({children}) => {
                         userDataRef.update(update).then(() => {
                             setUserData({
                                 loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered'),
-                                get user() {return snapshot.val()},
+                                get user() {
+                                    return snapshot.val()
+                                },
                                 ref: userDataRef
                             });
                         });
@@ -92,7 +96,7 @@ export const UserProvider: React.FC = ({children}) => {
     }
 
     useEffect(() => {
-        if(userAuth === null || auth().currentUser === null) {
+        if (userAuth === null || auth().currentUser === null) {
             setUserCOVIDPatients([]);
             setUserFibrinogenPatients([]);
             return;
@@ -125,7 +129,9 @@ export const UserProvider: React.FC = ({children}) => {
     return (
         <userAuthContext.Provider
             value={{
-                get user() {return userData.user},  // convenience function
+                get user() {
+                    return userData.user
+                },  // convenience function
                 userData: userData,
                 loginStatus: userData.loginStatus,  // convenience function
                 userAuth: userAuth,

@@ -36,7 +36,7 @@ const CreateAccount = ({navigation, route}) => {
         //  * we assume this page is reached by an anonymous account *
         //  * this is because we create a guest account when         *
         //  * the user has not create an account or logged in        *
-        if(userStatus !== 'guest') {
+        if (userStatus !== 'guest') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 
