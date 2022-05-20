@@ -255,7 +255,7 @@ const Monitor = ({navigation}) => {
 
             // card remains green
             // time remaining text updates
-            case 'status.fibrinogenSecondsRemaining':
+            case 'measurement.fibrinogenSecondsRemaining':
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
                     utilityBar: 'fibrinogen',  statusText: data + ' sec. remaining'
