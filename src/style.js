@@ -1,8 +1,13 @@
 import {StyleSheet} from 'react-native';
+import React from "react";
 
 export const backgroundColor = '#222';
 export const tabBarColor = '#131313';
 export const lightText = '#eee';
+export const deviceDefaultButtonColor = '#222';
+export const deviceDefaultTextColor = '#eee';
+export const borderColor = '#0b6e26';
+
 
 export const tabNavigatorStyle = {
     headerShown: false,
@@ -10,7 +15,6 @@ export const tabNavigatorStyle = {
     tabBarInactiveTintColor: '#aaa',
     tabBarActiveBackgroundColor: tabBarColor,
     tabBarInactiveBackgroundColor: tabBarColor,
-
     tabBarLabelStyle: {
         fontSize: 20,
         fontWeight: 'bold'
@@ -232,49 +236,40 @@ export const format = StyleSheet.create({
 });
 
 export const device = StyleSheet.create({
-    header: {
+    container: {
         paddingHorizontal: 30,
+        paddingVertical: 10,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: '#555',
-        backgroundColor: '#131313',
     },
-    leftBox: {
+    header: {
         flexDirection: 'row',
         marginVertical: 10,
     },
-    container: {
+    buttonContainerLandscape: {
         flex: 1,
-        justifyContent: 'center',
-    },
-    utilityBarContainerHorizontal: {
-        flexGrow: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
         alignItems: 'center'
     },
-    utilityBarContainerVertical: {
-        flexGrow: 1,
+    buttonContainer: {
+        flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+        alignItems: 'stretch',
     },
-    utilityBarButton: {
+    button: {
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderColor: '#555',
-        backgroundColor: '#222',
+        justifyContent: 'center',
         marginVertical: 15,
         borderWidth: 1,
         borderRadius: 10,
         paddingVertical: 5,
         paddingHorizontal: 15,
     },
-    utilityButtonText: {
+    buttonText: {
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: lightText,
         padding: 8,
         alignSelf: 'center',
         justifyContent: 'center'
@@ -283,7 +278,6 @@ export const device = StyleSheet.create({
         fontSize: 24,
         paddingHorizontal: 30,
         fontWeight: 'bold',
-        color: '#888',
         alignContent: 'center',
         justifyContent: 'center',
         maxWidth: 400,
@@ -292,23 +286,8 @@ export const device = StyleSheet.create({
         fontSize: 30,
         paddingHorizontal: 30,
         fontWeight: 'bold',
-        color: lightText,
         alignContent: 'center',
         justifyContent: 'center',
-    },
-    bigText: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: lightText,
-        alignContent: 'center',
-        justifyContent: 'center',
-    },
-    tapText: {
-        fontSize: 28,
-        textAlign: 'center',
-        color: '#888',
-        alignSelf: 'center',
-        justifyContent: 'center'
     },
     discoveredIcon: {
         alignSelf: 'center',
@@ -319,7 +298,82 @@ export const device = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         color: '#1c9c27',
-    }
+    },
+    // color variations
+    /*
+    containerDefault: {
+        borderColor: '#555',
+        backgroundColor: '#131313',
+    },
+     */
+    containerDefault: {
+        borderColor: '#555',
+        backgroundColor: '#131313',
+    },
+    containerLightGreen: {
+        borderColor: '#555',
+        backgroundColor: '#084f19',
+    },
+    containerGreen: {
+        borderColor: '#555',
+        backgroundColor: '#052e0f',
+    },
+    containerOrange: {
+        borderColor: '#555',
+        backgroundColor: '#520c03',
+    },
+    statusTextDefault: {
+        color: '#888',
+    },
+    statusTextLightGreen: {
+        color: '#888',
+    },
+    statusTextGreen: {
+        color: '#888',
+    },
+    statusTextOrange: {
+        color: '#888',
+    },
+    nameTextDefault: {
+        color: lightText
+    },
+    nameTextLightGreen: {
+        color: lightText
+    },
+    nameTextGreen: {
+        color: lightText
+    },
+    nameTextOrange: {
+        color: lightText
+    },
+    buttonDefault: {
+        borderColor: '#555',
+        backgroundColor: '#222',
+    },
+    buttonLightGreen: {
+        borderColor: '#555',
+        backgroundColor: '#096922',
+    },
+    buttonGreen: {
+        borderColor: '#555',
+        backgroundColor: '#094719',
+    },
+    buttonOrange: {
+        borderColor: '#555',
+        backgroundColor: '#692109',
+    },
+    buttonTextDefault: {
+        color: lightText,
+    },
+    buttonTextLightGreen: {
+        color: lightText,
+    },
+    buttonTextGreen: {
+        color: lightText,
+    },
+    buttonTextOrange: {
+        color: lightText,
+    },
 })
 
 export const fonts = StyleSheet.create({

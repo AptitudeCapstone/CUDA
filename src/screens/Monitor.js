@@ -28,11 +28,11 @@ const Monitor = ({navigation}) => {
         [readersMap, setReadersMap] = useState(() => new Map()),
         [readersArray, setReadersArray] = useState(() => []),
         [readerToPatientMap, setReaderToPatientMap] = useState(() => new Map()),
+        [readerToPatientArray, setRreaderToPatientArray] = useState(() => []),
         [lastTappedDeviceForPatientSelect, setLastTappedDeviceForPatientSelect] = useState(null),
         autoConnectByName = useRef(false),
         dimensions = useWindowDimensions(),
         isFocused = useIsFocused(),
-        [selectedTest, setSelectedTest] = useState('covid'),
         [covidPatients, setCovidPatients] = useState([]),
         [fibrinogenPatients, setFibrinogenPatients] = useState([]),
         [viewCOVIDPatientModalVisible, setViewCOVIDPatientModalVisible] = useState(false),
@@ -41,39 +41,37 @@ const Monitor = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = ((organization === undefined ?
-            '/users/' + auth?.uid :
-            '/organizations/' + organization) + '/patients/'),
+        patientsPath = ((organization === undefined
+            ? '/users/' + auth?.uid
+            :  '/organizations/' + organization) + '/patients/'),
         patientsRef = database().ref(patientsPath),
-        patientTestsPath = patientsPath + '/' + selectedTest + '/results/',
-        patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey);
+        isLandscape = (dimensions.width > dimensions.height);
 
     // this useEffect is the base of the patient database routine
-    useEffect(() => {
-        if (!auth) {
+    useEffect( () => {
+        if (auth) {
+            patientsRef.on('value',
+                (patientsSnapshot) => {
+                    if (patientsSnapshot.exists()) {
+                        const p = patientsSnapshot.toJSON();
+                        const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
+                        setCovidPatients(c);
+                        const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
+                        setFibrinogenPatients(f);
+                    } else {
+                        setCovidPatients([]);
+                        setFibrinogenPatients([]);
+                    }
+                },
+                (error) => console.error('Error fetching database updates:', error)
+            );
+            return () => patientsRef.off();
+        } else {
             setCovidPatients([]);
             setFibrinogenPatients([]);
-            return;
+            return () => console.debug('User is logged off');
         }
-
-        patientsRef.on('value',
-            (patientsSnapshot) => {
-                if (patientsSnapshot.exists()) {
-                    const p = patientsSnapshot.toJSON();
-                    const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
-                    setCovidPatients(c);
-                    const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
-                    setFibrinogenPatients(f);
-                } else {
-                    setCovidPatients([]);
-                    setFibrinogenPatients([]);
-                }
-            },
-            (error) => console.error('Error fetching database updates:', error)
-        );
-
-        return () => patientsRef.off();
-    }, [auth, organization, loginStatus, selectedTest, isFocused]);
+    }, [auth, organization, loginStatus, isFocused]);
 
     // this useEffect is base of the BLE routine
     useEffect(() => {
@@ -91,7 +89,8 @@ const Monitor = ({navigation}) => {
                                 connect(device.id);
                             } else if (!readersMap.get(device.id)) {
                                 // update list of cards but do not connect
-                                updateReaderCards({id: device.id, name: device.name, isConnected: false});
+                                updateReaderCards({id: device.id, name: device.name,
+                                                       statusText: 'Discovered', isConnected: false});
                             }
                         } catch (error) {
                             console.log('Device connection error:', error)
@@ -108,21 +107,33 @@ const Monitor = ({navigation}) => {
     const connect = (deviceID) => {
         manager.connectToDevice(deviceID)
             .then((device) => device.discoverAllServicesAndCharacteristics())
-            .then((device) => subscribe(device))
-            .then(() => console.log("Subscribed to device action updates"))
+            .then((device) => {
+                subscribe(device);
+                const tempConnectedReaders = new Map(readersMap);
+                tempConnectedReaders.delete(deviceID);
+                tempConnectedReaders.set(deviceID, {
+                    name: device.name,
+                    id: device.id,
+                    statusText: 'Idle',
+                    isConnected: true,
+                    color: 'default'
+                });
+                setReadersMap(tempConnectedReaders);
+                const tempArray = Array.from(tempConnectedReaders.values());
+                setReadersArray(tempArray);
+                console.log("Subscribed to device action updates");
+            })
     }
 
     const disconnectFromDevice = (deviceID) => {
+        const tempConnectedReaders = new Map(readersMap);
+        tempConnectedReaders.delete(device.id);
+        setReadersMap(tempConnectedReaders);
+        const tempArray = Array.from(tempConnectedReaders.values());
+        setReadersArray(tempArray);
+
         manager.cancelDeviceConnection(deviceID)
-            .then((device) => {
-                updateReaderCards({
-                    name: device.name,
-                    id: device.id,
-                    statusText: 'Discovered',
-                    isConnected: false
-                });
-            })
-            .then(() => console.log("Disconnected from device"))
+            .then((device) => console.log("Disconnected from ", device.name))
     }
 
     function jsonFromBytes(bytes) {
@@ -133,12 +144,6 @@ const Monitor = ({navigation}) => {
 
     // subscribe to the action characteristic
     const subscribe = (device) => {
-        updateReaderCards({
-            name: device.name,
-            id: device.id,
-            statusText: 'Idle',
-            isConnected: true
-        });
         device.monitorCharacteristicForService(
             serviceUUID,
             actionCharUUID,
@@ -162,6 +167,7 @@ const Monitor = ({navigation}) => {
                     updateReaderCards({
                         name: device.name,
                         id: device.id,
+                        statusText: 'Discovered',
                         isConnected: false
                     });
                 }
@@ -170,67 +176,117 @@ const Monitor = ({navigation}) => {
 
 
     // BLE update handler function
-    //  - update status label
-    //  - if there is a user error, show instructions
-    //  - if there is a finished measurement, store it in the appropriate location
-    //   on the firebase database
-    //  - if there is useful info, send a notification to user
     const handleUpdate = (device, action, status, data) => {
-        switch (action) {
-            /*
-                COVID test handlers
-             */
+        let patientSelectedForReader = readerToPatientMap[device.id];
+        console.log(readerToPatientMap);
+        if(!patientSelectedForReader) patientSelectedForReader = 'guest';
+        let covidDBRef = database().ref(patientsPath + '/covid/' + patientSelectedForReader + '/results/');
+        let fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen/' + patientSelectedForReader + '/results/');
 
+        switch (action) {
+            // card turns green
+            // time remaining text set to initial test time
             case 'measurement.covid.startedHeating':
                 console.debug('COVID test, device has started heating', JSON.stringify(data, null, 4))
-                break;
-
-            case 'status.covidSecondsRemaining':
                 updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true,
-                    lastStatus: status, lastAction: action, lastData: data,
-                    statusText: data
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'covid',  statusText: 'Device is warming up'
                 });
                 break;
 
+            // card remains green
+            // time remaining text set to initial test time
             case 'measurement.covid.testStartedSuccessfully':
                 console.debug('COVID test started successfully');
-                break;
-
-            case 'dataProcess.covid.finishedTest':
-                console.debug('COVID test result received', JSON.stringify(data, null, 4));
-                break;
-
-            /*
-                Fibrinogen test handlers
-            */
-
-            case 'measurement.fibrinogen.testStartedSuccessfully':
-                console.debug('Fibrinogen test started successfully');
-                break;
-
-            case 'status.fibrinogenSecondsRemaining':
                 updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true,
-                    lastStatus: status, lastAction: action, lastData: data,
-                    statusText: data
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'covid',  statusText: 'Test in progress'
                 });
                 break;
 
+            // card remains green
+            // time remaining text set to initial test time
+            case 'status.covidSecondsRemaining':
+                const covidTimeRemaining = new Date(data * 1000).toISOString().substr(14, 5);
+                const covidMin = (covidTimeRemaining[0] === '0' && covidTimeRemaining[1] !== '0')
+                    ? covidTimeRemaining[1] + ' min. '
+                    :  covidTimeRemaining[0] + covidTimeRemaining[1] + 'min. ';
+                const covidSec = (covidTimeRemaining[3] === '0' && covidTimeRemaining[4] !== '0')
+                    ? covidTimeRemaining[4] + 'sec.'
+                    : covidTimeRemaining[3] + covidTimeRemaining[4] + ' sec.';
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining'
+                });
+                break;
+
+            // card turns orange
+            // message is displayed to the user describing the error
+            case 'measurement.covid.testError':
+                console.debug('COVID test error', JSON.stringify(data, null, 4));
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'orange',
+                    utilityBar: 'covid',  statusText: 'An error occurred while testing'
+                });
+                break;
+
+            // card turns light green
+            // result is uploaded to patient database of current user
+            // if no patient assigned, uploads to guest results
+            case 'dataProcess.covid.finishedTest':
+                const covidResult = {result: data, time: new Date().getDate()};
+                console.log('db ref for covid result:', covidDBRef, 'and result:\n', covidResult);
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'light-green',
+                    utilityBar: 'covid',  statusText: 'Test complete with result ' + data
+                });
+                Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
+                break;
+
+            // card turns green
+            // time remaining text set to initial test time
+            case 'measurement.fibrinogen.testStartedSuccessfully':
+                console.debug('Fibrinogen test started');
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'fibrinogen',  statusText: 'Fibrinogen test in progress'
+                });
+                break;
+
+            // card remains green
+            // time remaining text updates
+            case 'status.fibrinogenSecondsRemaining':
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'fibrinogen',  statusText: data + ' sec. remaining'
+                });
+                break;
+
+            // card turns orange
+            // message is displayed to the user describing the error
             case 'measurement.fibrinogen.testError':
-                console.debug('Fibrinogen test error', JSON.stringify(data, null, 4));
+                console.debug('Fibrinogen test error', JSON.stringify(data, null, 4))
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'orange',
+                    utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing'
+                });
                 break;
 
+            // card turns light green
+            // result is uploaded to patient database of current user
+            // if no patient assigned, uploads to guest results
             case 'dataProcess.fibrinogen.finishedTest':
-                if (readerToPatientMap.get(device.id)) {
-                    Alert.alert('Uploading patient fibrinogen result', JSON.stringify(data, null, 4));
-                    uploadFibrinogenResultForPatient(device.id, data);
-                } else {
-                    Alert.alert('Uploading guest fibrinogen result', JSON.stringify(data, null, 4));
-                    uploadFibrinogenResultForPatient(device.id, data);
-                }
+                const fibrinogenResult = {result: data, time: new Date().getDate()};
+                //dbRef.push(result);
+                console.log('db ref for fibrinogen result:', fibrinogenDBRef, 'and result:\n', fibrinogenResult);
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'light-green',
+                    utilityBar: 'fibrinogen',  statusText: 'Test complete with result ' + data.value
+                });
+                //Alert.alert('Uploading fibrinogen result', JSON.stringify(data, null, 4));
                 break;
 
+            // for debugging, alert the action used that was not handled
             default:
                 Alert.alert('Unrecognized action received', JSON.stringify(action));
         }
@@ -241,7 +297,7 @@ const Monitor = ({navigation}) => {
         const tempConnectedReaders = new Map(readersMap);
         tempConnectedReaders.set(item.id, item);
 
-        if (JSON.stringify(readersMap) !== tempConnectedReaders) {
+        if (JSON.stringify(readersMap) !== JSON.stringify(tempConnectedReaders)) {
             setReadersMap(tempConnectedReaders);
         }
 
@@ -251,29 +307,30 @@ const Monitor = ({navigation}) => {
         }
     }
 
-    const isLandscape = (dimensions.width > dimensions.height);
-    const utilityBarStyle = isLandscape ? device.utilityBarContainerHorizontal : device.utilityBarContainerVertical;
-    const headerStyle = isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'};
-    const toggleViewCOVIDPatientModal = () => setViewCOVIDPatientModalVisible(!viewCOVIDPatientModalVisible);
-    const toggleViewFibrinogenPatientModal = () => setViewFibrinogenPatientModalVisible(!viewFibrinogenPatientModalVisible);
+    // helper function to switch patient assignment for devices
+    const updatePatientForDevice = (deviceID, patientID) => {
+        let tempMap = new Map(readerToPatientMap);
+        tempMap.set(deviceID, patientID);
+        console.log('updating patient id for result to ' + patientID + ' for device ' + deviceID);
+        setReaderToPatientMap(tempMap);
+        console.log('map of selected patients', readerToPatientMap);
+    }
 
     // define behavior of discovered but not connected reader display card
     function DiscoveredReader(props) {
-        const {id, name} = props;
-        return <View style={device.container}>
-                    <View style={[device.header, headerStyle]}>
-                        <View style={device.leftBox}>
-                            <IconA name='checkcircleo' size={34} style={device.discoveredIcon}/>
-                            <View style={{justifyContent: 'center', alignContent: 'center'}}>
-                                <Text style={device.nameText}>{name}</Text>
-                                <Text style={device.statusText}>Discovered</Text>
-                            </View>
+        const {id, name, statusText} = props;
+        return <View style={[[device.container, device.containerDefault], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
+                    <View style={device.header}>
+                        <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
+                        <View>
+                            <Text style={[device.nameText, device.nameTextDefault]}>{name}</Text>
+                            <Text style={[device.statusText, device.statusTextDefault]}>{statusText}</Text>
                         </View>
-                        <View style={utilityBarStyle}>
-                            <TouchableOpacity style={device.utilityBarButton} onPress={() => {connect(id, name)}}>
-                                <Text style={device.utilityButtonText}>Connect</Text>
-                            </TouchableOpacity>
-                        </View>
+                    </View>
+                    <View style={isLandscape ? device.buttonContainerLandscape : device.buttonContainer}>
+                        <TouchableOpacity style={[device.button, device.buttonDefault]} onPress={() => {connect(id, name)}}>
+                            <Text style={[device.buttonText, device.buttonTextDefault]}>Connect</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>;
     }
@@ -281,103 +338,92 @@ const Monitor = ({navigation}) => {
     const DiscoveredReaderMemo = React.memo(DiscoveredReader);
 
     function ConnectedReader(props) {
-        const {id, name, statusText} = props;
+        const {id, name, color, utilityBar, statusText} = props;
 
-        const UtilityButtons = ({statusText}) => {
-            if (true) {
-              return (
-                  <>
-                      <TouchableOpacity style={device.utilityBarButton}
-                                        onPress={() => {
-                                            setLastTappedDeviceForPatientSelect(id);
-                                            setViewCOVIDPatientModalVisible(true);
-                                        }}>
-                          <Text style={device.utilityButtonText}>Assign COVID patient</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={device.utilityBarButton}
-                                        onPress={() => {
-                                            setLastTappedDeviceForPatientSelect(id);
-                                            setViewFibrinogenPatientModalVisible(true);
-                                        }}>
-                          <Text style={device.utilityButtonText}>Assign fibrinogen patient</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={device.utilityBarButton}
-                                        onPress={() => {
-                                            disconnectFromDevice(id);
-                                        }}>
-                          <Text style={device.utilityButtonText}>Disconnect from device</Text>
-                      </TouchableOpacity>
-                  </>
-              );
-            } else if (statusText.includes('COVID')) {
-                return (
-                    <TouchableOpacity style={device.utilityBarButton}
-                                      onPress={() => {
-                                          setLastTappedDeviceForPatientSelect(id);
-                                          setViewCOVIDPatientModalVisible(true);
-                                      }}>
-                        <Text style={device.utilityButtonText}>Assign COVID patient</Text>
-                    </TouchableOpacity>);
-            } else if (statusText.includes('Fibrinogen')) {
-                return (
-                    <TouchableOpacity style={device.utilityBarButton}
-                                      onPress={() => {
-                                          setLastTappedDeviceForPatientSelect(id);
-                                          setViewFibrinogenPatientModalVisible(true);
-                                      }}>
-                        <Text style={device.utilityButtonText}>Assign fibrinogen patient</Text>
-                    </TouchableOpacity>);
-            } else return <View/>;
+        let containerColors = device.containerLightGreen;
+        let buttonColors = device.buttonLightGreen;
+        let buttonTextColors = device.buttonTextLightGreen;
+        let statusTextColors = device.statusTextLightGreen;
+        let nameColors = device.nameTextLightGreen;
+
+        if(color === 'green') {
+            // test running
+            containerColors = device.containerGreen;
+            buttonColors = device.buttonGreen;
+            buttonTextColors = device.buttonTextGreen;
+            statusTextColors = device.statusTextGreen;
+            nameColors = device.nameTextGreen;
+        } else if(color === 'light-green') {
+            // test finished
+            containerColors = device.containerLightGreen;
+            buttonColors = device.buttonLightGreen;
+            buttonTextColors = device.buttonTextLightGreen;
+            statusTextColors = device.statusTextLightGreen;
+            nameColors = device.nameTextLightGreen;
+        } else if(color === 'orange') {
+            // test error
+            containerColors = device.containerOrange;
+            buttonColors = device.buttonOrange;
+            buttonTextColors = device.buttonTextOrange;
+            statusTextColors = device.statusTextOrange;
+            nameColors = device.nameTextOrange;
         }
 
-        return (
-            <View style={device.container}>
-                    <View style={[device.header, headerStyle]}>
-                        <View style={device.leftBox}>
-                            <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
-                            <View style={{justifyContent: 'center', alignContent: 'center'}}>
-                                <Text style={device.nameText}>{name}</Text>
-                                <Text style={[device.statusText, {color: '#1c9c27'}]}>
-                                    {statusText}
-                                </Text>
-                            </View>
+        return <View style={[device.container, containerColors]}>
+                    <View style={device.header}>
+                        <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
+                        <View>
+                            <Text style={[device.nameText, nameColors]}>{name}</Text>
+                            <Text style={[device.statusText, statusTextColors]}>
+                                {statusText}
+                            </Text>
                         </View>
-                        <View style={utilityBarStyle}>
-                            <UtilityButtons statusText={statusText}/>
-                        </View>
+                        {
+                            (isLandscape) &&
+                            <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
+                                <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
+                            </TouchableOpacity>
+                        }
                     </View>
-            </View>
-        );
+                    <View style={device.buttonContainer}>
+                        {
+                            (!isLandscape) &&
+                            <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
+                                <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
+                            </TouchableOpacity>
+                        }
+                        {
+                            (utilityBar === 'covid') &&
+                            <TouchableOpacity style={[device.button, buttonColors]}
+                                              onPress={() => {
+                                                  setLastTappedDeviceForPatientSelect(id);
+                                                  setViewCOVIDPatientModalVisible(true);
+                                              }}>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for next result</Text>
+                            </TouchableOpacity>
+                        }
+                        {
+                            (utilityBar === 'fibrinogen') &&
+                            <TouchableOpacity style={[device.button, buttonColors]}
+                                              onPress={() => {
+                                                  setLastTappedDeviceForPatientSelect(id);
+                                                  setViewFibrinogenPatientModalVisible(true);
+                                              }}>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for next result</Text>
+                            </TouchableOpacity>
+                        }
+                    </View>
+                </View>;
     }
-
-    const uploadCOVIDResultForPatient = (patientID, result) => {
-        const dbRef = database().ref(patientsPath + '/covid/' + patientID + '/results/');
-        //dbRef.push({result: result, time: new Date().getDate()});
-        console.log('db ref for fibrinogen result:', dbRef);
-    }
-
-    const uploadFibrinogenResultForPatient = (deviceID, result) => {
-        const patientID = readerToPatientMap.get(deviceID);
-        const dbRef = database().ref(patientsPath + '/fibrinogen/' + patientID + '/results/');
-        //dbRef.push({result: result, time: new Date().getDate()});
-        console.log('db ref for fibrinogen result:', dbRef, 'and result:\n', );
-    }
-
 
     const ConnectedReaderMemo = React.memo(ConnectedReader);
-
-    const updatePatientForDevice = (deviceID, patientID) => {
-        let tempMap = new Map(readerToPatientMap);
-        tempMap.set(deviceID, patientID);
-        console.log('updating patient id for result to ' + patientID + ' for device ' + deviceID);
-        setReaderToPatientMap(tempMap);
-    }
 
     return <SafeAreaView style={format.safeArea}>
                 <View style={format.page}>
                     <ModalSelector
                         onChange={(option) => {
-                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0])
+                            setViewCOVIDPatientModalVisible(false);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0]);
                         }}
                         renderItem={<View/>}
                         customSelector={<View/>}
@@ -385,7 +431,7 @@ const Monitor = ({navigation}) => {
                         data={covidPatients}
                         keyExtractor={patient => patient[0]}
                         labelExtractor={patient => patient[1]['name']}
-                        onCancel={() => toggleViewCOVIDPatientModal()}
+                        onCancel={() => setViewCOVIDPatientModalVisible(false)}
                         cancelText={'Cancel'}
                         searchText={'Search patient by name'}
                         overlayStyle={modal.overlay}
@@ -400,7 +446,8 @@ const Monitor = ({navigation}) => {
                     />
                     <ModalSelector
                         onChange={(option) => {
-                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0])
+                            setViewFibrinogenPatientModalVisible(false);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0]);
                         }}
                         renderItem={<View/>}
                         customSelector={<View/>}
@@ -408,7 +455,7 @@ const Monitor = ({navigation}) => {
                         data={fibrinogenPatients}
                         keyExtractor={patient => patient[0]}
                         labelExtractor={patient => patient[1]['name']}
-                        onCancel={() => toggleViewFibrinogenPatientModal()}
+                        onCancel={() => setViewFibrinogenPatientModalVisible(false)}
                         cancelText={'Cancel'}
                         searchText={'Search patient by name'}
                         overlayStyle={modal.overlay}
@@ -426,9 +473,11 @@ const Monitor = ({navigation}) => {
                               renderItem={({item}) => {
                                   if(item.isConnected)
                                       return <ConnectedReaderMemo id={item.id} name={item.name}
+                                                                  color={item.color} utilityBar={item.utilityBar}
                                                                   statusText={item.statusText} />
                                   else
-                                    return <DiscoveredReaderMemo id={item.id} name={item.name} />
+                                    return <DiscoveredReaderMemo id={item.id} name={item.name}
+                                                                 statusText={item.statusText} />
                               }} />
                 </View>
                 <UserBar navigation={navigation}/>
