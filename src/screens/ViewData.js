@@ -44,7 +44,9 @@ const ViewData = ({navigation}) => {
             '/users/' + auth?.uid :
             '/organizations/' + organization) + '/patients/'),
         patientsRef = database().ref(patientsPath),
-        patientTestsPath = patientsPath + '/' + selectedTest + '/results/',
+        patientTestsPath = ((selectedTest === 'covid')
+                ? patientsPath + '/covid-patients/results/'
+                : patientsPath + '/fibrinogen-patients/results/'),
         patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey),
         databaseDelete = (testKey) =>
             patientTestDBRef(testKey).remove()
@@ -71,10 +73,14 @@ const ViewData = ({navigation}) => {
             (patientsSnapshot) => {
                 if (patientsSnapshot.exists()) {
                     const p = patientsSnapshot.toJSON();
-                    const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
-                    setCovidPatients(c);
-                    const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
-                    setFibrinogenPatients(f);
+                    if (p && p['covid-patients']) {
+                        const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
+                        setCovidPatients(c);
+                    }
+                    if (p && p['fibrinogen-patients']) {
+                        const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
+                        setFibrinogenPatients(f)
+                    }
                 } else {
                     setCovidPatients([]);
                     setFibrinogenPatients([]);

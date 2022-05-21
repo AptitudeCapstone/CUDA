@@ -312,11 +312,11 @@ export const device = StyleSheet.create({
     },
     containerLightGreen: {
         borderColor: '#555',
-        backgroundColor: '#084f19',
+        backgroundColor: '#0063d13',
     },
     containerGreen: {
         borderColor: '#555',
-        backgroundColor: '#052e0f',
+        backgroundColor: '#021c08',
     },
     containerOrange: {
         borderColor: '#555',

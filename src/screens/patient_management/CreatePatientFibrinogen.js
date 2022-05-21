@@ -4,7 +4,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
 import {useIsFocused} from '@react-navigation/native';
 import {buttons, fonts, format} from '../../style';
-import auth from '@react-native-firebase/auth';
+import {useAuth} from '../../contexts/UserContext';
 import database from '@react-native-firebase/database';
 
 const CreatePatientFibrinogen = ({navigation}) => {
@@ -16,8 +16,9 @@ const CreatePatientFibrinogen = ({navigation}) => {
     // case 2: is not connected to organization
     //  - upload to /organizations/orgKey/patients/x
     const isFocused = useIsFocused(),
-        [userInfo, setUserInfo] = useState(null),
-        [orgInfo, setOrgInfo] = useState(null),
+        userInfo = useAuth(),
+        auth = userInfo.userAuth,
+        organization = userInfo.user?.organization,
         [patientName, setPatientName] = useState(null),
         [patientBloodType, setPatientBloodType] = useState(null),
         [patientSex, setPatientSex] = useState(null),
@@ -25,40 +26,15 @@ const CreatePatientFibrinogen = ({navigation}) => {
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null);
 
-    // update user info with current authenticated user info
-    // also get organization info from user, update organization info
-    useEffect(() => {
-        if (auth().currentUser != null)
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
-                        setOrgInfo(null);
-                    } else
-                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
-                            setOrgInfo(orgSnapshot.val());
-                        });
-                }
-            });
-        else
-            auth().signInAnonymously().then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            }).catch(error => {
-                console.error(error);
-            });
-    }, [isFocused]);
-
     const register_user = () => {
-        if (orgInfo === null) {
+        if (!organization) {
             // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
+            database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/').orderByChild('qrId').once('value', function (snapshot) {
 
                 let qrId = 1;
                 if (snapshot.val()) {
                     let takenQRs = [];
 
-                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });
@@ -67,8 +43,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                         qrId += 1;
                 }
 
-
-                const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/').push();
+                const patientReference = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/').push();
 
                 patientReference.update({
                     qrId: qrId,
@@ -78,11 +53,11 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     age: patientAge,
                     height: patientHeight,
                     weight: patientWeight
-                }).then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientReference.key));
+                }).then(() => console.log('Added entry for /users/' + auth.uid + '/patients/fibrinogen-patients/' + patientReference.key));
             });
         } else {
             // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').orderByChild('qrId').once('value', function (snapshot) {
+            database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/').orderByChild('qrId').once('value', function (snapshot) {
                 let qrId = 1;
                 if (snapshot.val()) {
                     let takenQRs = [];
@@ -96,7 +71,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                         qrId += 1;
                 }
 
-                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/').push();
+                const patientReference = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/').push();
 
                 patientReference.update({
                     qrId: qrId,
@@ -107,7 +82,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     height: patientHeight,
                     weight: patientWeight
                 }).then(() => {
-                    console.log('Added entry for /organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientReference.key);
+                    console.log('Added entry for /organizations/' + organization + '/patients/fibrinogen-patients/' + patientReference.key);
                     navigation.navigate('View Data');
                 });
             });
@@ -119,25 +94,25 @@ const CreatePatientFibrinogen = ({navigation}) => {
             <View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(patientBloodType == 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('A+')}
                     >
                         <Text style={fonts.selectButtonText}>A+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('B+')}
                     >
                         <Text style={fonts.selectButtonText}>B+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('AB+')}
                     >
                         <Text style={fonts.selectButtonText}>AB+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('O+')}
                     >
                         <Text style={fonts.selectButtonText}>O+</Text>
@@ -145,25 +120,25 @@ const CreatePatientFibrinogen = ({navigation}) => {
                 </View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(patientBloodType == 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('A-')}
                     >
                         <Text style={fonts.selectButtonText}>A-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('B-')}
                     >
                         <Text style={fonts.selectButtonText}>B-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('AB-')}
                     >
                         <Text style={fonts.selectButtonText}>AB-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType == 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType === 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('O-')}
                     >
                         <Text style={fonts.selectButtonText}>O-</Text>
@@ -177,13 +152,13 @@ const CreatePatientFibrinogen = ({navigation}) => {
         return (
             <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                 <TouchableOpacity
-                    style={(patientSex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    style={(patientSex === 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                     onPress={() => setPatientSex('Male')}
                 >
                     <Text style={fonts.selectButtonText}>Male</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={(patientSex == 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    style={(patientSex === 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                     onPress={() => setPatientSex('Female')}
                 >
                     <Text style={fonts.selectButtonText}>Female</Text>

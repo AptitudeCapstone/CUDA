@@ -28,7 +28,6 @@ const Monitor = ({navigation}) => {
         [readersMap, setReadersMap] = useState(() => new Map()),
         [readersArray, setReadersArray] = useState(() => []),
         [readerToPatientMap, setReaderToPatientMap] = useState(() => new Map()),
-        [readerToPatientArray, setRreaderToPatientArray] = useState(() => []),
         [lastTappedDeviceForPatientSelect, setLastTappedDeviceForPatientSelect] = useState(null),
         autoConnectByName = useRef(false),
         dimensions = useWindowDimensions(),
@@ -53,17 +52,29 @@ const Monitor = ({navigation}) => {
             patientsRef.on('value',
                 (patientsSnapshot) => {
                     if (patientsSnapshot.exists()) {
+                        console.log(patientsSnapshot);
                         const p = patientsSnapshot.toJSON();
-                        const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
-                        setCovidPatients(c);
-                        const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
-                        setFibrinogenPatients(f);
+                        if(p && p['covid-patients']) {
+                            const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
+                            setCovidPatients(c);
+                        } else {
+                            setCovidPatients([]);
+                        }
+
+                        if(p['fibrinogen-patients']) {
+                            const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
+                            setFibrinogenPatients(f);
+                        } else{
+                            setFibrinogenPatients([]);
+                        }
                     } else {
                         setCovidPatients([]);
                         setFibrinogenPatients([]);
                     }
-                },
-                (error) => console.error('Error fetching database updates:', error)
+
+                    console.debug('set covid patients to ', covidPatients);
+                    console.debug('set fibrinogen patients to ', fibrinogenPatients);
+                }, (error) => console.error('Error fetching database updates:', error)
             );
             return () => patientsRef.off();
         } else {
@@ -115,13 +126,12 @@ const Monitor = ({navigation}) => {
                     name: device.name,
                     id: device.id,
                     statusText: 'Idle',
-                    isConnected: true,
-                    color: 'default'
+                    isConnected: true
                 });
                 setReadersMap(tempConnectedReaders);
                 const tempArray = Array.from(tempConnectedReaders.values());
                 setReadersArray(tempArray);
-                console.log("Subscribed to device action updates");
+                console.log('Subscribed to device action updates');
             })
     }
 
@@ -133,7 +143,7 @@ const Monitor = ({navigation}) => {
         setReadersArray(tempArray);
 
         manager.cancelDeviceConnection(deviceID)
-            .then((device) => console.log("Disconnected from ", device.name))
+            .then((device) => console.log('Disconnected from ', device.name))
     }
 
     function jsonFromBytes(bytes) {
@@ -177,13 +187,24 @@ const Monitor = ({navigation}) => {
 
     // BLE update handler function
     const handleUpdate = (device, action, status, data) => {
-        let patientSelectedForReader = readerToPatientMap[device.id];
-        console.log(readerToPatientMap);
-        if(!patientSelectedForReader) patientSelectedForReader = 'guest';
-        let covidDBRef = database().ref(patientsPath + '/covid/' + patientSelectedForReader + '/results/');
-        let fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen/' + patientSelectedForReader + '/results/');
+        let selectedPatient = readerToPatientMap.get(device.id);
+        let covidDBRef = null
+        let fibrinogenDBRef = null;
+        if(selectedPatient) {
+            covidDBRef = database().ref(patientsPath + '/covid-patients/' + selectedPatient + '/results/');
+            fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient + '/results/');
+        } else {
+            covidDBRef = database().ref(patientsPath + '/guest-results/covid/results/');
+            fibrinogenDBRef = database().ref(patientsPath + '/guest-results/fibrinogen/results/');
+        }
 
         switch (action) {
+            case 'measurement.covid.beginningTest':
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'covid',  statusText: 'Beginning a COVID test'
+                });
+                break;
             // card turns green
             // time remaining text set to initial test time
             case 'measurement.covid.startedHeating':
@@ -200,7 +221,7 @@ const Monitor = ({navigation}) => {
                 console.debug('COVID test started successfully');
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid',  statusText: 'Test in progress'
+                    utilityBar: 'covid',  statusText: 'Measurement in in progress'
                 });
                 break;
 
@@ -243,22 +264,20 @@ const Monitor = ({navigation}) => {
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
                 break;
 
+            case 'measurement.fibrinogen.beginningTest':
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'green',
+                    utilityBar: 'fibrinogen',  statusText: 'Beginning a fibrinogen test'
+                });
+                break;
+
             // card turns green
             // time remaining text set to initial test time
             case 'measurement.fibrinogen.testStartedSuccessfully':
                 console.debug('Fibrinogen test started');
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen',  statusText: 'Fibrinogen test in progress'
-                });
-                break;
-
-            // card remains green
-            // time remaining text updates
-            case 'measurement.fibrinogenSecondsRemaining':
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen',  statusText: data + ' sec. remaining'
+                    utilityBar: 'fibrinogen',  statusText: 'Fibrinogen measurement in progress'
                 });
                 break;
 
@@ -276,16 +295,26 @@ const Monitor = ({navigation}) => {
             // result is uploaded to patient database of current user
             // if no patient assigned, uploads to guest results
             case 'dataProcess.fibrinogen.finishedTest':
-                const fibrinogenResult = {result: data, time: new Date().getDate()};
-                //dbRef.push(result);
-                console.log('db ref for fibrinogen result:', fibrinogenDBRef, 'and result:\n', fibrinogenResult);
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'light-green',
-                    utilityBar: 'fibrinogen',  statusText: 'Test complete with result ' + data.value
-                });
-                //Alert.alert('Uploading fibrinogen result', JSON.stringify(data, null, 4));
+                const result = parseFloat(data).toFixed(2);
+                const fibrinogenResult = {result: result, time: new Date().toLocaleString()};
+                const newTestRef = fibrinogenDBRef.push();
+                newTestRef.set(fibrinogenResult).then(() => {
+                    updateReaderCards({
+                        name: device.name, id: device.id, isConnected: true, color: 'green',
+                        utilityBar: 'fibrinogen',
+                        statusText: 'Test complete with result ' + result
+                    });
+                    Alert.alert('Fibrinogen test complete', 'Result: ' + result);
+                }).catch((error) => {
+                    Alert.alert('Error uploading to the database:', error)
+                })
                 break;
-
+            case 'measurement.chipRemoved':
+                updateReaderCards({
+                    name: device.name, id: device.id, isConnected: true, color: 'default',
+                    statusText: 'Idle'
+                });
+                break;
             // for debugging, alert the action used that was not handled
             default:
                 Alert.alert('Unrecognized action received', JSON.stringify(action));
@@ -309,10 +338,8 @@ const Monitor = ({navigation}) => {
 
     // helper function to switch patient assignment for devices
     const updatePatientForDevice = (deviceID, patientID) => {
-        let tempMap = new Map(readerToPatientMap);
-        tempMap.set(deviceID, patientID);
+        setReaderToPatientMap(readerToPatientMap.set(deviceID, patientID));
         console.log('updating patient id for result to ' + patientID + ' for device ' + deviceID);
-        setReaderToPatientMap(tempMap);
         console.log('map of selected patients', readerToPatientMap);
     }
 
@@ -340,11 +367,11 @@ const Monitor = ({navigation}) => {
     function ConnectedReader(props) {
         const {id, name, color, utilityBar, statusText} = props;
 
-        let containerColors = device.containerLightGreen;
-        let buttonColors = device.buttonLightGreen;
-        let buttonTextColors = device.buttonTextLightGreen;
-        let statusTextColors = device.statusTextLightGreen;
-        let nameColors = device.nameTextLightGreen;
+        let containerColors = device.containerDefault;
+        let buttonColors = device.buttonDefault;
+        let buttonTextColors = device.buttonTextDefault;
+        let statusTextColors = device.statusTextDefault;
+        let nameColors = device.nameTextDefault;
 
         if(color === 'green') {
             // test running

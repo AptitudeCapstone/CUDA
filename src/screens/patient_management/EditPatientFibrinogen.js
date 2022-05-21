@@ -6,14 +6,16 @@ import {buttons, fonts, format} from '../../style';
 import {useIsFocused} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import {useAuth} from "../../contexts/UserContext";
 
 const EditPatientFibrinogen = ({route, navigation}) => {
     const {patientKey} = route.params;
 
     // text field values
     const isFocused = useIsFocused(),
-        [userInfo, setUserInfo] = useState(null),
-        [orgInfo, setOrgInfo] = useState(null),
+        userInfo = useAuth(),
+        auth = userInfo.userAuth,
+        organization = userInfo.user?.organization;
         [patientName, setPatientName] = useState(null),
         [patientBloodType, setPatientBloodType] = useState(null),
         [patientSex, setPatientSex] = useState(null),
@@ -21,44 +23,13 @@ const EditPatientFibrinogen = ({route, navigation}) => {
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null);
 
-    // case 1: is connected to organization
-    //  - upload to /users/patients/x
-    // case 2: is not connected to organization
-    //  - upload to /organizations/orgKey/patients/x
-
-    // get current user and org info
-    // determines when page comes into focus
-    // update user info with current authenticated user info
-    // also get organization info from user, update organization info
-    useEffect(() => {
-        if (auth().currentUser != null)
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
-                        setOrgInfo(null);
-                    } else
-                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
-                            setOrgInfo(orgSnapshot.val());
-                        });
-                }
-            });
-        else
-            auth().signInAnonymously().then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            }).catch(error => {
-                console.error(error);
-            });
-    }, [isFocused]);
-
     // add navigate to patient page after, and update patient that is selected
     const update_patient = () => {
         let patient = null;
-        if (orgInfo === null) {
-            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/fibrinogen/' + patientKey);
+        if (!organization) {
+            patient = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/' + patientKey);
         } else {
-            patient = database().ref('/organizations/' + userInfo.organization + '/patients/fibrinogen/' + patientKey);
+            patient = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/' + patientKey);
         }
 
         // first get current patient info
@@ -66,27 +37,27 @@ const EditPatientFibrinogen = ({route, navigation}) => {
         patient.once('value', function (patientSnapshot) {
             console.log(patientSnapshot.val());
             if (patientSnapshot.val()) {
-                if (patientName != patientSnapshot.val().name && patientName != null) {
+                if (patientName !== patientSnapshot.val().name && patientName !== null) {
                     patient.update({name: patientName});
                 }
 
-                if (patientBloodType != patientSnapshot.val().bloodType && patientBloodType != null) {
+                if (patientBloodType !== patientSnapshot.val().bloodType && patientBloodType !== null) {
                     patient.update({bloodType: patientBloodType});
                 }
 
-                if (patientSex != patientSnapshot.val().sex && patientSex != null) {
+                if (patientSex !== patientSnapshot.val().sex && patientSex !== null) {
                     patient.update({sex: patientSex});
                 }
 
-                if (patientAge != patientSnapshot.val().age && patientAge != null) {
+                if (patientAge !== patientSnapshot.val().age && patientAge !== null) {
                     patient.update({age: patientAge});
                 }
 
-                if (patientWeight != patientSnapshot.val().weight && patientWeight != null) {
+                if (patientWeight !== patientSnapshot.val().weight && patientWeight !== null) {
                     patient.update({weight: patientWeight});
                 }
 
-                if (patientHeight != patientSnapshot.val().height && patientHeight != null) {
+                if (patientHeight !== patientSnapshot.val().height && patientHeight !== null) {
                     patient.update({height: patientHeight});
                 }
             }

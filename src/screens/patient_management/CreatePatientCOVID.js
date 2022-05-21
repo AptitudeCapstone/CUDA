@@ -5,6 +5,7 @@ import database from "@react-native-firebase/database";
 import {buttons, fonts, format} from '../../style';
 import {useIsFocused} from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
+import {useAuth} from "../../contexts/UserContext";
 
 const CreatePatientCOVID = ({navigation}) => {
     // text field values
@@ -24,44 +25,19 @@ const CreatePatientCOVID = ({navigation}) => {
 
     // get current user and org info
     // determines when page comes into focus
-    const isFocused = useIsFocused();
-    const [userInfo, setUserInfo] = useState(null);
-    const [orgInfo, setOrgInfo] = useState(null);
-
-    // update user info with current authenticated user info
-    // also get organization info from user, update organization info
-    useEffect(() => {
-        if (auth().currentUser != null)
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
-                        setOrgInfo(null);
-                    } else
-                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
-                            setOrgInfo(orgSnapshot.val());
-                        });
-                }
-            });
-        else
-            auth().signInAnonymously().then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            }).catch(error => {
-                console.error(error);
-            });
-    }, [isFocused]);
+    const userInfo = useAuth(),
+        auth = userInfo.userAuth,
+        organization = userInfo.user?.organization;
 
     const register_user = () => {
-        if (orgInfo === null) {
+        if (!organization) {
             // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').orderByChild('qrId').once('value', function (snapshot) {
+            database().ref('/users/' + auth.uid + '/patients/covid-patients/').orderByChild('qrId').once('value', function (snapshot) {
 
                 let qrId = 1;
                 if (snapshot.val()) {
                     let takenQRs = [];
 
-                    // @ts-ignore
                     snapshot.forEach(function (data) {
                         takenQRs.push(data.val().qrId);
                     });
@@ -70,8 +46,7 @@ const CreatePatientCOVID = ({navigation}) => {
                         qrId += 1;
                 }
 
-
-                const patientReference = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/').push();
+                const patientReference = database().ref('/users/' + auth.uid + '/patients/covid-patients/').push();
 
                 patientReference.update({
                     name: patientName,
@@ -83,11 +58,11 @@ const CreatePatientCOVID = ({navigation}) => {
                     city: patientCity,
                     state: patientState,
                     zip: patientZip
-                }).then(() => console.log('Added entry for /users/' + auth().currentUser.uid + '/patients/covid/' + patientReference.key));
+                }).then(() => console.log('Added entry for /users/' + auth.uid + '/patients/covid-patients/' + patientReference.key));
             });
         } else {
             // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + userInfo.organization + '/patients/covid/').orderByChild('qrId').once('value', function (snapshot) {
+            database().ref('/organizations/' + organization + '/patients/covid-patients/').orderByChild('qrId').once('value', function (snapshot) {
                 let qrId = 1;
                 if (snapshot.val()) {
                     let takenQRs = [];
@@ -101,7 +76,7 @@ const CreatePatientCOVID = ({navigation}) => {
                         qrId += 1;
                 }
 
-                const patientReference = database().ref('/organizations/' + userInfo.organization + '/patients/covid/').push();
+                const patientReference = database().ref('/organizations/' + organization + '/patients/covid-patients/').push();
 
                 patientReference.update({
                     name: patientName,
@@ -114,7 +89,7 @@ const CreatePatientCOVID = ({navigation}) => {
                     state: patientState,
                     zip: patientZip
                 }).then(() => {
-                    console.log('Added entry for /organizations/' + userInfo.organization + '/patients/covid/' + patientReference.key);
+                    console.log('Added entry for /organizations/' + organization + '/patients/covid-patients/' + patientReference.key);
                     navigation.navigate('View Data');
                 });
             });

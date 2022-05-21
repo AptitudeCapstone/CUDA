@@ -3,8 +3,7 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format} from '../../style';
-import {useIsFocused} from "@react-navigation/native";
-import auth from "@react-native-firebase/auth";
+import {useAuth} from "../../contexts/UserContext";
 
 const EditPatientCOVID = ({route, navigation}) => {
     const {patientKey} = route.params;
@@ -17,51 +16,17 @@ const EditPatientCOVID = ({route, navigation}) => {
     const [patientStreetAddress2, setPatientStreetAddress2] = useState('');
     const [patientCity, setPatientCity] = useState('');
     const [patientState, setPatientState] = useState('');
-    const [patientCountry, setPatientCountry] = useState('');
     const [patientZip, setPatientZip] = useState(0);
-
-    // case 1: is connected to organization
-    //  - upload to /users/patients/x
-    // case 2: is not connected to organization
-    //  - upload to /organizations/orgKey/patients/x
-
-    // get current user and org info
-    // determines when page comes into focus
-    const isFocused = useIsFocused();
-    const [userInfo, setUserInfo] = useState(null);
-    const [orgInfo, setOrgInfo] = useState(null);
-
-    // update user info with current authenticated user info
-    // also get organization info from user, update organization info
-    useEffect(() => {
-        if (auth().currentUser != null)
-            // update user info based on database info
-            database().ref('/users/' + auth().currentUser.uid).once('value', function (userSnapshot) {
-                if (userSnapshot.val()) {
-                    setUserInfo(userSnapshot.val());
-                    if (userSnapshot.val().organization === undefined) {
-                        setOrgInfo(null);
-                    } else
-                        database().ref('/organizations/' + userSnapshot.val().organization).once('value', function (orgSnapshot) {
-                            setOrgInfo(orgSnapshot.val());
-                        });
-                }
-            });
-        else
-            auth().signInAnonymously().then(() => {
-                console.log('User signed in anonymously with uid ' + auth().currentUser.uid);
-            }).catch(error => {
-                console.error(error);
-            });
-    }, [isFocused]);
-
+    const userInfo = useAuth(),
+        auth = userInfo.userAuth,
+        organization = userInfo.user?.organization;
 
     const update_patient = () => {
         let patient = null;
-        if (orgInfo === null) {
-            patient = database().ref('/users/' + auth().currentUser.uid + '/patients/covid/' + patientKey);
+        if (!organization) {
+            patient = database().ref('/users/' + auth.uid + '/patients/covid-patients/' + patientKey);
         } else {
-            patient = database().ref('/organizations/' + userInfo.organization + '/patients/covid/' + patientKey)
+            patient = database().ref('/organizations/' + organization + '/patients/covid-patients/' + patientKey)
         }
 
         // first get current patient info
@@ -70,40 +35,40 @@ const EditPatientCOVID = ({route, navigation}) => {
             console.log(patientSnapshot.val());
             if (patientSnapshot.val()) {
 
-                if (patientName != patientSnapshot.val().name && patientName != '') {
+                if (patientName !== patientSnapshot.val().name && patientName !== '') {
                     patient.update({name: patientName});
                 }
 
-                if (patientEmail != patientSnapshot.val().email && patientEmail != '') {
+                if (patientEmail !== patientSnapshot.val().email && patientEmail !== '') {
                     patient.update({email: patientEmail});
                 }
 
-                if (patientPhone != patientSnapshot.val().phone && patientPhone != '') {
+                if (patientPhone !== patientSnapshot.val().phone && patientPhone !== '') {
                     patient.update({phone: patientPhone});
                 }
 
-                if (patientStreetAddress1 != patientSnapshot.val().streetAddress1 && patientStreetAddress1 != '') {
+                if (patientStreetAddress1 !== patientSnapshot.val().streetAddress1 && patientStreetAddress1 !== '') {
                     patient.update({streetAddress1: patientStreetAddress1});
                 }
 
-                if (patientStreetAddress2 != patientSnapshot.val().streetAddress2 && patientStreetAddress2 != '') {
+                if (patientStreetAddress2 !== patientSnapshot.val().streetAddress2 && patientStreetAddress2 !== '') {
                     patient.update({streetAddress2: patientStreetAddress2});
                 }
 
-                if (patientCity != patientSnapshot.val().city && patientCity != '') {
+                if (patientCity !== patientSnapshot.val().city && patientCity !== '') {
                     patient.update({city: patientCity});
                 }
 
-                if (patientState != patientSnapshot.val().state && patientState != '') {
+                if (patientState !== patientSnapshot.val().state && patientState !== '') {
                     patient.update({state: patientState});
                 }
 
-                if (patientZip != patientSnapshot.val().zip && patientZip != '') {
+                if (patientZip !== patientSnapshot.val().zip && patientZip !== '') {
                     patient.update({zip: patientZip});
                 }
             }
-        }).then(r => {
-            Alert.alert('Successfully applied changes', 'Returning to patient portal')
+        }).then(() => {
+            Alert.alert('Success', 'Changes have been applied')
         });
     }
 

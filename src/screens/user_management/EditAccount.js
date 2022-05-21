@@ -6,7 +6,6 @@ import {useAuth} from "../../contexts/UserContext";
 
 const EditAccount = ({navigation, route}) => {
     const userInfo = useAuth();
-
     const [name, setName] = useState(null);
     const [newPassword, setNewPassword] = useState(null);
     const [newEmail, setNewEmail] = useState(null);
