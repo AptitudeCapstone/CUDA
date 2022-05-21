@@ -3,17 +3,12 @@ import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'reac
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
 import {buttons, fonts, format} from '../../style';
-import {useIsFocused} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {useAuth} from "../../contexts/UserContext";
 
 const EditPatientFibrinogen = ({route, navigation}) => {
     const {patientKey} = route.params;
-
-    // text field values
-    const isFocused = useIsFocused(),
-        userInfo = useAuth(),
+    const userInfo = useAuth(),
         auth = userInfo.userAuth,
         organization = userInfo.user?.organization;
         [patientName, setPatientName] = useState(null),
@@ -64,7 +59,7 @@ const EditPatientFibrinogen = ({route, navigation}) => {
         });
 
         Alert.alert('Successfully applied changes', 'Returning to patient portal');
-        navigation.navigate('View Data');
+        navigation.goBack();
     }
 
     const BloodTypeSelector = () => {

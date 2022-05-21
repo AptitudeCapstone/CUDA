@@ -9,23 +9,10 @@ import {useAuth} from "../../contexts/UserContext";
 
 const CreatePatientCOVID = ({navigation}) => {
     // text field values
-    const [patientName, setPatientName] = useState('');
-    const [patientEmail, setPatientEmail] = useState('');
-    const [patientPhone, setPatientPhone] = useState(0);
-    const [patientStreetAddress1, setPatientStreetAddress1] = useState('');
-    const [patientStreetAddress2, setPatientStreetAddress2] = useState('');
-    const [patientCity, setPatientCity] = useState('');
-    const [patientState, setPatientState] = useState('');
-    const [patientZip, setPatientZip] = useState(0);
-
-    // case 1: is connected to organization
-    //  - upload to /users/patients/x
-    // case 2: is not connected to organization
-    //  - upload to /organizations/orgKey/patients/x
-
-    // get current user and org info
-    // determines when page comes into focus
-    const userInfo = useAuth(),
+    const [patientName, setPatientName] = useState(''),
+        [patientEmail, setPatientEmail] = useState(''),
+        [patientPhone, setPatientPhone] = useState(0),
+        userInfo = useAuth(),
         auth = userInfo.userAuth,
         organization = userInfo.user?.organization;
 
@@ -52,12 +39,7 @@ const CreatePatientCOVID = ({navigation}) => {
                     name: patientName,
                     qrId: qrId,
                     email: patientEmail,
-                    phone: patientPhone,
-                    addressLine1: patientStreetAddress1,
-                    addressLine2: patientStreetAddress2,
-                    city: patientCity,
-                    state: patientState,
-                    zip: patientZip
+                    phone: patientPhone
                 }).then(() => console.log('Added entry for /users/' + auth.uid + '/patients/covid-patients/' + patientReference.key));
             });
         } else {
@@ -83,14 +65,9 @@ const CreatePatientCOVID = ({navigation}) => {
                     qrId: qrId,
                     email: patientEmail,
                     phone: patientPhone,
-                    addressLine1: patientStreetAddress1,
-                    addressLine2: patientStreetAddress2,
-                    city: patientCity,
-                    state: patientState,
-                    zip: patientZip
                 }).then(() => {
                     console.log('Added entry for /organizations/' + organization + '/patients/covid-patients/' + patientReference.key);
-                    navigation.navigate('View Data');
+                    navigation.goBack();
                 });
             });
         }
@@ -100,10 +77,7 @@ const CreatePatientCOVID = ({navigation}) => {
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}
+                style={{paddingTop: 40,paddingBottom: 40}}
             >
                 <Text style={fonts.heading}>Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
@@ -143,72 +117,6 @@ const CreatePatientCOVID = ({navigation}) => {
                         placeholderTextColor='#bbb'
                         keyboardType='numeric'
                         onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
-                <Text style={fonts.subheading}>Address</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Address line 1'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientStreetAddress1) => setPatientStreetAddress1(patientStreetAddress1)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Address line 2 (e.g. Apt. #1)'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientStreetAddress2) => setPatientStreetAddress2(patientStreetAddress2)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='City'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientCity) => setPatientCity(patientCity)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='State'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientState) => setPatientState(patientState)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
-                </View>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='5-digit zip code'
-                        placeholderTextColor='#bbb'
-                        keyboardType='numeric'
-                        onChangeText={(patientZip) => setPatientZip(patientZip)}
                         numberOfLines={1}
                         multiline={false}
                         style={{padding: 25, color: '#fff'}}

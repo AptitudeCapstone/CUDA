@@ -8,15 +8,7 @@ import {useAuth} from '../../contexts/UserContext';
 import database from '@react-native-firebase/database';
 
 const CreatePatientFibrinogen = ({navigation}) => {
-    // text field values
-    // get current user and org info
-    // determines when page comes into focus
-    // case 1: is connected to organization
-    //  - upload to /users/patients/x
-    // case 2: is not connected to organization
-    //  - upload to /organizations/orgKey/patients/x
-    const isFocused = useIsFocused(),
-        userInfo = useAuth(),
+    const userInfo = useAuth(),
         auth = userInfo.userAuth,
         organization = userInfo.user?.organization,
         [patientName, setPatientName] = useState(null),
@@ -53,7 +45,10 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     age: patientAge,
                     height: patientHeight,
                     weight: patientWeight
-                }).then(() => console.log('Added entry for /users/' + auth.uid + '/patients/fibrinogen-patients/' + patientReference.key));
+                }).then(() => {
+                    console.log('Added entry for /users/' + auth.uid + '/patients/fibrinogen-patients/' + patientReference.key);
+                    navigation.goBack();
+                });
             });
         } else {
             // find the next available QR ID and use that for the next patient
@@ -83,7 +78,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     weight: patientWeight
                 }).then(() => {
                     console.log('Added entry for /organizations/' + organization + '/patients/fibrinogen-patients/' + patientReference.key);
-                    navigation.navigate('View Data');
+                    navigation.goBack();
                 });
             });
         }

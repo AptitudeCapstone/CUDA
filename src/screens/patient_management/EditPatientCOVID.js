@@ -9,25 +9,18 @@ const EditPatientCOVID = ({route, navigation}) => {
     const {patientKey} = route.params;
 
     // text field values
-    const [patientName, setPatientName] = useState('');
-    const [patientEmail, setPatientEmail] = useState('');
-    const [patientPhone, setPatientPhone] = useState(0);
-    const [patientStreetAddress1, setPatientStreetAddress1] = useState('');
-    const [patientStreetAddress2, setPatientStreetAddress2] = useState('');
-    const [patientCity, setPatientCity] = useState('');
-    const [patientState, setPatientState] = useState('');
-    const [patientZip, setPatientZip] = useState(0);
-    const userInfo = useAuth(),
+    const [patientName, setPatientName] = useState(''),
+        [patientEmail, setPatientEmail] = useState(''),
+        [patientPhone, setPatientPhone] = useState(0),
+        userInfo = useAuth(),
         auth = userInfo.userAuth,
         organization = userInfo.user?.organization;
 
     const update_patient = () => {
         let patient = null;
-        if (!organization) {
-            patient = database().ref('/users/' + auth.uid + '/patients/covid-patients/' + patientKey);
-        } else {
-            patient = database().ref('/organizations/' + organization + '/patients/covid-patients/' + patientKey)
-        }
+        patient = (organization)
+            ? patient = database().ref('/organizations/' + organization + '/patients/covid-patients/' + patientKey)
+            : database().ref('/users/' + auth.uid + '/patients/covid-patients/' + patientKey);
 
         // first get current patient info
         // if not empty, and not equal to current value, update the value
@@ -46,29 +39,10 @@ const EditPatientCOVID = ({route, navigation}) => {
                 if (patientPhone !== patientSnapshot.val().phone && patientPhone !== '') {
                     patient.update({phone: patientPhone});
                 }
-
-                if (patientStreetAddress1 !== patientSnapshot.val().streetAddress1 && patientStreetAddress1 !== '') {
-                    patient.update({streetAddress1: patientStreetAddress1});
-                }
-
-                if (patientStreetAddress2 !== patientSnapshot.val().streetAddress2 && patientStreetAddress2 !== '') {
-                    patient.update({streetAddress2: patientStreetAddress2});
-                }
-
-                if (patientCity !== patientSnapshot.val().city && patientCity !== '') {
-                    patient.update({city: patientCity});
-                }
-
-                if (patientState !== patientSnapshot.val().state && patientState !== '') {
-                    patient.update({state: patientState});
-                }
-
-                if (patientZip !== patientSnapshot.val().zip && patientZip !== '') {
-                    patient.update({zip: patientZip});
-                }
             }
         }).then(() => {
             Alert.alert('Success', 'Changes have been applied')
+            navigation.goBack();
         });
     }
 

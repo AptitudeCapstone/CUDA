@@ -406,7 +406,7 @@ const Monitor = ({navigation}) => {
                             </Text>
                         </View>
                         {
-                            (isLandscape) &&
+                            (isLandscape && color === 'default') &&
                             <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
                                 <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
                             </TouchableOpacity>
@@ -414,7 +414,7 @@ const Monitor = ({navigation}) => {
                     </View>
                     <View style={device.buttonContainer}>
                         {
-                            (!isLandscape) &&
+                            (!isLandscape && color === 'default') &&
                             <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
                                 <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
                             </TouchableOpacity>
@@ -426,7 +426,7 @@ const Monitor = ({navigation}) => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewCOVIDPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for next result</Text>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for this result</Text>
                             </TouchableOpacity>
                         }
                         {
@@ -436,7 +436,7 @@ const Monitor = ({navigation}) => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewFibrinogenPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for next result</Text>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for this result</Text>
                             </TouchableOpacity>
                         }
                     </View>
