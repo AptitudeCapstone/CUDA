@@ -8,6 +8,108 @@ export const deviceDefaultButtonColor = '#222';
 export const deviceDefaultTextColor = '#eee';
 export const borderColor = '#0b6e26';
 
+export const chartConfig = {
+    backgroundGradientFrom: "#111",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#222",
+    backgroundGradientToOpacity: 0.2,
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+};
+
+export const colorDefinitions = {
+    containerDefault: {
+        borderColor: '#555',
+        backgroundColor: '#131313',
+    },
+    containerLightGreen: {
+        borderColor: '#555',
+        backgroundColor: '#0063d13',
+    },
+    containerGreen: {
+        borderColor: '#555',
+        backgroundColor: '#021c08',
+    },
+    containerOrange: {
+        borderColor: '#555',
+        backgroundColor: '#520c03',
+    },
+    statusTextDefault: {
+        color: '#888',
+    },
+    statusTextLightGreen: {
+        color: '#888',
+    },
+    statusTextGreen: {
+        color: '#888',
+    },
+    statusTextOrange: {
+        color: '#888',
+    },
+    nameTextDefault: {
+        color: lightText
+    },
+    nameTextLightGreen: {
+        color: lightText
+    },
+    nameTextGreen: {
+        color: lightText
+    },
+    nameTextOrange: {
+        color: lightText
+    },
+    buttonDefault: {
+        borderColor: '#555',
+        backgroundColor: '#222',
+    },
+    buttonLightGreen: {
+        borderColor: '#555',
+        backgroundColor: '#096922',
+    },
+    buttonGreen: {
+        borderColor: '#555',
+        backgroundColor: '#094719',
+    },
+    buttonOrange: {
+        borderColor: '#555',
+        backgroundColor: '#692109',
+    },
+    buttonTextDefault: {
+        color: lightText,
+    },
+    buttonTextLightGreen: {
+        color: lightText,
+    },
+    buttonTextGreen: {
+        color: lightText,
+    },
+    buttonTextOrange: {
+        color: lightText,
+    },
+};
+
+export const deviceColors = {
+    'default': {
+        containerColors: colorDefinitions.containerDefault,
+        buttonColors: colorDefinitions.buttonDefault,
+        buttonTextColors: colorDefinitions.buttonTextDefault,
+        statusTextColors: colorDefinitions.statusTextDefault,
+        nameColors: colorDefinitions.nameTextDefault
+    },
+    'green': {
+        containerColors: colorDefinitions.containerGreen,
+        buttonColors: colorDefinitions.buttonGreen,
+        buttonTextColors: colorDefinitions.buttonTextGreen,
+        statusTextColors: colorDefinitions.statusTextGreen,
+        nameColors: colorDefinitions.nameTextGreen,
+    },
+    'orange': {
+        containerColors: colorDefinitions.containerOrange,
+        buttonColors: colorDefinitions.buttonOrange,
+        buttonTextColors: colorDefinitions.buttonTextOrange,
+        statusTextColors: colorDefinitions.statusTextOrange,
+        nameColors: colorDefinitions.nameTextOrange
+    }
+}
 
 export const tabNavigatorStyle = {
     headerShown: false,
@@ -298,83 +400,8 @@ export const device = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         color: '#1c9c27',
-    },
-    // color variations
-    /*
-    containerDefault: {
-        borderColor: '#555',
-        backgroundColor: '#131313',
-    },
-     */
-    containerDefault: {
-        borderColor: '#555',
-        backgroundColor: '#131313',
-    },
-    containerLightGreen: {
-        borderColor: '#555',
-        backgroundColor: '#0063d13',
-    },
-    containerGreen: {
-        borderColor: '#555',
-        backgroundColor: '#021c08',
-    },
-    containerOrange: {
-        borderColor: '#555',
-        backgroundColor: '#520c03',
-    },
-    statusTextDefault: {
-        color: '#888',
-    },
-    statusTextLightGreen: {
-        color: '#888',
-    },
-    statusTextGreen: {
-        color: '#888',
-    },
-    statusTextOrange: {
-        color: '#888',
-    },
-    nameTextDefault: {
-        color: lightText
-    },
-    nameTextLightGreen: {
-        color: lightText
-    },
-    nameTextGreen: {
-        color: lightText
-    },
-    nameTextOrange: {
-        color: lightText
-    },
-    buttonDefault: {
-        borderColor: '#555',
-        backgroundColor: '#222',
-    },
-    buttonLightGreen: {
-        borderColor: '#555',
-        backgroundColor: '#096922',
-    },
-    buttonGreen: {
-        borderColor: '#555',
-        backgroundColor: '#094719',
-    },
-    buttonOrange: {
-        borderColor: '#555',
-        backgroundColor: '#692109',
-    },
-    buttonTextDefault: {
-        color: lightText,
-    },
-    buttonTextLightGreen: {
-        color: lightText,
-    },
-    buttonTextGreen: {
-        color: lightText,
-    },
-    buttonTextOrange: {
-        color: lightText,
-    },
-})
+    }
+});
 
 export const fonts = StyleSheet.create({
     username: {

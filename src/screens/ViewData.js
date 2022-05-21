@@ -5,7 +5,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
-import {buttons, fonts, format, modal} from '../style';
+import {buttons, fonts, format, modal, chartConfig} from '../style';
 import database from '@react-native-firebase/database';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {format as dateFormat, parseISO} from 'date-fns';
@@ -29,20 +29,11 @@ const ViewData = ({navigation}) => {
         [viewPatientModalVisible, setViewPatientModalVisible] = useState(false),
         screenWidth = Dimensions.get('window').width,
         [chartData, setChartData] = useState({labels: ['0'], datasets: [{data: [0]}]}),
-        chartConfig = {
-            backgroundGradientFrom: "#111",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "#222",
-            backgroundGradientToOpacity: 0.2,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        },
         userInfo = useAuth(),
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = ((organization === undefined ?
-            '/users/' + auth?.uid :
-            '/organizations/' + organization) + '/patients/'),
+        patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
         patientsRef = database().ref(patientsPath),
         patientTestsPath = ((selectedTest === 'covid')
                 ? patientsPath + '/covid-patients/results/'
@@ -96,11 +87,11 @@ const ViewData = ({navigation}) => {
 
     }, [selectedPatient])
 
-    const selectedPatientChanged = (patientOption) => {
+    const selectedPatientChanged = (patientKey) => {
         if (selectedTest === 'covid') {
-            setPatientKeyCOVID(patientOption.key);
+            setPatientKeyCOVID(patientKey);
         } else if (selectedTest === 'fibrinogen') {
-            setPatientKeyFibrinogen(patientOption.key);
+            setPatientKeyFibrinogen(patientKey);
         }
     }
 
@@ -209,9 +200,7 @@ const ViewData = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 <ModalSelector
-                    onChange={(option) => {
-                        selectedPatientChanged(option)
-                    }}
+                    onChange={(option) => selectedPatientChanged(option[0])}
                     renderItem={<View/>}
                     customSelector={<View/>}
                     visible={viewPatientModalVisible}

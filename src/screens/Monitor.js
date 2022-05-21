@@ -1,31 +1,19 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-    useWindowDimensions,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
-    FlatList,
-    Alert,
-} from 'react-native';
-import {fonts, format, modal, device} from '../style';
+import {useWindowDimensions, SafeAreaView, Text, TouchableOpacity, View, FlatList, Alert} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import UserBar from '../components/UserBar';
-import {useAuth} from '../contexts/UserContext';
 import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
-
+import UserBar from '../components/UserBar';
+import {useAuth} from '../contexts/UserContext';
+import {format, modal, device, deviceColors} from '../style';
+import {serviceUUID, statusCharUUID, dataCharUUID, actionCharUUID} from '../BLEConstants'
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
 
 const Monitor = ({navigation}) => {
-    const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
-        statusCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
-        dataCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
-        actionCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
-        [readersMap, setReadersMap] = useState(() => new Map()),
+    const [readersMap, setReadersMap] = useState(() => new Map()),
         [readersArray, setReadersArray] = useState(() => []),
         [readerToPatientMap, setReaderToPatientMap] = useState(() => new Map()),
         [lastTappedDeviceForPatientSelect, setLastTappedDeviceForPatientSelect] = useState(null),
@@ -40,42 +28,29 @@ const Monitor = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = ((organization === undefined
-            ? '/users/' + auth?.uid
-            :  '/organizations/' + organization) + '/patients/'),
+        patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
         patientsRef = database().ref(patientsPath),
         isLandscape = (dimensions.width > dimensions.height);
 
     // this useEffect is the base of the patient database routine
     useEffect( () => {
         if (auth) {
-            patientsRef.on('value',
-                (patientsSnapshot) => {
-                    if (patientsSnapshot.exists()) {
-                        console.log(patientsSnapshot);
-                        const p = patientsSnapshot.toJSON();
-                        if(p && p['covid-patients']) {
-                            const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
-                            setCovidPatients(c);
-                        } else {
-                            setCovidPatients([]);
-                        }
-
-                        if(p['fibrinogen-patients']) {
-                            const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
-                            setFibrinogenPatients(f);
-                        } else{
-                            setFibrinogenPatients([]);
-                        }
-                    } else {
+            patientsRef.on('value', (patientsSnapshot) => {
+                if (patientsSnapshot.exists()) {
+                    const p = patientsSnapshot.toJSON();
+                    if(p && p['covid-patients']) {
+                        const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
+                        setCovidPatients(c);
+                    } else setCovidPatients([]);
+                    if(p['fibrinogen-patients']) {
+                        const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
+                        setFibrinogenPatients(f);
+                    } else setFibrinogenPatients([]);
+                } else {
                         setCovidPatients([]);
                         setFibrinogenPatients([]);
-                    }
-
-                    console.debug('set covid patients to ', covidPatients);
-                    console.debug('set fibrinogen patients to ', fibrinogenPatients);
-                }, (error) => console.error('Error fetching database updates:', error)
-            );
+                }
+            }, (error) => console.error('Error fetching database updates:', error));
             return () => patientsRef.off();
         } else {
             setCovidPatients([]);
@@ -88,108 +63,60 @@ const Monitor = ({navigation}) => {
     useEffect(() => {
         const subscription = manager.onStateChange((state) => {
             if (state === 'PoweredOn') {
-                manager.startDeviceScan(null, null, (error, device) => {
-                    if (error || !device || !device?.name) {
-                        if (error) console.log(error.message);
-                    } else if (device.name.includes('AMS-')) {
-                        // if device matches the naming pattern
-                        // this is called every time it gets scanned
-                        try {
-                            if (!readersMap.get(device.id) && autoConnectByName.current) {
-                                // connect to device if autoconnect on
-                                connect(device.id);
-                            } else if (!readersMap.get(device.id)) {
-                                // update list of cards but do not connect
-                                updateReaderCards({id: device.id, name: device.name,
-                                                       statusText: 'Discovered', isConnected: false});
+                    manager.startDeviceScan(null, null, 
+                        async (bleError, device) => {
+                            if (bleError || !device || !device?.name) {
+                                if (bleError) console.log('BLE Error: ' + bleError);
+                            } else if (device.name.includes('AMS-')) {
+                                try {
+                                    if (!readersMap.get(device.id) && autoConnectByName.current)
+                                        await connect(device.id);
+                                    else if (!readersMap.get(device.id))
+                                        updateReaderCards({id: device.id, name: device.name, color: 'default',
+                                                               statusText: 'Discovered', isConnected: false});
+                                } catch (err) {
+                                    console.log('Device connection error: ' + err)
+                                }
                             }
-                        } catch (error) {
-                            console.log('Device connection error:', error)
-                        }
-                    }
-                });
-                subscription.remove();
+                        });
+                    subscription.remove();
             }
         }, true);
         return () => subscription.remove();
     }, [manager]);
 
-    // connect device and subscribe to updates by ID
-    const connect = (deviceID) => {
+    const connect = (deviceID) =>
         manager.connectToDevice(deviceID)
             .then((device) => device.discoverAllServicesAndCharacteristics())
-            .then((device) => {
-                subscribe(device);
-                const tempConnectedReaders = new Map(readersMap);
-                tempConnectedReaders.delete(deviceID);
-                tempConnectedReaders.set(deviceID, {
-                    name: device.name,
-                    id: device.id,
-                    statusText: 'Idle',
-                    isConnected: true
-                });
-                setReadersMap(tempConnectedReaders);
-                const tempArray = Array.from(tempConnectedReaders.values());
-                setReadersArray(tempArray);
-                console.log('Subscribed to device action updates');
-            })
-    }
+            .then((device) =>  subscribe(device));
 
-    const disconnectFromDevice = (deviceID) => {
-        const tempConnectedReaders = new Map(readersMap);
-        tempConnectedReaders.delete(device.id);
-        setReadersMap(tempConnectedReaders);
-        const tempArray = Array.from(tempConnectedReaders.values());
-        setReadersArray(tempArray);
+    const disconnectFromDevice = (id) =>
+        manager.cancelDeviceConnection(id)
+            .then((device) => updateReaderCards({name: device.name, id: id, color: 'default',
+                                                            statusText: 'Discovered', isConnected: false}));
 
-        manager.cancelDeviceConnection(deviceID)
-            .then((device) => console.log('Disconnected from ', device.name))
-    }
+    // get json data from base64 data
+    const getJSON = (bytes) => JSON.parse(new Buffer(bytes, 'base64').toString('ascii'));
 
-    function jsonFromBytes(bytes) {
-        const b64buf = new Buffer(bytes, 'base64');
-        const str = b64buf.toString('ascii');
-        return JSON.parse(str);
-    }
-
-    // subscribe to the action characteristic
     const subscribe = (device) => {
-        device.monitorCharacteristicForService(
-            serviceUUID,
-            actionCharUUID,
-            async (error, characteristic) => {
-                if (!error && characteristic.value) {
-                    try {
-                        // read the other 2 characteristics when status update is received
-                        const actionRes = await  device.readCharacteristicForService(serviceUUID, actionCharUUID);
-                        const statusRes = await device.readCharacteristicForService(serviceUUID, statusCharUUID);
-                        const dataRes = await device.readCharacteristicForService(serviceUUID, dataCharUUID);
-                        const action = jsonFromBytes(actionRes.value);
-                        const status = jsonFromBytes(statusRes.value);
-                        const data = jsonFromBytes(dataRes.value);
-                        console.log('update received: ', JSON.stringify({'status': status, 'action': action, 'data': data}));
-                        handleUpdate(device, action, status, data);
-                    } catch (error) {
-                        console.debug(error);
-                    }
-                } else {
-                    console.debug(error.message);
-                    updateReaderCards({
-                        name: device.name,
-                        id: device.id,
-                        statusText: 'Discovered',
-                        isConnected: false
-                    });
-                }
-            });
+        updateReaderCards({name: device.name, id: device.id, color: 'default',
+            statusText: 'Idle', isConnected: true});
+        device.monitorCharacteristicForService(serviceUUID, actionCharUUID, async (bleError) => {
+            const isConnected = await manager.isDeviceConnected(device.id);
+            if(!isConnected) return 'BLE device disconnected';
+            if(!bleError) {
+                const action = await device.readCharacteristicForService(serviceUUID, actionCharUUID);
+                const status = await device.readCharacteristicForService(serviceUUID, statusCharUUID);
+                const data = await device.readCharacteristicForService(serviceUUID, dataCharUUID);
+                handleUpdate(device, getJSON(action.value), getJSON(status.value), getJSON(data.value));
+            }
+        });
     }
 
-
-    // BLE update handler function
     const handleUpdate = (device, action, status, data) => {
         let selectedPatient = readerToPatientMap.get(device.id);
-        let covidDBRef = null
-        let fibrinogenDBRef = null;
+        let covidDBRef, fibrinogenDBRef;
+
         if(selectedPatient) {
             covidDBRef = database().ref(patientsPath + '/covid-patients/' + selectedPatient + '/results/');
             fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient + '/results/');
@@ -200,33 +127,19 @@ const Monitor = ({navigation}) => {
 
         switch (action) {
             case 'measurement.covid.beginningTest':
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid',  statusText: 'Beginning a COVID test'
-                });
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'covid',  statusText: 'Beginning a COVID test'});
                 break;
-            // card turns green
-            // time remaining text set to initial test time
             case 'measurement.covid.startedHeating':
-                console.debug('COVID test, device has started heating', JSON.stringify(data, null, 4))
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid',  statusText: 'Device is warming up'
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'covid',  statusText: 'Device is warming up'
                 });
                 break;
-
-            // card remains green
-            // time remaining text set to initial test time
             case 'measurement.covid.testStartedSuccessfully':
-                console.debug('COVID test started successfully');
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid',  statusText: 'Measurement in in progress'
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'covid',  statusText: 'COVID measurement in progress'
                 });
                 break;
-
-            // card remains green
-            // time remaining text set to initial test time
             case 'status.covidSecondsRemaining':
                 const covidTimeRemaining = new Date(data * 1000).toISOString().substr(14, 5);
                 const covidMin = (covidTimeRemaining[0] === '0' && covidTimeRemaining[1] !== '0')
@@ -235,87 +148,48 @@ const Monitor = ({navigation}) => {
                 const covidSec = (covidTimeRemaining[3] === '0' && covidTimeRemaining[4] !== '0')
                     ? covidTimeRemaining[4] + 'sec.'
                     : covidTimeRemaining[3] + covidTimeRemaining[4] + ' sec.';
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining'
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining'
                 });
                 break;
-
-            // card turns orange
-            // message is displayed to the user describing the error
-            case 'measurement.covid.testError':
-                console.debug('COVID test error', JSON.stringify(data, null, 4));
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'orange',
-                    utilityBar: 'covid',  statusText: 'An error occurred while testing'
-                });
-                break;
-
-            // card turns light green
-            // result is uploaded to patient database of current user
-            // if no patient assigned, uploads to guest results
             case 'dataProcess.covid.finishedTest':
                 const covidResult = {result: data, time: new Date().getDate()};
-                console.log('db ref for covid result:', covidDBRef, 'and result:\n', covidResult);
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'light-green',
-                    utilityBar: 'covid',  statusText: 'Test complete with result ' + data
-                });
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'covid',  statusText: 'Test complete with result ' + data});
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
                 break;
-
+            case 'measurement.covid.testError':
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
+                                       utilityBar: 'covid',  statusText: 'An error occurred while testing'});
+                break;
             case 'measurement.fibrinogen.beginningTest':
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen',  statusText: 'Beginning a fibrinogen test'
-                });
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'fibrinogen',  statusText: 'Beginning a fibrinogen test'});
                 break;
-
-            // card turns green
-            // time remaining text set to initial test time
             case 'measurement.fibrinogen.testStartedSuccessfully':
-                console.debug('Fibrinogen test started');
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen',  statusText: 'Fibrinogen measurement in progress'
-                });
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
+                                       utilityBar: 'fibrinogen',  statusText: 'Fibrinogen measurement in progress'});
                 break;
-
-            // card turns orange
-            // message is displayed to the user describing the error
-            case 'measurement.fibrinogen.testError':
-                console.debug('Fibrinogen test error', JSON.stringify(data, null, 4))
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'orange',
-                    utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing'
-                });
-                break;
-
-            // card turns light green
-            // result is uploaded to patient database of current user
-            // if no patient assigned, uploads to guest results
             case 'dataProcess.fibrinogen.finishedTest':
                 const result = parseFloat(data).toFixed(2);
+                updateReaderCards({name: device.name, id: device.id,
+                    isConnected: true, color: 'green',
+                    utilityBar: 'fibrinogen', statusText: 'Test complete with result ' + result});
                 const fibrinogenResult = {result: result, time: new Date().toLocaleString()};
                 const newTestRef = fibrinogenDBRef.push();
-                newTestRef.set(fibrinogenResult).then(() => {
-                    updateReaderCards({
-                        name: device.name, id: device.id, isConnected: true, color: 'green',
-                        utilityBar: 'fibrinogen',
-                        statusText: 'Test complete with result ' + result
-                    });
-                    Alert.alert('Fibrinogen test complete', 'Result: ' + result);
-                }).catch((error) => {
-                    Alert.alert('Error uploading to the database:', error)
-                })
+                newTestRef.set(fibrinogenResult)
+                    .then(() => Alert.alert('Uploaded result', 'Result: ' + result))
+                    .catch((error) => Alert.alert('Error uploading result', 'Error: ' + error))
+                break;
+            case 'measurement.fibrinogen.testError':
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
+                                       utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing'});
                 break;
             case 'measurement.chipRemoved':
-                updateReaderCards({
-                    name: device.name, id: device.id, isConnected: true, color: 'default',
-                    statusText: 'Idle'
-                });
+                updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'default',
+                                       statusText: 'Idle'});
                 break;
-            // for debugging, alert the action used that was not handled
+
             default:
                 Alert.alert('Unrecognized action received', JSON.stringify(action));
         }
@@ -323,78 +197,39 @@ const Monitor = ({navigation}) => {
 
     // helper function to update the visible cards
     const updateReaderCards = (item) => {
-        const tempConnectedReaders = new Map(readersMap);
-        tempConnectedReaders.set(item.id, item);
-
-        if (JSON.stringify(readersMap) !== JSON.stringify(tempConnectedReaders)) {
-            setReadersMap(tempConnectedReaders);
-        }
-
-        const tempArray = Array.from(tempConnectedReaders.values());
-        if (JSON.stringify(tempArray) !== JSON.stringify(readersArray)) {
-            setReadersArray(tempArray);
-        }
+        setReadersMap(readersMap.set(item.id, item));
+        setReadersArray(Array.from(readersMap.values()));
     }
 
     // helper function to switch patient assignment for devices
-    const updatePatientForDevice = (deviceID, patientID) => {
-        setReaderToPatientMap(readerToPatientMap.set(deviceID, patientID));
-        console.log('updating patient id for result to ' + patientID + ' for device ' + deviceID);
-        console.log('map of selected patients', readerToPatientMap);
-    }
+    const updatePatientForDevice = (deviceID, patientID) => setReaderToPatientMap(readerToPatientMap.set(deviceID, patientID));
 
-    // define behavior of discovered but not connected reader display card
     function DiscoveredReader(props) {
         const {id, name, statusText} = props;
-        return <View style={[[device.container, device.containerDefault], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
+        const {containerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors['default'];
+
+        return <View style={[[device.container, containerColors], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
                     <View style={device.header}>
                         <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
                         <View>
-                            <Text style={[device.nameText, device.nameTextDefault]}>{name}</Text>
-                            <Text style={[device.statusText, device.statusTextDefault]}>{statusText}</Text>
+                            <Text style={[device.nameText, nameColors]}>{name}</Text>
+                            <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
                         </View>
                     </View>
                     <View style={isLandscape ? device.buttonContainerLandscape : device.buttonContainer}>
-                        <TouchableOpacity style={[device.button, device.buttonDefault]} onPress={() => {connect(id, name)}}>
-                            <Text style={[device.buttonText, device.buttonTextDefault]}>Connect</Text>
+                        <TouchableOpacity style={[device.button, buttonColors]} onPress={async () => {
+                            await connect(id)
+                        }}>
+                            <Text style={[device.buttonText, buttonTextColors]}>Connect</Text>
                         </TouchableOpacity>
                     </View>
                 </View>;
     }
-
     const DiscoveredReaderMemo = React.memo(DiscoveredReader);
 
     function ConnectedReader(props) {
         const {id, name, color, utilityBar, statusText} = props;
-
-        let containerColors = device.containerDefault;
-        let buttonColors = device.buttonDefault;
-        let buttonTextColors = device.buttonTextDefault;
-        let statusTextColors = device.statusTextDefault;
-        let nameColors = device.nameTextDefault;
-
-        if(color === 'green') {
-            // test running
-            containerColors = device.containerGreen;
-            buttonColors = device.buttonGreen;
-            buttonTextColors = device.buttonTextGreen;
-            statusTextColors = device.statusTextGreen;
-            nameColors = device.nameTextGreen;
-        } else if(color === 'light-green') {
-            // test finished
-            containerColors = device.containerLightGreen;
-            buttonColors = device.buttonLightGreen;
-            buttonTextColors = device.buttonTextLightGreen;
-            statusTextColors = device.statusTextLightGreen;
-            nameColors = device.nameTextLightGreen;
-        } else if(color === 'orange') {
-            // test error
-            containerColors = device.containerOrange;
-            buttonColors = device.buttonOrange;
-            buttonTextColors = device.buttonTextOrange;
-            statusTextColors = device.statusTextOrange;
-            nameColors = device.nameTextOrange;
-        }
+        const {containerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors[color];
 
         return <View style={[device.container, containerColors]}>
                     <View style={device.header}>
@@ -407,7 +242,8 @@ const Monitor = ({navigation}) => {
                         </View>
                         {
                             (isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
+                            <TouchableOpacity style={[device.button, buttonColors]}
+                                              onPress={async () => await disconnectFromDevice(id)}>
                                 <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
                             </TouchableOpacity>
                         }
@@ -415,7 +251,8 @@ const Monitor = ({navigation}) => {
                     <View style={device.buttonContainer}>
                         {
                             (!isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button, buttonColors]} onPress={() => disconnectFromDevice(id)}>
+                            <TouchableOpacity style={[device.button, buttonColors]}
+                                              onPress={async () => await disconnectFromDevice(id)}>
                                 <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
                             </TouchableOpacity>
                         }
@@ -426,7 +263,7 @@ const Monitor = ({navigation}) => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewCOVIDPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for this result</Text>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for result</Text>
                             </TouchableOpacity>
                         }
                         {
@@ -436,13 +273,12 @@ const Monitor = ({navigation}) => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewFibrinogenPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for this result</Text>
+                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for result</Text>
                             </TouchableOpacity>
                         }
                     </View>
                 </View>;
     }
-
     const ConnectedReaderMemo = React.memo(ConnectedReader);
 
     return <SafeAreaView style={format.safeArea}>
@@ -495,17 +331,17 @@ const Monitor = ({navigation}) => {
                         initValueTextStyle={modal.searchText}
                         searchTextStyle={modal.searchText}
                     />
-                    <FlatList data={readersArray}
-                              keyExtractor={(item) => item.id}
-                              renderItem={({item}) => {
-                                  if(item.isConnected)
-                                      return <ConnectedReaderMemo id={item.id} name={item.name}
-                                                                  color={item.color} utilityBar={item.utilityBar}
-                                                                  statusText={item.statusText} />
-                                  else
-                                    return <DiscoveredReaderMemo id={item.id} name={item.name}
-                                                                 statusText={item.statusText} />
-                              }} />
+                    <FlatList
+                        data={readersArray}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({item}) => {
+                            if(item.isConnected) return <ConnectedReaderMemo id={item.id} name={item.name}
+                                                                             color={item.color}
+                                                                             utilityBar={item.utilityBar}
+                                                                             statusText={item.statusText}/>
+                            else return <DiscoveredReaderMemo id={item.id} name={item.name}
+                                                              statusText={item.statusText}/>
+                        }} />
                 </View>
                 <UserBar navigation={navigation}/>
             </SafeAreaView>;
