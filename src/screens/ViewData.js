@@ -32,6 +32,7 @@ const ViewData = ({navigation}) => {
         [patientCOVIDTests, setPatientCOVIDTests] = useState([]),
         [patientFibrinogenTests, setPatientFibrinogenTests] = useState([]),
         [viewPatientModalVisible, setViewPatientModalVisible] = useState(false),
+        modalRef = useRef(),
         dimensions = useWindowDimensions(),
         [chartData, setChartData] = useState({labels: ['0'], datasets: [{data: [0]}]}),
         userInfo = useAuth(),
@@ -42,15 +43,7 @@ const ViewData = ({navigation}) => {
         patientsRef = database().ref(patientsPath),
         patientTestsPath = ((selectedTest === 'covid')
                 ? patientsPath + '/covid-patients/results/'
-                : patientsPath + '/fibrinogen-patients/results/'),
-        patientTestDBRef = (testKey) => database().ref(patientTestsPath + testKey),
-        databaseDelete = (testKey) =>
-            patientTestDBRef(testKey).remove()
-                .then(() => console.log('entry removed'))
-                .catch(() => {
-                    throw new Error('problem removing item from database')
-                }),
-        modalRef = useRef(null);
+                : patientsPath + '/fibrinogen-patients/results/');
 
     useEffect(() => {
         if (!auth) {
@@ -87,13 +80,23 @@ const ViewData = ({navigation}) => {
         if (selectedTest === 'covid') {
             setPatientDataCOVID(patients['covid-patients'][patientKey]);
             setPatientKeyCOVID(patientKey);
-            const tempTests = Array.from(Object.values(patients['covid-patients'][patientKey]['results']));
-            setPatientCOVIDTests(tempTests.reverse());
+            const patientResults = patients['covid-patients'][patientKey]['results'];
+            if(patientResults) {
+                const tempTests = Array.from(Object.values(patientResults));
+                setPatientCOVIDTests(tempTests.reverse());
+            } else {
+                setPatientCOVIDTests([]);
+            }
         } else if (selectedTest === 'fibrinogen') {
             setPatientDataFibrinogen(patients['fibrinogen-patients'][patientKey]);
             setPatientKeyFibrinogen(patientKey);
-            const tempTests = Array.from(Object.values(patients['fibrinogen-patients'][patientKey]['results']));
-            setPatientFibrinogenTests(tempTests.reverse());
+            const patientResults = patients['fibrinogen-patients'][patientKey]['results'];
+            if(patientResults) {
+                const tempTests = Array.from(Object.values(patientResults));
+                setPatientFibrinogenTests(tempTests.reverse());
+            } else {
+                setPatientFibrinogenTests([]);
+            }
         }
     }
 
@@ -114,9 +117,9 @@ const ViewData = ({navigation}) => {
     );
 
     const FibrinogenTest = ({item}) => (
-        <View style={{backgroundColor: '#eee', borderRadius: 15, flex: 1, marginVertical: 10}}>
+        <View style={{backgroundColor: '#fff', borderRadius: 15, flex: 1, marginVertical: 10}}>
             <View style={{
-                backgroundColor: '#ddd', padding: 20, paddingBottom: 10,
+                backgroundColor: '#eee', padding: 20, paddingBottom: 10,
                 flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15
             }}>
                 <Text style={fonts.mediumText}>
@@ -183,6 +186,15 @@ const ViewData = ({navigation}) => {
                     {
                         (isCOVIDTest) &&
                         <>
+                            <View style={format.utilityPatientBarContainer}>
+                                <Text style={fonts.sectionText}>Patient Data</Text>
+                                <TouchableOpacity style={format.utilityBarButton}
+                                                  onPress={() => navigation.navigate('Edit Patient COVID',
+                                                      {patientKey: patientKeyCOVID})}>
+                                    <Text style={fonts.mediumText}>Edit</Text>
+                                    <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                </TouchableOpacity>
+                            </View>
                             <View style={format.section}>
                                 {
                                     (patientDataCOVID.email) &&
@@ -199,30 +211,30 @@ const ViewData = ({navigation}) => {
                                     </View>
                                 }
                             </View>
-                            <View style={{padding: 20}}>
-                                <Text style={fonts.bigText}>Test Results</Text>
-                                {
-                                    (patientCOVIDTests.length === 0) &&
-                                    <Text style={fonts.bigText}>
-                                        No test results have been recorded yet
-                                    </Text>
-                                }
-                            </View>
                             <View style={format.utilityPatientBarContainer}>
-                                <Text style={fonts.sectionText}>Patient Information</Text>
+                                <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient Results</Text>
                                 <TouchableOpacity style={format.utilityBarButton}
-                                                  onPress={() => navigation.navigate('Edit Patient COVID',
-                                                      {patientKey: patientKeyCOVID})}>
-                                    <Text style={fonts.mediumText}>Edit</Text>
-                                    <IconA name='edit' size={20} style={format.utilityBarButtonIcon}/>
+                                                  onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
+                                    <Text style={fonts.mediumText}>Export</Text>
+                                    <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             {
-                                patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)
+                                (patientCOVIDTests.length > 0) &&
+                                <View style={{paddingVertical: 10}}>
+                                            {patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)}
+                                </View>
+                            }
+                            {
+                                (patientCOVIDTests.length === 0) &&
+                                <View style={{paddingVertical: 10}}>
+                                    <Text style={[fonts.fieldName, {color: '#999', paddingHorizontal: 20}]}>
+                                        No results have been saved for this patient yet
+                                    </Text>
+                                </View>
                             }
                         </>
                     }
-
                     {
                         (isFibrinogenTest) &&
                         <>
@@ -233,7 +245,7 @@ const ViewData = ({navigation}) => {
                                                       navigation.navigate('Edit Patient Fibrinogen',
                                                           {patientKey: patientKeyFibrinogen})}}>
                                     <Text style={fonts.mediumText}>Edit</Text>
-                                    <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center'}}/>
+                                    <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             <View style={format.section}>
@@ -278,23 +290,29 @@ const ViewData = ({navigation}) => {
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
                                     <Text style={fonts.mediumText}>Export</Text>
-                                    <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center'}}/>
+                                    <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             {
                                 (patientFibrinogenTests.length > 0) &&
-                                <View style={[format.section, {paddingVertical: 10}]}>
-                                    <View style={{flex: 0.6, padding: 15}}>
-                                        <LineChart
-                                            data={chartData}
-                                            width={dimensions.width*0.75}
-                                            height={300}
-                                            chartConfig={chartConfig}
-                                            withInnerLines={false}
-                                            withOuterLines={false}
-                                        />
-                                    </View>
+                                <View style={{paddingVertical: 10}}>
+                                    <LineChart
+                                        data={chartData}
+                                        width={dimensions.width}
+                                        height={250}
+                                        chartConfig={chartConfig}
+                                        withInnerLines={false}
+                                        withOuterLines={false}
+                                    />
                                     {patientFibrinogenTests.map(test => <FibrinogenTest key={test.time} item={test} />)}
+                                </View>
+                            }
+                            {
+                                (patientFibrinogenTests.length === 0) &&
+                                <View style={{paddingVertical: 10}}>
+                                    <Text style={[fonts.fieldName, {color: '#999', paddingHorizontal: 20}]}>
+                                        No results have been saved for this patient yet
+                                    </Text>
                                 </View>
                             }
                         </>
@@ -314,19 +332,11 @@ const ViewData = ({navigation}) => {
                     }
                 </ScrollView>
             </View>
-            <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
+            <RBSheet
+                ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
                 <QRCodeScanner
                     onRead={(e) => {
-                        Alert.alert('Setting patient to ', e.data);
-                        console.log('reader to patient map before:', readerToPatientMap);
-                        const temp = readerToPatientMap.set(lastTappedDeviceForPatientSelect, e.data);
-                        setReaderToPatientMap(temp);
-                        console.log('after:', temp);
-                        const deviceInfo = readersMap.get(lastTappedDeviceForPatientSelect);
-                        console.log('device info before:', deviceInfo);
-                        deviceInfo.selectedPatient = e.data;
-                        updateReaderCards(deviceInfo);
-                        console.log('after:', readersMap.get(lastTappedDeviceForPatientSelect))
+                        Alert.alert('Scanned data: ', e.data);
                         modalRef.current?.close();
                     }}
                     flashMode={RNCamera.Constants.FlashMode.auto}

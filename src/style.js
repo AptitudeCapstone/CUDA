@@ -269,14 +269,14 @@ export const format = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: 1,
         borderRadius: 10,
-        padding: 15,
-        paddingTop: 3,
-        paddingBottom: 3,
         alignItems: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 15
+
     },
     utilityBarButtonIcon: {
         color: '#555',
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     section: {
         backgroundColor: '#fff',
@@ -300,12 +300,14 @@ export const fonts = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: darkText,
+        alignSelf: 'center'
     },
     sectionText: {
         fontSize: 24,
         fontWeight: 'bold',
         color: darkText,
         textAlign: 'center',
+        alignSelf: 'center'
     },
     fieldName: {
         fontSize: 22,
@@ -313,6 +315,7 @@ export const fonts = StyleSheet.create({
         color: darkText,
         paddingTop: 4,
         paddingBottom: 4,
+        alignSelf: 'center'
     },
     selectPatientText: {
         fontSize: 24,
@@ -371,7 +374,7 @@ export const fonts = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: darkText,
-        padding: 8
+        alignSelf: 'center'
     },
     smallText: {
         marginTop: 0,
@@ -630,5 +633,5 @@ export const chartConfig = {
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "#222",
     backgroundGradientToOpacity: 0.2,
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    color: (opacity = 0.5) => '#666',
 };
