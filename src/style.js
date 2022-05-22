@@ -2,49 +2,18 @@ import {StyleSheet} from 'react-native';
 import React from "react";
 
 export const backgroundColor = '#ddd';
-export const tabBarColor = '#ccc';
+export const tabBarColor = '#eee';
 export const lightText = '#eee';
 export const darkText = '#666';
 export const deviceDefaultButtonColor = '#222';
 export const deviceDefaultTextColor = '#eee';
 export const buttonBorderColor = '#666';
-export const tabBarActiveTextColor = '#555';
-export const tabBarInactiveTextColor = '#666';
+export const tabBarActiveTextColor = '#666';
+export const tabBarInactiveTextColor = '#777';
 
-export const chartConfig = {
-    backgroundGradientFrom: "#111",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#222",
-    backgroundGradientToOpacity: 0.2,
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-};
-
-export const colorDefinitions = {
-    // device container colors
-    headerDefault: {
-        borderColor: '#888',
-        backgroundColor: '#777',
-    },
-    headerGreen: {
-        backgroundColor: '#519654',
-    },
-    headerOrange: {
-        borderColor: 'rgba(0, 0, 0, 0.25)',
-        backgroundColor: '#520c03',
-    },
-};
-
-export const deviceColors = {
-    'default': {
-        headerColors: colorDefinitions.headerDefault,
-    },
-    'green': {
-        headerColors: colorDefinitions.headerGreen,
-    },
-    'orange': {
-        headerColors: colorDefinitions.headerOrange,
-    }
-}
+/*
+    Tab navigator styles
+ */
 
 export const tabNavigatorStyle = {
     headerShown: false,
@@ -67,6 +36,10 @@ export const tabNavigatorStyle = {
         paddingVertical: 10
     },
 };
+
+/*
+    Sliding sheet styles
+ */
 
 export const rbSheetStyle = {
     wrapper: {
@@ -114,30 +87,9 @@ export const rbCameraSheetStyle = {
     }
 };
 
-export const floating = StyleSheet.create({
-    iconButtonIcon: {
-        color: '#444',
-        alignSelf: 'center'
-    },
-    iconButton: {
-        width: 75,
-        height: 75,
-        alignContent: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        backgroundColor: '#fff',
-        borderColor: '#888',
-        borderRadius: 150,
-        marginLeft: 15,
-        marginTop: 15,
-    },
-    actionBar: {
-        justifyContent: 'flex-end',
-        position: 'absolute',
-        right: 30,
-        bottom: 30,
-    },
-});
+/*
+    Modal list styles
+ */
 
 export const modal = StyleSheet.create({
     overlay: {
@@ -181,10 +133,43 @@ export const modal = StyleSheet.create({
     }
 });
 
+/*
+    Floating action bar styles
+ */
+
+export const floating = StyleSheet.create({
+    iconButtonIcon: {
+        color: darkText,
+        alignSelf: 'center'
+    },
+    iconButton: {
+        width: 70,
+        height: 70,
+        alignContent: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        backgroundColor: '#fff',
+        borderColor: '#888',
+        borderRadius: 150,
+        marginLeft: 15,
+        marginTop: 15,
+    },
+    actionBar: {
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        right: 15,
+        bottom: 15,
+    },
+});
+
+/*
+    Common styles
+ */
+
 export const format = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: backgroundColor
+        backgroundColor: backgroundColor,
     },
     page: {
         backgroundColor: backgroundColor,
@@ -244,13 +229,25 @@ export const format = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 14,
-        paddingLeft: 20,
-        paddingRight: 20,
+        flexGrow: 1,
+        padding: 10,
+        alignItems: 'center',
         borderWidth: 1,
         borderRadius: 10,
         borderColor: '#888',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        marginHorizontal: 5,
+    },
+    selectPatientBarIcon: {
+        marginVertical: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 16,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#888',
+        backgroundColor: '#fff',
+        marginHorizontal: 5
     },
     selectPatientBar: {
         backgroundColor: '#333',
@@ -262,7 +259,9 @@ export const format = StyleSheet.create({
     utilityPatientBarContainer: {
         paddingBottom: 10,
         flexDirection: 'row',
-        justifyContent: 'flex-start'
+        justifyContent: 'space-between',
+        marginTop: 15,
+        marginHorizontal: 10
     },
     utilityBarButton: {
         flexDirection: 'row',
@@ -270,107 +269,53 @@ export const format = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: 1,
         borderRadius: 10,
-        marginRight: 10,
         padding: 15,
         paddingTop: 3,
-        paddingBottom: 3
+        paddingBottom: 3,
+        alignItems: 'center',
     },
     utilityBarButtonIcon: {
         color: '#555',
         alignSelf: 'center'
-    }
-});
-
-export const device = StyleSheet.create({
-    container: {
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: '#888',
-        backgroundColor: '#ccc',
     },
-    header: {
-        flexDirection: 'row',
-        flex: 1,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        padding: 15
-    },
-    body: {
+    section: {
+        backgroundColor: '#fff',
         paddingVertical: 10,
-        backgroundColor: '#eee',
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-    },
-    patientSelect: {
-        flexDirection: 'row',
-        paddingHorizontal: 15,
-    },
-    buttonContainerLandscape: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#eee',
-        borderTopRightRadius: 15,
-        borderBottomRightRadius: 15,
-        paddingHorizontal: 10
-    },
-    buttonContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        paddingHorizontal: 15
-    },
-    button: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
+        paddingHorizontal: 20,
         marginVertical: 10,
-        borderWidth: 1,
         borderRadius: 10,
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderColor: '#aaa',
-        backgroundColor: '#ccc',
+        borderWidth: 1,
+        borderColor: '#999',
+        flex: 1
     },
-    buttonText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        padding: 8,
-        alignSelf: 'center',
-        justifyContent: 'center',
-        color: '#222',
+    field: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'space-between'
     },
-    statusText: {
-        fontSize: 24,
-        textAlign: 'left',
-        fontWeight: 'bold',
-        color: '#ddd',
-    },
-    nameText: {
-        fontSize: 30,
-        paddingBottom: 4,
-        textAlign: 'left',
-        fontWeight: 'bold',
-        color: lightText
-    },
-    patientText: {
-        fontSize: 24,
-        textAlign: 'left',
-        fontWeight: 'bold',
-        color: '#ddd',
-        marginBottom: 8
-    },
-    connectedIcon: {
-        alignSelf: 'center',
-        justifyContent: 'flex-end',
-        color: '#0dd414',
-    }
 });
 
 export const fonts = StyleSheet.create({
     bigText: {
         fontSize: 28,
+        fontWeight: 'bold',
+        color: darkText,
+    },
+    sectionText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: darkText,
+        textAlign: 'center',
+    },
+    fieldName: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: darkText,
+        paddingTop: 4,
+        paddingBottom: 4,
+    },
+    selectPatientText: {
+        fontSize: 24,
         fontWeight: 'bold',
         color: darkText,
     },
@@ -442,7 +387,7 @@ export const fonts = StyleSheet.create({
         textAlign: 'center',
     },
     selectButtonText: {
-        color: darkText,
+        color: lightText,
         fontSize: 24,
         fontWeight: 'bold',
         alignSelf: 'center'
@@ -470,25 +415,25 @@ export const icons = StyleSheet.create({
 export const buttons = StyleSheet.create({
     covidSelectButton: {
         paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#fff',
-        borderBottomColor: '#3c499e',
-        borderBottomWidth: 6,
+        paddingVertical: 16,
+        backgroundColor: '#777',
+        borderBottomColor: '#5461ba',
+        borderBottomWidth: 10,
         flexGrow: 1,
     },
     fibrinogenSelectButton: {
         paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#fff',
-        borderBottomColor: '#9c3a2f',
-        borderBottomWidth: 6,
+        paddingVertical: 16,
+        backgroundColor: '#777',
+        borderBottomColor: '#d9584a',
+        borderBottomWidth: 10,
         flexGrow: 1,
     },
     unselectedButton: {
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: 16,
         borderColor: '#888',
-        backgroundColor: '#fff',
+        backgroundColor: '#777',
         flexGrow: 1,
     },
     submitButtonContainer: {
@@ -561,3 +506,129 @@ export const buttons = StyleSheet.create({
         color: lightText
     },
 });
+
+/*
+    Device card styles
+ */
+
+export const colorDefinitions = {
+    // device container colors
+    headerDefault: {
+        borderColor: '#888',
+        backgroundColor: '#777',
+    },
+    headerGreen: {
+        backgroundColor: '#519654',
+    },
+    headerOrange: {
+        borderColor: 'rgba(0, 0, 0, 0.25)',
+        backgroundColor: '#520c03',
+    },
+};
+
+export const deviceColors = {
+    'default': {
+        headerColors: colorDefinitions.headerDefault,
+    },
+    'green': {
+        headerColors: colorDefinitions.headerGreen,
+    },
+    'orange': {
+        headerColors: colorDefinitions.headerOrange,
+    }
+}
+
+export const device = StyleSheet.create({
+    container: {
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#888',
+        backgroundColor: '#ccc',
+    },
+    header: {
+        flexDirection: 'row',
+        flex: 1,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        padding: 15
+    },
+    body: {
+        paddingVertical: 10,
+        backgroundColor: '#eee',
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+    },
+    patientSelect: {
+        flexDirection: 'row',
+        paddingHorizontal: 15,
+    },
+    buttonContainerLandscape: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#eee',
+        borderTopRightRadius: 15,
+        borderBottomRightRadius: 15,
+        paddingHorizontal: 10
+    },
+    buttonContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        paddingHorizontal: 15
+    },
+    button: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        borderColor: '#aaa',
+        backgroundColor: '#ddd',
+    },
+    buttonText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        padding: 8,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        color: darkText,
+    },
+    statusText: {
+        fontSize: 24,
+        textAlign: 'left',
+        fontWeight: 'bold',
+        color: '#ddd',
+    },
+    nameText: {
+        fontSize: 30,
+        paddingBottom: 4,
+        textAlign: 'left',
+        fontWeight: 'bold',
+        color: lightText
+    },
+    patientText: {
+        fontSize: 24,
+        textAlign: 'left',
+        fontWeight: 'bold',
+        color: '#ddd',
+        marginBottom: 8
+    },
+    connectedIcon: {
+        alignSelf: 'center',
+        justifyContent: 'flex-end',
+        color: '#0dd414',
+    }
+});
+
+export const chartConfig = {
+    backgroundGradientFrom: "#111",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#222",
+    backgroundGradientToOpacity: 0.2,
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+};

@@ -37,7 +37,7 @@ const TabNavigator = () => (
                     tabBarIcon: ({size}) => (
                         <IconE
                             name='area-graph'
-                            color='#8c5fed'
+                            color='#8d67a8'
                             size={30}
                         />
                     ),

@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, useWindowDimensions, SafeAreaView, Text, TouchableOpacity, View, FlatList, Alert} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
+import IconE from 'react-native-vector-icons/Entypo';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalSelector from 'react-native-modal-selector';
 import {BleManager} from 'react-native-ble-plx';
@@ -214,19 +215,20 @@ const Monitor = ({navigation}) => {
 
     function DiscoveredReader(props) {
         const {id, name, statusText} = props;
-        const {headerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors['default'];
+        const {headerColors} = deviceColors['default'];
 
         return <View style={[[device.container], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
                     <View style={[device.header, headerColors, isLandscape ? {borderBottomLeftRadius: 15} : {borderBottomLeftRadius: 0}]}>
                         <View style={{flex: 1}}>
-                            <Text style={[device.nameText, nameColors]}>{name}</Text>
-                            <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
+                            <Text style={[device.nameText]}>{name}</Text>
+                            <Text style={[device.statusText]}>{statusText}</Text>
                         </View>
                     </View>
                         <View style={[device.body, isLandscape ? device.buttonContainerLandscape : device.buttonContainer,
                             isLandscape ? {borderBottomLeftRadius: 0} : {borderBottomLeftRadius: 15}]}>
-                            <TouchableOpacity style={[device.button, buttonColors]} onPress={async () => {await connect(id)}}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Connect</Text>
+                            <TouchableOpacity style={[device.button]} onPress={async () => {await connect(id)}}>
+                                <Text style={[device.buttonText]}>Connect</Text>
+                                <IconMCI name='bluetooth-connect' size={24} style={format.utilityBarButtonIcon}/>
                             </TouchableOpacity>
                         </View>
                 </View>;
@@ -286,7 +288,8 @@ const Monitor = ({navigation}) => {
                                     setLastTappedDeviceForPatientSelect(id);
                                     modalRef.current?.open()
                                 }}>
-                                    <Text style={[device.buttonText]}>Select patient by QR</Text>
+                                    <Text style={[device.buttonText]}>Scan patient QR</Text>
+                                    <IconMCI name='qrcode-scan' size={24} style={format.utilityBarButtonIcon}/>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -296,6 +299,7 @@ const Monitor = ({navigation}) => {
                                 <TouchableOpacity style={[device.button]}
                                                   onPress={async () => await disconnectFromDevice(id)}>
                                     <Text style={[device.buttonText]}>Disconnect</Text>
+                                    <IconA name='disconnect' size={24} style={format.utilityBarButtonIcon}/>
                                 </TouchableOpacity>
                             }
                             {
@@ -305,7 +309,8 @@ const Monitor = ({navigation}) => {
                                                       setLastTappedDeviceForPatientSelect(id);
                                                       setViewCOVIDPatientModalVisible(true);
                                                   }}>
-                                    <Text style={[device.buttonText]}>Select patient for result</Text>
+                                    <Text style={[device.buttonText]}>Select patient from list</Text>
+                                    <IconE name='list' size={24} style={format.utilityBarButtonIcon}/>
                                 </TouchableOpacity>
                             }
                             {
@@ -315,7 +320,8 @@ const Monitor = ({navigation}) => {
                                                       setLastTappedDeviceForPatientSelect(id);
                                                       setViewFibrinogenPatientModalVisible(true);
                                                   }}>
-                                    <Text style={[device.buttonText]}>Select patient for result</Text>
+                                    <Text style={[device.buttonText]}>Select patient from list</Text>
+                                    <IconE name='list' size={24} style={format.utilityBarButtonIcon}/>
                                 </TouchableOpacity>
                             }
                         </View>
