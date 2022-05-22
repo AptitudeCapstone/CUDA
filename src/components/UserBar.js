@@ -99,12 +99,17 @@ const UserBar = ({navigation}) => {
         navigation.navigate('User Stack', {screen: 'Create Organization'});
     }
 
+    /*
+    removed for now
+    <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
+                    <IconE style={floating.iconButtonIcon} name='help' size={28}/>
+                </TouchableOpacity>
+
+     */
+
     return (
         <View>
             <View style={[floating.actionBar, isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
-                <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
-                    <IconE style={floating.iconButtonIcon} name='help' size={28}/>
-                </TouchableOpacity>
                 <TouchableOpacity style={floating.iconButton} onPress={() => modalRef.current?.open()}>
                     <IconFA style={floating.iconButtonIcon} name='user-md' size={28}/>
                 </TouchableOpacity>

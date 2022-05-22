@@ -37,6 +37,7 @@
     "react-native-google-signin": "^2.1.1",
     "react-native-html-to-pdf": "^0.12.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-modal-selector": "^2.1.0",
     "react-native-modal-selector-searchable": "^2.1.4",
     "react-native-modalize": "^2.0.13",
     "react-native-pdf": "^6.4.0",

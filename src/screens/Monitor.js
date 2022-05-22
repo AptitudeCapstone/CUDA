@@ -2,14 +2,18 @@ import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, useWindowDimensions, SafeAreaView, Text, TouchableOpacity, View, FlatList, Alert} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
-import ModalSelector from 'react-native-modal-selector-searchable';
+import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import ModalSelector from 'react-native-modal-selector';
 import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
 import UserBar from '../components/UserBar';
 import {useAuth} from '../contexts/UserContext';
-import {format, modal, device, deviceColors} from '../style';
+import {format, modal, device, deviceColors, rbSheetStyle, rbCameraSheetStyle} from '../style';
 import {serviceUUID, statusCharUUID, dataCharUUID, actionCharUUID} from '../BLEConstants'
+import QRCodeScanner from "react-native-qrcode-scanner";
+import {RNCamera} from "react-native-camera";
+import RBSheet from "react-native-raw-bottom-sheet";
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
 
@@ -31,7 +35,8 @@ const Monitor = ({navigation}) => {
         organization = userInfo.user?.organization,
         patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
         patientsRef = database().ref(patientsPath),
-        isLandscape = (dimensions.width > dimensions.height);
+        isLandscape = (dimensions.width > dimensions.height),
+        modalRef = useRef(null);;
 
     // this useEffect is the base of the patient database routine
     useEffect( () => {
@@ -114,10 +119,10 @@ const Monitor = ({navigation}) => {
     }
 
     const handleUpdate = (device, action, status, data) => {
-        let selectedPatient = readerToPatientMap.get(device.id);
+        const selectedPatient = readerToPatientMap.get(device.id, 'Not selected');
         let covidDBRef, fibrinogenDBRef;
 
-        if(selectedPatient) {
+        if(selectedPatient === 'Not selected') {
             covidDBRef = database().ref(patientsPath + '/covid-patients/' + selectedPatient + '/results/');
             fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient + '/results/');
         } else {
@@ -128,17 +133,18 @@ const Monitor = ({navigation}) => {
         switch (action) {
             case 'measurement.covid.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Starting new test'});
+                                       utilityBar: 'covid',  statusText: 'Starting new test',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'measurement.covid.startedHeating':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Device is warming up'
-                });
+                                       utilityBar: 'covid',  statusText: 'Device is warming up',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'measurement.covid.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Running test'
-                });
+                                       utilityBar: 'covid',  statusText: 'Running test',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'status.covidSecondsRemaining':
                 const covidTimeRemaining = new Date(data * 1000).toISOString().substr(14, 5);
@@ -149,31 +155,35 @@ const Monitor = ({navigation}) => {
                     ? covidTimeRemaining[4] + 'sec.'
                     : covidTimeRemaining[3] + covidTimeRemaining[4] + ' sec.';
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining'
-                });
+                                       utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'dataProcess.covid.finishedTest':
                 const covidResult = {result: data, time: new Date().getDate()};
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Result: ' + data});
+                                       utilityBar: 'covid',  statusText: 'Result: ' + data,
+                                       selectedPatient: selectedPatient});
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
                 break;
             case 'measurement.covid.testError':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
-                                       utilityBar: 'covid',  statusText: 'An error occurred while testing'});
+                                       utilityBar: 'covid',  statusText: 'An error occurred while testing',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'measurement.fibrinogen.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'fibrinogen',  statusText: 'Starting new test'});
+                                       utilityBar: 'fibrinogen',  statusText: 'Starting new test',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'measurement.fibrinogen.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'fibrinogen',  statusText: 'Running test'});
+                                       utilityBar: 'fibrinogen',  statusText: 'Running test',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'dataProcess.fibrinogen.finishedTest':
                 const result = parseFloat(data).toFixed(2);
                 updateReaderCards({name: device.name, id: device.id,
-                    isConnected: true, color: 'green',
+                    isConnected: true, color: 'green', selectedPatient: selectedPatient,
                     utilityBar: 'fibrinogen', statusText: 'Result: ' + result});
                 const fibrinogenResult = {result: result, time: new Date().toLocaleString()};
                 const newTestRef = fibrinogenDBRef.push();
@@ -183,15 +193,13 @@ const Monitor = ({navigation}) => {
                 break;
             case 'measurement.fibrinogen.testError':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
-                                       utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing'});
+                                       utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing',
+                                       selectedPatient: selectedPatient});
                 break;
             case 'measurement.chipRemoved':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'default',
-                                       statusText: 'Device is idle'});
+                                       statusText: 'Device is idle', selectedPatient: selectedPatient});
                 break;
-
-            default:
-                Alert.alert('Unrecognized action received', JSON.stringify(action));
         }
     }
 
@@ -209,37 +217,36 @@ const Monitor = ({navigation}) => {
         const {headerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors['default'];
 
         return <View style={[[device.container], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
-                    <View style={[device.header, headerColors]}>
-                                <View style={{flex: 1}}>
-                                    <Text style={[device.nameText, nameColors]}>{name}</Text>
-                                    <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
-                                </View>
+                    <View style={[device.header, headerColors, isLandscape ? {borderBottomLeftRadius: 15} : {borderBottomLeftRadius: 0}]}>
+                        <View style={{flex: 1}}>
+                            <Text style={[device.nameText, nameColors]}>{name}</Text>
+                            <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
+                        </View>
                     </View>
-                    <View style={[device.patientSelect, isLandscape ? device.buttonContainerLandscape : device.buttonContainer]}>
-                        <TouchableOpacity style={[device.button, buttonColors]} onPress={async () => {
-                            await connect(id)
-                        }}>
-                            <Text style={[device.buttonText, buttonTextColors]}>Connect</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <View style={[device.body, isLandscape ? device.buttonContainerLandscape : device.buttonContainer,
+                            isLandscape ? {borderBottomLeftRadius: 0} : {borderBottomLeftRadius: 15}]}>
+                            <TouchableOpacity style={[device.button, buttonColors]} onPress={async () => {await connect(id)}}>
+                                <Text style={[device.buttonText, buttonTextColors]}>Connect</Text>
+                            </TouchableOpacity>
+                        </View>
                 </View>;
     }
     const DiscoveredReaderMemo = React.memo(DiscoveredReader);
 
     function ConnectedReader(props) {
-        const {id, name, color, utilityBar, statusText} = props;
+        const {id, name, color, utilityBar, statusText, selectedPatient} = props;
         const {headerColors} = deviceColors[color];
 
-        const selectedPatient = readerToPatientMap.get(id);
-        let selectedPatientName = selectedPatient?.displayName;
-        if (!selectedPatientName) selectedPatientName = 'Not selected';
+        let selectedPatientName;
+        if (!selectedPatient) selectedPatientName = 'Not selected';
+        else selectedPatientName = selectedPatient;
 
         return <View style={device.container}>
                     <View style={[device.header, headerColors]}>
                         <View style={{flex: 1, textAlign: 'center'}}>
                             <Text style={[device.nameText]}>{name}</Text>
                             <View style={{flexDirection: 'row'}}>
-                                <View style={{width: 40}}>
+                                <View style={{width: 30}}>
                                 {
                                     (selectedPatient?.displayName)
                                         ? <IconF name='user-check' color='#ddd' size={24} />
@@ -272,41 +279,46 @@ const Monitor = ({navigation}) => {
                         }
                         <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
                     </View>
-                    <View style={device.patientSelect}>
-                        <View style={{flexGrow: 1, textAlign: 'center'}}>
-                            <TouchableOpacity style={[device.button]}>
-                                <Text style={[device.buttonText]}>Select patient by QR</Text>
-                            </TouchableOpacity>
+                    <View style={device.body}>
+                        <View style={device.patientSelect}>
+                            <View style={{flexGrow: 1, textAlign: 'center'}}>
+                                <TouchableOpacity style={[device.button]} onPress={() => {
+                                    setLastTappedDeviceForPatientSelect(id);
+                                    modalRef.current?.open()
+                                }}>
+                                    <Text style={[device.buttonText]}>Select patient by QR</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                    <View style={device.buttonContainer}>
-                        {
-                            (!isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={async () => await disconnectFromDevice(id)}>
-                                <Text style={[device.buttonText]}>Disconnect</Text>
-                            </TouchableOpacity>
-                        }
-                        {
-                            (utilityBar === 'covid') &&
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={() => {
-                                                  setLastTappedDeviceForPatientSelect(id);
-                                                  setViewCOVIDPatientModalVisible(true);
-                                              }}>
-                                <Text style={[device.buttonText]}>Select patient for result</Text>
-                            </TouchableOpacity>
-                        }
-                        {
-                            (utilityBar === 'fibrinogen') &&
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={() => {
-                                                  setLastTappedDeviceForPatientSelect(id);
-                                                  setViewFibrinogenPatientModalVisible(true);
-                                              }}>
-                                <Text style={[device.buttonText]}>Select patient for result</Text>
-                            </TouchableOpacity>
-                        }
+                        <View style={device.buttonContainer}>
+                            {
+                                (!isLandscape && color === 'default') &&
+                                <TouchableOpacity style={[device.button]}
+                                                  onPress={async () => await disconnectFromDevice(id)}>
+                                    <Text style={[device.buttonText]}>Disconnect</Text>
+                                </TouchableOpacity>
+                            }
+                            {
+                                (utilityBar === 'covid') &&
+                                <TouchableOpacity style={[device.button]}
+                                                  onPress={() => {
+                                                      setLastTappedDeviceForPatientSelect(id);
+                                                      setViewCOVIDPatientModalVisible(true);
+                                                  }}>
+                                    <Text style={[device.buttonText]}>Select patient for result</Text>
+                                </TouchableOpacity>
+                            }
+                            {
+                                (utilityBar === 'fibrinogen') &&
+                                <TouchableOpacity style={[device.button]}
+                                                  onPress={() => {
+                                                      setLastTappedDeviceForPatientSelect(id);
+                                                      setViewFibrinogenPatientModalVisible(true);
+                                                  }}>
+                                    <Text style={[device.buttonText]}>Select patient for result</Text>
+                                </TouchableOpacity>
+                            }
+                        </View>
                     </View>
                 </View>;
     }
@@ -327,16 +339,12 @@ const Monitor = ({navigation}) => {
                         labelExtractor={patient => patient[1]['name']}
                         onCancel={() => setViewCOVIDPatientModalVisible(false)}
                         cancelText={'Cancel'}
-                        searchText={'Search patient by name'}
                         overlayStyle={modal.overlay}
                         optionContainerStyle={modal.container}
                         optionTextStyle={modal.optionText}
                         optionStyle={modal.option}
                         cancelStyle={modal.cancelOption}
                         cancelTextStyle={modal.cancelText}
-                        searchStyle={modal.searchBar}
-                        initValueTextStyle={modal.searchText}
-                        searchTextStyle={modal.searchText}
                     />
                     <ModalSelector
                         onChange={(option) => {
@@ -351,16 +359,12 @@ const Monitor = ({navigation}) => {
                         labelExtractor={patient => patient[1]['name']}
                         onCancel={() => setViewFibrinogenPatientModalVisible(false)}
                         cancelText={'Cancel'}
-                        searchText={'Search patient by name'}
                         overlayStyle={modal.overlay}
                         optionContainerStyle={modal.container}
                         optionTextStyle={modal.optionText}
                         optionStyle={modal.option}
                         cancelStyle={modal.cancelOption}
                         cancelTextStyle={modal.cancelText}
-                        searchStyle={modal.searchBar}
-                        initValueTextStyle={modal.searchText}
-                        searchTextStyle={modal.searchText}
                     />
                     <FlatList
                         data={readersArray}
@@ -369,12 +373,36 @@ const Monitor = ({navigation}) => {
                             if(item.isConnected) return <ConnectedReaderMemo id={item.id} name={item.name}
                                                                              color={item.color}
                                                                              utilityBar={item.utilityBar}
-                                                                             statusText={item.statusText}/>
+                                                                             statusText={item.statusText}
+                                                                             selectedPatient={item.selectedPatient}/>
                             else return <DiscoveredReaderMemo id={item.id} name={item.name}
                                                               statusText={item.statusText}/>
                         }} />
                 </View>
                 <UserBar navigation={navigation}/>
+                <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
+                    <QRCodeScanner
+                        onRead={(e) => {
+                            Alert.alert('Setting patient to ', e.data);
+                            console.log('reader to patient map before:', readerToPatientMap);
+                            const temp = readerToPatientMap.set(lastTappedDeviceForPatientSelect, e.data);
+                            setReaderToPatientMap(temp);
+                            console.log('after:', temp);
+                            const deviceInfo = readersMap.get(lastTappedDeviceForPatientSelect);
+                            console.log('device info before:', deviceInfo);
+                            deviceInfo.selectedPatient = e.data;
+                            updateReaderCards(deviceInfo);
+                            console.log('after:', readersMap.get(lastTappedDeviceForPatientSelect))
+                            modalRef.current?.close();
+                        }}
+                        flashMode={RNCamera.Constants.FlashMode.auto}
+                        topContent={
+                            <Text style={[device.statusText, {color: '#888', textAlign: 'center'}]}>
+                                Place QR code into the frame
+                            </Text>
+                        }
+                    />
+                </RBSheet>
             </SafeAreaView>;
 }
 

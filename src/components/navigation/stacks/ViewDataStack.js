@@ -1,5 +1,5 @@
 import React from "react";
-import {Stack, screenOptions} from '../NavigationOptions';
+import {Stack, screenOptions, userScreenOptions} from '../NavigationOptions';
 import ViewData from "../../../screens/ViewData";
 import CreatePatientCOVID from "../../../screens/patient_management/CreatePatientCOVID";
 import CreatePatientFibrinogen from "../../../screens/patient_management/CreatePatientFibrinogen";
@@ -18,27 +18,27 @@ const ViewDataStack = () => (
         <Stack.Screen
             name='Create Patient COVID'
             component={CreatePatientCOVID}
-            options={screenOptions}
+            options={userScreenOptions}
         />
         <Stack.Screen
             name='Create Patient Fibrinogen'
             component={CreatePatientFibrinogen}
-            options={screenOptions}
+            options={userScreenOptions}
         />
         <Stack.Screen
             name='Edit Patient COVID'
             component={EditPatientCOVID}
-            options={screenOptions}
+            options={userScreenOptions}
         />
         <Stack.Screen
             name='Edit Patient Fibrinogen'
             component={EditPatientFibrinogen}
-            options={screenOptions}
+            options={userScreenOptions}
         />
         <Stack.Screen
             name='User Stack'
             component={UserStack}
-            options={screenOptions}
+            options={userScreenOptions}
         />
     </Stack.Navigator>
 );

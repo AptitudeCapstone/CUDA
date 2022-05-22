@@ -8,9 +8,9 @@ export const screenOptions = {headerShown: false};
 export const userScreenOptions = {
     title: '',
     headerStyle: {
-        backgroundColor: tabBarColor,
+        backgroundColor: '#fff',
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#222',
     headerTitleStyle: {
         fontWeight: 'bold',
     },
