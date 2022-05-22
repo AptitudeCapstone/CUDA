@@ -222,12 +222,12 @@ const ViewData = ({navigation}) => {
                 />
                 <TouchableOpacity onPress={() => toggleViewPatientModal()}
                                   style={format.selectPatientBarContainer}>
-                    <Text style={fonts.username}>
+                    <Text style={fonts.bigText}>
                         {(selectedTest === 'covid') ?
                             (patientDataCOVID === null) ? 'Select Patient' : patientDataCOVID.name :
                             (patientDataFibrinogen === null) ? 'Select Patient' : patientDataFibrinogen.name}
                     </Text>
-                    <IconE style={fonts.username} size={34}
+                    <IconE style={fonts.bigText} size={34}
                            name={viewPatientModalVisible ? 'chevron-up' : 'chevron-down'}/>
                 </TouchableOpacity>
                 {

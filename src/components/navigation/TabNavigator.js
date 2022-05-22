@@ -23,7 +23,7 @@ const TabNavigator = () => (
                     tabBarIcon: ({size}) => (
                         <Image
                             resizeMode='stretch'
-                            style={{width: size, height: size}}
+                            style={{width: 30, height: 30}}
                             source={require('../../resources/aptitude-logo.png')}/>
                     ),
                 }}
@@ -38,8 +38,7 @@ const TabNavigator = () => (
                         <IconE
                             name='area-graph'
                             color='#8c5fed'
-                            style={{width: size, height: size}}
-                            size={size}
+                            size={30}
                         />
                     ),
                 }}

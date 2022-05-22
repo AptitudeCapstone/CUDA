@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import {ActivityIndicator, Alert, Text, TouchableOpacity, View} from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconE from 'react-native-vector-icons/Entypo';
-import {fonts, format, floating, rbSheetStyle} from '../style';
+import {fonts, format, floating, rbSheetStyle, colorDefinitions} from '../style';
 import {useAuth} from '../contexts/UserContext';
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
@@ -112,7 +112,7 @@ const UserBar = ({navigation}) => {
             <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
                 <View style={isLandscape ? {flexDirection: 'row', flex: 1} : {flexDirection: 'column', flex: 1}}>
                 <View  style={{flex: 1}}>
-                    <Text style={[fonts.username, {alignSelf: 'center', paddingBottom: 20, color: '#eee'}]}>
+                    <Text style={[fonts.bigText, {alignSelf: 'center', paddingBottom: 20}]}>
                         Manage Account
                     </Text>
                     <ScrollView style={{flex: 0.5}}>
@@ -150,7 +150,7 @@ const UserBar = ({navigation}) => {
                     </ScrollView>
                 </View>
                 <View style={isLandscape ? {flex: 1} : {flex: 1, marginTop: 20}}>
-                    <Text style={[fonts.username, {alignSelf: 'center', paddingBottom: 20, color: '#eee'}]}>
+                    <Text style={[fonts.bigText, {alignSelf: 'center', paddingBottom: 20, color: '#eee'}]}>
                         Manage Organization
                     </Text>
                     <ScrollView style={{flex: 0.5}}>

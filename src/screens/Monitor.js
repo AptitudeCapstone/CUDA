@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useWindowDimensions, SafeAreaView, Text, TouchableOpacity, View, FlatList, Alert} from 'react-native';
+import {ActivityIndicator, useWindowDimensions, SafeAreaView, Text, TouchableOpacity, View, FlatList, Alert} from 'react-native';
 import IconA from 'react-native-vector-icons/AntDesign';
+import IconF from 'react-native-vector-icons/Feather';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
@@ -95,12 +96,11 @@ const Monitor = ({navigation}) => {
             .then((device) => updateReaderCards({name: device.name, id: id, color: 'default',
                                                             statusText: 'Discovered', isConnected: false}));
 
-    // get json data from base64 data
     const getJSON = (bytes) => JSON.parse(new Buffer(bytes, 'base64').toString('ascii'));
 
     const subscribe = (device) => {
         updateReaderCards({name: device.name, id: device.id, color: 'default',
-            statusText: 'Idle', isConnected: true});
+            statusText: 'Device is idle', isConnected: true});
         device.monitorCharacteristicForService(serviceUUID, actionCharUUID, async (bleError) => {
             const isConnected = await manager.isDeviceConnected(device.id);
             if(!isConnected) return 'BLE device disconnected';
@@ -128,7 +128,7 @@ const Monitor = ({navigation}) => {
         switch (action) {
             case 'measurement.covid.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Beginning a COVID test'});
+                                       utilityBar: 'covid',  statusText: 'Starting new test'});
                 break;
             case 'measurement.covid.startedHeating':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
@@ -137,7 +137,7 @@ const Monitor = ({navigation}) => {
                 break;
             case 'measurement.covid.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'COVID measurement in progress'
+                                       utilityBar: 'covid',  statusText: 'Running test'
                 });
                 break;
             case 'status.covidSecondsRemaining':
@@ -155,7 +155,7 @@ const Monitor = ({navigation}) => {
             case 'dataProcess.covid.finishedTest':
                 const covidResult = {result: data, time: new Date().getDate()};
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'covid',  statusText: 'Test complete with result ' + data});
+                                       utilityBar: 'covid',  statusText: 'Result: ' + data});
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
                 break;
             case 'measurement.covid.testError':
@@ -164,17 +164,17 @@ const Monitor = ({navigation}) => {
                 break;
             case 'measurement.fibrinogen.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'fibrinogen',  statusText: 'Beginning a fibrinogen test'});
+                                       utilityBar: 'fibrinogen',  statusText: 'Starting new test'});
                 break;
             case 'measurement.fibrinogen.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
-                                       utilityBar: 'fibrinogen',  statusText: 'Fibrinogen measurement in progress'});
+                                       utilityBar: 'fibrinogen',  statusText: 'Running test'});
                 break;
             case 'dataProcess.fibrinogen.finishedTest':
                 const result = parseFloat(data).toFixed(2);
                 updateReaderCards({name: device.name, id: device.id,
                     isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen', statusText: 'Test complete with result ' + result});
+                    utilityBar: 'fibrinogen', statusText: 'Result: ' + result});
                 const fibrinogenResult = {result: result, time: new Date().toLocaleString()};
                 const newTestRef = fibrinogenDBRef.push();
                 newTestRef.set(fibrinogenResult)
@@ -187,7 +187,7 @@ const Monitor = ({navigation}) => {
                 break;
             case 'measurement.chipRemoved':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'default',
-                                       statusText: 'Idle'});
+                                       statusText: 'Device is idle'});
                 break;
 
             default:
@@ -206,17 +206,16 @@ const Monitor = ({navigation}) => {
 
     function DiscoveredReader(props) {
         const {id, name, statusText} = props;
-        const {containerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors['default'];
+        const {headerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors['default'];
 
-        return <View style={[[device.container, containerColors], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
-                    <View style={device.header}>
-                        <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
-                        <View>
-                            <Text style={[device.nameText, nameColors]}>{name}</Text>
-                            <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
-                        </View>
+        return <View style={[[device.container], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
+                    <View style={[device.header, headerColors]}>
+                                <View style={{flex: 1}}>
+                                    <Text style={[device.nameText, nameColors]}>{name}</Text>
+                                    <Text style={[device.statusText, statusTextColors]}>{statusText}</Text>
+                                </View>
                     </View>
-                    <View style={isLandscape ? device.buttonContainerLandscape : device.buttonContainer}>
+                    <View style={[device.patientSelect, isLandscape ? device.buttonContainerLandscape : device.buttonContainer]}>
                         <TouchableOpacity style={[device.button, buttonColors]} onPress={async () => {
                             await connect(id)
                         }}>
@@ -229,51 +228,83 @@ const Monitor = ({navigation}) => {
 
     function ConnectedReader(props) {
         const {id, name, color, utilityBar, statusText} = props;
-        const {containerColors, buttonColors, buttonTextColors, statusTextColors, nameColors} = deviceColors[color];
+        const {headerColors} = deviceColors[color];
 
-        return <View style={[device.container, containerColors]}>
-                    <View style={device.header}>
-                        <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
-                        <View>
-                            <Text style={[device.nameText, nameColors]}>{name}</Text>
-                            <Text style={[device.statusText, statusTextColors]}>
-                                {statusText}
-                            </Text>
+        const selectedPatient = readerToPatientMap.get(id);
+        let selectedPatientName = selectedPatient?.displayName;
+        if (!selectedPatientName) selectedPatientName = 'Not selected';
+
+        return <View style={device.container}>
+                    <View style={[device.header, headerColors]}>
+                        <View style={{flex: 1, textAlign: 'center'}}>
+                            <Text style={[device.nameText]}>{name}</Text>
+                            <View style={{flexDirection: 'row'}}>
+                                <View style={{width: 40}}>
+                                {
+                                    (selectedPatient?.displayName)
+                                        ? <IconF name='user-check' color='#ddd' size={24} />
+                                        : <IconF name='user' color='#ddd' size={24} />
+                                }
+                                </View>
+                                <Text style={[device.patientText]}>{selectedPatientName}</Text>
+                            </View>
+                                {
+                                    (color === 'default' || color === 'green' && statusText.includes('Result')) &&
+                                    <View style={{flexDirection: 'row'}}>
+                                        <IconF style={{width: 30}} name='check-square' color='#ddd' size={24} />
+                                        <Text style={[device.statusText]}>{statusText}</Text>
+                                    </View>
+                                }
+                                {
+                                    (color === 'green' && !statusText.includes('Result')) &&
+                                    <View style={{flexDirection: 'row'}}>
+                                        <ActivityIndicator style={{width: 30}} color='#ddd' size={24} />
+                                        <Text style={[device.statusText]}>{statusText}</Text>
+                                    </View>
+                                }
                         </View>
                         {
                             (isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button, buttonColors]}
+                            <TouchableOpacity style={[device.button]}
                                               onPress={async () => await disconnectFromDevice(id)}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
+                                <Text style={[device.buttonText]}>Disconnect</Text>
                             </TouchableOpacity>
                         }
+                        <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
+                    </View>
+                    <View style={device.patientSelect}>
+                        <View style={{flexGrow: 1, textAlign: 'center'}}>
+                            <TouchableOpacity style={[device.button]}>
+                                <Text style={[device.buttonText]}>Select patient by QR</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={device.buttonContainer}>
                         {
                             (!isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button, buttonColors]}
+                            <TouchableOpacity style={[device.button]}
                                               onPress={async () => await disconnectFromDevice(id)}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Disconnect</Text>
+                                <Text style={[device.buttonText]}>Disconnect</Text>
                             </TouchableOpacity>
                         }
                         {
                             (utilityBar === 'covid') &&
-                            <TouchableOpacity style={[device.button, buttonColors]}
+                            <TouchableOpacity style={[device.button]}
                                               onPress={() => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewCOVIDPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for result</Text>
+                                <Text style={[device.buttonText]}>Select patient for result</Text>
                             </TouchableOpacity>
                         }
                         {
                             (utilityBar === 'fibrinogen') &&
-                            <TouchableOpacity style={[device.button, buttonColors]}
+                            <TouchableOpacity style={[device.button]}
                                               onPress={() => {
                                                   setLastTappedDeviceForPatientSelect(id);
                                                   setViewFibrinogenPatientModalVisible(true);
                                               }}>
-                                <Text style={[device.buttonText, buttonTextColors]}>Select patient for result</Text>
+                                <Text style={[device.buttonText]}>Select patient for result</Text>
                             </TouchableOpacity>
                         }
                     </View>

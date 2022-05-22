@@ -1,12 +1,15 @@
 import {StyleSheet} from 'react-native';
 import React from "react";
 
-export const backgroundColor = '#222';
-export const tabBarColor = '#131313';
+export const backgroundColor = '#ddd';
+export const tabBarColor = '#ccc';
 export const lightText = '#eee';
+export const darkText = '#131313';
 export const deviceDefaultButtonColor = '#222';
 export const deviceDefaultTextColor = '#eee';
-export const borderColor = '#0b6e26';
+export const buttonBorderColor = '#555';
+export const tabBarActiveTextColor = '#555';
+export const tabBarInactiveTextColor = '#666';
 
 export const chartConfig = {
     backgroundGradientFrom: "#111",
@@ -17,104 +20,36 @@ export const chartConfig = {
 };
 
 export const colorDefinitions = {
-    containerDefault: {
-        borderColor: '#555',
-        backgroundColor: '#131313',
+    // device container colors
+    headerDefault: {
+        borderColor: '#888',
+        backgroundColor: '#777',
     },
-    containerLightGreen: {
-        borderColor: '#555',
-        backgroundColor: '#0063d13',
+    headerGreen: {
+        backgroundColor: '#519654',
     },
-    containerGreen: {
-        borderColor: '#555',
-        backgroundColor: '#021c08',
-    },
-    containerOrange: {
-        borderColor: '#555',
+    headerOrange: {
+        borderColor: 'rgba(0, 0, 0, 0.25)',
         backgroundColor: '#520c03',
-    },
-    statusTextDefault: {
-        color: '#888',
-    },
-    statusTextLightGreen: {
-        color: '#888',
-    },
-    statusTextGreen: {
-        color: '#888',
-    },
-    statusTextOrange: {
-        color: '#888',
-    },
-    nameTextDefault: {
-        color: lightText
-    },
-    nameTextLightGreen: {
-        color: lightText
-    },
-    nameTextGreen: {
-        color: lightText
-    },
-    nameTextOrange: {
-        color: lightText
-    },
-    buttonDefault: {
-        borderColor: '#555',
-        backgroundColor: '#222',
-    },
-    buttonLightGreen: {
-        borderColor: '#555',
-        backgroundColor: '#096922',
-    },
-    buttonGreen: {
-        borderColor: '#555',
-        backgroundColor: '#094719',
-    },
-    buttonOrange: {
-        borderColor: '#555',
-        backgroundColor: '#692109',
-    },
-    buttonTextDefault: {
-        color: lightText,
-    },
-    buttonTextLightGreen: {
-        color: lightText,
-    },
-    buttonTextGreen: {
-        color: lightText,
-    },
-    buttonTextOrange: {
-        color: lightText,
     },
 };
 
 export const deviceColors = {
     'default': {
-        containerColors: colorDefinitions.containerDefault,
-        buttonColors: colorDefinitions.buttonDefault,
-        buttonTextColors: colorDefinitions.buttonTextDefault,
-        statusTextColors: colorDefinitions.statusTextDefault,
-        nameColors: colorDefinitions.nameTextDefault
+        headerColors: colorDefinitions.headerDefault,
     },
     'green': {
-        containerColors: colorDefinitions.containerGreen,
-        buttonColors: colorDefinitions.buttonGreen,
-        buttonTextColors: colorDefinitions.buttonTextGreen,
-        statusTextColors: colorDefinitions.statusTextGreen,
-        nameColors: colorDefinitions.nameTextGreen,
+        headerColors: colorDefinitions.headerGreen,
     },
     'orange': {
-        containerColors: colorDefinitions.containerOrange,
-        buttonColors: colorDefinitions.buttonOrange,
-        buttonTextColors: colorDefinitions.buttonTextOrange,
-        statusTextColors: colorDefinitions.statusTextOrange,
-        nameColors: colorDefinitions.nameTextOrange
+        headerColors: colorDefinitions.headerOrange,
     }
 }
 
 export const tabNavigatorStyle = {
     headerShown: false,
-    tabBarActiveTintColor: lightText,
-    tabBarInactiveTintColor: '#aaa',
+    tabBarActiveTintColor: tabBarActiveTextColor,
+    tabBarInactiveTintColor: tabBarInactiveTextColor,
     tabBarActiveBackgroundColor: tabBarColor,
     tabBarInactiveBackgroundColor: tabBarColor,
     tabBarLabelStyle: {
@@ -122,17 +57,14 @@ export const tabNavigatorStyle = {
         fontWeight: 'bold'
     },
     tabBarStyle: {
-        borderTopWidth: 0,
-        height: 100,
-        padding: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#aaa',
+        height: 110,
         backgroundColor: tabBarColor,
-    },
-    tabBarIconStyle: {
-        height: 40,
-        width: 40,
     },
     safeAreaInsets: {
         bottom: 0,
+        paddingVertical: 10
     },
 };
 
@@ -147,10 +79,10 @@ export const rbSheetStyle = {
         borderTopRightRadius: 25,
         borderTopLeftRadius: 25,
         padding: 15,
-        backgroundColor: '#131313',
-        borderTopColor: '#555',
-        borderLeftColor: '#555',
-        borderRightColor: '#555',
+        backgroundColor: backgroundColor,
+        borderTopColor: buttonBorderColor,
+        borderLeftColor: buttonBorderColor,
+        borderRightColor: buttonBorderColor,
         borderTopWidth: 1,
         borderLeftWidth: 1,
         borderRightWidth: 1,
@@ -161,7 +93,7 @@ export const rbSheetStyle = {
 
 export const floating = StyleSheet.create({
     iconButtonIcon: {
-        color: lightText,
+        color: '#555',
         alignSelf: 'center'
     },
     iconButton: {
@@ -170,8 +102,8 @@ export const floating = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        backgroundColor: tabBarColor,
-        borderColor: '#555',
+        backgroundColor: '#ccc',
+        borderColor: '#aaa',
         borderRadius: 150,
         marginLeft: 15,
         marginTop: 15,
@@ -339,14 +271,22 @@ export const format = StyleSheet.create({
 
 export const device = StyleSheet.create({
     container: {
-        paddingHorizontal: 30,
-        paddingVertical: 10,
         borderRadius: 15,
         borderWidth: 1,
+        borderColor: '#888',
+        backgroundColor: '#777',
     },
     header: {
         flexDirection: 'row',
-        marginVertical: 10,
+        flex: 1,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        padding: 15
+    },
+    patientSelect: {
+        flexDirection: 'row',
+        paddingHorizontal: 15,
+        backgroundColor: '#eee'
     },
     buttonContainerLandscape: {
         flex: 1,
@@ -357,16 +297,22 @@ export const device = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignItems: 'stretch',
+        paddingHorizontal: 15,
+        backgroundColor: '#eee',
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15
     },
     button: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
-        marginVertical: 15,
+        marginVertical: 10,
         borderWidth: 1,
         borderRadius: 10,
         paddingVertical: 5,
         paddingHorizontal: 15,
+        borderColor: '#aaa',
+        backgroundColor: '#ccc',
     },
     buttonText: {
         fontSize: 20,
@@ -374,37 +320,39 @@ export const device = StyleSheet.create({
         textAlign: 'center',
         padding: 8,
         alignSelf: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        color: '#555',
     },
     statusText: {
         fontSize: 24,
-        paddingHorizontal: 30,
+        textAlign: 'left',
         fontWeight: 'bold',
-        alignContent: 'center',
-        justifyContent: 'center',
-        maxWidth: 400,
+        color: '#ddd',
+        paddingLeft: 10,
     },
     nameText: {
         fontSize: 30,
-        paddingHorizontal: 30,
+        paddingBottom: 4,
+        textAlign: 'left',
         fontWeight: 'bold',
-        alignContent: 'center',
-        justifyContent: 'center',
+        color: lightText
     },
-    discoveredIcon: {
-        alignSelf: 'center',
-        justifyContent: 'center',
-        color: lightText,
+    patientText: {
+        fontSize: 24,
+        textAlign: 'left',
+        fontWeight: 'bold',
+        color: '#ddd',
+        marginBottom: 8
     },
     connectedIcon: {
         alignSelf: 'center',
-        justifyContent: 'center',
-        color: '#1c9c27',
+        justifyContent: 'flex-end',
+        color: '#0dd414',
     }
 });
 
 export const fonts = StyleSheet.create({
-    username: {
+    bigText: {
         fontSize: 28,
         fontWeight: 'bold',
         color: lightText,
