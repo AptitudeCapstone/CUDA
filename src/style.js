@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import React from "react";
 
-export const backgroundColor = '#ddd';
+export const backgroundColor = '#eee';
 export const tabBarColor = '#eee';
 export const lightText = '#eee';
 export const darkText = '#666';
@@ -93,23 +93,21 @@ export const rbCameraSheetStyle = {
 
 export const modal = StyleSheet.create({
     overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)'
+        backgroundColor: '#eee'
     },
     container: {
-        backgroundColor: 'rgba(0, 0, 0, 0.0)',
-        marginHorizontal: -12,
+        backgroundColor: '#eee'
     },
     option: {
-        borderWidth: 0,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        borderRadius: 15,
+        marginVertical: 10,
+        borderColor: '#888'
     },
     optionText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#aaa',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderWidth: 1,
-        borderColor: '#666',
-        borderRadius: 15,
+        color: darkText,
         paddingVertical: 18,
         paddingHorizontal: 16,
         marginVertical: 8
@@ -117,19 +115,18 @@ export const modal = StyleSheet.create({
     cancelOption: {
         paddingVertical: 12,
         paddingHorizontal: 16,
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderColor: '#666',
-        borderWidth: 1,
         borderRadius: 15,
+        backgroundColor: 'rgba(0,0,0,0.05)',
         margin: 5,
         marginBottom: 15,
     },
     cancelText: {
-        color: '#aaa',
+        color: darkText,
         fontSize: 24,
         fontWeight: 'bold',
         paddingVertical: 8,
         paddingHorizontal: 16,
+        marginVertical: 8
     }
 });
 
@@ -190,6 +187,7 @@ export const format = StyleSheet.create({
     },
     utilityBarButtonIcon: {
         color: '#555',
+        alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -261,10 +259,10 @@ export const format = StyleSheet.create({
         borderColor: '#888',
         backgroundColor: '#fff',
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 100,
         alignItems: 'center',
-        paddingVertical: 10,
-        paddingHorizontal: 15
+        paddingVertical: 8,
+        paddingHorizontal: 10,
 
     },
     section: {
@@ -288,34 +286,35 @@ export const patientSelectBar = {
     container: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        backgroundColor: '#ddd'
+        backgroundColor: '#eee',
+        marginHorizontal: 5
     },
     barButton: {
         marginVertical: 10,
         flex: 0.3,
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 100,
         borderColor: '#888',
         backgroundColor: '#fff',
-        padding: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 10
     },
     iconText: {
         fontSize: 18,
         fontWeight: 'bold',
-        alignSelf: 'stretch',
+        alignSelf: 'center',
         textAlign: 'center',
         color: darkText,
-        paddingBottom: 6,
     },
     icon: {
         color: '#555',
         alignItems: 'center',
         alignContent: 'center',
+        alignSelf: 'center',
         justifyContent: 'center',
-        marginVertical: 5
     },
 };
 
@@ -409,7 +408,7 @@ export const fonts = StyleSheet.create({
         textAlign: 'center',
     },
     selectButtonText: {
-        color: lightText,
+        color: darkText,
         fontSize: 24,
         fontWeight: 'bold',
         alignSelf: 'center'
@@ -438,24 +437,25 @@ export const buttons = StyleSheet.create({
     covidSelectButton: {
         paddingHorizontal: 16,
         paddingVertical: 16,
-        backgroundColor: '#777',
-        borderBottomColor: '#5461ba',
-        borderBottomWidth: 10,
+        backgroundColor: '#fff',
+        borderTopColor: '#5461ba',
+        borderTopWidth: 6,
         flexGrow: 1,
     },
     fibrinogenSelectButton: {
         paddingHorizontal: 16,
         paddingVertical: 16,
-        backgroundColor: '#777',
-        borderBottomColor: '#d9584a',
-        borderBottomWidth: 10,
+        backgroundColor: '#fff',
+        borderTopColor: '#d9584a',
+        borderTopWidth: 6,
         flexGrow: 1,
     },
     unselectedButton: {
         paddingHorizontal: 16,
         paddingVertical: 16,
-        borderColor: '#888',
-        backgroundColor: '#777',
+        borderTopColor: '#fff',
+        borderTopWidth: 6,
+        backgroundColor: '#fff',
         flexGrow: 1,
     },
     submitButtonContainer: {

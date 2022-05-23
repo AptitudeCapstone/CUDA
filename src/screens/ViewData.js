@@ -159,7 +159,7 @@ const ViewData = ({navigation}) => {
 
 
     return (
-        <SafeAreaView style={[format.safeArea, {backgroundColor: '#777'}]}>
+        <SafeAreaView style={[format.safeArea]}>
             <ModalSelector
                 onModalClose={(option) => {
                     if(option[0])
@@ -204,24 +204,14 @@ const ViewData = ({navigation}) => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar}
             />
-            <View style={format.testSelectBar}>
-                <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                                  style={selectedTest === 'covid' ? buttons.covidSelectButton : buttons.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>COVID</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                                  style={selectedTest === 'fibrinogen' ? buttons.fibrinogenSelectButton : buttons.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
-                </TouchableOpacity>
-            </View>
             <View style={patientSelectBar.container}>
                 <TouchableOpacity style={patientSelectBar.barButton} onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                    <IconF name='user-plus' size={34} style={patientSelectBar.icon} />
                     <Text style={patientSelectBar.iconText}>Create</Text>
+                    <IconF name='user-plus' size={18} style={patientSelectBar.icon} />
                 </TouchableOpacity>
                 <TouchableOpacity style={patientSelectBar.barButton} onPress={() => modalRef.current?.open()}>
-                    <IconMCI name='qrcode-scan' size={34} style={patientSelectBar.icon} />
-                    <Text style={patientSelectBar.iconText}>Scan QR</Text>
+                    <Text style={patientSelectBar.iconText}>Scan</Text>
+                    <IconMCI name='qrcode-scan' size={18} style={patientSelectBar.icon} />
                 </TouchableOpacity>
                 <TouchableOpacity style={patientSelectBar.barButton} onPress={() => {
                     if(selectedTest === 'covid') {
@@ -230,8 +220,8 @@ const ViewData = ({navigation}) => {
                         setFibrinogenPatientModalVisible(true);
                     }
                 }}>
-                    <IconE name='list' size={34} style={patientSelectBar.icon} />
                     <Text style={patientSelectBar.iconText}>Select</Text>
+                    <IconE name='list' size={18} style={patientSelectBar.icon} />
                 </TouchableOpacity>
             </View>
             <View style={[format.page]}>
@@ -244,7 +234,7 @@ const ViewData = ({navigation}) => {
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => navigation.navigate('Edit Patient COVID',
                                                       {patientKey: patientKeyCOVID})}>
-                                    <Text style={fonts.mediumText}>Edit</Text>
+                                    <Text style={patientSelectBar.iconText}>Edit</Text>
                                     <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
@@ -268,7 +258,7 @@ const ViewData = ({navigation}) => {
                                 <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient Results</Text>
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                                    <Text style={fonts.mediumText}>Export</Text>
+                                    <Text style={patientSelectBar.iconText}>Export</Text>
                                     <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
@@ -299,7 +289,7 @@ const ViewData = ({navigation}) => {
                                                   onPress={() => {
                                                       navigation.navigate('Edit Patient Fibrinogen',
                                                           {patientKey: patientKeyFibrinogen})}}>
-                                    <Text style={fonts.mediumText}>Edit</Text>
+                                    <Text style={patientSelectBar.iconText}>Edit</Text>
                                     <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
@@ -347,7 +337,7 @@ const ViewData = ({navigation}) => {
                                         <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient Results</Text>
                                         <TouchableOpacity style={format.utilityBarButton}
                                                           onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                                            <Text style={fonts.mediumText}>Export</Text>
+                                            <Text style={patientSelectBar.iconText}>Export</Text>
                                             <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                         </TouchableOpacity>
                                     </View>
@@ -396,6 +386,17 @@ const ViewData = ({navigation}) => {
                         </>
                     }
                 </ScrollView>
+                <UserBar navigation={navigation}/>
+            </View>
+            <View style={format.testSelectBar}>
+                <TouchableOpacity onPress={() => setSelectedTest('covid')}
+                                  style={selectedTest === 'covid' ? buttons.covidSelectButton : buttons.unselectedButton}>
+                    <Text style={fonts.selectButtonText}>COVID</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
+                                  style={selectedTest === 'fibrinogen' ? buttons.fibrinogenSelectButton : buttons.unselectedButton}>
+                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
+                </TouchableOpacity>
             </View>
             <RBSheet
                 ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
@@ -412,7 +413,6 @@ const ViewData = ({navigation}) => {
                     }
                 />
             </RBSheet>
-            <UserBar navigation={navigation}/>
         </SafeAreaView>
     );
 };
