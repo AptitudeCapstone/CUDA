@@ -26,6 +26,7 @@ const Monitor = ({navigation}) => {
         autoConnectByName = useRef(false),
         dimensions = useWindowDimensions(),
         isFocused = useIsFocused(),
+        [patients, setPatients] = useState(() => new Map()),
         [covidPatients, setCovidPatients] = useState([]),
         [fibrinogenPatients, setFibrinogenPatients] = useState([]),
         [viewCOVIDPatientModalVisible, setViewCOVIDPatientModalVisible] = useState(false),
@@ -45,6 +46,7 @@ const Monitor = ({navigation}) => {
             patientsRef.on('value', (patientsSnapshot) => {
                 if (patientsSnapshot.exists()) {
                     const p = patientsSnapshot.toJSON();
+                    setPatients(p);
                     if(p && p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
                         setCovidPatients(c);
@@ -80,7 +82,8 @@ const Monitor = ({navigation}) => {
                                         await connect(device.id);
                                     else if (!readersMap.get(device.id))
                                         updateReaderCards({id: device.id, name: device.name, color: 'default',
-                                                               statusText: 'Discovered', isConnected: false});
+                                                               statusText: 'Discovered', isConnected: false,
+                                                               selectedPatient: 'Not selected'});
                                 } catch (err) {
                                     console.log('Device connection error: ' + err)
                                 }
@@ -100,13 +103,14 @@ const Monitor = ({navigation}) => {
     const disconnectFromDevice = (id) =>
         manager.cancelDeviceConnection(id)
             .then((device) => updateReaderCards({name: device.name, id: id, color: 'default',
-                                                            statusText: 'Discovered', isConnected: false}));
+                                                            statusText: 'Discovered', isConnected: false,
+                                                            selectedPatient: 'Not selected'}));
 
     const getJSON = (bytes) => JSON.parse(new Buffer(bytes, 'base64').toString('ascii'));
 
     const subscribe = (device) => {
         updateReaderCards({name: device.name, id: device.id, color: 'default',
-            statusText: 'Device is idle', isConnected: true});
+            statusText: 'Device is idle', isConnected: true, selectedPatient: 'Not selected'});
         device.monitorCharacteristicForService(serviceUUID, actionCharUUID, async (bleError) => {
             const isConnected = await manager.isDeviceConnected(device.id);
             if(!isConnected) return 'BLE device disconnected';
@@ -120,14 +124,17 @@ const Monitor = ({navigation}) => {
     }
 
     const handleUpdate = (device, action, status, data) => {
-        const selectedPatient = readerToPatientMap.get(device.id, 'Not selected');
+        const selectedPatient = readerToPatientMap.get(device.id);
         let covidDBRef, fibrinogenDBRef;
 
-        if(selectedPatient === 'Not selected') {
-            covidDBRef = database().ref(patientsPath + '/covid-patients/' + selectedPatient + '/results/');
-            fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient + '/results/');
+        let name = selectedPatient?.name
+        if(!name) name = 'Not selected'
+
+        if(selectedPatient) {
+            covidDBRef = database().ref(patientsPath + 'covid-patients/' + selectedPatient.id + '/results/');
+            fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient.id + '/results/');
         } else {
-            covidDBRef = database().ref(patientsPath + '/guest-results/covid/results/');
+            covidDBRef = database().ref(patientsPath + 'guest-results/covid/results/');
             fibrinogenDBRef = database().ref(patientsPath + '/guest-results/fibrinogen/results/');
         }
 
@@ -135,17 +142,17 @@ const Monitor = ({navigation}) => {
             case 'measurement.covid.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'covid',  statusText: 'Starting new test',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'measurement.covid.startedHeating':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'covid',  statusText: 'Device is warming up',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'measurement.covid.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'covid',  statusText: 'Running test',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'status.covidSecondsRemaining':
                 const covidTimeRemaining = new Date(data * 1000).toISOString().substr(14, 5);
@@ -157,36 +164,36 @@ const Monitor = ({navigation}) => {
                     : covidTimeRemaining[3] + covidTimeRemaining[4] + ' sec.';
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'covid',  statusText: covidMin + covidSec + ' remaining',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'dataProcess.covid.finishedTest':
-                const covidResult = {result: data, time: new Date().getDate()};
+                const covidResult = {result: data, time: new Date()};
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'covid',  statusText: 'Result: ' + data,
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
                 break;
             case 'measurement.covid.testError':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
                                        utilityBar: 'covid',  statusText: 'An error occurred while testing',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'measurement.fibrinogen.beginningTest':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'fibrinogen',  statusText: 'Starting new test',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'measurement.fibrinogen.testStartedSuccessfully':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'green',
                                        utilityBar: 'fibrinogen',  statusText: 'Running test',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'dataProcess.fibrinogen.finishedTest':
                 const result = parseFloat(data).toFixed(2);
                 updateReaderCards({name: device.name, id: device.id,
-                    isConnected: true, color: 'green', selectedPatient: selectedPatient,
+                    isConnected: true, color: 'green', selectedPatient: name,
                     utilityBar: 'fibrinogen', statusText: 'Result: ' + result});
-                const fibrinogenResult = {result: result, time: new Date().toLocaleString()};
+                const fibrinogenResult = {result: result, time: new Date().toISOString()};
                 const newTestRef = fibrinogenDBRef.push();
                 newTestRef.set(fibrinogenResult)
                     .then(() => Alert.alert('Uploaded result', 'Result: ' + result))
@@ -195,11 +202,11 @@ const Monitor = ({navigation}) => {
             case 'measurement.fibrinogen.testError':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'orange',
                                        utilityBar: 'fibrinogen',  statusText: 'An error occurred while testing',
-                                       selectedPatient: selectedPatient});
+                                       selectedPatient: name});
                 break;
             case 'measurement.chipRemoved':
                 updateReaderCards({name: device.name, id: device.id, isConnected: true, color: 'default',
-                                       statusText: 'Device is idle', selectedPatient: selectedPatient});
+                                       statusText: 'Device is idle', selectedPatient: name});
                 break;
         }
     }
@@ -211,7 +218,13 @@ const Monitor = ({navigation}) => {
     }
 
     // helper function to switch patient assignment for devices
-    const updatePatientForDevice = (deviceID, patientID) => setReaderToPatientMap(readerToPatientMap.set(deviceID, patientID));
+    const updatePatientForDevice = (deviceID, patientID, patientName) => {
+        setReaderToPatientMap(readerToPatientMap.set(deviceID, {id: patientID, name: patientName}));
+        let tempReader = readersMap.get(deviceID);
+        tempReader.selectedPatient = patientName;
+        setReadersMap(readersMap.set(deviceID, tempReader));
+        setReadersArray(Array.from(readersMap.values()));
+    };
 
     function DiscoveredReader(props) {
         const {id, name, statusText} = props;
@@ -239,10 +252,6 @@ const Monitor = ({navigation}) => {
         const {id, name, color, utilityBar, statusText, selectedPatient} = props;
         const {headerColors} = deviceColors[color];
 
-        let selectedPatientName;
-        if (!selectedPatient) selectedPatientName = 'Not selected';
-        else selectedPatientName = selectedPatient;
-
         return <View style={device.container}>
                     <View style={[device.header, headerColors]}>
                         <View style={{flex: 1, textAlign: 'center'}}>
@@ -250,12 +259,12 @@ const Monitor = ({navigation}) => {
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{width: 30}}>
                                 {
-                                    (selectedPatient?.displayName)
+                                    (selectedPatient !== 'Not selected')
                                         ? <IconF name='user-check' color='#ddd' size={24} />
                                         : <IconF name='user' color='#ddd' size={24} />
                                 }
                                 </View>
-                                <Text style={[device.patientText]}>{selectedPatientName}</Text>
+                                <Text style={[device.patientText]}>{selectedPatient}</Text>
                             </View>
                                 {
                                     (color === 'default' || color === 'green' && statusText.includes('Result')) &&
@@ -335,7 +344,7 @@ const Monitor = ({navigation}) => {
                     <ModalSelector
                         onChange={(option) => {
                             setViewCOVIDPatientModalVisible(false);
-                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0]);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
                         }}
                         renderItem={<View/>}
                         customSelector={<View/>}
@@ -355,7 +364,7 @@ const Monitor = ({navigation}) => {
                     <ModalSelector
                         onChange={(option) => {
                             setViewFibrinogenPatientModalVisible(false);
-                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0]);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
                         }}
                         renderItem={<View/>}
                         customSelector={<View/>}

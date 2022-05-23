@@ -1,8 +1,5 @@
 #import "AppDelegate.h"
 
-#import "SDImageCodersManager.h"
-#import <SDWebImageWebPCoder/SDWebImageWebPCoder.h>
-
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -37,8 +34,6 @@ if ([FIRApp defaultApp] == nil) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
-
-    [SDImageCodersManager.sharedManager addCoder:SDImageWebPCoder.sharedCoder];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge

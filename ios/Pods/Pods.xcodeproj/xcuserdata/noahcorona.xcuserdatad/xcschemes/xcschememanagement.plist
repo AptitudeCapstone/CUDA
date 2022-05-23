@@ -344,11 +344,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>ReactNativeWebPFormat.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -405,11 +400,6 @@
 			<false/>
 		</dict>
 		<key>nanopb.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>react-native-ble-manager.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -1659,6 +1659,11 @@
   resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.7.5.tgz#09fa51e356d07d0be200642b0e4f91d8e6dd408d"
   integrity sha512-V3BIhmY36fXZ1OtVcI9W+FxQqxVLsPKcNjWigIaa81dLC9IolJl5Mt4Cvhmr0flUnjSpTdrbMTSbXqYqV5dT6A==
 
+"@yr/monotone-cubic-spline@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@yr/monotone-cubic-spline/-/monotone-cubic-spline-1.0.3.tgz#7272d89f8e4f6fb7a1600c28c378cc18d3b577b9"
+  integrity sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==
+
 abab@^2.0.3, abab@^2.0.5:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz#41b80f2c871d19686216b82309231cfd3cb3d291"
@@ -4868,15 +4873,35 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash.clamp@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.clamp/-/lodash.clamp-4.0.3.tgz#5c24bedeeeef0753560dc2b4cb4671f90a6ddfaa"
+  integrity sha1-XCS+3u7vB1NWDcK0y0Zx+Qpt36o=
+
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.maxby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.maxby/-/lodash.maxby-4.6.0.tgz#082240068f3c7a227aa00a8380e4f38cf0786e3d"
+  integrity sha1-CCJABo88eiJ6oAqDgOTzjPB4bj0=
+
 lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
+
+lodash.minby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.minby/-/lodash.minby-4.6.0.tgz#8b105765ae973954ae944a8029999b8080bdf8c4"
+  integrity sha1-ixBXZa6XOVSulEqAKZmbgIC9+MQ=
 
 lodash.throttle@^4.1.1:
   version "4.1.1"
@@ -5781,7 +5806,7 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-paths-js@^0.4.10:
+paths-js@^0.4.10, paths-js@^0.4.11:
   version "0.4.11"
   resolved "https://registry.yarnpkg.com/paths-js/-/paths-js-0.4.11.tgz#b2a9d5f94ee9949aa8fee945f78a12abff44599e"
   integrity sha512-3mqcLomDBXOo7Fo+UlaenG6f71bk1ZezPQy2JCmYHy2W2k5VKpP+Jbin9H0bjXynelTbglCqdFhSEkeIkKTYUA==
@@ -5996,16 +6021,6 @@ react-is@^17.0.1, react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-animated-webp@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-animated-webp/-/react-native-animated-webp-0.0.8.tgz#96900ec4cbcb25a9697c0eef596d5c97fb5cf2fd"
-  integrity sha512-Sci9xDG9qX2cJninJ+SVpJIPfJd4WgTrN2JcQsuiPPZ3ZXsdahVlUm84GmqNgZF67Q2olG/rkCzNIPEkaBosyg==
-
-react-native-ble-manager@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-8.0.2.tgz#1fb7f00fabb412e563b903ee2c12df1736d52c3b"
-  integrity sha512-SCtuLFkBwKyPY0er3uKPcZaWUdSjJ3koDUlBvO/nS/WPbBBa2CJn+at/IXPolnxlV++jZqrOGV2qmENrq7ppZA==
-
 react-native-ble-plx@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-2.0.3.tgz#b0a746f33389dbf7fd7b158513330d487d5d0fbb"
@@ -6143,6 +6158,21 @@ react-native-raw-bottom-sheet@^2.2.0:
   resolved "https://registry.yarnpkg.com/react-native-raw-bottom-sheet/-/react-native-raw-bottom-sheet-2.2.0.tgz#d11dabb86aadb014273767ef7b554924b13633c5"
   integrity sha512-qL4JKIqvbcVxbkKzeh51hjV7suoJN3ouxzvLmOg0FBUV1yiJAfEbacjQdtRCI6+OU5pyGFBIifLsTXcFDwHggg==
 
+react-native-responsive-linechart@^5.7.1:
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-responsive-linechart/-/react-native-responsive-linechart-5.7.1.tgz#20aaa9f46983f9abff660fead5518830c2a8e0e9"
+  integrity sha512-DogkaY7l3UD4NgLFvAdNLmologlZkTUDOkI3VFyYhZljm+kuq6Opn1apM8BrCZ6WodqyUu6oY0/PuH55WI5RmA==
+  dependencies:
+    "@yr/monotone-cubic-spline" "^1.0.3"
+    deepmerge "^4.2.2"
+    fast-deep-equal "^3.1.3"
+    lodash.clamp "^4.0.3"
+    lodash.clonedeep "^4.5.0"
+    lodash.debounce "^4.0.8"
+    lodash.maxby "^4.6.0"
+    lodash.minby "^4.6.0"
+    paths-js "^0.4.11"
+
 react-native-safe-area-context@^3.3.2:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.4.1.tgz#c967a52903d55fe010b2428e5368b42f1debc0a7"
@@ -6209,11 +6239,6 @@ react-native-vector-icons@^9.0.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
-
-react-native-webp-format@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-webp-format/-/react-native-webp-format-1.1.2.tgz#22b14f544191e9a5411c920b9874e532a6ea6c89"
-  integrity sha512-qs0oyLZOjoLdlTM9781Vr8WBwvtdkcwQuSJpCtA5KxspGl+YDDDZrW+tpwRQI0PSlB84O+IoK3bfmgHu1zqejQ==
 
 react-native-wheel-scrollview-picker@^1.2.3:
   version "1.2.3"

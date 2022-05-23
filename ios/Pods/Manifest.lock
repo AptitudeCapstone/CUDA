@@ -349,8 +349,6 @@ PODS:
   - React-jsinspector (0.66.4)
   - React-logger (0.66.4):
     - glog
-  - react-native-ble-manager (8.0.2):
-    - React-Core
   - react-native-ble-plx (2.0.3):
     - MultiplatformBleAdapter (= 0.1.9)
     - React-Core
@@ -437,9 +435,6 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
-  - ReactNativeWebPFormat (1.1.2):
-    - React
-    - SDWebImageWebPCoder
   - RNCPicker (2.4.1):
     - React-Core
   - RNFastImage (8.5.11):
@@ -529,7 +524,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
-  - react-native-ble-manager (from `../node_modules/react-native-ble-manager`)
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - react-native-camera (from `../node_modules/react-native-camera`)
@@ -549,7 +543,6 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - ReactNativeWebPFormat (from `../node_modules/react-native-webp-format`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -637,8 +630,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
-  react-native-ble-manager:
-    :path: "../node_modules/react-native-ble-manager"
   react-native-ble-plx:
     :path: "../node_modules/react-native-ble-plx"
   react-native-blob-util:
@@ -677,8 +668,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativeWebPFormat:
-    :path: "../node_modules/react-native-webp-format"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNFastImage:
@@ -754,7 +743,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 94ce921e1d8ce7023366873ec371f3441383b396
   React-jsinspector: d0374f7509d407d2264168b6d0fad0b54e300b85
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
-  react-native-ble-manager: 2d49a9a94b8a1fb548a5239b0969703282a3545f
   react-native-ble-plx: f10240444452dfb2d2a13a0e4f58d7783e92d76e
   react-native-blob-util: 600972b1782380a5a7d5db61a3817ea32349dae9
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
@@ -774,7 +762,6 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
-  ReactNativeWebPFormat: 4275844b80c2c385a10ab64f50264d720f2d691c
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFBApp: d3a0f69a3cc67c609f962acf67f483a841ffc49f

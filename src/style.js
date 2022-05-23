@@ -174,7 +174,6 @@ export const format = StyleSheet.create({
     page: {
         backgroundColor: backgroundColor,
         flex: 1,
-        paddingHorizontal: 10
     },
     modalSelector: {
         marginBottom: 20,
@@ -188,6 +187,11 @@ export const format = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#888',
         zIndex: -1,
+    },
+    utilityBarButtonIcon: {
+        color: '#555',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     iconButton: {
         padding: 12,
@@ -238,17 +242,6 @@ export const format = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: 5,
     },
-    selectPatientBarIcon: {
-        marginVertical: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 16,
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: '#888',
-        backgroundColor: '#fff',
-        marginHorizontal: 5
-    },
     selectPatientBar: {
         backgroundColor: '#333',
         borderRadius: 50,
@@ -274,19 +267,15 @@ export const format = StyleSheet.create({
         paddingHorizontal: 15
 
     },
-    utilityBarButtonIcon: {
-        color: '#555',
-        alignSelf: 'center',
-    },
     section: {
         backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#999',
         paddingVertical: 10,
         paddingHorizontal: 20,
         marginVertical: 10,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#999',
-        flex: 1
+        flex: 1,
     },
     field: {
         flexDirection: 'row',
@@ -294,6 +283,41 @@ export const format = StyleSheet.create({
         justifyContent: 'space-between'
     },
 });
+
+export const patientSelectBar = {
+    container: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        backgroundColor: '#ddd'
+    },
+    barButton: {
+        marginVertical: 10,
+        flex: 0.3,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#888',
+        backgroundColor: '#fff',
+        padding: 4,
+    },
+    iconText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'stretch',
+        textAlign: 'center',
+        color: darkText,
+        paddingBottom: 6,
+    },
+    icon: {
+        color: '#555',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        marginVertical: 5
+    },
+};
 
 export const fonts = StyleSheet.create({
     bigText: {
@@ -316,11 +340,6 @@ export const fonts = StyleSheet.create({
         paddingTop: 4,
         paddingBottom: 4,
         alignSelf: 'center'
-    },
-    selectPatientText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: darkText,
     },
     iconButtonText: {
         fontSize: 24,
@@ -547,6 +566,7 @@ export const device = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#888',
         backgroundColor: '#ccc',
+        marginHorizontal: 10
     },
     header: {
         flexDirection: 'row',
@@ -628,10 +648,33 @@ export const device = StyleSheet.create({
     }
 });
 
+export const chart = {
+    marginTop: 15,
+    marginLeft: 0,
+    marginRight: 0
+}
+
+export const chartContainer = {
+    marginVertical: 15,
+    backgroundColor: '#fff'
+};
+
 export const chartConfig = {
-    backgroundGradientFrom: "#111",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#222",
-    backgroundGradientToOpacity: 0.2,
-    color: (opacity = 0.5) => '#666',
+    backgroundColor: `rgba(255, 255, 255, 0)`,
+    backgroundGradientFrom: `rgba(255, 255, 255, 0)`,
+    backgroundGradientTo: `rgba(255, 255, 255, 0)`,
+    fillShadowGradientFromOpacity: 0,
+    fillShadowGradientToOpacity: 0,
+    decimalPlaces: 2,
+    color: (opacity = 1) => '#aaa',
+    labelColor: (opacity = 1) => '#777',
+    style: {
+        marginVertical: 15,
+    },
+    propsForDots: {
+        r: '6',
+        strokeWidth: '2',
+        stroke: "#999"
+    },
+    useShadowColorFromDataset: false
 };
