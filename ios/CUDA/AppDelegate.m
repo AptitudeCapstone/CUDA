@@ -47,7 +47,7 @@ if ([FIRApp defaultApp] == nil) {
   }
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
+  UIViewController *rootViewController = [AllOrientationViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
@@ -62,4 +62,11 @@ if ([FIRApp defaultApp] == nil) {
 #endif
 }
 
+@end
+
+@implementation AllOrientationViewController
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
 @end

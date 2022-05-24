@@ -6,3 +6,6 @@
 @property (nonatomic, strong) UIWindow *window;
 
 @end
+
+@interface AllOrientationViewController : UIViewController
+@end

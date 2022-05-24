@@ -231,14 +231,19 @@ const Monitor = ({navigation}) => {
         const {headerColors} = deviceColors['default'];
 
         return <View style={[[device.container], isLandscape ? {flexDirection: 'row'} : {flexDirection: 'column'}]}>
-                    <View style={[device.header, headerColors, isLandscape ? {borderBottomLeftRadius: 15} : {borderBottomLeftRadius: 0}]}>
+                    <View style={[device.header,
+                        headerColors,
+                        isLandscape ? {borderBottomLeftRadius: 15, borderTopRightRadius: 0} : {borderBottomLeftRadius: 0, borderTopRightRadius: 15}
+                    ]}>
                         <View style={{flex: 1}}>
                             <Text style={[device.nameText]}>{name}</Text>
                             <Text style={[device.statusText]}>{statusText}</Text>
                         </View>
                     </View>
-                        <View style={[device.body, isLandscape ? device.buttonContainerLandscape : device.buttonContainer,
-                            isLandscape ? {borderBottomLeftRadius: 0} : {borderBottomLeftRadius: 15}]}>
+                        <View style={[device.body,
+                            isLandscape ? device.buttonContainerLandscape : device.buttonContainer,
+                            isLandscape ? {borderBottomLeftRadius: 0} : {borderBottomLeftRadius: 15}
+                        ]}>
                             <TouchableOpacity style={[device.button]} onPress={async () => {await connect(id)}}>
                                 <Text style={[device.buttonText]}>Connect</Text>
                                 <IconMCI name='bluetooth-connect' size={24} style={format.utilityBarButtonIcon}/>
@@ -281,13 +286,6 @@ const Monitor = ({navigation}) => {
                                     </View>
                                 }
                         </View>
-                        {
-                            (isLandscape && color === 'default') &&
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={async () => await disconnectFromDevice(id)}>
-                                <Text style={[device.buttonText]}>Disconnect</Text>
-                            </TouchableOpacity>
-                        }
                         <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
                     </View>
                     <View style={device.body}>
@@ -304,7 +302,7 @@ const Monitor = ({navigation}) => {
                         </View>
                         <View style={device.buttonContainer}>
                             {
-                                (!isLandscape && color === 'default') &&
+                                (color === 'default') &&
                                 <TouchableOpacity style={[device.button]}
                                                   onPress={async () => await disconnectFromDevice(id)}>
                                     <Text style={[device.buttonText]}>Disconnect</Text>
@@ -340,7 +338,7 @@ const Monitor = ({navigation}) => {
     const ConnectedReaderMemo = React.memo(ConnectedReader);
 
     return <SafeAreaView style={format.safeArea}>
-                <View style={format.page}>
+                <View style={[format.page, {padding: 15}]}>
                     <ModalSelector
                         onChange={(option) => {
                             setViewCOVIDPatientModalVisible(false);
