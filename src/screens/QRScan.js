@@ -3,7 +3,6 @@ import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-nativ
 import {backgroundColor, buttons, fonts, format} from '../style/Styles';
 import {useAuth} from "../auth/UserContext";
 import {RNCamera} from "react-native-camera";
-import {device} from "../style/Styles";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import ActionBar from "../navigation/ActionBar";
 
