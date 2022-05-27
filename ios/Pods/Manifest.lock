@@ -441,15 +441,18 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (14.10.1):
+  - RNFBApp (14.11.0):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
-  - RNFBAuth (14.10.1):
+  - RNFBAuth (14.11.0):
     - Firebase/Auth (= 8.15.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (14.10.1):
+  - RNFBDatabase (14.11.0):
     - Firebase/Database (= 8.15.0)
+    - React-Core
+    - RNFBApp
+  - RNFBML (14.11.0):
     - React-Core
     - RNFBApp
   - RNGestureHandler (2.4.2):
@@ -548,6 +551,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
+  - "RNFBML (from `../node_modules/@react-native-firebase/ml`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -678,6 +682,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNFBDatabase:
     :path: "../node_modules/@react-native-firebase/database"
+  RNFBML:
+    :path: "../node_modules/@react-native-firebase/ml"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
@@ -764,9 +770,10 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBApp: ce36cbcce243d63f2b84d7bad48d82fe118602d0
-  RNFBAuth: 2456be668b18455edeb5394817c32047f20770b0
-  RNFBDatabase: d0d920b67ac985fcf784b6585fafefa02e7c3217
+  RNFBApp: b1b5a80a676a07dea17e778bda7c1e8b69b2f5ec
+  RNFBAuth: e28fb7cd1b956086e68233b9ea19fb97c428f86b
+  RNFBDatabase: 465033505f231fb2cb760f227a1b6df052f6ea8f
+  RNFBML: f441edad823d9c1d04da1936f727e97dd4b79490
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNGoogleSignin: d7f8368b82d94f1dec964785d496387ca7f19092
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
