@@ -2,7 +2,7 @@ import React, {Alert, useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
-import {buttons, fonts, format} from '../../Styles';
+import {buttons, fonts, format} from '../../style/Styles';
 
 const CreateOrganization = ({navigation}) => {
     const [name, setName] = useState('');

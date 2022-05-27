@@ -1,12 +1,13 @@
 import React from 'react';
-import {Stack} from "../TabNavigator";
-import CreateAccount from '../../../screens/user_management/CreateAccount.js';
-import SignIn from '../../../screens/user_management/SignIn';
-import EditAccount from '../../../screens/user_management/EditAccount';
-import ForgotPassword from '../../../screens/user_management/ForgotPassword';
-import CreateOrganization from '../../../screens/user_management/CreateOrganization';
-import ConnectOrganization from '../../../screens/user_management/ConnectOrganization';
-import {userScreenOptions} from "../../../Styles";
+import {Stack} from "../Navigator";
+import CreateAccount from '../../screens/user/CreateAccount.js';
+import SignIn from '../../screens/user/SignIn';
+import EditAccount from '../../screens/user/EditAccount';
+import ForgotPassword from '../../screens/user/ForgotPassword';
+import CreateOrganization from '../../screens/user/CreateOrganization';
+import ConnectOrganization from '../../screens/user/ConnectOrganization';
+import {userScreenOptions} from "../../style/Styles";
+import QRScan from "../../screens/QRScan";
 
 const UserStack = () => (
     <Stack.Navigator>
@@ -16,6 +17,7 @@ const UserStack = () => (
         <Stack.Screen name='Forgot Password' component={ForgotPassword} options={userScreenOptions}/>
         <Stack.Screen name='Create Organization' component={CreateOrganization} options={userScreenOptions}/>
         <Stack.Screen name='Connect Organization' component={ConnectOrganization} options={userScreenOptions}/>
+        <Stack.Screen name='QR Scan' component={QRScan} options={userScreenOptions}/>
     </Stack.Navigator>
 )
 

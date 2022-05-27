@@ -17,19 +17,19 @@ import {
     patientSelect,
     rbCameraSheetStyle,
     testSelect
-} from '../Styles';
+} from '../style/Styles';
 import database from '@react-native-firebase/database';
 import {parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
-import ActionBar from "../components/ActionBar";
-import useAuth from "../contexts/UserContext";
+import ActionBar from "../navigation/ActionBar";
+import useAuth from "../auth/UserContext";
 import {useIsFocused} from '@react-navigation/native';
 import QRCodeScanner from "react-native-qrcode-scanner";
 import {RNCamera} from "react-native-camera";
 import RBSheet from "react-native-raw-bottom-sheet";
 import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions";
 
-const ViewData = ({navigation}) => {
+const Data = ({navigation}) => {
     const isFocused = useIsFocused(),
         [selectedTest, setSelectedTest] = useState('covid'),
         [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
@@ -412,4 +412,4 @@ const ViewData = ({navigation}) => {
     );
 };
 
-export default ViewData;
+export default Data;

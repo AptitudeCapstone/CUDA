@@ -5577,7 +5577,7 @@ enum GCDAsyncSocketConfig
 	{
 		if (![self usingCFStreamForTLS])
 		{
-			// Monitor the socket for readability (if we're not already doing so)
+			// Devices the socket for readability (if we're not already doing so)
 			[self resumeReadSource];
 		}
 	}

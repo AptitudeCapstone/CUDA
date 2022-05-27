@@ -292,14 +292,14 @@ export const format = StyleSheet.create({
     },
 });
 
-export const utilityBar = {
+export const iconButton = {
     icon: {
         color: '#555',
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    iconButton: {
+    button: {
         padding: 12,
         marginHorizontal: 20,
         flexDirection: 'row',

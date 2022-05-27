@@ -1,10 +1,10 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import MonitorDevicesStack from './stacks/MonitorDevicesStack'
-import ViewDataStack from './stacks/ViewDataStack';
+import DevicesStack from './stacks/DevicesStack'
+import DataStack from './stacks/DataStack';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMI from 'react-native-vector-icons/MaterialIcons'
-import {backgroundColor, mediumPurple, tabNavigatorStyle} from '../../Styles';
+import {backgroundColor, mediumPurple, tabNavigatorStyle} from '../style/Styles';
 import {AnimatedTabBarNavigator,} from 'react-native-animated-nav-tab-bar'
 import {createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
@@ -15,7 +15,7 @@ export const screenOptions = {headerShown: false};
 
 const Tabs = AnimatedTabBarNavigator();
 
-const TabNavigator = () => (
+const Navigator = () => (
     <NavigationContainer>
         <Tabs.Navigator
             initialRouteName='MonitorTab'
@@ -33,7 +33,7 @@ const TabNavigator = () => (
             }}>
             <Tabs.Screen
                 name='MonitorTab'
-                component={MonitorDevicesStack}
+                component={DevicesStack}
                 options={{
                     title: 'Devices',
                     headerShown: false,
@@ -44,7 +44,7 @@ const TabNavigator = () => (
             />
             <Tabs.Screen
                 name='ViewDataTab'
-                component={ViewDataStack}
+                component={DataStack}
                 options={{
                     title: 'Records',
                     headerShown: false,
@@ -57,4 +57,4 @@ const TabNavigator = () => (
     </NavigationContainer>
 )
 
-export default TabNavigator;
+export default Navigator;

@@ -1,9 +1,9 @@
 import React from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {fonts, format, rbSheetStyle} from "../../Styles";
+import {fonts, format, rbSheetStyle} from "../style/Styles";
 import {ActivityIndicator, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
-import useAuth from "../../contexts/UserContext";
+import useAuth from "../auth/UserContext";
 
 export const PatientSheet = ({navigation, modalRef}) => {
     const dimensions = useWindowDimensions();

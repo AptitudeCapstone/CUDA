@@ -7,7 +7,7 @@
 //  See http://www.boost.org/libs/test for the library home page.
 //
 /// @file
-/// @brief Implements main function for Test Execution Monitor.
+/// @brief Implements main function for Test Execution Devices.
 // ***************************************************************************
 
 #ifndef BOOST_TEST_TEST_MAIN_IPP_012205GER

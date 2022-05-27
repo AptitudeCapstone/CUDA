@@ -1,18 +1,17 @@
 import React, {useRef} from 'react';
-import {backgroundColor} from '../Styles';
+import {backgroundColor, device, rbCameraSheetStyle} from '../style/Styles';
 import { FloatingAction } from "react-native-floating-action";
 import IconMCI from "react-native-vector-icons/MaterialCommunityIcons";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
 import IconF from "react-native-vector-icons/Foundation";
 import IconFA from "react-native-vector-icons/FontAwesome5";
-import {UserSheet} from "./sheets/UserSheet";
-import {PatientSheet} from "./sheets/PatientSheet";
-import {QRSheet} from "./sheets/QRScanSheet";
+import {UserSheet} from "../components/UserSheet";
+import {PatientSheet} from "../components/PatientSheet";
+import {View} from "react-native";
 
 const ActionBar = ({navigation}) => {
     const userSheetRef = useRef(null);
     const patientSheetRef = useRef(null);
-    const qrSheetRef = useRef(null);
 
     const actions = [
         {
@@ -42,7 +41,7 @@ const ActionBar = ({navigation}) => {
     ];
 
     return (
-        <>
+        <View>
             <FloatingAction
                 actions={actions}
                 distanceToEdge={{ vertical: 120, horizontal: 20 }}
@@ -55,18 +54,19 @@ const ActionBar = ({navigation}) => {
                 style={{marginBottom: 60}}
                 onPressItem={name => {
                     if(name === 'account') {
-                        userSheetRef.current?.open()
+                        userSheetRef.current?.open();
                     } else if(name === 'patients') {
-                        patientSheetRef.current?.open()
+                        patientSheetRef.current?.open();
                     } else if (name === 'qr') {
-                        qrSheetRef.current?.open()
+                        navigation.navigate('User Stack', { screen: 'QR Scan'});
                     }
                 }}
             />
-            <UserSheet modalRef={userSheetRef} />
-            <PatientSheet modalRef={patientSheetRef} />
-            <QRSheet modalRef={qrSheetRef} />
-        </>
+            <View>
+                <UserSheet navigation={navigation} modalRef={userSheetRef} />
+                <PatientSheet navigation={navigation} modalRef={patientSheetRef} />
+            </View>
+        </View>
     );
 }
 

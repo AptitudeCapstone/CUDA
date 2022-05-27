@@ -17,16 +17,19 @@ import ModalSelector from 'react-native-modal-selector';
 import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
-import ActionBar from '../components/ActionBar';
-import {useAuth} from '../contexts/UserContext';
-import {device, deviceColors, format, modal, utilityBar} from '../Styles';
-import {actionCharUUID, dataCharUUID, serviceUUID, statusCharUUID} from '../BLEConstants'
+import ActionBar from '../navigation/ActionBar';
+import {useAuth} from '../auth/UserContext';
+import {device, deviceColors, format, iconButton, modal} from '../style/Styles';
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
 
-const Monitor = ({navigation}) => {
-    const [readersMap, setReadersMap] = useState(() => new Map()),
+const Devices = ({navigation}) => {
+    const serviceUUID = 'ab173c6c-8493-412d-897c-1974fa74fc13',
+        statusCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BD',
+        dataCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BB',
+        actionCharUUID = '04CB0EB1-8B58-44D0-91E4-080AF33438BF',
+        [readersMap, setReadersMap] = useState(() => new Map()),
         [readersArray, setReadersArray] = useState(() => []),
         [readerToPatientMap, setReaderToPatientMap] = useState(() => new Map()),
         [lastTappedDeviceForPatientSelect, setLastTappedDeviceForPatientSelect] = useState(null),
@@ -44,9 +47,7 @@ const Monitor = ({navigation}) => {
         organization = userInfo.user?.organization,
         patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
         patientsRef = database().ref(patientsPath),
-        isLandscape = (dimensions.width > dimensions.height),
-        modalRef = useRef(null);
-
+        isLandscape = (dimensions.width > dimensions.height);
 
     // this useEffect is the base of the patient database routine
     useEffect(() => {
@@ -287,7 +288,7 @@ const Monitor = ({navigation}) => {
                     await connect(id)
                 }}>
                     <Text style={[device.buttonText]}>Connect</Text>
-                    <IconMCI name='bluetooth-connect' size={24} style={utilityBar.icon}/>
+                    <IconMCI name='bluetooth-connect' size={24} style={iconButton.icon}/>
                 </TouchableOpacity>
             </View>
         </View>;
@@ -334,11 +335,18 @@ const Monitor = ({navigation}) => {
                 <View style={device.patientSelect}>
                     <View style={{flexGrow: 1, textAlign: 'center'}}>
                         <TouchableOpacity style={[device.button]} onPress={() => {
+                            // set device to modify to the tapped device
                             setLastTappedDeviceForPatientSelect(id);
-                            modalRef.current?.open()
+
+                            // navigate to QR page
+
+                            // wait until back
+
+                            // use scanned QR value
+
                         }}>
                             <Text style={[device.buttonText]}>Scan patient QR</Text>
-                            <IconMCI name='qrcode-scan' size={24} style={utilityBar.icon}/>
+                            <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -348,7 +356,7 @@ const Monitor = ({navigation}) => {
                         <TouchableOpacity style={[device.button]}
                                           onPress={async () => await disconnectFromDevice(id)}>
                             <Text style={[device.buttonText]}>Disconnect</Text>
-                            <IconA name='disconnect' size={24} style={utilityBar.icon}/>
+                            <IconA name='disconnect' size={24} style={iconButton.icon}/>
                         </TouchableOpacity>
                     }
                     {
@@ -359,7 +367,7 @@ const Monitor = ({navigation}) => {
                                               setViewCOVIDPatientModalVisible(true);
                                           }}>
                             <Text style={[device.buttonText]}>Select patient from list</Text>
-                            <IconE name='list' size={24} style={utilityBar.utilityBar}/>
+                            <IconE name='list' size={24} style={iconButton.icon}/>
                         </TouchableOpacity>
                     }
                     {
@@ -370,7 +378,7 @@ const Monitor = ({navigation}) => {
                                               setViewFibrinogenPatientModalVisible(true);
                                           }}>
                             <Text style={[device.buttonText]}>Select patient from list</Text>
-                            <IconE name='list' size={24} style={utilityBar.utilityBar}/>
+                            <IconE name='list' size={24} style={iconButton.icon}/>
                         </TouchableOpacity>
                     }
                 </View>
@@ -439,4 +447,4 @@ const Monitor = ({navigation}) => {
     </SafeAreaView>;
 }
 
-export default Monitor;
+export default Devices;

@@ -10,7 +10,7 @@
 //
 //  Version     : $Revision$
 //
-//  Description : main function implementation for Program Executon Monitor
+//  Description : main function implementation for Program Executon Devices
 // ***************************************************************************
 
 #ifndef BOOST_TEST_CPP_MAIN_IPP_012205GER

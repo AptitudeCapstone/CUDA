@@ -1,10 +1,10 @@
 import React from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {fonts, format, rbSheetStyle} from "../../Styles";
+import {fonts, format, rbSheetStyle} from "../style/Styles";
 import {ActivityIndicator, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
-import {disconnectFromOrganization, handleLogInGoogle, logOut} from "../../auth/Common";
-import useAuth from "../../contexts/UserContext";
+import {disconnectFromOrganization, handleLogInGoogle, logOut} from "../auth/Auth";
+import useAuth from "../auth/UserContext";
 
 export const UserSheet = ({navigation, modalRef}) => {
     const userInfo = useAuth()
@@ -47,10 +47,10 @@ export const UserSheet = ({navigation, modalRef}) => {
                     {
                         (userInfo.loginStatus === 'registered') &&
                         <View>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={editAccount}>
+                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => editAccount()}>
                                 <Text style={fonts.mediumText}>Edit my account</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={logOut}>
+                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => logOut()}>
                                 <Text style={fonts.mediumText}>Logout</Text>
                             </TouchableOpacity>
                         </View>
@@ -62,11 +62,11 @@ export const UserSheet = ({navigation, modalRef}) => {
                                               onPress={handleLogInGoogle(userInfo)}>
                                 <Text style={fonts.mediumText}>Sign in with Google</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={signIn}>
+                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => signIn()}>
                                 <Text style={fonts.mediumText}>Sign in with Email</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
-                                              onPress={createAccount}>
+                                              onPress={() => createAccount()}>
                                 <Text style={fonts.mediumText}>Create Account</Text>
                             </TouchableOpacity>
                         </View>
@@ -86,7 +86,7 @@ export const UserSheet = ({navigation, modalRef}) => {
                         (!(userInfo.user?.organization === null || userInfo.user?.organization === undefined)) &&
                         <View>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
-                                              onPress={disconnectFromOrganization(userInfo)}>
+                                              onPress={() => disconnectFromOrganization(userInfo)}>
                                 <Text style={fonts.iconButtonText}>Disconnect from current organization</Text>
                             </TouchableOpacity>
                         </View>
@@ -95,11 +95,11 @@ export const UserSheet = ({navigation, modalRef}) => {
                         (userInfo.user?.organization === null || userInfo.user?.organization === undefined) &&
                         <View>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
-                                              onPress={navConnectOrganization}>
+                                              onPress={() => navConnectOrganization()}>
                                 <Text style={fonts.iconButtonText}>Connect to existing</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
-                                              onPress={navCreateOrganization}>
+                                              onPress={() => navCreateOrganization()}>
                                 <Text style={fonts.iconButtonText}>Create new</Text>
                             </TouchableOpacity>
                         </View>

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../Styles';
-import {useAuth} from "../../contexts/UserContext";
+import {buttons, fonts, format} from '../../style/Styles';
+import {useAuth} from "../../auth/UserContext";
 
 const EditAccount = ({navigation, route}) => {
     const userInfo = useAuth();

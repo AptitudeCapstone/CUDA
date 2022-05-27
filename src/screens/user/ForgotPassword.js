@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
-import {buttons, fonts, format} from '../../Styles';
+import {buttons, fonts, format} from '../../style/Styles';
 
 const ForgotPassword = ({navigation, route}) => {
     const [email, setEmail] = useState('');

@@ -9,7 +9,7 @@
 //
 //  Version     : $Revision$
 //
-//  Description : implements specific subclass of Executon Monitor used by Unit
+//  Description : implements specific subclass of Executon Devices used by Unit
 //  Test Framework to monitor test cases run.
 // ***************************************************************************
 

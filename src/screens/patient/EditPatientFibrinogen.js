@@ -1,86 +1,65 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
-import {buttons, fonts, format} from '../../Styles';
-import {useAuth} from '../../contexts/UserContext';
+import {buttons, fonts, format} from '../../style/Styles';
 import database from '@react-native-firebase/database';
+import {useAuth} from "../../auth/UserContext";
 
-const CreatePatientFibrinogen = ({navigation}) => {
+const EditPatientFibrinogen = ({route, navigation}) => {
+    const {patientKey} = route.params;
     const userInfo = useAuth(),
         auth = userInfo.userAuth,
-        organization = userInfo.user?.organization,
-        [patientName, setPatientName] = useState(null),
+        organization = userInfo.user?.organization;
+    [patientName, setPatientName] = useState(null),
         [patientBloodType, setPatientBloodType] = useState(null),
         [patientSex, setPatientSex] = useState(null),
         [patientAge, setPatientAge] = useState(null),
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null);
 
-    const register_user = () => {
+    // add navigate to patient page after, and update patient that is selected
+    const update_patient = () => {
+        let patient = null;
         if (!organization) {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/').orderByChild('qrId').once('value', function (snapshot) {
-
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
-
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
-
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
-                }
-
-                const patientReference = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/').push();
-
-                patientReference.update({
-                    qrId: qrId,
-                    name: patientName,
-                    bloodType: patientBloodType,
-                    sex: patientSex,
-                    age: patientAge,
-                    height: patientHeight,
-                    weight: patientWeight
-                }).then(() => {
-                    console.log('Added entry for /users/' + auth.uid + '/patients/fibrinogen-patients/' + patientReference.key);
-                    navigation.goBack();
-                });
-            });
+            patient = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/' + patientKey);
         } else {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/').orderByChild('qrId').once('value', function (snapshot) {
-                let qrId = 1;
-                if (snapshot.val()) {
-                    let takenQRs = [];
+            patient = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/' + patientKey);
+        }
 
-                    // @ts-ignore
-                    snapshot.forEach(function (data) {
-                        takenQRs.push(data.val().qrId);
-                    });
-
-                    while (takenQRs.includes(qrId))
-                        qrId += 1;
+        // first get current patient info
+        // if not empty, and not equal to current value, update the value
+        patient.once('value', function (patientSnapshot) {
+            console.log(patientSnapshot.val());
+            if (patientSnapshot.val()) {
+                if (patientName !== patientSnapshot.val().name && patientName !== null) {
+                    patient.update({name: patientName});
                 }
 
-                const patientReference = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/').push();
+                if (patientBloodType !== patientSnapshot.val().bloodType && patientBloodType !== null) {
+                    patient.update({bloodType: patientBloodType});
+                }
 
-                patientReference.update({
-                    qrId: qrId,
-                    name: patientName,
-                    bloodType: patientBloodType,
-                    sex: patientSex,
-                    age: patientAge,
-                    height: patientHeight,
-                    weight: patientWeight
-                }).then(() => {
-                    console.log('Added entry for /organizations/' + organization + '/patients/fibrinogen-patients/' + patientReference.key);
-                    navigation.goBack();
-                });
-            });
-        }
+                if (patientSex !== patientSnapshot.val().sex && patientSex !== null) {
+                    patient.update({sex: patientSex});
+                }
+
+                if (patientAge !== patientSnapshot.val().age && patientAge !== null) {
+                    patient.update({age: patientAge});
+                }
+
+                if (patientWeight !== patientSnapshot.val().weight && patientWeight !== null) {
+                    patient.update({weight: patientWeight});
+                }
+
+                if (patientHeight !== patientSnapshot.val().height && patientHeight !== null) {
+                    patient.update({height: patientHeight});
+                }
+            }
+        });
+
+        Alert.alert('Successfully applied changes', 'Returning to patient portal');
+        navigation.goBack();
     }
 
     const BloodTypeSelector = () => {
@@ -88,25 +67,25 @@ const CreatePatientFibrinogen = ({navigation}) => {
             <View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(patientBloodType === 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('A+')}
                     >
                         <Text style={fonts.selectButtonText}>A+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'B+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('B+')}
                     >
                         <Text style={fonts.selectButtonText}>B+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'AB+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('AB+')}
                     >
                         <Text style={fonts.selectButtonText}>AB+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'O+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('O+')}
                     >
                         <Text style={fonts.selectButtonText}>O+</Text>
@@ -114,25 +93,25 @@ const CreatePatientFibrinogen = ({navigation}) => {
                 </View>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                     <TouchableOpacity
-                        style={(patientBloodType === 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'A-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('A-')}
                     >
                         <Text style={fonts.selectButtonText}>A-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'B-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('B-')}
                     >
                         <Text style={fonts.selectButtonText}>B-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'AB-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('AB-')}
                     >
                         <Text style={fonts.selectButtonText}>AB-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={(patientBloodType === 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                        style={(patientBloodType == 'O-') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                         onPress={() => setPatientBloodType('O-')}
                     >
                         <Text style={fonts.selectButtonText}>O-</Text>
@@ -146,13 +125,13 @@ const CreatePatientFibrinogen = ({navigation}) => {
         return (
             <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
                 <TouchableOpacity
-                    style={(patientSex === 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    style={(patientSex == 'Male') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                     onPress={() => setPatientSex('Male')}
                 >
                     <Text style={fonts.selectButtonText}>Male</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={(patientSex === 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
+                    style={(patientSex == 'Female') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                     onPress={() => setPatientSex('Female')}
                 >
                     <Text style={fonts.selectButtonText}>Female</Text>
@@ -177,7 +156,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     return <Picker.Item key={key} label={key.toString()} value={key.toString()}/>
                 })}
             </Picker>
-        );
+        )
     }
 
     const [feet, setFeet] = useState(null);
@@ -237,7 +216,7 @@ const CreatePatientFibrinogen = ({navigation}) => {
                     paddingBottom: 40
                 }}
             >
-                <Text style={fonts.heading}>Patient Info</Text>
+                <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text> </Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
@@ -279,9 +258,9 @@ const CreatePatientFibrinogen = ({navigation}) => {
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={register_user}
+                        onPress={update_patient}
                     >
-                        <Text style={buttons.submitButtonText}>Create Patient</Text>
+                        <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
@@ -289,4 +268,4 @@ const CreatePatientFibrinogen = ({navigation}) => {
     );
 }
 
-export default CreatePatientFibrinogen;
+export default EditPatientFibrinogen;

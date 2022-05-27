@@ -1,10 +1,10 @@
 import React from 'react';
-import { UserProvider } from "./src/contexts/UserContext.js";
-import TabNavigator from "./src/components/navigation/TabNavigator";
+import { UserProvider } from "./src/auth/UserContext.js";
+import Navigator from "./src/navigation/Navigator";
 
 const App = () => (
     <UserProvider>
-        <TabNavigator />
+        <Navigator />
     </UserProvider>
 );
 

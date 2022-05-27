@@ -721,8 +721,8 @@
     <string name="catalyst_inspector_stop" project="catalyst" translatable="false">Hide Element Inspector</string>
     <string name="catalyst_loading_from_url" project="catalyst" translatable="false">Loading from %1$s…</string>
     <string name="catalyst_open_flipper_error" project="catalyst" translatable="false">Failed to open Flipper. Please check that Metro is running.</string>
-    <string name="catalyst_perf_monitor" project="catalyst" translatable="false">Show Perf Monitor</string>
-    <string name="catalyst_perf_monitor_stop" project="catalyst" translatable="false">Hide Perf Monitor</string>
+    <string name="catalyst_perf_monitor" project="catalyst" translatable="false">Show Perf Devices</string>
+    <string name="catalyst_perf_monitor_stop" project="catalyst" translatable="false">Hide Perf Devices</string>
     <string name="catalyst_reload" project="catalyst" translatable="false">Reload</string>
     <string name="catalyst_reload_button" project="catalyst" translatable="false">Reload\n(R,\u00A0R)</string>
     <string name="catalyst_reload_error" project="catalyst" translatable="false">Failed to load bundle. Try restarting the bundler or reconnecting your device.</string>
