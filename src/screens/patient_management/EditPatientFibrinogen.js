@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Picker} from '@react-native-picker/picker';
-import {buttons, fonts, format} from '../../style';
+import {buttons, fonts, format} from '../../Styles';
 import database from '@react-native-firebase/database';
 import {useAuth} from "../../contexts/UserContext";
 
@@ -11,7 +11,7 @@ const EditPatientFibrinogen = ({route, navigation}) => {
     const userInfo = useAuth(),
         auth = userInfo.userAuth,
         organization = userInfo.user?.organization;
-        [patientName, setPatientName] = useState(null),
+    [patientName, setPatientName] = useState(null),
         [patientBloodType, setPatientBloodType] = useState(null),
         [patientSex, setPatientSex] = useState(null),
         [patientAge, setPatientAge] = useState(null),

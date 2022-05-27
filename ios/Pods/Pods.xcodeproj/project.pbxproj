@@ -122,6 +122,7 @@
 		0032A9BBE5D0325EDBD25B7AC5FF1780 /* ZXMaxiCodeBitMatrixParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 31424B01487315D2FDF227CD63CD96DB /* ZXMaxiCodeBitMatrixParser.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		005034CD15CE0953210B3089987B6C34 /* TupleOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 9067B1DD3D5533171E82A817A01D3EE9 /* TupleOps.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		005BF8E0A292680C28D165F5C6690AE8 /* SKMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = AFF1305E5EB9C5EE4E999E1B4DA3F557 /* SKMacros.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		005D22B6EDE456058258C812DFB8ED8A /* GTMAppAuthFetcherAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 710704F8968F6AECD6B73E9B5D05C48C /* GTMAppAuthFetcherAuthorization.m */; };
 		007521F13BDD032EEF5C6C55C058E20E /* rescaler.c in Sources */ = {isa = PBXBuildFile; fileRef = 48D096D804880B0F10C52E3DDA6004E0 /* rescaler.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		00777427EB20C2EDB79823DC65F8DCE5 /* EDFThreadPoolExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = F1C315322FB40DDF3BAB0CBF5D059A0D /* EDFThreadPoolExecutor.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		007B9D6138E334D6AC859C19A6BA075A /* CustomLogFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A2B38D6AA6473FD465139594BD9E8C /* CustomLogFormatter.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -176,7 +177,7 @@
 		02C1A6A5DDBA5AB1F41DA19C26DBBC11 /* Platform.Linux.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF5A16F4F365E4BC6FAC6DB8EEC75F0 /* Platform.Linux.swift */; };
 		02E0B1D83701685EC141A2A4B2B66D3C /* ZXPDF417HighLevelEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = C7799C5CF11FA5A41C692C28F8B933EA /* ZXPDF417HighLevelEncoder.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		02E303B5CB078D26C6969B4D0C7AD27D /* frame_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = C036D635A20832FD7B01C0190DDE9C3D /* frame_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		02E3AF1D0E84AB4C1F9A4D8F13CB4868 /* GTMOAuth2KeychainCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = AFC4F3C9BAABD15826D26D1857670FB3 /* GTMOAuth2KeychainCompatibility.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		02E3AF1D0E84AB4C1F9A4D8F13CB4868 /* GTMOAuth2KeychainCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F185B36D1D9C48DB497881AEE64C6001 /* GTMOAuth2KeychainCompatibility.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		02E7EB644A45E88B77EDBB2E84DE480C /* FIRVerifyAssertionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 477425F5AD60A48A95E4EF9B5238E129 /* FIRVerifyAssertionRequest.m */; };
 		02FE178C1A30181C61895DF3DB38F493 /* RNCSafeAreaViewMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8010EACEC3A96A0AEB09104EE0121BAF /* RNCSafeAreaViewMode.m */; };
 		0301D26005BB7685AB64AA1DDAD643FF /* HazptrObj.h in Headers */ = {isa = PBXBuildFile; fileRef = 7FF076A0970D43C7F720585DE56EF2A2 /* HazptrObj.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -311,6 +312,7 @@
 		0A2BB0EE619A6AABCC4BCB0DFE2F864A /* ZXQRCodeBlockPair.m in Sources */ = {isa = PBXBuildFile; fileRef = E6280958152715FA4C20B368C30B8EC2 /* ZXQRCodeBlockPair.m */; };
 		0A391C877E77B7F4392C18CB35FB2CBA /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F3985D80B42A16475E8F4CC4E4B2EBC6 /* GCDAsyncUdpSocket.m */; };
 		0A4CEC4569F950958DD3E2A32732ED11 /* Result.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B5742DCEF09BBAE0D16D92DE83F42F1 /* Result.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		0A533E7EE45B69ABF789A484C1B50C3D /* GTMAppAuthFetcherAuthorization+Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 71269DF18B97EE2FB930B5698BBB4653 /* GTMAppAuthFetcherAuthorization+Keychain.m */; };
 		0A7A108C8013CAAE2E190CCDE968BBC4 /* RNSVGForeignObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AF8C25C2BEAB88672AEA0C878D57A113 /* RNSVGForeignObject.m */; };
 		0A9D57D9B16B304A9D4EA80DFC4DB72A /* RNSVGSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AC1EDA55A781082010B3E232DE8379A /* RNSVGSymbol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0AA1AC4C822F1EDBD87ABFA08650CE32 /* SynchronizedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = C028048B2379A84E4EDEDD7B576B7703 /* SynchronizedPtr.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -323,6 +325,7 @@
 		0B29322E2241DA185B9D8A88DB35EE1C /* RCTInputAccessoryViewContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB5065F96894576B6AEFECE5F2597A8 /* RCTInputAccessoryViewContent.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0B2CDA1E559CFAE9AF1B7BB04508886A /* RNSVGClipPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F84BF1422624184F9C8D08AFDAEEBEB /* RNSVGClipPath.m */; };
 		0B45EC55C969E5525B90B6D400E0BCA6 /* FIRResetPasswordRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A262653EAC28E100328CE4FE325F907 /* FIRResetPasswordRequest.m */; };
+		0B611048E9BFACF4F512751A0215CD1D /* GTMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = E664B7146F6723826CFCB0EB4F1B1F9B /* GTMKeychain.m */; };
 		0B745A39A78F248F552BC65341B400DD /* SerialExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 312439A8A40398CA958B216778459369 /* SerialExecutor.cpp */; settings = {COMPILER_FLAGS = "-DFOLLY_HAVE_BACKTRACE=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -DFOLLY_HAVE_PTHREAD=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_HAVE_LIBGFLAGS=0 -DFOLLY_HAVE_LIBJEMALLOC=0 -DFOLLY_HAVE_PREADV=0 -DFOLLY_HAVE_PWRITEV=0 -DFOLLY_HAVE_TFO=0\n    -frtti\n    -fexceptions\n    -std=c++14\n    -Wno-error\n    -Wno-unused-local-typedefs\n    -Wno-unused-variable\n    -Wno-sign-compare\n    -Wno-comment\n    -Wno-return-type\n    -Wno-global-constructors\n    -Wno-comma"; }; };
 		0B7DC3AC0CDB58DE8F92A2310CD637F3 /* RequestResponseResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = E90F1379BD8C2E44927A1D9C430F351C /* RequestResponseResponder.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0B878E93563DFE88B48975346A4BA31B /* RNSVGEllipseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 92CDFC4B1FF8ABBF93462D4CB254D1B3 /* RNSVGEllipseManager.m */; };
@@ -470,7 +473,6 @@
 		11F79D27542FF5A10F8F98992CE48DE6 /* ZXRSSExpandedCurrentParsingState.m in Sources */ = {isa = PBXBuildFile; fileRef = AA064401B71B4BBA197F09A5359CADEE /* ZXRSSExpandedCurrentParsingState.m */; };
 		121DD93EFBD46035E4E52473995C9A19 /* ZXGenericGF.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C077D39C6D9D2BBD8BF21AF85DFF953 /* ZXGenericGF.m */; };
 		12295EA0C57E1F6A2DCB24D75DE5DBBD /* Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0A1384DBC3D29D62FAAF36C6D67B8C /* Singleton.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		122C1049B461BBDF22DE235197C2116D /* GTMKeychain_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CFE3D0782E367CF7A0C884A5B174160 /* GTMKeychain_iOS.m */; };
 		122E8C84ECFD3726B2CEFC016C54CA28 /* OIDURLQueryComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC90A705140062F5A59B032EECD2923 /* OIDURLQueryComponent.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		123FA432D5AB9C496F8EC724F84F17DB /* FlipperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F63B4C39083CEE44F18E2017AF55A0 /* FlipperConnection.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		12459FC1730EDAE44336AC6486951433 /* Elf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBCA998A376871A9D39E6F408A4C713E /* Elf.cpp */; settings = {COMPILER_FLAGS = "-DFOLLY_HAVE_BACKTRACE=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -DFOLLY_HAVE_PTHREAD=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_HAVE_LIBGFLAGS=0 -DFOLLY_HAVE_LIBJEMALLOC=0 -DFOLLY_HAVE_PREADV=0 -DFOLLY_HAVE_PWRITEV=0 -DFOLLY_HAVE_TFO=0\n    -frtti\n    -fexceptions\n    -std=c++14\n    -Wno-error\n    -Wno-unused-local-typedefs\n    -Wno-unused-variable\n    -Wno-sign-compare\n    -Wno-comment\n    -Wno-return-type\n    -Wno-global-constructors\n    -Wno-comma"; }; };
@@ -883,7 +885,6 @@
 		2A6FFA1752238FAE30EB5490E893BE9E /* RNSVGDefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B51B8CCB07DDCEE69B42279CFA4E4841 /* RNSVGDefsManager.m */; };
 		2A807095669E97058FA92DE55F0949EB /* Benchmark.h in Headers */ = {isa = PBXBuildFile; fileRef = 015A7747F99F4EB6F5BC31BBEF11BFE2 /* Benchmark.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2A8869CE0264B1D2B52776ED63D637A1 /* CoreModulesPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B9C2B09D506B138FA0CC14D08BFDBFB /* CoreModulesPlugins.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		2A8BF73C968C7195C68B27774676ABD5 /* GTMAppAuthFetcherAuthorization+Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E18CD1E39ADAB6F96F72DB9820657C /* GTMAppAuthFetcherAuthorization+Keychain.m */; };
 		2A8E2C80D249ED60E84A7A7651E3D54C /* Disposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DC756D854551D2CBC365D0B47CB268 /* Disposable.swift */; };
 		2A9B9EF53D340571CE9CE3CE4F24BC7D /* FIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C9371DCB6BB6A2F1899ECB94E2B0F3C7 /* FIndex.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2A9EB42940E28FD4DB419A6E058E3353 /* OIDURLSessionProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 32560C0E220F11FCD249D49CB9B134C2 /* OIDURLSessionProvider.m */; };
@@ -1273,6 +1274,7 @@
 		40CD013025632F69B8F4AD11F17EE6A8 /* Init.h in Headers */ = {isa = PBXBuildFile; fileRef = ADD72D8DD885FBF6371285E68A06F914 /* Init.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		40EB2B8FC962D3734024C660D19F33DA /* RNSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = DC53D656068CD7D66EFEB915E2EC80F9 /* RNSVGPath.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		40EFA183B222EAF5F6DD9D45FDFD1FD4 /* RCTFrameAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA35257D48E36478F13EA7C3696B6FB /* RCTFrameAnimation.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4140F8A7FB8F3B640EF9DAC5C6C590E0 /* GTMOAuth2KeychainCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 3854FF39C1F6103F139F56AFE6A569F7 /* GTMOAuth2KeychainCompatibility.m */; };
 		4146EF565F4E535FC3112DB62E9E5C2C /* FTypedefs_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C97B087B73CC388000531F52FB7A29C9 /* FTypedefs_Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4157C523820685F4C30DC93B49C20850 /* CppAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2744CCC07E098D8CC61EB1738DB0AE1C /* CppAttributes.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		415D54EA9E0686E8B7F3290B82263D98 /* ZXRSSExpandedDecodedChar.m in Sources */ = {isa = PBXBuildFile; fileRef = BB2F2C91B8D6E5389379236479269CF9 /* ZXRSSExpandedDecodedChar.m */; };
@@ -1307,7 +1309,7 @@
 		42C87A8DF0739BCC1BC8B8CCBD259471 /* ZXAztecCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 45617832800C0B57DF13F3495988FF8D /* ZXAztecCode.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		42DB01E41A273FBEEBE14B85DC1D5C99 /* JSCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = C1ABF5E0FE06DC5E5A15AD34B90513FA /* JSCRuntime.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		42E78E59A85A743791056C89D1E25D75 /* Single.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C895A02D3ED0C4FB999713A10CD57F4 /* Single.swift */; };
-		42FA1A3D4982515F2F2090408A14AC79 /* GTMAppAuthFetcherAuthorization.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D561DF9DC626A36E534DA3AAE66B41 /* GTMAppAuthFetcherAuthorization.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		42FA1A3D4982515F2F2090408A14AC79 /* GTMAppAuthFetcherAuthorization.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB7E7C376961493C6686CF750C3FFCA /* GTMAppAuthFetcherAuthorization.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4301D36D8A4D399B4FB7A2DD9150FC00 /* SafeAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 701A4B5E3F8323415A15368F2302EF60 /* SafeAssert.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4303FE441B9A969386CF0E48B1C9FF98 /* SkipWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A53E7D5158D63FA4D1897E7E4E5872 /* SkipWhile.swift */; };
 		43106689548A72B44D40B64E71B9987B /* RCTUIManagerObserverCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = DEC827802B2CB433E3D04F18F97F3CCC /* RCTUIManagerObserverCoordinator.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1798,6 +1800,7 @@
 		5FC68A1A119F90FC231E0E9B2CA429D6 /* RCTAnimationType.h in Headers */ = {isa = PBXBuildFile; fileRef = BAEBCD5654460C083AA469A6F2DDDD4D /* RCTAnimationType.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5FE1978850638CA64106F017840DE6DA /* RCTMultilineTextInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = B10FEAB985F3F61FE97300E4445FB519 /* RCTMultilineTextInputView.m */; };
 		5FE26C520B7E117F2276A88968333AC9 /* RNGoogleSignin.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E151835B0B1F48C051447B9A66955B4 /* RNGoogleSignin.m */; };
+		5FE71B088CF7408F0EB44D9CA42A29C9 /* GTMAppAuth-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F306F33514130EDEFE1C6F189050F2E0 /* GTMAppAuth-dummy.m */; };
 		5FE863F848E48D580AC2C212F356885F /* GULLoggerCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = D25F126D9CB420C985408DF870F78E41 /* GULLoggerCodes.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5FEEA99092BDA5FD7EA5A8597BFB8FBF /* ZXProductParsedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 500AF861C4F5488A28FF7E3C547CB10A /* ZXProductParsedResult.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5FF39675B8C556844130A612D322A8DF /* FIRVerifyCustomTokenResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = F4AAF7D8283CC05EE805549127700EDE /* FIRVerifyCustomTokenResponse.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1872,7 +1875,6 @@
 		63344E10937E6C5B60F70263816D0068 /* RCTNetworkTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFEAADF2B0690C7CCB9089E9766C58C /* RCTNetworkTask.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		63349405A94965480ED8CCE9672BE0EF /* Byte.h in Headers */ = {isa = PBXBuildFile; fileRef = A3319645323F0BACEA16C271F8358903 /* Byte.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		633C7AD40239D3AD0900F6C83AA7BA5F /* BitIteratorDetail.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EDD293CF67A20CE2AA2120DB5E6B9F /* BitIteratorDetail.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		63485C23B82A89E81FB9DC6E4367D0BA /* GTMOAuth2KeychainCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = D1328C3D60023BFF70FE04482D080045 /* GTMOAuth2KeychainCompatibility.m */; };
 		63570B24C8FC848FBEF09925FBA62158 /* ResumeIdentificationToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 18DB60A2A995D04C3C81BD850CFE2CC2 /* ResumeIdentificationToken.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		636F80FCC230419228EB854947741208 /* PTChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C5E7BC9F451F18E8C22CF61C4571B30 /* PTChannel.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		638D862E2899B737B915C0B52C184B7B /* FIRGameCenterAuthProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 4156713C46B4183F30558234EC80EEA2 /* FIRGameCenterAuthProvider.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2046,7 +2048,7 @@
 		6D8495F7C7D2568B52300119F83A0137 /* ZXEANManufacturerOrgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B71DE0C9EC5FC8D86CDDF75A695559 /* ZXEANManufacturerOrgSupport.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DA13B3890661966A17BD439CDD42C5C /* RNSVGMask.h in Headers */ = {isa = PBXBuildFile; fileRef = 352EEA61215F48497228492190EAF10F /* RNSVGMask.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DA9DD522DC7B4F4838511424ECF6303 /* FPruneForest.m in Sources */ = {isa = PBXBuildFile; fileRef = AF034F4E36AE6F4F8E204E0A65E25B48 /* FPruneForest.m */; };
-		6DC98441745C2F5B74461F7DE01DB680 /* GTMAppAuthFetcherAuthorization+Keychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B32CBD6F3A53996E27D0141CE650CC /* GTMAppAuthFetcherAuthorization+Keychain.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		6DC98441745C2F5B74461F7DE01DB680 /* GTMAppAuthFetcherAuthorization+Keychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 62FEAFA17EFA736C154A83E2012863CB /* GTMAppAuthFetcherAuthorization+Keychain.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DFEF2A0577B169C13597399BCB5DA9A /* RNSVGSolidColorBrush.h in Headers */ = {isa = PBXBuildFile; fileRef = 726C5EFDEBD8379BD1A6D6F8B6ED1D06 /* RNSVGSolidColorBrush.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6E08349CD689E3DCD4FF3E97CA34A644 /* GDTCORClock.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB3C10EF5485B58D47C0F24429E4A01 /* GDTCORClock.m */; };
 		6E0C43694C9EECE3F9D78F2F8F67F1F3 /* FIRDataSnapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 5955B37DA1E27E170DA8A2FF66B04E7F /* FIRDataSnapshot.m */; };
@@ -2632,7 +2634,7 @@
 		8D8FA9B0B371C6983C53BEDDC72B0AC5 /* RCTProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 63FBD01EAC3975403AC28C687C8FFAB0 /* RCTProfile.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8D965128F057FB989417EFC452FA30B4 /* RCTSettingsPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = FCE7AF895D224228ED2AE3C4EB7908B4 /* RCTSettingsPlugins.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8D971BDC945D6E62AB78EC131F5F256A /* pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF8D2A628ED466DCCEAC6FA9A99B80B /* pb.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		8D9B921BD5E4B169871976B35C9138AA /* GTMKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 33FAA6F7E0C9F162F8EB15385B1E8E6C /* GTMKeychain.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8D9B921BD5E4B169871976B35C9138AA /* GTMKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D992F91AB54BC649F97CDCCBC1179A /* GTMKeychain.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8DB1A3CB0093A6766960D4C1354E5A15 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = 1746CC54B4F9EB42424CA4413587A102 /* Request.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8DC167DAAF649372ED6E1EED644CC070 /* AsyncSSLSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2589A7D1DE35836460DC93ABD8B81ACB /* AsyncSSLSocket.cpp */; settings = {COMPILER_FLAGS = "-DFOLLY_HAVE_BACKTRACE=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -DFOLLY_HAVE_PTHREAD=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_HAVE_LIBGFLAGS=0 -DFOLLY_HAVE_LIBJEMALLOC=0 -DFOLLY_HAVE_PREADV=0 -DFOLLY_HAVE_PWRITEV=0 -DFOLLY_HAVE_TFO=0\n    -frtti\n    -fexceptions\n    -std=c++14\n    -Wno-error\n    -Wno-unused-local-typedefs\n    -Wno-unused-variable\n    -Wno-sign-compare\n    -Wno-comment\n    -Wno-return-type\n    -Wno-global-constructors\n    -Wno-comma"; }; };
 		8DCA8D72F24A1B4AD278FBC7B79E607E /* ZXAddressBookAUResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DFED5133A9B8181677533FB7197D8938 /* ZXAddressBookAUResultParser.m */; };
@@ -3111,7 +3113,7 @@
 		A98EC2D8888C1C253E17EBA507139C01 /* Elf-inl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A2C12628624B08E0AEC76D3E4C54808 /* Elf-inl.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A9A1F92D61C58CF97F2BA391987F6BB1 /* IPAddressV6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA049407BED9489BAE24DDD10B7B3C3F /* IPAddressV6.cpp */; settings = {COMPILER_FLAGS = "-DFOLLY_HAVE_BACKTRACE=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -DFOLLY_HAVE_PTHREAD=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_HAVE_LIBGFLAGS=0 -DFOLLY_HAVE_LIBJEMALLOC=0 -DFOLLY_HAVE_PREADV=0 -DFOLLY_HAVE_PWRITEV=0 -DFOLLY_HAVE_TFO=0\n    -frtti\n    -fexceptions\n    -std=c++14\n    -Wno-error\n    -Wno-unused-local-typedefs\n    -Wno-unused-variable\n    -Wno-sign-compare\n    -Wno-comment\n    -Wno-return-type\n    -Wno-global-constructors\n    -Wno-comma"; }; };
 		A9A6BFA2343BFDDC1E3A826B8B4DB9C6 /* RCTNativeModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 28363470D826A299AFEAFFE78EF8E9D7 /* RCTNativeModule.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		A9B2118B0B4AE1D02FB17B3E5CF352CE /* GTMAppAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = 008C8753144E2EFA3C647604A8D81EFA /* GTMAppAuth.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A9B2118B0B4AE1D02FB17B3E5CF352CE /* GTMAppAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = 01795B3DE004D5692C1FED5ADE1B6904 /* GTMAppAuth.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A9B542446F33133CE8D797232BBF2E1F /* FIRAuthErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FB70A1B4F5AE63B6D9B39643E48F5AC /* FIRAuthErrors.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A9B9211A3C9107E787B9C626E4F88DC1 /* SDImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0945B0300364D8B1087C9FA25E2774C9 /* SDImageCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A9C2F3235D69ABC12F920D3B29D172E1 /* Generate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920DE1BEEC26876BAB6B942F4107105D /* Generate.swift */; };
@@ -3131,7 +3133,6 @@
 		AA355B6102B65137FD452BC2C021E2DA /* FFFastImageSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 21AD50D2EFD20691A2FB5ED64038EECB /* FFFastImageSource.m */; };
 		AA412434A211F577ED74CC27E8D04DCA /* BehaviorSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258CE08D7BBAE55E81214655F26731FC /* BehaviorSubject.swift */; };
 		AA418CFF45BC8100BA09257535015EC5 /* RCTInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F572EA0D2E6E1CE8916FC08DA1F18A /* RCTInspector.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		AA470DA1B75E7F69C769DB5F586E9A32 /* GTMAppAuthFetcherAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = A623AA7F8DC3826B32BF12A1F6864EBE /* GTMAppAuthFetcherAuthorization.m */; };
 		AA4BB748F6F6CB35534426414A5FCEB7 /* BinaryDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3610C75BEC8ABC498E045C188AEFA05D /* BinaryDisposable.swift */; };
 		AA5B9865EE463D443BAE51D7CE185FB4 /* LogConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DB0ABE788BC930972F2AD0516D98497 /* LogConfig.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AA5E64A9A3D626F0C000AF21B606D7CF /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = 06DFAEB167274DB6722C8820BD30E3D8 /* Unicode.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -4636,7 +4637,6 @@
 		FB9771AA372F6508C8F350213549EFF1 /* RNSVGUnits.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F057EF43FF2D561DC19C83BE7BE5C9 /* RNSVGUnits.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FBA05558B07A24C1F874525094A8C668 /* RNSVGGlyphContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CF11BE64C3FD90D5DD2B1915431EB9 /* RNSVGGlyphContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FBAF7D164023A6AA0581082AA134338E /* color.h in Headers */ = {isa = PBXBuildFile; fileRef = 111AEF387CC463BE900926A5FB0AD69C /* color.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		FBB5C81116D49BB05FBCD206B1620AF6 /* GTMAppAuth-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D54CC9C769C410BD56DCC02F64D01204 /* GTMAppAuth-dummy.m */; };
 		FBBB8AB659D35E8CB2DA71D56DD2A623 /* ZXExpandedProductParsedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = C2E957DE55DF3D50B9E8D8C3540C3457 /* ZXExpandedProductParsedResult.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FBBD758AF916F477A204BDA60A92F678 /* RNSVG-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A15DFBB36929D419D5BB9B416FC1E8F /* RNSVG-dummy.m */; };
 		FBBEBE8B22EC7EC69031DBD64A94327C /* FIREmailAuthProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D918E1C87549EC5BCB2B5A80F6DE615 /* FIREmailAuthProvider.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -7168,7 +7168,6 @@
 		0074EBEE49ADF8B78A74FA7727C7C2B5 /* FIRMutableData_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRMutableData_Private.h; path = FirebaseDatabase/Sources/Api/Private/FIRMutableData_Private.h; sourceTree = "<group>"; };
 		0082BB1E49C9456B3AAF71938BA75DB1 /* BitIteratorDetail.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = BitIteratorDetail.h; path = folly/container/detail/BitIteratorDetail.h; sourceTree = "<group>"; };
 		008A37EBF8744101446F60C24CDE34B2 /* Flipper-PeerTalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flipper-PeerTalk.release.xcconfig"; sourceTree = "<group>"; };
-		008C8753144E2EFA3C647604A8D81EFA /* GTMAppAuth.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMAppAuth.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuth.h; sourceTree = "<group>"; };
 		008E7BCC426AB59FC7BC9C1425743AE6 /* bignum-dtoa.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = "bignum-dtoa.cc"; path = "double-conversion/bignum-dtoa.cc"; sourceTree = "<group>"; };
 		00A084126D4A1E2A2B3B3D4E9C303A13 /* RCTHTTPRequestHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RCTHTTPRequestHandler.h; path = Libraries/Network/RCTHTTPRequestHandler.h; sourceTree = "<group>"; };
 		00AF4E61526003D7C4A91BB2860BCBDE /* FarmHash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FarmHash.h; path = folly/hash/FarmHash.h; sourceTree = "<group>"; };
@@ -7184,6 +7183,7 @@
 		0164CD262268A562D43C960AA2B85101 /* GFlags.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GFlags.h; path = folly/portability/GFlags.h; sourceTree = "<group>"; };
 		016527BE7641362B6D28519BB16741B1 /* RNFileSystem.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = RNFileSystem.m; path = ios/RN/RNFileSystem.m; sourceTree = "<group>"; };
 		01698A028A1E7DAF2AA0931F94605FDC /* GDTCCTUploadOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GDTCCTUploadOperation.h; path = GoogleDataTransport/GDTCCTLibrary/Private/GDTCCTUploadOperation.h; sourceTree = "<group>"; };
+		01795B3DE004D5692C1FED5ADE1B6904 /* GTMAppAuth.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMAppAuth.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuth.h; sourceTree = "<group>"; };
 		018594763E759A05CF397EA417C9A94F /* GULSceneDelegateSwizzler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GULSceneDelegateSwizzler.m; path = GoogleUtilities/AppDelegateSwizzler/GULSceneDelegateSwizzler.m; sourceTree = "<group>"; };
 		01891CAFBF1338A87E44EA5B022E8DFC /* IPAddressException.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = IPAddressException.h; path = folly/IPAddressException.h; sourceTree = "<group>"; };
 		019A537BE5665639AA63ADF12E470D87 /* RNFBApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = RNFBApp.release.xcconfig; sourceTree = "<group>"; };
@@ -7614,6 +7614,7 @@
 		17DD877058C5617930C3D975236E1364 /* FTupleObjectNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FTupleObjectNode.h; path = FirebaseDatabase/Sources/Utilities/Tuples/FTupleObjectNode.h; sourceTree = "<group>"; };
 		17E7EA728113D88FB949F2143CFA5D61 /* RCTMultipartDataTask.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTMultipartDataTask.m; sourceTree = "<group>"; };
 		17FEA5E20DAC1BD1B0DEA6DB4BFAFA0C /* write_batch.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = write_batch.cc; path = db/write_batch.cc; sourceTree = "<group>"; };
+		180F4448AC142D73FCCD1576C67EE5CF /* GTMAppAuth.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GTMAppAuth.debug.xcconfig; sourceTree = "<group>"; };
 		18160A5BABDCBEE66EA655AFF2DD330F /* RNSVGCircleManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RNSVGCircleManager.h; sourceTree = "<group>"; };
 		181F1EC3517F30CAD38D66028F4BCD27 /* SymbolizePrinter.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = SymbolizePrinter.cpp; path = folly/experimental/symbolizer/SymbolizePrinter.cpp; sourceTree = "<group>"; };
 		1839EECF0325A46402D7316A91F4081C /* React-jsiexecutor.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = "React-jsiexecutor.podspec"; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -8159,7 +8160,6 @@
 		33A2B0F4F4F15430AE835474CEB5CF61 /* RNSVGSvgView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RNSVGSvgView.m; sourceTree = "<group>"; };
 		33DAFA70C85F0DD7BE61FCDF989D1F2A /* ZXExpandedProductParsedResult.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ZXExpandedProductParsedResult.m; path = ZXingObjC/client/result/ZXExpandedProductParsedResult.m; sourceTree = "<group>"; };
 		33E75D8B10CB4E3D40A286D0A4920584 /* MultiplatformBleAdapter-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MultiplatformBleAdapter-prefix.pch"; sourceTree = "<group>"; };
-		33FAA6F7E0C9F162F8EB15385B1E8E6C /* GTMKeychain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMKeychain.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h; sourceTree = "<group>"; };
 		34035355BDCD93F2798258CC03A45F37 /* FIRAdditionalUserInfo_Internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRAdditionalUserInfo_Internal.h; path = FirebaseAuth/Sources/User/FIRAdditionalUserInfo_Internal.h; sourceTree = "<group>"; };
 		340B00172E1ADAB5CA12DA06A8416EF1 /* SQLiteResult.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SQLiteResult.h; path = platforms/ios/SQLiteResult.h; sourceTree = "<group>"; };
 		3425E858BF8C0E54106F40E0C13A64A7 /* RCTCxxModule.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTCxxModule.h; sourceTree = "<group>"; };
@@ -8239,7 +8239,7 @@
 		3846C73B317B2AA6BAC8C3EE544DAEF6 /* ObservableConcatOperators.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ObservableConcatOperators.h; path = yarpl/observable/ObservableConcatOperators.h; sourceTree = "<group>"; };
 		38484C0052AFBE7AB9E061D9AA41E336 /* OIDServiceDiscovery.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDServiceDiscovery.h; path = Source/AppAuthCore/OIDServiceDiscovery.h; sourceTree = "<group>"; };
 		384876B6047072D6863A2A8DE05D8674 /* ZXPDF417DetectionResult.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXPDF417DetectionResult.h; path = ZXingObjC/pdf417/decoder/ZXPDF417DetectionResult.h; sourceTree = "<group>"; };
-		38500160326A5930A0F23052827C0E4F /* GTMAppAuth.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GTMAppAuth.release.xcconfig; sourceTree = "<group>"; };
+		3854FF39C1F6103F139F56AFE6A569F7 /* GTMOAuth2KeychainCompatibility.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2KeychainCompatibility.m; path = GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility.m; sourceTree = "<group>"; };
 		385B6B8BE0EE58D08B4F5FA9DEE3356E /* LogCategory.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = LogCategory.cpp; path = folly/logging/LogCategory.cpp; sourceTree = "<group>"; };
 		3870347872816C9D0E8466E695A26185 /* ZXReedSolomonDecoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXReedSolomonDecoder.h; path = ZXingObjC/common/reedsolomon/ZXReedSolomonDecoder.h; sourceTree = "<group>"; };
 		387686B4A3D9FD615C2DB762F6FD6C40 /* FIRSecureTokenRequest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRSecureTokenRequest.h; path = FirebaseAuth/Sources/Backend/RPC/FIRSecureTokenRequest.h; sourceTree = "<group>"; };
@@ -9025,7 +9025,6 @@
 		61AD5DAF7E04784352E480BE3E759AC0 /* LogStreamProcessor.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = LogStreamProcessor.cpp; path = folly/logging/LogStreamProcessor.cpp; sourceTree = "<group>"; };
 		61BB9FA9EAF0E438A1FC45A7FE4D60A5 /* FIRPhoneMultiFactorInfo.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FIRPhoneMultiFactorInfo.m; path = FirebaseAuth/Sources/MultiFactor/Phone/FIRPhoneMultiFactorInfo.m; sourceTree = "<group>"; };
 		61C0BFA021F7550F43177E21E4EA4923 /* ZXResult.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ZXResult.m; path = ZXingObjC/core/ZXResult.m; sourceTree = "<group>"; };
-		61D561DF9DC626A36E534DA3AAE66B41 /* GTMAppAuthFetcherAuthorization.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMAppAuthFetcherAuthorization.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuthFetcherAuthorization.h; sourceTree = "<group>"; };
 		61DC756D854551D2CBC365D0B47CB268 /* Disposable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Disposable.swift; path = iOS/RxSwift/Disposable.swift; sourceTree = "<group>"; };
 		61DE2E6F48C656BAB6F1784AFC202FBD /* ZXPlanarYUVLuminanceSource.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ZXPlanarYUVLuminanceSource.m; path = ZXingObjC/core/ZXPlanarYUVLuminanceSource.m; sourceTree = "<group>"; };
 		61E339CDA84D4B9A7306A4DEC78C9122 /* IOThreadPoolExecutor.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = IOThreadPoolExecutor.cpp; path = folly/executors/IOThreadPoolExecutor.cpp; sourceTree = "<group>"; };
@@ -9055,6 +9054,7 @@
 		62E3BE471095C25A44FC2554CE18AD64 /* OIDGrantTypes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDGrantTypes.h; path = Source/AppAuthCore/OIDGrantTypes.h; sourceTree = "<group>"; };
 		62E501725D2A19CCEE46E6B6562373DE /* RNCPicker.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RNCPicker.h; path = ios/RNCPicker.h; sourceTree = "<group>"; };
 		62E766F0D36CAA43BD50F6ABD2F8297A /* RCTStatusBarManager.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = RCTStatusBarManager.mm; sourceTree = "<group>"; };
+		62FEAFA17EFA736C154A83E2012863CB /* GTMAppAuthFetcherAuthorization+Keychain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "GTMAppAuthFetcherAuthorization+Keychain.h"; path = "GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuthFetcherAuthorization+Keychain.h"; sourceTree = "<group>"; };
 		630E4A7A94FB986CCF6EB8BC1249BAFD /* GIDSignInInternalOptions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GIDSignInInternalOptions.m; path = GoogleSignIn/Sources/GIDSignInInternalOptions.m; sourceTree = "<group>"; };
 		630F6F05A41E2E57AA89F47487895093 /* react-native-blob-util */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "react-native-blob-util"; path = "libreact-native-blob-util.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6327BCFE90715E723F9E7549827BD96D /* FChildEventRegistration.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FChildEventRegistration.m; path = FirebaseDatabase/Sources/Core/View/FChildEventRegistration.m; sourceTree = "<group>"; };
@@ -9327,7 +9327,9 @@
 		70DFC8BB51C6584ED55A0B680B8F6202 /* ZXAI013103decoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXAI013103decoder.h; path = ZXingObjC/oned/rss/expanded/decoders/ZXAI013103decoder.h; sourceTree = "<group>"; };
 		70E6F860F6E791E5DB3849BF23335097 /* ReactNativeBlobUtilReqBuilder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ReactNativeBlobUtilReqBuilder.m; path = ios/ReactNativeBlobUtilReqBuilder.m; sourceTree = "<group>"; };
 		71059F6B2D20DAB5D05D5401B9A87E6E /* React-cxxreact.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "React-cxxreact.debug.xcconfig"; sourceTree = "<group>"; };
+		710704F8968F6AECD6B73E9B5D05C48C /* GTMAppAuthFetcherAuthorization.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMAppAuthFetcherAuthorization.m; path = GTMAppAuth/Sources/GTMAppAuthFetcherAuthorization.m; sourceTree = "<group>"; };
 		711478DD5BB0ED376EFDB8F2DCA3533B /* RNGestureHandlerManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RNGestureHandlerManager.h; path = ios/RNGestureHandlerManager.h; sourceTree = "<group>"; };
+		71269DF18B97EE2FB930B5698BBB4653 /* GTMAppAuthFetcherAuthorization+Keychain.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "GTMAppAuthFetcherAuthorization+Keychain.m"; path = "GTMAppAuth/Sources/GTMAppAuthFetcherAuthorization+Keychain.m"; sourceTree = "<group>"; };
 		7139018F50B88F70C7BE8974137D513D /* VirtualEventBase.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = VirtualEventBase.cpp; path = folly/io/async/VirtualEventBase.cpp; sourceTree = "<group>"; };
 		714D5B73D5D5B425B58A6979D8CAA251 /* FIRMultiFactor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRMultiFactor.h; path = FirebaseAuth/Sources/Public/FirebaseAuth/FIRMultiFactor.h; sourceTree = "<group>"; };
 		71538F67F9E634687D2ADC3EA675B13B /* config_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = config_enc.c; path = src/enc/config_enc.c; sourceTree = "<group>"; };
@@ -9354,6 +9356,7 @@
 		72B2F0D2A49033651480F5F115475B35 /* LogHandlerFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = LogHandlerFactory.h; path = folly/logging/LogHandlerFactory.h; sourceTree = "<group>"; };
 		72BD790BFD9E3314699E8E439BFB19E4 /* SDGraphicsImageRenderer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDGraphicsImageRenderer.m; path = SDWebImage/Core/SDGraphicsImageRenderer.m; sourceTree = "<group>"; };
 		72CC7CCCF31C552CE38474E6E717C1EE /* Entypo.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = Entypo.ttf; path = Fonts/Entypo.ttf; sourceTree = "<group>"; };
+		72D992F91AB54BC649F97CDCCBC1179A /* GTMKeychain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMKeychain.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h; sourceTree = "<group>"; };
 		72DDD533B99E56ED3C07B02B22F9FA5D /* FIRAuthProvider.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FIRAuthProvider.m; path = FirebaseAuth/Sources/AuthProvider/FIRAuthProvider.m; sourceTree = "<group>"; };
 		72F6AC7A758E3E8556C41B2791B6F655 /* SDImageCachesManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageCachesManager.h; path = SDWebImage/Core/SDImageCachesManager.h; sourceTree = "<group>"; };
 		72F7EC76B58851A8C33265A282DA7F96 /* Queue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Queue.swift; path = iOS/RxSwift/Platform/DataStructures/Queue.swift; sourceTree = "<group>"; };
@@ -9553,7 +9556,6 @@
 		7CD604A4F3B769B4EAD08D9D8E02C335 /* FIRGameCenterAuthCredential.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRGameCenterAuthCredential.h; path = FirebaseAuth/Sources/AuthProvider/GameCenter/FIRGameCenterAuthCredential.h; sourceTree = "<group>"; };
 		7CF7B9FC84B9B58E2E642C85C44F2AAE /* bufferevent_pair.c */ = {isa = PBXFileReference; includeInIndex = 1; path = bufferevent_pair.c; sourceTree = "<group>"; };
 		7CF7E4A26CC90FAD11BB0E10CE566D99 /* SKSwizzle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SKSwizzle.h; path = iOS/Plugins/FlipperKitPluginUtils/FlipperKitLayoutHelpers/FlipperKitLayoutHelpers/SKSwizzle.h; sourceTree = "<group>"; };
-		7CFE3D0782E367CF7A0C884A5B174160 /* GTMKeychain_iOS.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMKeychain_iOS.m; path = GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m; sourceTree = "<group>"; };
 		7CFE6473E3B6EF588D725FEA2DA4E5AD /* Uri-inl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Uri-inl.h"; path = "folly/Uri-inl.h"; sourceTree = "<group>"; };
 		7D0811C6C1D877C120339BF1E53F750C /* GoogleUtilities.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleUtilities.debug.xcconfig; sourceTree = "<group>"; };
 		7D0A3A5F015087CD36EF8A6292EBE823 /* DeferObservable.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DeferObservable.h; path = yarpl/observable/DeferObservable.h; sourceTree = "<group>"; };
@@ -9683,7 +9685,6 @@
 		8391DB296E789A973182D8607975FB79 /* RNGestureHandlerDirection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RNGestureHandlerDirection.h; path = ios/RNGestureHandlerDirection.h; sourceTree = "<group>"; };
 		839CCDE26564A2498F4BFC88F936B8FE /* Fixture.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Fixture.h; path = rsocket/benchmarks/Fixture.h; sourceTree = "<group>"; };
 		83A9DBAAA49102A67AD7FD57D029769A /* SysFile.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SysFile.h; path = folly/portability/SysFile.h; sourceTree = "<group>"; };
-		83B32CBD6F3A53996E27D0141CE650CC /* GTMAppAuthFetcherAuthorization+Keychain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "GTMAppAuthFetcherAuthorization+Keychain.h"; path = "GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuthFetcherAuthorization+Keychain.h"; sourceTree = "<group>"; };
 		83B87D39D685F3260DA169D108D68180 /* RCTNetworkPlugins.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RCTNetworkPlugins.h; path = Libraries/Network/RCTNetworkPlugins.h; sourceTree = "<group>"; };
 		83C4A1049F1E9F39F669BD02527EFB56 /* RCTAnimatedImage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTAnimatedImage.m; sourceTree = "<group>"; };
 		83E8FC14A5CF9C6192AB6E5889109610 /* Executor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Executor.h; path = folly/Executor.h; sourceTree = "<group>"; };
@@ -9775,7 +9776,6 @@
 		88980892BC0CD2B068A99A5A82F8A5D6 /* RCTSubtractionAnimatedNode.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTSubtractionAnimatedNode.m; sourceTree = "<group>"; };
 		88C4CF1DCBB1EF31458032F0F762B147 /* ZXAddressBookParsedResult.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXAddressBookParsedResult.h; path = ZXingObjC/client/result/ZXAddressBookParsedResult.h; sourceTree = "<group>"; };
 		88D7ACBC39BE57F1A524AA1EA93758E4 /* Multicast.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Multicast.swift; path = iOS/RxSwift/Observables/Multicast.swift; sourceTree = "<group>"; };
-		88E18CD1E39ADAB6F96F72DB9820657C /* GTMAppAuthFetcherAuthorization+Keychain.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "GTMAppAuthFetcherAuthorization+Keychain.m"; path = "GTMAppAuth/Sources/GTMAppAuthFetcherAuthorization+Keychain.m"; sourceTree = "<group>"; };
 		88E60B5A17F3715552DAD3BF6AC0ED9A /* BitIterator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = BitIterator.h; path = folly/container/BitIterator.h; sourceTree = "<group>"; };
 		88F268926ED27B711D2DF11DDE2B669A /* FrameHeader.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = FrameHeader.cpp; path = rsocket/framing/FrameHeader.cpp; sourceTree = "<group>"; };
 		88F367AD7CC2286A1A1650B9F285C037 /* ZXAddressBookParsedResult.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ZXAddressBookParsedResult.m; path = ZXingObjC/client/result/ZXAddressBookParsedResult.m; sourceTree = "<group>"; };
@@ -10363,7 +10363,6 @@
 		A5F309815B438F5541A596D5DA619464 /* FClock.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FClock.m; path = FirebaseDatabase/Sources/FClock.m; sourceTree = "<group>"; };
 		A602F46D3BC1C16B455FB4A637DE4859 /* ZXPDF417DetectionResultColumn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXPDF417DetectionResultColumn.h; path = ZXingObjC/pdf417/decoder/ZXPDF417DetectionResultColumn.h; sourceTree = "<group>"; };
 		A6094F4589F28905892875ECA8F12BFA /* ZXAztecSimpleToken.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXAztecSimpleToken.h; path = ZXingObjC/aztec/encoder/ZXAztecSimpleToken.h; sourceTree = "<group>"; };
-		A623AA7F8DC3826B32BF12A1F6864EBE /* GTMAppAuthFetcherAuthorization.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMAppAuthFetcherAuthorization.m; path = GTMAppAuth/Sources/GTMAppAuthFetcherAuthorization.m; sourceTree = "<group>"; };
 		A637563CFA4529B7935C5C03539DA5BF /* VirtualTimeConverterType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VirtualTimeConverterType.swift; path = iOS/RxSwift/Schedulers/VirtualTimeConverterType.swift; sourceTree = "<group>"; };
 		A649F2FEC922292F6ADBED09B62D97DD /* FChildrenNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FChildrenNode.h; path = FirebaseDatabase/Sources/Snapshot/FChildrenNode.h; sourceTree = "<group>"; };
 		A64AE0E61C935B172101B3EB9D2647F8 /* FIRAuthInterop.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRAuthInterop.h; path = Interop/Auth/Public/FIRAuthInterop.h; sourceTree = "<group>"; };
@@ -10558,7 +10557,6 @@
 		AF8B66F7075C4367940CD21164A2D6D1 /* RNSVGPainterBrush.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RNSVGPainterBrush.m; sourceTree = "<group>"; };
 		AF8C25C2BEAB88672AEA0C878D57A113 /* RNSVGForeignObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RNSVGForeignObject.m; sourceTree = "<group>"; };
 		AF936C2A5B46548BD6B5D54886502A8C /* GIDAuthStateMigration.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GIDAuthStateMigration.m; path = GoogleSignIn/Sources/GIDAuthStateMigration.m; sourceTree = "<group>"; };
-		AFC4F3C9BAABD15826D26D1857670FB3 /* GTMOAuth2KeychainCompatibility.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMOAuth2KeychainCompatibility.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMOAuth2KeychainCompatibility.h; sourceTree = "<group>"; };
 		AFC61A99DA4CE2F36B8F9CB0630E276C /* Singleton-inl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Singleton-inl.h"; path = "folly/Singleton-inl.h"; sourceTree = "<group>"; };
 		AFE02D39BAD06CF014990635350A7965 /* RCTEventDispatcherProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTEventDispatcherProtocol.h; sourceTree = "<group>"; };
 		AFF1305E5EB9C5EE4E999E1B4DA3F557 /* SKMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SKMacros.h; path = iOS/FlipperKit/SKMacros.h; sourceTree = "<group>"; };
@@ -10646,6 +10644,7 @@
 		B45A84D3548BD041AD59518191798A32 /* CString.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CString.h; path = folly/lang/CString.h; sourceTree = "<group>"; };
 		B45CBAAB2C0D6E81C96C2672E61F831E /* AsyncSocketBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AsyncSocketBase.h; path = folly/io/async/AsyncSocketBase.h; sourceTree = "<group>"; };
 		B47A70677CFD12691C258829CDA6D206 /* RCTStatusBarManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RCTStatusBarManager.h; path = React/CoreModules/RCTStatusBarManager.h; sourceTree = "<group>"; };
+		B47D1800765BC08F4F15C7224E3239B2 /* GTMAppAuth.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GTMAppAuth.release.xcconfig; sourceTree = "<group>"; };
 		B4A1C44865A0A463F96055F748679295 /* GuardPageAllocator.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = GuardPageAllocator.cpp; path = folly/fibers/GuardPageAllocator.cpp; sourceTree = "<group>"; };
 		B4B54BAAB0F7EF7F4F3E7F4B1FC0F68F /* GDTCCTNanopbHelpers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GDTCCTNanopbHelpers.m; path = GoogleDataTransport/GDTCCTLibrary/GDTCCTNanopbHelpers.m; sourceTree = "<group>"; };
 		B4C188F6FABE260A059548984CEC856F /* ZXUPCEANExtensionSupport.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZXUPCEANExtensionSupport.h; path = ZXingObjC/oned/ZXUPCEANExtensionSupport.h; sourceTree = "<group>"; };
@@ -10818,7 +10817,6 @@
 		BCBCD21549DC069B4BD0DF78C465D5F3 /* FBLazyVector.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBLazyVector.h; path = FBLazyVector/FBLazyVector.h; sourceTree = "<group>"; };
 		BCBE39292F918C69FD267F9D12834607 /* ThreadLocalDetail.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadLocalDetail.cpp; path = folly/detail/ThreadLocalDetail.cpp; sourceTree = "<group>"; };
 		BCC0DB6A744E0382A090A9C8F0CEA291 /* quant_levels_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = quant_levels_utils.h; path = src/utils/quant_levels_utils.h; sourceTree = "<group>"; };
-		BCC6B8C73E8F4A9317BD26E8ECE4E456 /* GTMAppAuth.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GTMAppAuth.debug.xcconfig; sourceTree = "<group>"; };
 		BCC6FB403CB838CFD4604FA0B44C98FF /* fmt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = fmt.release.xcconfig; sourceTree = "<group>"; };
 		BCE4834DD06C5C3898F43DEECE95C286 /* FirebaseDatabase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FirebaseDatabase.debug.xcconfig; sourceTree = "<group>"; };
 		BCEA981616EDF4BE9590578BF2E825E3 /* FixedString.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FixedString.h; path = folly/FixedString.h; sourceTree = "<group>"; };
@@ -10866,6 +10864,7 @@
 		BEB07387E3FC0EF8EC78DDE935AAF434 /* RCTSurfaceRootShadowView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTSurfaceRootShadowView.h; sourceTree = "<group>"; };
 		BEB35102305979AA0C9FE59292149460 /* Poly.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Poly.h; path = folly/Poly.h; sourceTree = "<group>"; };
 		BEB3C10EF5485B58D47C0F24429E4A01 /* GDTCORClock.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GDTCORClock.m; path = GoogleDataTransport/GDTCORLibrary/GDTCORClock.m; sourceTree = "<group>"; };
+		BEB7E7C376961493C6686CF750C3FFCA /* GTMAppAuthFetcherAuthorization.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMAppAuthFetcherAuthorization.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuthFetcherAuthorization.h; sourceTree = "<group>"; };
 		BEC6805DC15EBE17A583E6E67D6BF10D /* Event.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Event.h; path = folly/portability/Event.h; sourceTree = "<group>"; };
 		BED1BA593D38434A799B88314C672BD8 /* ConcurrentBitSet.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ConcurrentBitSet.h; path = folly/ConcurrentBitSet.h; sourceTree = "<group>"; };
 		BEDA7FED7FA0B3DA68E3B307B8EF981A /* FIRAuthURLPresenter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FIRAuthURLPresenter.m; path = FirebaseAuth/Sources/Utilities/FIRAuthURLPresenter.m; sourceTree = "<group>"; };
@@ -11236,7 +11235,6 @@
 		D105BEC03E9C4DBE6D9E44F73E925E9A /* React-Core-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "React-Core-umbrella.h"; sourceTree = "<group>"; };
 		D1188E2683161EF32DD5A62AE968820B /* bit_writer_utils.c */ = {isa = PBXFileReference; includeInIndex = 1; name = bit_writer_utils.c; path = src/utils/bit_writer_utils.c; sourceTree = "<group>"; };
 		D123325493BAD75C2C660C32A15E1DD9 /* RCTManagedPointer.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = RCTManagedPointer.mm; sourceTree = "<group>"; };
-		D1328C3D60023BFF70FE04482D080045 /* GTMOAuth2KeychainCompatibility.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2KeychainCompatibility.m; path = GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility.m; sourceTree = "<group>"; };
 		D14600BB267FE71103DAE17B561592AB /* IOVec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = IOVec.h; path = folly/portability/IOVec.h; sourceTree = "<group>"; };
 		D15ED6B87CBC1C231A17DF29764D1A10 /* SpookyHashV1.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = SpookyHashV1.cpp; path = folly/hash/SpookyHashV1.cpp; sourceTree = "<group>"; };
 		D165C66B25E9F18D22017BA109F59707 /* Arena.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Arena.h; path = folly/memory/Arena.h; sourceTree = "<group>"; };
@@ -11308,7 +11306,6 @@
 		D538A6EDC0564CEEDE65CC62675868BF /* FIRAuthBackend+MultiFactor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "FIRAuthBackend+MultiFactor.m"; path = "FirebaseAuth/Sources/Backend/FIRAuthBackend+MultiFactor.m"; sourceTree = "<group>"; };
 		D53A7D500BFD8C9DF25FB3DC25662AC1 /* F14Map-fwd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "F14Map-fwd.h"; path = "folly/container/F14Map-fwd.h"; sourceTree = "<group>"; };
 		D545EA0C4F25317212300C35904B58AD /* FValueIndex.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FValueIndex.m; path = FirebaseDatabase/Sources/FValueIndex.m; sourceTree = "<group>"; };
-		D54CC9C769C410BD56DCC02F64D01204 /* GTMAppAuth-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "GTMAppAuth-dummy.m"; sourceTree = "<group>"; };
 		D55E7488A12E08D134DA9A7C96F87366 /* fbase64.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fbase64.c; path = FirebaseDatabase/Sources/third_party/SocketRocket/fbase64.c; sourceTree = "<group>"; };
 		D568C3A773FB646541121CDE12FE0771 /* react_native_log.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = react_native_log.h; sourceTree = "<group>"; };
 		D57DE1F6F7CB765469D548182B999E6F /* RNFastImage.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = RNFastImage.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -11645,6 +11642,7 @@
 		E62AD1837066DB926B56F4A857B52F47 /* Singleton.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Singleton.h; path = folly/Singleton.h; sourceTree = "<group>"; };
 		E633E80E5BCF7A33644A501797E2B4C6 /* LogLevel.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = LogLevel.cpp; path = folly/logging/LogLevel.cpp; sourceTree = "<group>"; };
 		E664756201FDCB31A6B8AC45658A3226 /* RCTNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RCTNetworking.h; path = Libraries/Network/RCTNetworking.h; sourceTree = "<group>"; };
+		E664B7146F6723826CFCB0EB4F1B1F9B /* GTMKeychain.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMKeychain.m; path = GTMAppAuth/Sources/GTMKeychain.m; sourceTree = "<group>"; };
 		E670E40F9124145F929548FF2574FD4F /* Iterators.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Iterators.h; path = folly/detail/Iterators.h; sourceTree = "<group>"; };
 		E6A16705C69FC7DE11C2469A4A0F8358 /* React-RCTText */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "React-RCTText"; path = "libReact-RCTText.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6A2D48838D9B35E40388D08B8316470 /* SDWebImageIndicator.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageIndicator.m; path = SDWebImage/Core/SDWebImageIndicator.m; sourceTree = "<group>"; };
@@ -11857,6 +11855,7 @@
 		F1753A58E39A49F4DCD878DEE6A108EE /* FIRAuthAPNSToken.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRAuthAPNSToken.h; path = FirebaseAuth/Sources/SystemService/FIRAuthAPNSToken.h; sourceTree = "<group>"; };
 		F177C8B5A4A9194644FF3A8B2F0F0153 /* RCTVersion.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTVersion.m; sourceTree = "<group>"; };
 		F17A5E7DE081768883E839696B5A82AC /* RCTModalHostViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTModalHostViewController.m; sourceTree = "<group>"; };
+		F185B36D1D9C48DB497881AEE64C6001 /* GTMOAuth2KeychainCompatibility.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GTMOAuth2KeychainCompatibility.h; path = GTMAppAuth/Sources/Public/GTMAppAuth/GTMOAuth2KeychainCompatibility.h; sourceTree = "<group>"; };
 		F1C315322FB40DDF3BAB0CBF5D059A0D /* EDFThreadPoolExecutor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EDFThreadPoolExecutor.h; path = folly/executors/EDFThreadPoolExecutor.h; sourceTree = "<group>"; };
 		F1C7CA5D47E9F249CE8BECAEE523AD69 /* React-jsinspector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "React-jsinspector.debug.xcconfig"; sourceTree = "<group>"; };
 		F1C8CF4A2DF1ECFBA6D529D23220F0C2 /* FIRPhoneAuthProvider.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FIRPhoneAuthProvider.h; path = FirebaseAuth/Sources/Public/FirebaseAuth/FIRPhoneAuthProvider.h; sourceTree = "<group>"; };
@@ -11881,6 +11880,7 @@
 		F2E7C88DFCD460A4B46B913ADEB8A641 /* React-jsiexecutor */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "React-jsiexecutor"; path = "libReact-jsiexecutor.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2F1BF14D57A00F2464E138ADB514F6B /* FIRGameCenterAuthCredential.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FIRGameCenterAuthCredential.m; path = FirebaseAuth/Sources/AuthProvider/GameCenter/FIRGameCenterAuthCredential.m; sourceTree = "<group>"; };
 		F3007011BFB4CEBC67DEB29A0B3489E3 /* FWriteRecord.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FWriteRecord.h; path = FirebaseDatabase/Sources/Core/FWriteRecord.h; sourceTree = "<group>"; };
+		F306F33514130EDEFE1C6F189050F2E0 /* GTMAppAuth-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "GTMAppAuth-dummy.m"; sourceTree = "<group>"; };
 		F31735D26DF5F7D976DECD2C32E4FC6D /* RCTSurfaceHostingProxyRootView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTSurfaceHostingProxyRootView.h; sourceTree = "<group>"; };
 		F31927D33B045A388FC108BC50638F18 /* RCTUITextField.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTUITextField.m; sourceTree = "<group>"; };
 		F32393E47A2A9964D1DF1ABA6413BBBB /* RNGestureHandlerButton.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = RNGestureHandlerButton.m; path = ios/RNGestureHandlerButton.m; sourceTree = "<group>"; };
@@ -14474,6 +14474,17 @@
 			path = "../../ios/Pods/Target Support Files/React-Core";
 			sourceTree = "<group>";
 		};
+		53D7B9F92A16BF1C4EDE7FD976DAE89D /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				F306F33514130EDEFE1C6F189050F2E0 /* GTMAppAuth-dummy.m */,
+				180F4448AC142D73FCCD1576C67EE5CF /* GTMAppAuth.debug.xcconfig */,
+				B47D1800765BC08F4F15C7224E3239B2 /* GTMAppAuth.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/GTMAppAuth";
+			sourceTree = "<group>";
+		};
 		5503D19C5DFD77C69277B846DB0E3096 /* Profiler */ = {
 			isa = PBXGroup;
 			children = (
@@ -15213,7 +15224,7 @@
 				080EF2A297A954D4F565E1DA4ED8C910 /* GoogleDataTransport */,
 				5FDE5BB73052CEECC438B54E9774150C /* GoogleSignIn */,
 				651D1E83D00A4176C1B28C9975AC230E /* GoogleUtilities */,
-				ECABED14072243D2F31353BFB041965A /* GTMAppAuth */,
+				BDF12FEBB35B8249E6CB02F73FA05FBF /* GTMAppAuth */,
 				1568CD540E0944BC87A910D98A2992DE /* GTMSessionFetcher */,
 				3C27B258C2814D2D07F2094C5FAFF3B8 /* leveldb-library */,
 				18056CFFACB7E7F3CA5C46CC4525441D /* libevent */,
@@ -16345,17 +16356,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/AppAuth";
-			sourceTree = "<group>";
-		};
-		8E70E52746EA15BF5707A56B48E9C970 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				D54CC9C769C410BD56DCC02F64D01204 /* GTMAppAuth-dummy.m */,
-				BCC6B8C73E8F4A9317BD26E8ECE4E456 /* GTMAppAuth.debug.xcconfig */,
-				38500160326A5930A0F23052827C0E4F /* GTMAppAuth.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/GTMAppAuth";
 			sourceTree = "<group>";
 		};
 		8F52A9B5BF0C1AF5642AADA97B91B1C0 /* Surface */ = {
@@ -18321,6 +18321,24 @@
 			path = RawText;
 			sourceTree = "<group>";
 		};
+		BDF12FEBB35B8249E6CB02F73FA05FBF /* GTMAppAuth */ = {
+			isa = PBXGroup;
+			children = (
+				01795B3DE004D5692C1FED5ADE1B6904 /* GTMAppAuth.h */,
+				BEB7E7C376961493C6686CF750C3FFCA /* GTMAppAuthFetcherAuthorization.h */,
+				710704F8968F6AECD6B73E9B5D05C48C /* GTMAppAuthFetcherAuthorization.m */,
+				62FEAFA17EFA736C154A83E2012863CB /* GTMAppAuthFetcherAuthorization+Keychain.h */,
+				71269DF18B97EE2FB930B5698BBB4653 /* GTMAppAuthFetcherAuthorization+Keychain.m */,
+				72D992F91AB54BC649F97CDCCBC1179A /* GTMKeychain.h */,
+				E664B7146F6723826CFCB0EB4F1B1F9B /* GTMKeychain.m */,
+				F185B36D1D9C48DB497881AEE64C6001 /* GTMOAuth2KeychainCompatibility.h */,
+				3854FF39C1F6103F139F56AFE6A569F7 /* GTMOAuth2KeychainCompatibility.m */,
+				53D7B9F92A16BF1C4EDE7FD976DAE89D /* Support Files */,
+			);
+			name = GTMAppAuth;
+			path = GTMAppAuth;
+			sourceTree = "<group>";
+		};
 		BE2FC55F96AB7CAD0145766CF2D35960 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -19817,24 +19835,6 @@
 			);
 			name = nanopb;
 			path = nanopb;
-			sourceTree = "<group>";
-		};
-		ECABED14072243D2F31353BFB041965A /* GTMAppAuth */ = {
-			isa = PBXGroup;
-			children = (
-				008C8753144E2EFA3C647604A8D81EFA /* GTMAppAuth.h */,
-				61D561DF9DC626A36E534DA3AAE66B41 /* GTMAppAuthFetcherAuthorization.h */,
-				A623AA7F8DC3826B32BF12A1F6864EBE /* GTMAppAuthFetcherAuthorization.m */,
-				83B32CBD6F3A53996E27D0141CE650CC /* GTMAppAuthFetcherAuthorization+Keychain.h */,
-				88E18CD1E39ADAB6F96F72DB9820657C /* GTMAppAuthFetcherAuthorization+Keychain.m */,
-				33FAA6F7E0C9F162F8EB15385B1E8E6C /* GTMKeychain.h */,
-				7CFE3D0782E367CF7A0C884A5B174160 /* GTMKeychain_iOS.m */,
-				AFC4F3C9BAABD15826D26D1857670FB3 /* GTMOAuth2KeychainCompatibility.h */,
-				D1328C3D60023BFF70FE04482D080045 /* GTMOAuth2KeychainCompatibility.m */,
-				8E70E52746EA15BF5707A56B48E9C970 /* Support Files */,
-			);
-			name = GTMAppAuth;
-			path = GTMAppAuth;
 			sourceTree = "<group>";
 		};
 		ECE799E421820A3C8A783A099CDC2437 /* Products */ = {
@@ -24452,7 +24452,7 @@
 			buildConfigurationList = 6B531D069A39567D754E69CC5038102F /* Build configuration list for PBXNativeTarget "GTMAppAuth" */;
 			buildPhases = (
 				532F6083B86EA203D7B944D412136291 /* Headers */,
-				63309556376471004C24C2CCAE7FE780 /* Sources */,
+				7334A677AF40954F411F31EEC0E6C9BC /* Sources */,
 				500FE5DDB11D89748D24D7DD06DB5FD0 /* Frameworks */,
 			);
 			buildRules = (
@@ -26205,18 +26205,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		63309556376471004C24C2CCAE7FE780 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FBB5C81116D49BB05FBCD206B1620AF6 /* GTMAppAuth-dummy.m in Sources */,
-				AA470DA1B75E7F69C769DB5F586E9A32 /* GTMAppAuthFetcherAuthorization.m in Sources */,
-				2A8BF73C968C7195C68B27774676ABD5 /* GTMAppAuthFetcherAuthorization+Keychain.m in Sources */,
-				122C1049B461BBDF22DE235197C2116D /* GTMKeychain_iOS.m in Sources */,
-				63485C23B82A89E81FB9DC6E4367D0BA /* GTMOAuth2KeychainCompatibility.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		638206906FAB4B0DB3EFA689F73C9FAD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -26425,6 +26413,18 @@
 				B7E72E3E903B672F780E202401BC765B /* RNFBSharedUtils.m in Sources */,
 				73107CA192884F4192DBD72413DF9288 /* RNFBUtilsModule.m in Sources */,
 				EBABD59ECD420BBC82B588690954B650 /* RNFBVersion.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7334A677AF40954F411F31EEC0E6C9BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FE71B088CF7408F0EB44D9CA42A29C9 /* GTMAppAuth-dummy.m in Sources */,
+				005D22B6EDE456058258C812DFB8ED8A /* GTMAppAuthFetcherAuthorization.m in Sources */,
+				0A533E7EE45B69ABF789A484C1B50C3D /* GTMAppAuthFetcherAuthorization+Keychain.m in Sources */,
+				0B611048E9BFACF4F512751A0215CD1D /* GTMKeychain.m in Sources */,
+				4140F8A7FB8F3B640EF9DAC5C6C590E0 /* GTMOAuth2KeychainCompatibility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -30392,7 +30392,7 @@
 		};
 		169A2630ABFA80339A4AF2F95BFE5E07 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 38500160326A5930A0F23052827C0E4F /* GTMAppAuth.release.xcconfig */;
+			baseConfigurationReference = B47D1800765BC08F4F15C7224E3239B2 /* GTMAppAuth.release.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -32746,7 +32746,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -33008,7 +33008,7 @@
 		};
 		9E711EC177F16CE24B6672D1E14D2C0C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCC6B8C73E8F4A9317BD26E8ECE4E456 /* GTMAppAuth.debug.xcconfig */;
+			baseConfigurationReference = 180F4448AC142D73FCCD1576C67EE5CF /* GTMAppAuth.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -33312,7 +33312,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;

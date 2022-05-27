@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
-import {buttons, fonts, format} from '../../style';
+import {buttons, fonts, format} from '../../Styles';
 import {useAuth} from "../../contexts/UserContext";
 
 const EditPatientCOVID = ({route, navigation}) => {

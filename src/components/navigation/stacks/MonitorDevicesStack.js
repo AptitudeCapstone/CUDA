@@ -1,7 +1,7 @@
 import Monitor from "../../../screens/Monitor";
 import UserStack from "./UserStack";
 import React from "react";
-import {Stack, screenOptions} from '../NavigationOptions';
+import {screenOptions, Stack} from '../NavigationOptions';
 
 const MonitorDevicesStack = () => (
     <Stack.Navigator>

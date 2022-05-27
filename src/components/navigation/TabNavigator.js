@@ -4,17 +4,22 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MonitorDevicesStack from './stacks/MonitorDevicesStack'
 import ViewDataStack from './stacks/ViewDataStack';
-import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconE from 'react-native-vector-icons/Entypo';
-import FastImage from "react-native-fast-image";
+import {tabNavigatorStyle} from '../../Styles';
+import {
+    AnimatedTabBarNavigator,
+    DotSize,
+    TabElementDisplayOptions,
+    TabButtonLayout,
+    IAppearanceOptions
+} from 'react-native-animated-nav-tab-bar'
 
-const Tab = createBottomTabNavigator();
-import {tabNavigatorStyle} from '../../style';
+const Tabs = AnimatedTabBarNavigator();
 
 const TabNavigator = () => (
     <NavigationContainer>
-        <Tab.Navigator initialRouteName='MonitorTab' screenOptions={tabNavigatorStyle}>
-            <Tab.Screen
+        <Tabs.Navigator initialRouteName='MonitorTab' screenOptions={tabNavigatorStyle}>
+            <Tabs.Screen
                 name='MonitorTab'
                 component={MonitorDevicesStack}
                 options={{
@@ -28,7 +33,7 @@ const TabNavigator = () => (
                     ),
                 }}
             />
-            <Tab.Screen
+            <Tabs.Screen
                 name='ViewDataTab'
                 component={ViewDataStack}
                 options={{
@@ -43,7 +48,7 @@ const TabNavigator = () => (
                     ),
                 }}
             />
-        </Tab.Navigator>
+        </Tabs.Navigator>
     </NavigationContainer>
 )
 

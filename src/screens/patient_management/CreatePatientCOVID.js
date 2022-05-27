@@ -1,10 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
-import {buttons, fonts, format} from '../../style';
-import {useIsFocused} from "@react-navigation/native";
-import auth from "@react-native-firebase/auth";
+import {buttons, fonts, format} from '../../Styles';
 import {useAuth} from "../../contexts/UserContext";
 
 const CreatePatientCOVID = ({navigation}) => {
@@ -77,7 +75,7 @@ const CreatePatientCOVID = ({navigation}) => {
         <SafeAreaView style={format.page}>
             <KeyboardAwareScrollView
                 extraScrollHeight={150}
-                style={{paddingTop: 40,paddingBottom: 40}}
+                style={{paddingTop: 40, paddingBottom: 40}}
             >
                 <Text style={fonts.heading}>Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>

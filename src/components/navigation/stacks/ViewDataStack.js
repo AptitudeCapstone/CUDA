@@ -1,5 +1,5 @@
 import React from "react";
-import {Stack, screenOptions, userScreenOptions} from '../NavigationOptions';
+import {screenOptions, Stack, userScreenOptions} from '../NavigationOptions';
 import ViewData from "../../../screens/ViewData";
 import CreatePatientCOVID from "../../../screens/patient_management/CreatePatientCOVID";
 import CreatePatientFibrinogen from "../../../screens/patient_management/CreatePatientFibrinogen";

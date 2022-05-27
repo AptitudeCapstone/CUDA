@@ -1,5 +1,5 @@
-import React, {useRef, useEffect, useState} from 'react';
-import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from 'react-native-modal-selector';
 import IconA from 'react-native-vector-icons/AntDesign';
@@ -8,20 +8,21 @@ import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     buttons,
+    chart,
+    chartConfig,
+    chartContainer,
+    device,
     fonts,
     format,
     modal,
-    chart,
-    chartContainer,
-    chartConfig,
+    patientSelect,
     rbCameraSheetStyle,
-    device,
-    patientSelectBar
-} from '../style';
+    testSelect
+} from '../Styles';
 import database from '@react-native-firebase/database';
-import {format as dateFormat, parseISO} from 'date-fns';
+import {parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
-import UserBar from "../components/UserBar";
+import ActionBar from "../components/ActionBar";
 import useAuth from "../contexts/UserContext";
 import {useIsFocused} from '@react-navigation/native';
 import QRCodeScanner from "react-native-qrcode-scanner";
@@ -89,7 +90,7 @@ const ViewData = ({navigation}) => {
             setPatientDataCOVID(patients['covid-patients'][patientKey]);
             setPatientKeyCOVID(patientKey);
             const patientResults = patients['covid-patients'][patientKey]['results'];
-            if(patientResults) {
+            if (patientResults) {
                 const tempTests = Array.from(Object.values(patientResults));
                 setPatientCOVIDTests(tempTests.reverse());
             } else {
@@ -99,7 +100,7 @@ const ViewData = ({navigation}) => {
             setPatientDataFibrinogen(patients['fibrinogen-patients'][patientKey]);
             setPatientKeyFibrinogen(patientKey);
             const patientResults = patients['fibrinogen-patients'][patientKey]['results'];
-            if(patientResults) {
+            if (patientResults) {
                 const tempTests = Array.from(Object.values(patientResults));
                 setPatientFibrinogenTests(tempTests.reverse());
 
@@ -162,7 +163,7 @@ const ViewData = ({navigation}) => {
         <SafeAreaView style={[format.safeArea]}>
             <ModalSelector
                 onModalClose={(option) => {
-                    if(option[0])
+                    if (option[0])
                         selectedPatientChanged(option[0]);
                     setFibrinogenPatientModalVisible(false);
                 }}
@@ -184,7 +185,7 @@ const ViewData = ({navigation}) => {
             />
             <ModalSelector
                 onModalClose={(option) => {
-                    if(option[0])
+                    if (option[0])
                         selectedPatientChanged(option[0]);
                     setCOVIDPatientModalVisible(false);
                 }}
@@ -204,24 +205,35 @@ const ViewData = ({navigation}) => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar}
             />
-            <View style={patientSelectBar.container}>
-                <TouchableOpacity style={patientSelectBar.barButton} onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                    <Text style={patientSelectBar.iconText}>Create</Text>
-                    <IconF name='user-plus' size={18} style={patientSelectBar.icon} />
+            <View style={testSelect.container}>
+                <TouchableOpacity onPress={() => setSelectedTest('covid')}
+                                  style={selectedTest === 'covid' ? testSelect.covidSelectButton : testSelect.unselectedButton}>
+                    <Text style={fonts.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={patientSelectBar.barButton} onPress={() => modalRef.current?.open()}>
-                    <Text style={patientSelectBar.iconText}>Scan</Text>
-                    <IconMCI name='qrcode-scan' size={18} style={patientSelectBar.icon} />
+                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
+                                  style={selectedTest === 'fibrinogen' ? testSelect.fibrinogenSelectButton : testSelect.unselectedButton}>
+                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={patientSelectBar.barButton} onPress={() => {
-                    if(selectedTest === 'covid') {
+            </View>
+            <View style={patientSelect.container}>
+                <TouchableOpacity style={patientSelect.barButton}
+                                  onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
+                    <Text style={patientSelect.iconText}>Create</Text>
+                    <IconF name='user-plus' size={18} style={patientSelect.icon}/>
+                </TouchableOpacity>
+                <TouchableOpacity style={patientSelect.barButton} onPress={() => modalRef.current?.open()}>
+                    <Text style={patientSelect.iconText}>Scan</Text>
+                    <IconMCI name='qrcode-scan' size={18} style={patientSelect.icon}/>
+                </TouchableOpacity>
+                <TouchableOpacity style={patientSelect.barButton} onPress={() => {
+                    if (selectedTest === 'covid') {
                         setCOVIDPatientModalVisible(true);
-                    } else if(selectedTest === 'fibrinogen') {
+                    } else if (selectedTest === 'fibrinogen') {
                         setFibrinogenPatientModalVisible(true);
                     }
                 }}>
-                    <Text style={patientSelectBar.iconText}>Select</Text>
-                    <IconE name='list' size={18} style={patientSelectBar.icon} />
+                    <Text style={patientSelect.iconText}>Select</Text>
+                    <IconE name='list' size={18} style={patientSelect.icon}/>
                 </TouchableOpacity>
             </View>
             <View style={[format.page]}>
@@ -234,8 +246,9 @@ const ViewData = ({navigation}) => {
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => navigation.navigate('Edit Patient COVID',
                                                       {patientKey: patientKeyCOVID})}>
-                                    <Text style={patientSelectBar.iconText}>Edit</Text>
-                                    <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                    <Text style={patientSelect.iconText}>Edit</Text>
+                                    <IconA name='edit' size={20}
+                                           style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             <View style={format.section}>
@@ -255,17 +268,19 @@ const ViewData = ({navigation}) => {
                                 }
                             </View>
                             <View style={format.utilityPatientBarContainer}>
-                                <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient Results</Text>
+                                <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient
+                                    Results</Text>
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                                    <Text style={patientSelectBar.iconText}>Export</Text>
-                                    <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                    <Text style={patientSelect.iconText}>Export</Text>
+                                    <IconF name='share' size={20}
+                                           style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             {
                                 (patientCOVIDTests.length > 0) &&
                                 <View style={{paddingVertical: 10}}>
-                                            {patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)}
+                                    {patientCOVIDTests.map(test => <COVIDTest key={test.key} item={test}/>)}
                                 </View>
                             }
                             {
@@ -288,9 +303,11 @@ const ViewData = ({navigation}) => {
                                 <TouchableOpacity style={format.utilityBarButton}
                                                   onPress={() => {
                                                       navigation.navigate('Edit Patient Fibrinogen',
-                                                          {patientKey: patientKeyFibrinogen})}}>
-                                    <Text style={patientSelectBar.iconText}>Edit</Text>
-                                    <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                                          {patientKey: patientKeyFibrinogen})
+                                                  }}>
+                                    <Text style={patientSelect.iconText}>Edit</Text>
+                                    <IconA name='edit' size={20}
+                                           style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                 </TouchableOpacity>
                             </View>
                             <View style={format.section}>
@@ -334,11 +351,13 @@ const ViewData = ({navigation}) => {
                                 (patientFibrinogenTests.length > 0) &&
                                 <>
                                     <View style={format.utilityPatientBarContainer}>
-                                        <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient Results</Text>
+                                        <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient
+                                            Results</Text>
                                         <TouchableOpacity style={format.utilityBarButton}
                                                           onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                                            <Text style={patientSelectBar.iconText}>Export</Text>
-                                            <IconF name='share' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                            <Text style={patientSelect.iconText}>Export</Text>
+                                            <IconF name='share' size={20}
+                                                   style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
                                         </TouchableOpacity>
                                     </View>
                                     <View style={format.section}>
@@ -357,7 +376,8 @@ const ViewData = ({navigation}) => {
                                             />
                                         </View>
                                         {
-                                            patientFibrinogenTests.map(test => <FibrinogenTest key={test.time} item={test} />)
+                                            patientFibrinogenTests.map(test => <FibrinogenTest key={test.time}
+                                                                                               item={test}/>)
                                         }
                                     </View>
                                 </>
@@ -386,17 +406,7 @@ const ViewData = ({navigation}) => {
                         </>
                     }
                 </ScrollView>
-                <UserBar navigation={navigation}/>
-            </View>
-            <View style={format.testSelectBar}>
-                <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                                  style={selectedTest === 'covid' ? buttons.covidSelectButton : buttons.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>COVID</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                                  style={selectedTest === 'fibrinogen' ? buttons.fibrinogenSelectButton : buttons.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
-                </TouchableOpacity>
+                <ActionBar navigation={navigation}/>
             </View>
             <RBSheet
                 ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>

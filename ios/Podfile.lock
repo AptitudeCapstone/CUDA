@@ -103,9 +103,9 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleDataTransport (9.1.2):
-    - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.4):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleSignIn (6.1.0):
     - AppAuth (~> 1.4)
@@ -126,10 +126,10 @@ PODS:
   - "GoogleUtilities/NSData+zlib (7.7.0)"
   - GoogleUtilities/Reachability (7.7.0):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.2.3):
+  - GTMAppAuth (1.3.0):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
-  - GTMSessionFetcher/Core (1.7.1)
+  - GTMSessionFetcher/Core (1.7.2)
   - leveldb-library (1.22.1)
   - libevent (2.1.12)
   - libwebp (1.2.1):
@@ -441,14 +441,14 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (14.9.0):
+  - RNFBApp (14.10.1):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
-  - RNFBAuth (14.9.0):
+  - RNFBAuth (14.10.1):
     - Firebase/Auth (= 8.15.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (14.9.0):
+  - RNFBDatabase (14.10.1):
     - Firebase/Database (= 8.15.0)
     - React-Core
     - RNFBApp
@@ -718,11 +718,11 @@ SPEC CHECKSUMS:
   FlipperKit: d8d346844eca5d9120c17d441a2f38596e8ed2b9
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 5337263514dd6f09803962437687240c5dc39aa4
-  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
+  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleSignIn: c90b5bec45e780f54c6a8e1e3c182a86e3dda69d
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  GTMAppAuth: 987526d41b07efb1bedda5e936fe0cb718a03113
-  GTMSessionFetcher: 4577a4cc914a5a07c40a8a0ad0acc22080418c2d
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
@@ -764,9 +764,9 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBApp: d3a0f69a3cc67c609f962acf67f483a841ffc49f
-  RNFBAuth: 647e3bac0592ad7f2adc2e5ba9764e918400566a
-  RNFBDatabase: b0cfd1213a5d90aea03a66b9feab34ddfae37b96
+  RNFBApp: ce36cbcce243d63f2b84d7bad48d82fe118602d0
+  RNFBAuth: 2456be668b18455edeb5394817c32047f20770b0
+  RNFBDatabase: d0d920b67ac985fcf784b6585fafefa02e7c3217
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNGoogleSignin: d7f8368b82d94f1dec964785d496387ca7f19092
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
@@ -782,4 +782,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 25d497b90c5d7e4b647537a9770f4830d2b2b883
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../style';
+import {buttons, fonts, format} from '../../Styles';
 import {useAuth} from "../../contexts/UserContext";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
