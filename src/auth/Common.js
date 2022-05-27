@@ -51,7 +51,7 @@ export const logOut = async () => {
     });
 }
 
-const disconnectFromOrganization = (userInfo) => {
+export const disconnectFromOrganization = (userInfo) => {
     userInfo.userData.ref.update({organization: null})
         .then(() => {
             Alert.alert('Disconnect Successful', 'Data is no longer being synced');

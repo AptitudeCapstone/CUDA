@@ -7,7 +7,6 @@ import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
-    buttons,
     chart,
     chartConfig,
     chartContainer,
@@ -221,10 +220,6 @@ const ViewData = ({navigation}) => {
                     <Text style={patientSelect.iconText}>Create</Text>
                     <IconF name='user-plus' size={18} style={patientSelect.icon}/>
                 </TouchableOpacity>
-                <TouchableOpacity style={patientSelect.barButton} onPress={() => modalRef.current?.open()}>
-                    <Text style={patientSelect.iconText}>Scan</Text>
-                    <IconMCI name='qrcode-scan' size={18} style={patientSelect.icon}/>
-                </TouchableOpacity>
                 <TouchableOpacity style={patientSelect.barButton} onPress={() => {
                     if (selectedTest === 'covid') {
                         setCOVIDPatientModalVisible(true);
@@ -266,16 +261,6 @@ const ViewData = ({navigation}) => {
                                         <Text style={fonts.mediumText}>{patientDataCOVID.phone}</Text>
                                     </View>
                                 }
-                            </View>
-                            <View style={format.utilityPatientBarContainer}>
-                                <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>Patient
-                                    Results</Text>
-                                <TouchableOpacity style={format.utilityBarButton}
-                                                  onPress={() => navigation.navigate('Create Patient Fibrinogen')}>
-                                    <Text style={patientSelect.iconText}>Export</Text>
-                                    <IconF name='share' size={20}
-                                           style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
-                                </TouchableOpacity>
                             </View>
                             {
                                 (patientCOVIDTests.length > 0) &&
@@ -406,7 +391,6 @@ const ViewData = ({navigation}) => {
                         </>
                     }
                 </ScrollView>
-                <ActionBar navigation={navigation}/>
             </View>
             <RBSheet
                 ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
@@ -423,6 +407,7 @@ const ViewData = ({navigation}) => {
                     }
                 />
             </RBSheet>
+            <ActionBar navigation={navigation}/>
         </SafeAreaView>
     );
 };

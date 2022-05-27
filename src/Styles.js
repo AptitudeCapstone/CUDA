@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
 import React from "react";
+import {StyleSheet} from 'react-native';
 
 /*
     Named hex colors
@@ -34,10 +34,13 @@ export const tabBarInactiveTextColor = '#777';
 
 export const tabNavigatorStyle = {
     headerShown: false,
-    tabBarActiveTintColor: tabBarActiveTextColor,
-    tabBarInactiveTintColor: tabBarInactiveTextColor,
-    tabBarActiveBackgroundColor: tabBarColor,
-    tabBarInactiveBackgroundColor: tabBarColor,
+    tabBarActiveTintColor: mediumPurple,
+    tabBarInactiveTintColor: mediumPurple,
+    tabBarActiveBackgroundColor: backgroundColor,
+    tabBarInactiveBackgroundColor: backgroundColor,
+    tabBarIconStyle: {
+        size:  40
+    },
     tabBarLabelStyle: {
         fontSize: 20,
         fontWeight: 'bold'
@@ -51,6 +54,17 @@ export const tabNavigatorStyle = {
     safeAreaInsets: {
         bottom: 0,
         paddingVertical: 10
+    },
+};
+
+export const userScreenOptions = {
+    title: '',
+    headerStyle: {
+        backgroundColor: '#fff',
+    },
+    headerTintColor: '#222',
+    headerTitleStyle: {
+        fontWeight: 'bold',
     },
 };
 
@@ -260,7 +274,6 @@ export const format = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 8,
         paddingHorizontal: 10,
-
     },
     section: {
         backgroundColor: '#fff',
@@ -592,6 +605,12 @@ export const device = StyleSheet.create({
         borderColor: '#888',
         backgroundColor: '#ccc',
         marginHorizontal: 10
+    },
+    icon: {
+        color: '#555',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     header: {
         flexDirection: 'row',

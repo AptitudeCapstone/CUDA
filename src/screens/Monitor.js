@@ -19,11 +19,8 @@ import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
 import ActionBar from '../components/ActionBar';
 import {useAuth} from '../contexts/UserContext';
-import {device, deviceColors, format, modal, rbCameraSheetStyle, utilityBar} from '../Styles';
+import {device, deviceColors, format, modal, utilityBar} from '../Styles';
 import {actionCharUUID, dataCharUUID, serviceUUID, statusCharUUID} from '../BLEConstants'
-import QRCodeScanner from "react-native-qrcode-scanner";
-import {RNCamera} from "react-native-camera";
-import RBSheet from "react-native-raw-bottom-sheet";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -439,29 +436,6 @@ const Monitor = ({navigation}) => {
                 }}/>
         </View>
         <ActionBar navigation={navigation}/>
-        <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
-            <QRCodeScanner
-                onRead={(e) => {
-                    Alert.alert('Setting patient to ', e.data);
-                    console.log('reader to patient map before:', readerToPatientMap);
-                    const temp = readerToPatientMap.set(lastTappedDeviceForPatientSelect, e.data);
-                    setReaderToPatientMap(temp);
-                    console.log('after:', temp);
-                    const deviceInfo = readersMap.get(lastTappedDeviceForPatientSelect);
-                    console.log('device info before:', deviceInfo);
-                    deviceInfo.selectedPatient = e.data;
-                    updateReaderCards(deviceInfo);
-                    console.log('after:', readersMap.get(lastTappedDeviceForPatientSelect))
-                    modalRef.current?.close();
-                }}
-                flashMode={RNCamera.Constants.FlashMode.auto}
-                topContent={
-                    <Text style={[device.statusText, {color: '#888', textAlign: 'center'}]}>
-                        Place QR code into the frame
-                    </Text>
-                }
-            />
-        </RBSheet>
     </SafeAreaView>;
 }
 
