@@ -102,7 +102,7 @@ const SignIn = ({navigation}) => {
                     <Text style={buttons.submitButtonText}>Forgot Password?</Text>
                     <TouchableOpacity
                         style={buttons.forgotPasswordButton}
-                        onPress={() => navigation.navigate('Forgot Password')}
+                        onPress={() => navigation.navigate('Forgot password')}
                     >
                         <Text style={buttons.submitButtonText}>Send Recovery Link</Text>
                     </TouchableOpacity>

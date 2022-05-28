@@ -5,8 +5,8 @@ import {screenOptions, Stack} from "../Navigator";
 
 const DevicesStack = () => (
     <Stack.Navigator>
-        <Stack.Screen name='Monitor Devices' component={Devices} options={screenOptions}/>
-        <Stack.Screen name='User Stack' component={UserStack} options={screenOptions}/>
+        <Stack.Screen name='Monitor devices' component={Devices} options={screenOptions}/>
+        <Stack.Screen name='User stack' component={UserStack} options={screenOptions}/>
     </Stack.Navigator>
 );
 

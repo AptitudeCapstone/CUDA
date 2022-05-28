@@ -13,27 +13,27 @@ export const UserSheet = ({navigation, modalRef}) => {
 
     const signIn = () => {
         modalRef.current.close();
-        navigation.navigate('User Stack', {screen: 'Sign in'});
+        navigation.navigate('User stack', {screen: 'Sign in'});
     }
 
     const createAccount = () => {
         modalRef.current.close();
-        navigation.navigate('User Stack', {screen: 'Create Account'});
+        navigation.navigate('User stack', {screen: 'Create Account'});
     }
 
     const editAccount = () => {
         modalRef.current.close();
-        navigation.navigate('User Stack', {screen: 'Edit Account'});
+        navigation.navigate('User stack', {screen: 'Edit account'});
     }
 
     const navConnectOrganization = () => {
         modalRef.current.close();
-        navigation.navigate('User Stack', {screen: 'Connect Organization'});
+        navigation.navigate('User stack', {screen: 'Connect organization'});
     }
 
     const navCreateOrganization = () => {
         modalRef.current.close();
-        navigation.navigate('User Stack', {screen: 'Create Organization'});
+        navigation.navigate('User stack', {screen: 'Create organization'});
     }
 
     return (

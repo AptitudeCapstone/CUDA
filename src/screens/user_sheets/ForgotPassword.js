@@ -12,7 +12,7 @@ const ForgotPassword = ({navigation, route}) => {
             console.log('Attempting to edit user info');
             await sendEmail();
             Alert.alert('Recovery email Sent', 'Please check your email for instructions');
-            navigation.navigate('Sign In');
+            navigation.navigate('Sign in');
         } catch (error) {
             Alert.alert('Error', error.message);
         }

@@ -18,7 +18,16 @@ import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
 import {useAuth} from '../auth/UserContext';
-import {backgroundColor, device, deviceColors, fabColor, format, iconButton, modal} from '../style/Styles';
+import {
+    backgroundColor,
+    device,
+    deviceColors,
+    fabColor,
+    fabOverlayColor,
+    format,
+    iconButton, MainFabIcon,
+    modal
+} from '../style/Styles';
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
@@ -50,7 +59,9 @@ const Devices = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
+        patientsPath = (organization
+            ? '/organizations/' + organization + '/patients/'
+            : '/users/' + auth?.uid + '/patients/'),
         patientsRef = database().ref(patientsPath),
         isLandscape = (dimensions.width > dimensions.height),
         accountSlideUpRef = useRef(null),
@@ -422,6 +433,23 @@ const Devices = ({navigation}) => {
         }
     }
 
+    const Navigation = () => (
+        <>
+            <FloatingAction
+                    actions={fabActions}
+                    distanceToEdge={{ vertical: 120, horizontal: 20 }}
+                    iconWidth={20}
+                    iconHeight={20}
+                    buttonSize={68}
+                    overlayColor='rgba(0, 0, 0, 0.3)'
+                    color={fabColor}
+                    floatingIcon={<MainFabIcon />}
+                    onPressItem={name => fabActionHandler(name)}/>
+            <UserSheet navigation={navigation} modalRef={accountSlideUpRef} />
+            <OrganizationSheet navigation={navigation} modalRef={organizationSlideUpRef} />
+        </>
+    );
+
     return <SafeAreaView style={format.safeArea}>
         <View style={[format.page, {padding: 15}]}>
             <ModalSelector
@@ -477,24 +505,7 @@ const Devices = ({navigation}) => {
                                                       statusText={item.statusText}/>
                 }}/>
         </View>
-        <View>
-            <FloatingAction
-                actions={fabActions}
-                distanceToEdge={{ vertical: 120, horizontal: 20 }}
-                iconWidth={20}
-                iconHeight={20}
-                buttonSize={68}
-                overlayColor={'rgb(141, 103, 168, 1.0)'}
-                color={fabColor}
-                floatingIcon={<IconMI name='menu' color={backgroundColor} size={30}/>}
-                style={{marginBottom: 60}}
-                onPressItem={name => fabActionHandler(name)}
-            />
-            <View>
-                <UserSheet navigation={navigation} modalRef={accountSlideUpRef} />
-                <OrganizationSheet navigation={navigation} modalRef={organizationSlideUpRef} />
-            </View>
-        </View>
+        <Navigation />
     </SafeAreaView>;
 }
 

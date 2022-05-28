@@ -1,5 +1,6 @@
 import React from "react";
 import {Dimensions, StyleSheet} from 'react-native';
+import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
 
 /*
     Named hex colors
@@ -18,11 +19,12 @@ export const lightText = '#eee';
 export const darkText = '#666';
 
 /*
-    Hamburger menu colors
+    Floating action bar menu
  */
 
+export const MainFabIcon = () => <IconMI name='menu' color={backgroundColor} size={30}/>;
 export const fabColor = lightPurple;
-export const fabOverlayColor = 'rgba(68, 68, 68, 0.6)';
+export const fabOverlayColor = 'rgba(0, 0, 0, 0.3)';
 
 export const buttonBorderColor = '#666';
 export const tabBarActiveTextColor = '#666';
@@ -336,34 +338,31 @@ export const iconButton = {
 }
 
 export const testSelect = {
+    covidColor: '#5461ba',
+    fibrinogenColor: '#d9584a',
     container: {
         flexDirection: 'row',
-        justifyContent: 'center'
-
+        justifyContent: 'center',
+        marginVertical: 10,
     },
-    covidSelected: {
-        backgroundColor: '#5461ba',
-
-    },
-    fibrinogenSelected: {
-        backgroundColor: '#d9584a',
-
-    },
-    testSelectButton: {
+    button: {
         backgroundColor: '#aaa',
-        shadowColor: 'rgba(0, 0, 0, 0.25)',
-        shadowOffset : { width: 0, height: 0},
-        shadowOpacity: 0.9,
-        shadowRadius: 7,
-        elevation: 6,
-        margin: 15,
+        shadowColor: 'rgba(0, 0, 0, 0.4)',
+        shadowOpacity: 0.6,
+        textElevation: 6,
+        shadowOffset: {
+            width: 0,
+            height: 6
+        },
+        flex: 1,
+        marginHorizontal: 15,
         paddingHorizontal: 26,
         paddingVertical: 13,
         borderRadius: 999,
         borderWidth: 1,
         borderColor: '#999'
     },
-    selectButtonText: {
+    text: {
         color: lightText,
         fontSize: 20,
         fontWeight: 'bold',
@@ -373,26 +372,22 @@ export const testSelect = {
 
 export const patientSelect = {
     container: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        backgroundColor: '#eee',
-        marginHorizontal: 5
-    },
-    barButton: {
-        marginVertical: 10,
-        flex: 0.3,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        borderWidth: 1,
-        borderRadius: 100,
-        borderColor: '#888',
         backgroundColor: '#fff',
+        borderColor: '#aaa',
+        borderWidth: 1,
+        borderRadius: 15,
+        margin: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: 8,
         paddingVertical: 10
     },
-    iconText: {
-        fontSize: 18,
+    text: {
+        paddingVertical: 15,
+        paddingLeft: 18,
+        paddingRight: 10,
+        fontSize: 24,
         fontWeight: 'bold',
         alignSelf: 'center',
         textAlign: 'center',
@@ -400,6 +395,8 @@ export const patientSelect = {
     },
     icon: {
         color: '#555',
+        paddingLeft: 10,
+        paddingRight: 20,
         alignItems: 'center',
         alignContent: 'center',
         alignSelf: 'center',

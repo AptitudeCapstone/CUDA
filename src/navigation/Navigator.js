@@ -12,7 +12,6 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 export const Stack = createStackNavigator();
 export const Tab = createBottomTabNavigator();
 export const screenOptions = {headerShown: false};
-
 const Tabs = AnimatedTabBarNavigator();
 
 const Navigator = () => (
