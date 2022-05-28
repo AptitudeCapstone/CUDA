@@ -5,7 +5,9 @@ import {Alert} from "react-native";
 export const handleLogInGoogle = async (userInfo) => {
     try {
         console.log('attempting to log in with google');
-        await logInGoogle(userInfo);
+        const success = await logInGoogle(userInfo);
+        if(success)
+            console.log('success');
     } catch (error) {
         Alert.alert('Error', error.message);
     }
@@ -24,6 +26,7 @@ export const logInGoogle = async (userInfo) => {
             .catch(() => {
                 auth().signInWithCredential(credential);
             });
+        console.log(userInfo);
         return true;
     } catch (error) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -33,6 +36,7 @@ export const logInGoogle = async (userInfo) => {
         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
             throw new Error('Google play services are unavailable, try another login method.');
         }
+        return false
     }
 }
 

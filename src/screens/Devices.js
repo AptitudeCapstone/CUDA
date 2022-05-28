@@ -23,16 +23,16 @@ import {
     device,
     deviceColors,
     fabColor,
-    fabOverlayColor,
+    MainFabIcon,
     format,
-    iconButton, MainFabIcon,
+    iconButton,
     modal
 } from '../style/Styles';
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
-import {UserAccountSheet} from "../sheets/user/UserAccountSheet";
+import {AccountSheet} from "../sheets/user/AccountSheet";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -432,23 +432,6 @@ const Devices = ({navigation}) => {
         }
     }
 
-    const Navigation = () => (
-        <>
-            <FloatingAction
-                    actions={fabActions}
-                    distanceToEdge={{ vertical: 120, horizontal: 20 }}
-                    iconWidth={20}
-                    iconHeight={20}
-                    buttonSize={68}
-                    overlayColor='rgba(0, 0, 0, 0.3)'
-                    color={fabColor}
-                    floatingIcon={<MainFabIcon />}
-                    onPressItem={name => fabActionHandler(name)}/>
-            <UserAccountSheet navigation={navigation} modalRef={accountSlideUpRef} />
-
-        </>
-    );
-
     return <SafeAreaView style={format.safeArea}>
         <View style={[format.page, {padding: 15}]}>
             <ModalSelector
@@ -504,7 +487,19 @@ const Devices = ({navigation}) => {
                                                       statusText={item.statusText}/>
                 }}/>
         </View>
-        <Navigation />
+
+        <FloatingAction
+            actions={fabActions}
+            distanceToEdge={{ vertical: 120, horizontal: 20 }}
+            iconWidth={20}
+            iconHeight={20}
+            buttonSize={68}
+            overlayColor='rgba(0, 0, 0, 0.3)'
+            color={fabColor}
+            floatingIcon={<MainFabIcon />}
+            onPressItem={name => fabActionHandler(name)}/>
+
+        <AccountSheet navigation={navigation} modalRef={accountSlideUpRef} />
     </SafeAreaView>;
 }
 

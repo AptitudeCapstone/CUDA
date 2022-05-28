@@ -6,7 +6,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import {logOut} from "../../auth/Auth";
 import useAuth from "../../auth/UserContext";
 
-export const UserAccountSheet = ({modalRef, editModalRef}) => {
+export const AccountSheet = ({modalRef, editModalRef}) => {
     const userInfo = useAuth()
     const dimensions = useWindowDimensions();
     const isLandscape = (dimensions.width > dimensions.height);

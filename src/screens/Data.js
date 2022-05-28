@@ -26,7 +26,7 @@ import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimen
 import QRScanSheet from "../sheets/QRScanSheet";
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import {FloatingAction} from "react-native-floating-action";
-import {UserAccountSheet} from "../sheets/user/UserAccountSheet";
+import {AccountSheet} from "../sheets/user/AccountSheet";
 import {CreateOrganization} from "../sheets/user/CreateOrganization";
 import {CreateCOVID} from "../sheets/data/CreateCOVID";
 import {EditCOVID} from "../sheets/data/EditCOVID";
@@ -34,6 +34,7 @@ import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
 import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
 import ConnectOrganization from "../sheets/user/ConnectOrganization";
 import {disconnectFromOrganization} from "../auth/Auth";
+import SignInSignUp from "../sheets/user/SignInSignUp";
 
 const Data = ({navigation}) => {
     const isFocused = useIsFocused(),
@@ -66,8 +67,9 @@ const Data = ({navigation}) => {
         createCOVIDSlideUpRef = useRef(null),
         editCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null),
-        editFibrinogenSlideUpRef = useRef(null);
-
+        editFibrinogenSlideUpRef = useRef(null),
+        signInSignUpSlideUpRef = useRef(null),
+        userAccountSheetSlideUpRef = useRef(null);
 
     useEffect(() => {
         if (!auth) {
@@ -233,7 +235,13 @@ const Data = ({navigation}) => {
                 break;
             case 'guest':
                 // sign in button
-                // opens slide up menu with options
+                const signInSignUpButton = [{
+                    ...fabPropsCommon,
+                    text: "Sign in or create an account",
+                    name: "sign_in_sign_up",
+                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+                }]
+                setFabActions(signInSignUpButton.concat(organizationButtons).concat(fabActionsDefault));
                 break;
             default:
                 setFabActions(organizationButtons.concat(fabActionsDefault));
@@ -274,6 +282,9 @@ const Data = ({navigation}) => {
                         }
                     ]
                 );
+                break;
+            case 'sign_in_sign_up':
+                signInSignUpSlideUpRef.current?.open();
                 break;
             case 'qr':
                 scanSheetRef.current?.open();
@@ -520,8 +531,8 @@ const Data = ({navigation}) => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar} />
 
-            <UserAccountSheet navigation={navigation}
-                              modalRef={accountSlideUpRef} />
+            <AccountSheet navigation={navigation}
+                          modalRef={accountSlideUpRef} />
 
             <CreateOrganization navigation={navigation}
                                 modalRef={createOrganizationSlideUpRef} />
@@ -532,6 +543,9 @@ const Data = ({navigation}) => {
             <EditCOVID modalRef={editCOVIDSlideUpRef} patientKey={patientKeyCOVID} />
             <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
             <EditFibrinogen modalRef={editFibrinogenSlideUpRef} patientKey={patientKeyFibrinogen} />
+
+            <SignInSignUp modalRef={signInSignUpSlideUpRef} />
+            <AccountSheet modalRef={userAccountSheetSlideUpRef} />
 
             <QRScanSheet scanSheetRef={scanSheetRef} />
         </SafeAreaView>

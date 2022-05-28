@@ -426,6 +426,8 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
+  - RNAppleAuthentication (2.2.0):
+    - React-Core
   - RNCPicker (2.4.1):
     - React-Core
   - RNFBApp (14.11.0):
@@ -524,6 +526,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -645,6 +648,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNAppleAuthentication:
+    :path: "../node_modules/@invertase/react-native-apple-authentication"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNFBApp:
@@ -736,6 +741,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
+  RNAppleAuthentication: cbe1ab5c0f398ce07a215e6b247048092bf4feb3
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFBApp: b1b5a80a676a07dea17e778bda7c1e8b69b2f5ec
   RNFBAuth: e28fb7cd1b956086e68233b9ea19fb97c428f86b

@@ -496,6 +496,8 @@
 			baseConfigurationReference = CA93D7E916B83F1F94075E2D /* Pods-CUDA-CUDATests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -523,7 +525,9 @@
 			baseConfigurationReference = DF17FC1060A2261CF1A57EFC /* Pods-CUDA-CUDATests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				INFOPLIST_FILE = CUDATests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
