@@ -3,7 +3,7 @@
     <style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
         <item name="android:textAlignment">viewStart</item>
     </style>
-    <style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
+    <style name="RtlOverlay.Widget.AppCompat.UserActionBar.TitleItem" parent="android:Widget">
         <item name="android:layout_gravity">center_vertical|start</item>
         <item name="android:paddingEnd">8dp</item>
     </style>

@@ -22,7 +22,7 @@ export const darkText = '#666';
  */
 
 export const fabColor = lightPurple;
-
+export const fabOverlayColor = 'rgba(68, 68, 68, 0.6)';
 
 export const buttonBorderColor = '#666';
 export const tabBarActiveTextColor = '#666';
@@ -338,31 +338,34 @@ export const iconButton = {
 export const testSelect = {
     container: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'center'
+
     },
-    covidSelectButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomColor: '#5461ba',
-        borderBottomWidth: 6,
+    covidSelected: {
+        backgroundColor: '#5461ba',
+
     },
-    fibrinogenSelectButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        backgroundColor: '#fff',
-        borderBottomColor: '#d9584a',
-        borderBottomWidth: 6,
+    fibrinogenSelected: {
+        backgroundColor: '#d9584a',
+
     },
-    unselectedButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomColor: '#fff',
-        borderBottomWidth: 6,
-        backgroundColor: '#fff',
+    testSelectButton: {
+        backgroundColor: '#aaa',
+        shadowColor: 'rgba(0, 0, 0, 0.25)',
+        shadowOffset : { width: 0, height: 0},
+        shadowOpacity: 0.9,
+        shadowRadius: 7,
+        elevation: 6,
+        margin: 15,
+        paddingHorizontal: 26,
+        paddingVertical: 13,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: '#999'
     },
     selectButtonText: {
-        color: darkText,
-        fontSize: 24,
+        color: lightText,
+        fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center'
     },

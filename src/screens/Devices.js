@@ -17,9 +17,14 @@ import ModalSelector from 'react-native-modal-selector';
 import {BleManager} from 'react-native-ble-plx';
 import {useIsFocused} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
-import ActionBar from '../navigation/ActionBar';
 import {useAuth} from '../auth/UserContext';
-import {device, deviceColors, format, iconButton, modal} from '../style/Styles';
+import {backgroundColor, device, deviceColors, fabColor, format, iconButton, modal} from '../style/Styles';
+import IconFA from "react-native-vector-icons/FontAwesome5";
+import IconO from "react-native-vector-icons/Octicons";
+import {FloatingAction} from "react-native-floating-action";
+import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
+import {UserSheet} from "../sheets/UserSheet";
+import {OrganizationSheet} from "../sheets/OrganizationSheet";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -47,7 +52,9 @@ const Devices = ({navigation}) => {
         organization = userInfo.user?.organization,
         patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
         patientsRef = database().ref(patientsPath),
-        isLandscape = (dimensions.width > dimensions.height);
+        isLandscape = (dimensions.width > dimensions.height),
+        accountSlideUpRef = useRef(null),
+        organizationSlideUpRef = useRef(null);
 
     // this useEffect is the base of the patient database routine
     useEffect(() => {
@@ -388,6 +395,33 @@ const Devices = ({navigation}) => {
 
     const ConnectedReaderMemo = React.memo(ConnectedReader);
 
+    const fabActions = [
+        {
+            text: "My Account",
+            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+            name: "account",
+            buttonSize: 60,
+            color:'#8d67a8',
+            position: 1
+        },
+        {
+            text: "My Organization",
+            icon: <IconO name='organization' color={backgroundColor} size={30}/>,
+            name: "organization",
+            buttonSize: 60,
+            color:'#8d67a8',
+            position: 2
+        },
+    ];
+
+    const fabActionHandler = (actionName) => {
+        if(actionName === 'account') {
+            accountSlideUpRef.current?.open();
+        } else if(actionName === 'patients') {
+            organizationSlideUpRef.current?.open();
+        }
+    }
+
     return <SafeAreaView style={format.safeArea}>
         <View style={[format.page, {padding: 15}]}>
             <ModalSelector
@@ -443,7 +477,24 @@ const Devices = ({navigation}) => {
                                                       statusText={item.statusText}/>
                 }}/>
         </View>
-        <ActionBar navigation={navigation}/>
+        <View>
+            <FloatingAction
+                actions={fabActions}
+                distanceToEdge={{ vertical: 120, horizontal: 20 }}
+                iconWidth={20}
+                iconHeight={20}
+                buttonSize={68}
+                overlayColor={'rgb(141, 103, 168, 1.0)'}
+                color={fabColor}
+                floatingIcon={<IconMI name='menu' color={backgroundColor} size={30}/>}
+                style={{marginBottom: 60}}
+                onPressItem={name => fabActionHandler(name)}
+            />
+            <View>
+                <UserSheet navigation={navigation} modalRef={accountSlideUpRef} />
+                <OrganizationSheet navigation={navigation} modalRef={organizationSlideUpRef} />
+            </View>
+        </View>
     </SafeAreaView>;
 }
 

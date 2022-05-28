@@ -5,7 +5,7 @@ import {ActivityIndicator, Text, TouchableOpacity, useWindowDimensions, View} fr
 import {ScrollView} from "react-native-gesture-handler";
 import useAuth from "../auth/UserContext";
 
-export const PatientSheet = ({navigation, modalRef}) => {
+export const OrganizationSheet = ({navigation, modalRef}) => {
     const dimensions = useWindowDimensions();
     const userInfo = useAuth();
 

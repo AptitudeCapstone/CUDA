@@ -42,13 +42,13 @@
     <style name="Base.TextAppearance.AppCompat.Small.Inverse" parent="android:TextAppearance.Material.Small.Inverse"/>
     <style name="Base.TextAppearance.AppCompat.Subhead" parent="android:TextAppearance.Material.Subhead"/>
     <style name="Base.TextAppearance.AppCompat.Title" parent="android:TextAppearance.Material.Title"/>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle">
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle.Inverse">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle.Inverse">
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="android:TextAppearance.Material.Widget.UserActionBar.Title">
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="android:TextAppearance.Material.Widget.ActionBar.Title.Inverse">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="android:TextAppearance.Material.Widget.UserActionBar.Title.Inverse">
     </style>
     <style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="android:TextAppearance.Material.Widget.ActionMode.Subtitle">
     </style>
@@ -66,9 +66,9 @@
     </style>
     <style name="Base.TextAppearance.AppCompat.Widget.Switch" parent="android:TextAppearance.Material.Button"/>
     <style name="Base.TextAppearance.AppCompat.Widget.TextView.SpinnerItem" parent="android:TextAppearance.Material.Widget.TextView.SpinnerItem"/>
-    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle">
     </style>
-    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="android:TextAppearance.Material.Widget.UserActionBar.Title">
     </style>
     <style name="Base.Theme.AppCompat" parent="Base.V21.Theme.AppCompat"/>
     <style name="Base.Theme.AppCompat.Dialog" parent="Base.V21.Theme.AppCompat.Dialog"/>
@@ -173,9 +173,9 @@
     <style name="Base.V21.ThemeOverlay.AppCompat.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
         <item name="android:windowElevation">@dimen/abc_floating_window_z</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.TabText" parent="android:Widget.Material.ActionBar.TabText">
+    <style name="Base.Widget.AppCompat.UserActionBar.TabText" parent="android:Widget.Material.UserActionBar.TabText">
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.TabView" parent="android:Widget.Material.ActionBar.TabView">
+    <style name="Base.Widget.AppCompat.UserActionBar.TabView" parent="android:Widget.Material.UserActionBar.TabView">
     </style>
     <style name="Base.Widget.AppCompat.ActionButton" parent="android:Widget.Material.ActionButton">
     </style>
@@ -203,11 +203,11 @@
         <item name="android:background">?attr/editTextBackground</item>
     </style>
     <style name="Base.Widget.AppCompat.ImageButton" parent="android:Widget.Material.ImageButton"/>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabText" parent="android:Widget.Material.Light.ActionBar.TabText">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabText" parent="android:Widget.Material.Light.UserActionBar.TabText">
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="android:Widget.Material.Light.ActionBar.TabText">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="android:Widget.Material.Light.UserActionBar.TabText">
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabView" parent="android:Widget.Material.Light.ActionBar.TabView">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabView" parent="android:Widget.Material.Light.UserActionBar.TabView">
     </style>
     <style name="Base.Widget.AppCompat.Light.PopupMenu" parent="android:Widget.Material.Light.PopupMenu">
     </style>

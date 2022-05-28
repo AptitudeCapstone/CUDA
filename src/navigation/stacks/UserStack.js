@@ -7,7 +7,6 @@ import ForgotPassword from '../../screens/user/ForgotPassword';
 import CreateOrganization from '../../screens/user/CreateOrganization';
 import ConnectOrganization from '../../screens/user/ConnectOrganization';
 import {userScreenOptions} from "../../style/Styles";
-import QRScan from "../../screens/QRScan";
 
 const UserStack = () => (
     <Stack.Navigator>
@@ -17,7 +16,6 @@ const UserStack = () => (
         <Stack.Screen name='Forgot Password' component={ForgotPassword} options={userScreenOptions}/>
         <Stack.Screen name='Create Organization' component={CreateOrganization} options={userScreenOptions}/>
         <Stack.Screen name='Connect Organization' component={ConnectOrganization} options={userScreenOptions}/>
-        <Stack.Screen name='QR Scan' component={QRScan} options={userScreenOptions}/>
     </Stack.Navigator>
 )
 

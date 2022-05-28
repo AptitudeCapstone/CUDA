@@ -7,10 +7,11 @@ import IconE from 'react-native-vector-icons/Entypo';
 import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
+    backgroundColor,
     chart,
     chartConfig,
     chartContainer,
-    device,
+    device, fabColor,
     fonts,
     format,
     modal,
@@ -21,10 +22,14 @@ import {
 import database from '@react-native-firebase/database';
 import {parseISO} from 'date-fns';
 import {LineChart} from 'react-native-chart-kit';
-import ActionBar from "../navigation/ActionBar";
 import useAuth from "../auth/UserContext";
 import {useIsFocused} from '@react-navigation/native';
 import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions";
+import QRScanSheet from "../sheets/QRScanSheet";
+import IconFA from "react-native-vector-icons/FontAwesome5";
+import IconO from "react-native-vector-icons/Octicons";
+import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
+import {FloatingAction} from "react-native-floating-action";
 
 const Data = ({navigation}) => {
     const isFocused = useIsFocused(),
@@ -48,7 +53,8 @@ const Data = ({navigation}) => {
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
         patientsPath = (organization ? '/organizations/' + organization + '/patients/' : '/users/' + auth?.uid),
-        patientsRef = database().ref(patientsPath);
+        patientsRef = database().ref(patientsPath),
+        scanSheetRef = useRef(null);
 
     useEffect(() => {
         if (!auth) {
@@ -154,6 +160,51 @@ const Data = ({navigation}) => {
     const isCOVIDTest = (patientKeyCOVID && patientDataCOVID && selectedTest === 'covid');
     const isFibrinogenTest = (patientKeyFibrinogen && patientDataFibrinogen && selectedTest === 'fibrinogen');
 
+    const fabProps = {
+        buttonSize: 60,
+        color:'#8d67a8',
+        position: 3
+    }
+
+    const fabActions = [
+        {
+            ...fabProps,
+            text: "My Account",
+            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+            name: "account",
+        },
+        {
+            ...fabProps,
+            text: "My Organization",
+            icon: <IconO name='organization' color={backgroundColor} size={30}/>,
+            name: "organization",
+            buttonSize: 60,
+            color:'#8d67a8',
+            position: 2
+        },
+        {
+            ...fabProps,
+            text: "Create new COVID patient",
+            icon: <IconFA name='user-plus' color={backgroundColor} size={30}/>,
+            name: "create_covid",
+        },
+        {
+            ...fabProps,
+            text: "Create new fibrinogen patient",
+            icon: <IconFA name='user-plus' color={backgroundColor} size={30}/>,
+            name: "create_fibrinogen",
+        },
+        {
+            ...fabProps,
+            text: "Scan patient QR",
+            icon: <IconMCI name='qrcode-scan' color={backgroundColor} size={30}/>,
+            name: "qr",
+        },
+    ];
+
+    const fabActionHandler = (actionName) => {
+        console.log(actionName)
+    }
 
     return (
         <SafeAreaView style={[format.safeArea]}>
@@ -203,12 +254,18 @@ const Data = ({navigation}) => {
             />
             <View style={testSelect.container}>
                 <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                                  style={selectedTest === 'covid' ? testSelect.covidSelectButton : testSelect.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>COVID</Text>
+                                  style={[testSelect.testSelectButton,
+                                      selectedTest === 'covid'
+                                          ? testSelect.covidSelected
+                                          : {}]}>
+                    <Text style={testSelect.selectButtonText}>COVID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                                  style={selectedTest === 'fibrinogen' ? testSelect.fibrinogenSelectButton : testSelect.unselectedButton}>
-                    <Text style={fonts.selectButtonText}>Fibrinogen</Text>
+                                  style={[testSelect.testSelectButton,
+                                      selectedTest === 'fibrinogen'
+                                          ? testSelect.fibrinogenSelected
+                                          : {}]}>
+                    <Text style={testSelect.selectButtonText}>Fibrinogen</Text>
                 </TouchableOpacity>
             </View>
             <View style={patientSelect.container}>
@@ -389,7 +446,19 @@ const Data = ({navigation}) => {
                     }
                 </ScrollView>
             </View>
-            <ActionBar navigation={navigation}/>
+            <FloatingAction
+                actions={fabActions}
+                distanceToEdge={{ vertical: 120, horizontal: 20 }}
+                iconWidth={20}
+                iconHeight={20}
+                buttonSize={68}
+                overlayColor={'rgb(141, 103, 168, 1.0)'}
+                color={fabColor}
+                floatingIcon={<IconMI name='menu' color={backgroundColor} size={30}/>}
+                style={{marginBottom: 60}}
+                onPressItem={name => fabActionHandler(name)}
+            />
+            <QRScanSheet scanSheetRef={scanSheetRef} />
         </SafeAreaView>
     );
 };

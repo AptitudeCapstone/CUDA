@@ -398,7 +398,7 @@
         <attr format="reference" name="autofillInlineSuggestionEndIconStyle"/>
     </declare-styleable></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.appcompat:appcompat:1.3.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.appcompat:appcompat:1.3.0" from-dependency="true" generated-set="androidx.appcompat:appcompat:1.3.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res"><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-v17/values-v17.xml" qualifiers="v17"><style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
         <item name="android:textAlignment">viewStart</item>
-    </style><style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
+    </style><style name="RtlOverlay.Widget.AppCompat.UserActionBar.TitleItem" parent="android:Widget">
         <item name="android:layout_gravity">center_vertical|start</item>
         <item name="android:paddingEnd">8dp</item>
     </style><style name="RtlOverlay.Widget.AppCompat.DialogTitle.Icon" parent="android:Widget">
@@ -457,10 +457,10 @@
     </style><style name="Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" parent="android:TextAppearance.Material.Widget.PopupMenu.Small">
     </style><style name="Base.TextAppearance.AppCompat.Medium" parent="android:TextAppearance.Material.Medium"/><style name="Base.TextAppearance.AppCompat.Medium.Inverse" parent="android:TextAppearance.Material.Medium.Inverse"/><style name="Base.TextAppearance.AppCompat.Menu" parent="android:TextAppearance.Material.Menu"/><style name="Base.TextAppearance.AppCompat.SearchResult.Subtitle" parent="android:TextAppearance.Material.SearchResult.Subtitle">
     </style><style name="Base.TextAppearance.AppCompat.SearchResult.Title" parent="android:TextAppearance.Material.SearchResult.Title">
-    </style><style name="Base.TextAppearance.AppCompat.Small" parent="android:TextAppearance.Material.Small"/><style name="Base.TextAppearance.AppCompat.Small.Inverse" parent="android:TextAppearance.Material.Small.Inverse"/><style name="Base.TextAppearance.AppCompat.Subhead" parent="android:TextAppearance.Material.Subhead"/><style name="Base.TextAppearance.AppCompat.Title" parent="android:TextAppearance.Material.Title"/><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle.Inverse">
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="android:TextAppearance.Material.Widget.ActionBar.Title.Inverse">
+    </style><style name="Base.TextAppearance.AppCompat.Small" parent="android:TextAppearance.Material.Small"/><style name="Base.TextAppearance.AppCompat.Small.Inverse" parent="android:TextAppearance.Material.Small.Inverse"/><style name="Base.TextAppearance.AppCompat.Subhead" parent="android:TextAppearance.Material.Subhead"/><style name="Base.TextAppearance.AppCompat.Title" parent="android:TextAppearance.Material.Title"/><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle.Inverse">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="android:TextAppearance.Material.Widget.UserActionBar.Title">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="android:TextAppearance.Material.Widget.UserActionBar.Title.Inverse">
     </style><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="android:TextAppearance.Material.Widget.ActionMode.Subtitle">
     </style><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Title" parent="android:TextAppearance.Material.Widget.ActionMode.Title">
     </style><style name="Base.TextAppearance.AppCompat.Widget.Button" parent="android:TextAppearance.Material.Widget.Button"/><style name="Base.TextAppearance.AppCompat.Widget.PopupMenu.Header" parent="TextAppearance.AppCompat">
@@ -469,8 +469,8 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style><style name="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large" parent="android:TextAppearance.Material.Widget.PopupMenu.Large">
     </style><style name="Base.TextAppearance.AppCompat.Widget.PopupMenu.Small" parent="android:TextAppearance.Material.Widget.PopupMenu.Small">
-    </style><style name="Base.TextAppearance.AppCompat.Widget.Switch" parent="android:TextAppearance.Material.Button"/><style name="Base.TextAppearance.AppCompat.Widget.TextView.SpinnerItem" parent="android:TextAppearance.Material.Widget.TextView.SpinnerItem"/><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
-    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.Switch" parent="android:TextAppearance.Material.Button"/><style name="Base.TextAppearance.AppCompat.Widget.TextView.SpinnerItem" parent="android:TextAppearance.Material.Widget.TextView.SpinnerItem"/><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="android:TextAppearance.Material.Widget.UserActionBar.Subtitle">
+    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="android:TextAppearance.Material.Widget.UserActionBar.Title">
     </style><style name="Base.Theme.AppCompat" parent="Base.V21.Theme.AppCompat"/><style name="Base.Theme.AppCompat.Dialog" parent="Base.V21.Theme.AppCompat.Dialog"/><style name="Base.Theme.AppCompat.Light" parent="Base.V21.Theme.AppCompat.Light"/><style name="Base.Theme.AppCompat.Light.Dialog" parent="Base.V21.Theme.AppCompat.Light.Dialog"/><style name="Base.ThemeOverlay.AppCompat.Dialog" parent="Base.V21.ThemeOverlay.AppCompat.Dialog"/><style name="Base.V21.Theme.AppCompat" parent="Base.V7.Theme.AppCompat">
         
         <item name="actionBarSize">?android:attr/actionBarSize</item>
@@ -561,8 +561,8 @@
         <item name="android:windowElevation">@dimen/abc_floating_window_z</item>
     </style><style name="Base.V21.ThemeOverlay.AppCompat.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
         <item name="android:windowElevation">@dimen/abc_floating_window_z</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar.TabText" parent="android:Widget.Material.ActionBar.TabText">
-    </style><style name="Base.Widget.AppCompat.ActionBar.TabView" parent="android:Widget.Material.ActionBar.TabView">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.TabText" parent="android:Widget.Material.UserActionBar.TabText">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.TabView" parent="android:Widget.Material.UserActionBar.TabView">
     </style><style name="Base.Widget.AppCompat.ActionButton" parent="android:Widget.Material.ActionButton">
     </style><style name="Base.Widget.AppCompat.ActionButton.CloseMode" parent="android:Widget.Material.ActionButton.CloseMode">
         <item name="android:minWidth">56dp</item>
@@ -575,9 +575,9 @@
         <item name="android:textColor">@color/abc_btn_colored_borderless_text_material</item>
     </style><style name="Base.Widget.AppCompat.Button.Small" parent="android:Widget.Material.Button.Small"/><style name="Base.Widget.AppCompat.ButtonBar" parent="android:Widget.Material.ButtonBar"/><style name="Base.Widget.AppCompat.CompoundButton.CheckBox" parent="android:Widget.Material.CompoundButton.CheckBox"/><style name="Base.Widget.AppCompat.CompoundButton.RadioButton" parent="android:Widget.Material.CompoundButton.RadioButton"/><style name="Base.Widget.AppCompat.DropDownItem.Spinner" parent="android:Widget.Material.DropDownItem.Spinner"/><style name="Base.Widget.AppCompat.EditText" parent="android:Widget.Material.EditText">
         <item name="android:background">?attr/editTextBackground</item>
-    </style><style name="Base.Widget.AppCompat.ImageButton" parent="android:Widget.Material.ImageButton"/><style name="Base.Widget.AppCompat.Light.ActionBar.TabText" parent="android:Widget.Material.Light.ActionBar.TabText">
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="android:Widget.Material.Light.ActionBar.TabText">
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabView" parent="android:Widget.Material.Light.ActionBar.TabView">
+    </style><style name="Base.Widget.AppCompat.ImageButton" parent="android:Widget.Material.ImageButton"/><style name="Base.Widget.AppCompat.Light.UserActionBar.TabText" parent="android:Widget.Material.Light.UserActionBar.TabText">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="android:Widget.Material.Light.UserActionBar.TabText">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabView" parent="android:Widget.Material.Light.UserActionBar.TabView">
     </style><style name="Base.Widget.AppCompat.Light.PopupMenu" parent="android:Widget.Material.Light.PopupMenu">
     </style><style name="Base.Widget.AppCompat.Light.PopupMenu.Overflow">
         <item name="android:dropDownHorizontalOffset">-4dip</item>
@@ -757,22 +757,22 @@
         <item name="android:textColorLink">?android:attr/textColorLinkInverse</item>
     </style><style name="Base.TextAppearance.AppCompat.Tooltip">
         <item name="android:textSize">14sp</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Menu" parent="TextAppearance.AppCompat.Button">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Menu" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">?attr/actionMenuTextColor</item>
         <item name="textAllCaps">@bool/abc_config_actionMenuItemAllCaps</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="TextAppearance.AppCompat.Subhead">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:textSize">@dimen/abc_text_size_subtitle_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="TextAppearance.AppCompat.Subhead.Inverse">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="TextAppearance.AppCompat.Subhead.Inverse">
         <item name="android:textSize">@dimen/abc_text_size_subtitle_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" parent="TextAppearance.AppCompat.Title">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="TextAppearance.AppCompat.Title.Inverse">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="TextAppearance.AppCompat.Title.Inverse">
         <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title"/><style name="Base.TextAppearance.AppCompat.Widget.Button" parent="TextAppearance.AppCompat.Button"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="Base.TextAppearance.AppCompat.Widget.Button">
+    </style><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle"/><style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.UserActionBar.Title"/><style name="Base.TextAppearance.AppCompat.Widget.Button" parent="TextAppearance.AppCompat.Button"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="Base.TextAppearance.AppCompat.Widget.Button">
         <item name="android:textColor">@color/abc_btn_colored_borderless_text_material</item>
     </style><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored">
         <item name="android:textColor">@color/abc_btn_colored_text_material</item>
@@ -785,8 +785,8 @@
         <item name="android:textColor">?attr/colorAccent</item>
     </style><style name="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large" parent="TextAppearance.AppCompat.Menu"/><style name="Base.TextAppearance.AppCompat.Widget.PopupMenu.Small" parent="TextAppearance.AppCompat.Menu"/><style name="Base.TextAppearance.AppCompat.Widget.Switch" parent="TextAppearance.AppCompat.Button"/><style name="Base.TextAppearance.AppCompat.Widget.TextView.SpinnerItem" parent="TextAppearance.AppCompat.Menu"/><style name="Base.TextAppearance.Widget.AppCompat.ExpandedMenu.Item" parent="android:TextAppearance.Medium">
         <item name="android:textColor">?android:attr/textColorPrimaryDisableOnly</item>
-    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle">
+    </style><style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="TextAppearance.AppCompat.Widget.UserActionBar.Title">
     </style><style name="Base.Theme.AppCompat" parent="Base.V7.Theme.AppCompat">
     </style><style name="Base.Theme.AppCompat.CompactMenu" parent="">
         <item name="android:itemTextAppearance">?android:attr/textAppearanceMedium</item>
@@ -807,7 +807,7 @@
     </style><style name="Base.Theme.AppCompat.Light.DarkActionBar" parent="Base.Theme.AppCompat.Light">
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.UserActionBar</item>
         <item name="actionModeTheme">?attr/actionBarTheme</item>
 
         
@@ -826,9 +826,9 @@
     </style><style name="Base.Theme.AppCompat.Light.Dialog.MinWidth">
         <item name="android:windowMinWidthMajor">@dimen/abc_dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
-    </style><style name="Base.Theme.AppCompat.Light.DialogWhenLarge" parent="Theme.AppCompat.Light"/><style name="Base.ThemeOverlay.AppCompat" parent="Platform.ThemeOverlay.AppCompat"/><style name="Base.ThemeOverlay.AppCompat.ActionBar">
+    </style><style name="Base.Theme.AppCompat.Light.DialogWhenLarge" parent="Theme.AppCompat.Light"/><style name="Base.ThemeOverlay.AppCompat" parent="Platform.ThemeOverlay.AppCompat"/><style name="Base.ThemeOverlay.AppCompat.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
     </style><style name="Base.ThemeOverlay.AppCompat.Dark" parent="Platform.ThemeOverlay.AppCompat.Dark">
         <item name="android:windowBackground">@color/background_material_dark</item>
         <item name="android:colorForeground">@color/foreground_material_dark</item>
@@ -855,9 +855,9 @@
 
         
         <item name="isLightTheme">false</item>
-    </style><style name="Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style><style name="Base.ThemeOverlay.AppCompat.Dark.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
     </style><style name="Base.ThemeOverlay.AppCompat.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog"/><style name="Base.ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="android:windowMinWidthMajor">@dimen/abc_dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
@@ -909,24 +909,24 @@
         <item name="dividerHorizontal">@drawable/abc_list_divider_mtrl_alpha</item>
 
         
-        <item name="actionBarTabStyle">@style/Widget.AppCompat.ActionBar.TabView</item>
-        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.ActionBar.TabBar</item>
-        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.ActionBar.TabText</item>
+        <item name="actionBarTabStyle">@style/Widget.AppCompat.UserActionBar.TabView</item>
+        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.UserActionBar.TabBar</item>
+        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.UserActionBar.TabText</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.ActionButton.Overflow</item>
         <item name="actionOverflowMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
-        <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.UserActionBar.Solid</item>
         <item name="actionBarSplitStyle">?attr/actionBarStyle</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.UserActionBar</item>
         <item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
         <item name="actionBarDivider">?attr/dividerVertical</item>
         <item name="actionBarItemBackground">?attr/selectableItemBackgroundBorderless</item>
-        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.UserActionBar.Menu</item>
         <item name="actionMenuTextColor">?android:attr/textColorPrimaryDisableOnly</item>
 
         
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.UserActionBar</item>
 
         
         <item name="actionModeTheme">?attr/actionBarTheme</item>
@@ -1104,20 +1104,20 @@
         <item name="dividerHorizontal">@drawable/abc_list_divider_mtrl_alpha</item>
 
         
-        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.ActionBar.TabView</item>
-        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.ActionBar.TabBar</item>
-        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.ActionBar.TabText</item>
+        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.UserActionBar.TabView</item>
+        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.UserActionBar.TabBar</item>
+        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.UserActionBar.TabText</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.Light.ActionButton.Overflow</item>
         <item name="actionOverflowMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
-        <item name="actionBarStyle">@style/Widget.AppCompat.Light.ActionBar.Solid</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.Light.UserActionBar.Solid</item>
         <item name="actionBarSplitStyle">?attr/actionBarStyle</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.UserActionBar</item>
         <item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
         <item name="actionBarDivider">?attr/dividerVertical</item>
         <item name="actionBarItemBackground">?attr/selectableItemBackgroundBorderless</item>
-        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.UserActionBar.Menu</item>
         <item name="actionMenuTextColor">?android:attr/textColorPrimaryDisableOnly</item>
 
         
@@ -1136,7 +1136,7 @@
         <item name="actionModeShareDrawable">@drawable/abc_ic_menu_share_mtrl_alpha</item>
 
         
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.UserActionBar</item>
 
         
         <item name="panelMenuListWidth">@dimen/abc_panel_menu_list_width</item>
@@ -1335,13 +1335,13 @@
         <item name="android:paddingStart">@dimen/abc_action_bar_default_padding_start_material</item>
         <item name="android:paddingRight">@dimen/abc_action_bar_default_padding_end_material</item>
         <item name="android:paddingEnd">@dimen/abc_action_bar_default_padding_end_material</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar" parent="">
+    </style><style name="Base.Widget.AppCompat.UserActionBar" parent="">
         <item name="displayOptions">showTitle</item>
         <item name="divider">?attr/dividerVertical</item>
         <item name="height">?attr/actionBarSize</item>
 
-        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
-        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
+        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.UserActionBar.Title</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.UserActionBar.Subtitle</item>
 
         <item name="background">@null</item>
         <item name="backgroundStacked">@null</item>
@@ -1356,15 +1356,15 @@
         <item name="contentInsetEnd">@dimen/abc_action_bar_content_inset_material</item>
         <item name="elevation">@dimen/abc_action_bar_elevation_material</item>
         <item name="popupTheme">?attr/actionBarPopupTheme</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar.Solid">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.Solid">
         <item name="background">?attr/colorPrimary</item>
         <item name="backgroundStacked">?attr/colorPrimary</item>
         <item name="backgroundSplit">?attr/colorPrimary</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar.TabBar" parent="">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.TabBar" parent="">
         <item name="divider">?attr/actionBarDivider</item>
         <item name="showDividers">middle</item>
         <item name="dividerPadding">8dip</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar.TabText" parent="">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.TabText" parent="">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">12sp</item>
@@ -1373,7 +1373,7 @@
         <item name="android:maxLines">2</item>
         <item name="android:maxWidth">180dp</item>
         <item name="textAllCaps">true</item>
-    </style><style name="Base.Widget.AppCompat.ActionBar.TabView" parent="">
+    </style><style name="Base.Widget.AppCompat.UserActionBar.TabView" parent="">
         <item name="android:background">@drawable/abc_tab_indicator_material</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:paddingLeft">16dip</item>
@@ -1479,18 +1479,18 @@
         <item name="android:gravity">center_vertical</item>
     </style><style name="Base.Widget.AppCompat.EditText" parent="Base.V7.Widget.AppCompat.EditText"/><style name="Base.Widget.AppCompat.ImageButton" parent="android:Widget.ImageButton">
         <item name="android:background">@drawable/abc_btn_default_mtrl_shape</item>
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar" parent="Base.Widget.AppCompat.ActionBar">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar" parent="Base.Widget.AppCompat.UserActionBar">
         <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.Light.ActionButton.Overflow</item>
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.Solid">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.Solid">
         <item name="background">?attr/colorPrimary</item>
         <item name="backgroundStacked">?attr/colorPrimary</item>
         <item name="backgroundSplit">?attr/colorPrimary</item>
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabBar" parent="Base.Widget.AppCompat.ActionBar.TabBar">
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabText" parent="Base.Widget.AppCompat.ActionBar.TabText">
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabBar" parent="Base.Widget.AppCompat.UserActionBar.TabBar">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabText" parent="Base.Widget.AppCompat.UserActionBar.TabText">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium.Inverse</item>
-    </style><style name="Base.Widget.AppCompat.Light.ActionBar.TabView" parent="Base.Widget.AppCompat.ActionBar.TabView">
+    </style><style name="Base.Widget.AppCompat.Light.UserActionBar.TabView" parent="Base.Widget.AppCompat.UserActionBar.TabView">
         <item name="android:background">@drawable/abc_tab_indicator_material</item>
     </style><style name="Base.Widget.AppCompat.Light.PopupMenu" parent="@style/Widget.AppCompat.ListPopupWindow">
     </style><style name="Base.Widget.AppCompat.Light.PopupMenu.Overflow">
@@ -1546,7 +1546,7 @@
         <item name="voiceIcon">@drawable/abc_ic_voice_search_api_material</item>
         <item name="commitIcon">@drawable/abc_ic_commit_search_api_mtrl_alpha</item>
         <item name="suggestionRowLayout">@layout/abc_search_dropdown_item_icons_2line</item>
-    </style><style name="Base.Widget.AppCompat.SearchView.ActionBar">
+    </style><style name="Base.Widget.AppCompat.SearchView.UserActionBar">
         <item name="queryBackground">@null</item>
         <item name="submitBackground">@null</item>
         <item name="searchHintIcon">@null</item>
@@ -1721,7 +1721,7 @@
     </style><style name="Platform.ThemeOverlay.AppCompat" parent=""/><style name="Platform.ThemeOverlay.AppCompat.Dark">
         
         <item name="actionBarItemBackground">@drawable/abc_item_background_holo_dark</item>
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.UserActionBar</item>
         <item name="selectableItemBackground">@drawable/abc_item_background_holo_dark</item>
 
         
@@ -1729,14 +1729,14 @@
         <item name="android:dropDownItemStyle">@style/Widget.AppCompat.DropDownItem.Spinner</item>
     </style><style name="Platform.ThemeOverlay.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/abc_item_background_holo_light</item>
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.UserActionBar</item>
         <item name="selectableItemBackground">@drawable/abc_item_background_holo_light</item>
 
         
         <item name="android:autoCompleteTextViewStyle">@style/Widget.AppCompat.Light.AutoCompleteTextView</item>
         <item name="android:dropDownItemStyle">@style/Widget.AppCompat.DropDownItem.Spinner</item>
     </style><style name="Platform.Widget.AppCompat.Spinner" parent="android:Widget.Holo.Spinner"/><style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
-    </style><style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
+    </style><style name="RtlOverlay.Widget.AppCompat.UserActionBar.TitleItem" parent="android:Widget">
         <item name="android:layout_gravity">center_vertical|left</item>
         <item name="android:paddingRight">8dp</item>
     </style><style name="RtlOverlay.Widget.AppCompat.DialogTitle.Icon" parent="android:Widget">
@@ -1775,9 +1775,9 @@
         <item name="android:paddingRight">@dimen/abc_action_bar_overflow_padding_end_material</item>
     </style><style name="TextAppearance.AppCompat" parent="Base.TextAppearance.AppCompat"/><style name="TextAppearance.AppCompat.Body1" parent="Base.TextAppearance.AppCompat.Body1"/><style name="TextAppearance.AppCompat.Body2" parent="Base.TextAppearance.AppCompat.Body2"/><style name="TextAppearance.AppCompat.Button" parent="Base.TextAppearance.AppCompat.Button"/><style name="TextAppearance.AppCompat.Caption" parent="Base.TextAppearance.AppCompat.Caption"/><style name="TextAppearance.AppCompat.Display1" parent="Base.TextAppearance.AppCompat.Display1"/><style name="TextAppearance.AppCompat.Display2" parent="Base.TextAppearance.AppCompat.Display2"/><style name="TextAppearance.AppCompat.Display3" parent="Base.TextAppearance.AppCompat.Display3"/><style name="TextAppearance.AppCompat.Display4" parent="Base.TextAppearance.AppCompat.Display4"/><style name="TextAppearance.AppCompat.Headline" parent="Base.TextAppearance.AppCompat.Headline"/><style name="TextAppearance.AppCompat.Inverse" parent="Base.TextAppearance.AppCompat.Inverse"/><style name="TextAppearance.AppCompat.Large" parent="Base.TextAppearance.AppCompat.Large"/><style name="TextAppearance.AppCompat.Large.Inverse" parent="Base.TextAppearance.AppCompat.Large.Inverse"/><style name="TextAppearance.AppCompat.Light.SearchResult.Subtitle" parent="TextAppearance.AppCompat.SearchResult.Subtitle"/><style name="TextAppearance.AppCompat.Light.SearchResult.Title" parent="TextAppearance.AppCompat.SearchResult.Title"/><style name="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large" parent="TextAppearance.AppCompat.Widget.PopupMenu.Large"/><style name="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" parent="TextAppearance.AppCompat.Widget.PopupMenu.Small"/><style name="TextAppearance.AppCompat.Medium" parent="Base.TextAppearance.AppCompat.Medium"/><style name="TextAppearance.AppCompat.Medium.Inverse" parent="Base.TextAppearance.AppCompat.Medium.Inverse"/><style name="TextAppearance.AppCompat.Menu" parent="Base.TextAppearance.AppCompat.Menu"/><style name="TextAppearance.AppCompat.SearchResult.Subtitle" parent="Base.TextAppearance.AppCompat.SearchResult.Subtitle">
     </style><style name="TextAppearance.AppCompat.SearchResult.Title" parent="Base.TextAppearance.AppCompat.SearchResult.Title">
-    </style><style name="TextAppearance.AppCompat.Small" parent="Base.TextAppearance.AppCompat.Small"/><style name="TextAppearance.AppCompat.Small.Inverse" parent="Base.TextAppearance.AppCompat.Small.Inverse"/><style name="TextAppearance.AppCompat.Subhead" parent="Base.TextAppearance.AppCompat.Subhead"/><style name="TextAppearance.AppCompat.Subhead.Inverse" parent="Base.TextAppearance.AppCompat.Subhead.Inverse"/><style name="TextAppearance.AppCompat.Title" parent="Base.TextAppearance.AppCompat.Title"/><style name="TextAppearance.AppCompat.Title.Inverse" parent="Base.TextAppearance.AppCompat.Title.Inverse"/><style name="TextAppearance.AppCompat.Tooltip" parent="Base.TextAppearance.AppCompat.Tooltip"/><style name="TextAppearance.AppCompat.Widget.ActionBar.Menu" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Menu">
-    </style><style name="TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/><style name="TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse">
-    </style><style name="TextAppearance.AppCompat.Widget.ActionBar.Title" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title"/><style name="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+    </style><style name="TextAppearance.AppCompat.Small" parent="Base.TextAppearance.AppCompat.Small"/><style name="TextAppearance.AppCompat.Small.Inverse" parent="Base.TextAppearance.AppCompat.Small.Inverse"/><style name="TextAppearance.AppCompat.Subhead" parent="Base.TextAppearance.AppCompat.Subhead"/><style name="TextAppearance.AppCompat.Subhead.Inverse" parent="Base.TextAppearance.AppCompat.Subhead.Inverse"/><style name="TextAppearance.AppCompat.Title" parent="Base.TextAppearance.AppCompat.Title"/><style name="TextAppearance.AppCompat.Title.Inverse" parent="Base.TextAppearance.AppCompat.Title.Inverse"/><style name="TextAppearance.AppCompat.Tooltip" parent="Base.TextAppearance.AppCompat.Tooltip"/><style name="TextAppearance.AppCompat.Widget.UserActionBar.Menu" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Menu">
+    </style><style name="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle"/><style name="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse">
+    </style><style name="TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title"/><style name="TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse">
     </style><style name="TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
     </style><style name="TextAppearance.AppCompat.Widget.ActionMode.Subtitle.Inverse" parent="TextAppearance.AppCompat.Widget.ActionMode.Subtitle"/><style name="TextAppearance.AppCompat.Widget.ActionMode.Title" parent="Base.TextAppearance.AppCompat.Widget.ActionMode.Title">
     </style><style name="TextAppearance.AppCompat.Widget.ActionMode.Title.Inverse" parent="TextAppearance.AppCompat.Widget.ActionMode.Title"/><style name="TextAppearance.AppCompat.Widget.Button" parent="Base.TextAppearance.AppCompat.Widget.Button"/><style name="TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"/><style name="TextAppearance.AppCompat.Widget.Button.Colored" parent="Base.TextAppearance.AppCompat.Widget.Button.Colored"/><style name="TextAppearance.AppCompat.Widget.Button.Inverse" parent="Base.TextAppearance.AppCompat.Widget.Button.Inverse"/><style name="TextAppearance.AppCompat.Widget.DropDownItem" parent="Base.TextAppearance.AppCompat.Widget.DropDownItem">
@@ -1792,32 +1792,32 @@
     </style><style name="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style><style name="ThemeOverlay.AppCompat" parent="Base.ThemeOverlay.AppCompat"/><style name="ThemeOverlay.AppCompat.ActionBar" parent="Base.ThemeOverlay.AppCompat.ActionBar"/><style name="ThemeOverlay.AppCompat.Dark" parent="Base.ThemeOverlay.AppCompat.Dark"/><style name="ThemeOverlay.AppCompat.Dark.ActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar"/><style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Light"/><style name="ThemeOverlay.AppCompat.DayNight.ActionBar">
+    </style><style name="ThemeOverlay.AppCompat" parent="Base.ThemeOverlay.AppCompat"/><style name="ThemeOverlay.AppCompat.UserActionBar" parent="Base.ThemeOverlay.AppCompat.UserActionBar"/><style name="ThemeOverlay.AppCompat.Dark" parent="Base.ThemeOverlay.AppCompat.Dark"/><style name="ThemeOverlay.AppCompat.Dark.UserActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.UserActionBar"/><style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Light"/><style name="ThemeOverlay.AppCompat.DayNight.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
-    </style><style name="ThemeOverlay.AppCompat.Dialog" parent="Base.ThemeOverlay.AppCompat.Dialog"/><style name="ThemeOverlay.AppCompat.Dialog.Alert" parent="Base.ThemeOverlay.AppCompat.Dialog.Alert"/><style name="ThemeOverlay.AppCompat.Light" parent="Base.ThemeOverlay.AppCompat.Light"/><style name="Widget.AppCompat.ActionBar" parent="Base.Widget.AppCompat.ActionBar">
-    </style><style name="Widget.AppCompat.ActionBar.Solid" parent="Base.Widget.AppCompat.ActionBar.Solid">
-    </style><style name="Widget.AppCompat.ActionBar.TabBar" parent="Base.Widget.AppCompat.ActionBar.TabBar">
-    </style><style name="Widget.AppCompat.ActionBar.TabText" parent="Base.Widget.AppCompat.ActionBar.TabText">
-    </style><style name="Widget.AppCompat.ActionBar.TabView" parent="Base.Widget.AppCompat.ActionBar.TabView">
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
+    </style><style name="ThemeOverlay.AppCompat.Dialog" parent="Base.ThemeOverlay.AppCompat.Dialog"/><style name="ThemeOverlay.AppCompat.Dialog.Alert" parent="Base.ThemeOverlay.AppCompat.Dialog.Alert"/><style name="ThemeOverlay.AppCompat.Light" parent="Base.ThemeOverlay.AppCompat.Light"/><style name="Widget.AppCompat.UserActionBar" parent="Base.Widget.AppCompat.UserActionBar">
+    </style><style name="Widget.AppCompat.UserActionBar.Solid" parent="Base.Widget.AppCompat.UserActionBar.Solid">
+    </style><style name="Widget.AppCompat.UserActionBar.TabBar" parent="Base.Widget.AppCompat.UserActionBar.TabBar">
+    </style><style name="Widget.AppCompat.UserActionBar.TabText" parent="Base.Widget.AppCompat.UserActionBar.TabText">
+    </style><style name="Widget.AppCompat.UserActionBar.TabView" parent="Base.Widget.AppCompat.UserActionBar.TabView">
     </style><style name="Widget.AppCompat.ActionButton" parent="Base.Widget.AppCompat.ActionButton"/><style name="Widget.AppCompat.ActionButton.CloseMode" parent="Base.Widget.AppCompat.ActionButton.CloseMode"/><style name="Widget.AppCompat.ActionButton.Overflow" parent="Base.Widget.AppCompat.ActionButton.Overflow"/><style name="Widget.AppCompat.ActionMode" parent="Base.Widget.AppCompat.ActionMode">
     </style><style name="Widget.AppCompat.ActivityChooserView" parent="Base.Widget.AppCompat.ActivityChooserView">
     </style><style name="Widget.AppCompat.AutoCompleteTextView" parent="Base.Widget.AppCompat.AutoCompleteTextView">
     </style><style name="Widget.AppCompat.Button" parent="Base.Widget.AppCompat.Button"/><style name="Widget.AppCompat.Button.Borderless" parent="Base.Widget.AppCompat.Button.Borderless"/><style name="Widget.AppCompat.Button.Borderless.Colored" parent="Base.Widget.AppCompat.Button.Borderless.Colored"/><style name="Widget.AppCompat.Button.ButtonBar.AlertDialog" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog"/><style name="Widget.AppCompat.Button.Colored" parent="Base.Widget.AppCompat.Button.Colored"/><style name="Widget.AppCompat.Button.Small" parent="Base.Widget.AppCompat.Button.Small"/><style name="Widget.AppCompat.ButtonBar" parent="Base.Widget.AppCompat.ButtonBar"/><style name="Widget.AppCompat.ButtonBar.AlertDialog" parent="Base.Widget.AppCompat.ButtonBar.AlertDialog"/><style name="Widget.AppCompat.CompoundButton.CheckBox" parent="Base.Widget.AppCompat.CompoundButton.CheckBox"/><style name="Widget.AppCompat.CompoundButton.RadioButton" parent="Base.Widget.AppCompat.CompoundButton.RadioButton"/><style name="Widget.AppCompat.CompoundButton.Switch" parent="Base.Widget.AppCompat.CompoundButton.Switch"/><style name="Widget.AppCompat.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
         <item name="color">?attr/colorControlNormal</item>
-    </style><style name="Widget.AppCompat.DropDownItem.Spinner" parent="RtlOverlay.Widget.AppCompat.Search.DropDown.Text"/><style name="Widget.AppCompat.EditText" parent="Base.Widget.AppCompat.EditText"/><style name="Widget.AppCompat.ImageButton" parent="Base.Widget.AppCompat.ImageButton"/><style name="Widget.AppCompat.Light.ActionBar" parent="Base.Widget.AppCompat.Light.ActionBar">
-    </style><style name="Widget.AppCompat.Light.ActionBar.Solid" parent="Base.Widget.AppCompat.Light.ActionBar.Solid">
-    </style><style name="Widget.AppCompat.Light.ActionBar.Solid.Inverse"/><style name="Widget.AppCompat.Light.ActionBar.TabBar" parent="Base.Widget.AppCompat.Light.ActionBar.TabBar">
-    </style><style name="Widget.AppCompat.Light.ActionBar.TabBar.Inverse"/><style name="Widget.AppCompat.Light.ActionBar.TabText" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
-    </style><style name="Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse">
-    </style><style name="Widget.AppCompat.Light.ActionBar.TabView" parent="Base.Widget.AppCompat.Light.ActionBar.TabView">
-    </style><style name="Widget.AppCompat.Light.ActionBar.TabView.Inverse"/><style name="Widget.AppCompat.Light.ActionButton" parent="Widget.AppCompat.ActionButton"/><style name="Widget.AppCompat.Light.ActionButton.CloseMode" parent="Widget.AppCompat.ActionButton.CloseMode"/><style name="Widget.AppCompat.Light.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow"/><style name="Widget.AppCompat.Light.ActionMode.Inverse" parent="Widget.AppCompat.ActionMode"/><style name="Widget.AppCompat.Light.ActivityChooserView" parent="Widget.AppCompat.ActivityChooserView"/><style name="Widget.AppCompat.Light.AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView"/><style name="Widget.AppCompat.Light.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner"/><style name="Widget.AppCompat.Light.ListPopupWindow" parent="Widget.AppCompat.ListPopupWindow"/><style name="Widget.AppCompat.Light.ListView.DropDown" parent="Widget.AppCompat.ListView.DropDown"/><style name="Widget.AppCompat.Light.PopupMenu" parent="Base.Widget.AppCompat.Light.PopupMenu"/><style name="Widget.AppCompat.Light.PopupMenu.Overflow" parent="Base.Widget.AppCompat.Light.PopupMenu.Overflow">
-    </style><style name="Widget.AppCompat.Light.SearchView" parent="Widget.AppCompat.SearchView"/><style name="Widget.AppCompat.Light.Spinner.DropDown.ActionBar" parent="Widget.AppCompat.Spinner.DropDown.ActionBar"/><style name="Widget.AppCompat.ListMenuView" parent="Base.Widget.AppCompat.ListMenuView"/><style name="Widget.AppCompat.ListPopupWindow" parent="Base.Widget.AppCompat.ListPopupWindow">
+    </style><style name="Widget.AppCompat.DropDownItem.Spinner" parent="RtlOverlay.Widget.AppCompat.Search.DropDown.Text"/><style name="Widget.AppCompat.EditText" parent="Base.Widget.AppCompat.EditText"/><style name="Widget.AppCompat.ImageButton" parent="Base.Widget.AppCompat.ImageButton"/><style name="Widget.AppCompat.Light.UserActionBar" parent="Base.Widget.AppCompat.Light.UserActionBar">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.Solid" parent="Base.Widget.AppCompat.Light.UserActionBar.Solid">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.Solid.Inverse"/><style name="Widget.AppCompat.Light.UserActionBar.TabBar" parent="Base.Widget.AppCompat.Light.UserActionBar.TabBar">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.TabBar.Inverse"/><style name="Widget.AppCompat.Light.UserActionBar.TabText" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.TabView" parent="Base.Widget.AppCompat.Light.UserActionBar.TabView">
+    </style><style name="Widget.AppCompat.Light.UserActionBar.TabView.Inverse"/><style name="Widget.AppCompat.Light.ActionButton" parent="Widget.AppCompat.ActionButton"/><style name="Widget.AppCompat.Light.ActionButton.CloseMode" parent="Widget.AppCompat.ActionButton.CloseMode"/><style name="Widget.AppCompat.Light.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow"/><style name="Widget.AppCompat.Light.ActionMode.Inverse" parent="Widget.AppCompat.ActionMode"/><style name="Widget.AppCompat.Light.ActivityChooserView" parent="Widget.AppCompat.ActivityChooserView"/><style name="Widget.AppCompat.Light.AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView"/><style name="Widget.AppCompat.Light.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner"/><style name="Widget.AppCompat.Light.ListPopupWindow" parent="Widget.AppCompat.ListPopupWindow"/><style name="Widget.AppCompat.Light.ListView.DropDown" parent="Widget.AppCompat.ListView.DropDown"/><style name="Widget.AppCompat.Light.PopupMenu" parent="Base.Widget.AppCompat.Light.PopupMenu"/><style name="Widget.AppCompat.Light.PopupMenu.Overflow" parent="Base.Widget.AppCompat.Light.PopupMenu.Overflow">
+    </style><style name="Widget.AppCompat.Light.SearchView" parent="Widget.AppCompat.SearchView"/><style name="Widget.AppCompat.Light.Spinner.DropDown.UserActionBar" parent="Widget.AppCompat.Spinner.DropDown.UserActionBar"/><style name="Widget.AppCompat.ListMenuView" parent="Base.Widget.AppCompat.ListMenuView"/><style name="Widget.AppCompat.ListPopupWindow" parent="Base.Widget.AppCompat.ListPopupWindow">
     </style><style name="Widget.AppCompat.ListView" parent="Base.Widget.AppCompat.ListView"/><style name="Widget.AppCompat.ListView.DropDown" parent="Base.Widget.AppCompat.ListView.DropDown"/><style name="Widget.AppCompat.ListView.Menu" parent="Base.Widget.AppCompat.ListView.Menu"/><style name="Widget.AppCompat.PopupMenu" parent="Base.Widget.AppCompat.PopupMenu"/><style name="Widget.AppCompat.PopupMenu.Overflow" parent="Base.Widget.AppCompat.PopupMenu.Overflow">
     </style><style name="Widget.AppCompat.PopupWindow" parent="Base.Widget.AppCompat.PopupWindow">
     </style><style name="Widget.AppCompat.ProgressBar" parent="Base.Widget.AppCompat.ProgressBar">
     </style><style name="Widget.AppCompat.ProgressBar.Horizontal" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
-    </style><style name="Widget.AppCompat.RatingBar" parent="Base.Widget.AppCompat.RatingBar"/><style name="Widget.AppCompat.RatingBar.Indicator" parent="Base.Widget.AppCompat.RatingBar.Indicator"/><style name="Widget.AppCompat.RatingBar.Small" parent="Base.Widget.AppCompat.RatingBar.Small"/><style name="Widget.AppCompat.SearchView" parent="Base.Widget.AppCompat.SearchView"/><style name="Widget.AppCompat.SearchView.ActionBar" parent="Base.Widget.AppCompat.SearchView.ActionBar"/><style name="Widget.AppCompat.SeekBar" parent="Base.Widget.AppCompat.SeekBar"/><style name="Widget.AppCompat.SeekBar.Discrete" parent="Base.Widget.AppCompat.SeekBar.Discrete"/><style name="Widget.AppCompat.Spinner" parent="Base.Widget.AppCompat.Spinner"/><style name="Widget.AppCompat.Spinner.DropDown"/><style name="Widget.AppCompat.Spinner.DropDown.ActionBar"/><style name="Widget.AppCompat.Spinner.Underlined" parent="Base.Widget.AppCompat.Spinner.Underlined"/><style name="Widget.AppCompat.TextView" parent="Base.Widget.AppCompat.TextView"/><style name="Widget.AppCompat.TextView.SpinnerItem" parent="Base.Widget.AppCompat.TextView.SpinnerItem"/><style name="Widget.AppCompat.Toolbar" parent="Base.Widget.AppCompat.Toolbar"/><style name="Widget.AppCompat.Toolbar.Button.Navigation" parent="Base.Widget.AppCompat.Toolbar.Button.Navigation"/><declare-styleable name="ActionBar">
+    </style><style name="Widget.AppCompat.RatingBar" parent="Base.Widget.AppCompat.RatingBar"/><style name="Widget.AppCompat.RatingBar.Indicator" parent="Base.Widget.AppCompat.RatingBar.Indicator"/><style name="Widget.AppCompat.RatingBar.Small" parent="Base.Widget.AppCompat.RatingBar.Small"/><style name="Widget.AppCompat.SearchView" parent="Base.Widget.AppCompat.SearchView"/><style name="Widget.AppCompat.SearchView.UserActionBar" parent="Base.Widget.AppCompat.SearchView.UserActionBar"/><style name="Widget.AppCompat.SeekBar" parent="Base.Widget.AppCompat.SeekBar"/><style name="Widget.AppCompat.SeekBar.Discrete" parent="Base.Widget.AppCompat.SeekBar.Discrete"/><style name="Widget.AppCompat.Spinner" parent="Base.Widget.AppCompat.Spinner"/><style name="Widget.AppCompat.Spinner.DropDown"/><style name="Widget.AppCompat.Spinner.DropDown.UserActionBar"/><style name="Widget.AppCompat.Spinner.Underlined" parent="Base.Widget.AppCompat.Spinner.Underlined"/><style name="Widget.AppCompat.TextView" parent="Base.Widget.AppCompat.TextView"/><style name="Widget.AppCompat.TextView.SpinnerItem" parent="Base.Widget.AppCompat.TextView.SpinnerItem"/><style name="Widget.AppCompat.Toolbar" parent="Base.Widget.AppCompat.Toolbar"/><style name="Widget.AppCompat.Toolbar.Button.Navigation" parent="Base.Widget.AppCompat.Toolbar.Button.Navigation"/><declare-styleable name="UserActionBar">
         
         <attr name="navigationMode">
             
@@ -2853,7 +2853,7 @@
           <item name="barLength">18.66dp</item>
           <item name="gapBetweenBars">3.33dp</item>
           <item name="drawableSize">24dp</item>
-     </style></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-v24/values-v24.xml" qualifiers="v24"><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="android:TextAppearance.Material.Widget.Button.Borderless.Colored"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="android:TextAppearance.Material.Widget.Button.Colored"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-large-v4/values-large-v4.xml" qualifiers="large-v4"><dimen name="abc_config_prefDialogWidth">440dp</dimen><item name="abc_dialog_fixed_height_major" type="dimen">60%</item><item name="abc_dialog_fixed_height_minor" type="dimen">90%</item><item name="abc_dialog_fixed_width_major" type="dimen">60%</item><item name="abc_dialog_fixed_width_minor" type="dimen">90%</item><item name="abc_dialog_min_width_major" type="dimen">55%</item><item name="abc_dialog_min_width_minor" type="dimen">80%</item><style name="Base.Theme.AppCompat.DialogWhenLarge" parent="Base.Theme.AppCompat.Dialog.FixedSize"/><style name="Base.Theme.AppCompat.Light.DialogWhenLarge" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-ta/values-ta.xml" qualifiers="ta"><string msgid="5976598919945601918" name="abc_action_bar_home_description">"முகப்பிற்குச் செல்லும்"</string><string msgid="8388173803310557296" name="abc_action_bar_up_description">"மேலே செல்லும்"</string><string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"மேலும் விருப்பங்கள்"</string><string msgid="4692188335987374352" name="abc_action_mode_done">"முடிந்தது"</string><string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"அனைத்தையும் காட்டு"</string><string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"ஆப்ஸைத் தேர்வுசெய்க"</string><string msgid="4215997306490295099" name="abc_capital_off">"ஆஃப்"</string><string msgid="884982626291842264" name="abc_capital_on">"ஆன்"</string><string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt மற்றும்"</string><string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl மற்றும்"</string><string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string><string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string><string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function மற்றும்"</string><string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta மற்றும்"</string><string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift மற்றும்"</string><string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"space"</string><string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym மற்றும்"</string><string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menu மற்றும்"</string><string msgid="7208076849092622260" name="abc_search_hint">"தேடுக…"</string><string msgid="3741173234950517107" name="abc_searchview_description_clear">"வினவலை அழிக்கும்"</string><string msgid="693312494995508443" name="abc_searchview_description_query">"தேடல் வினவல்"</string><string msgid="3417662926640357176" name="abc_searchview_description_search">"தேடும்"</string><string msgid="1486535517437947103" name="abc_searchview_description_submit">"வினவலைச் சமர்ப்பிக்கும்"</string><string msgid="2293578557972875415" name="abc_searchview_description_voice">"குரல் தேடல்"</string><string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"இதில் பகிர்"</string><string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"<ns1:g id="APPLICATION_NAME">%s</ns1:g> மூலம் பகிர்"</string><string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"சுருக்கும்"</string><string msgid="6264217191555673260" name="search_menu_title">"தேடல்"</string></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-v23/values-v23.xml" qualifiers="v23"><style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Menu" parent="android:TextAppearance.Material.Widget.ActionBar.Menu"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Inverse" parent="android:TextAppearance.Material.Widget.Button.Inverse"/><style name="Base.Theme.AppCompat" parent="Base.V23.Theme.AppCompat"/><style name="Base.Theme.AppCompat.Light" parent="Base.V23.Theme.AppCompat.Light"/><style name="Base.V23.Theme.AppCompat" parent="Base.V22.Theme.AppCompat">
+     </style></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-v24/values-v24.xml" qualifiers="v24"><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="android:TextAppearance.Material.Widget.Button.Borderless.Colored"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="android:TextAppearance.Material.Widget.Button.Colored"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-large-v4/values-large-v4.xml" qualifiers="large-v4"><dimen name="abc_config_prefDialogWidth">440dp</dimen><item name="abc_dialog_fixed_height_major" type="dimen">60%</item><item name="abc_dialog_fixed_height_minor" type="dimen">90%</item><item name="abc_dialog_fixed_width_major" type="dimen">60%</item><item name="abc_dialog_fixed_width_minor" type="dimen">90%</item><item name="abc_dialog_min_width_major" type="dimen">55%</item><item name="abc_dialog_min_width_minor" type="dimen">80%</item><style name="Base.Theme.AppCompat.DialogWhenLarge" parent="Base.Theme.AppCompat.Dialog.FixedSize"/><style name="Base.Theme.AppCompat.Light.DialogWhenLarge" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-ta/values-ta.xml" qualifiers="ta"><string msgid="5976598919945601918" name="abc_action_bar_home_description">"முகப்பிற்குச் செல்லும்"</string><string msgid="8388173803310557296" name="abc_action_bar_up_description">"மேலே செல்லும்"</string><string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"மேலும் விருப்பங்கள்"</string><string msgid="4692188335987374352" name="abc_action_mode_done">"முடிந்தது"</string><string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"அனைத்தையும் காட்டு"</string><string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"ஆப்ஸைத் தேர்வுசெய்க"</string><string msgid="4215997306490295099" name="abc_capital_off">"ஆஃப்"</string><string msgid="884982626291842264" name="abc_capital_on">"ஆன்"</string><string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt மற்றும்"</string><string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl மற்றும்"</string><string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string><string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string><string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function மற்றும்"</string><string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta மற்றும்"</string><string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift மற்றும்"</string><string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"space"</string><string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym மற்றும்"</string><string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menu மற்றும்"</string><string msgid="7208076849092622260" name="abc_search_hint">"தேடுக…"</string><string msgid="3741173234950517107" name="abc_searchview_description_clear">"வினவலை அழிக்கும்"</string><string msgid="693312494995508443" name="abc_searchview_description_query">"தேடல் வினவல்"</string><string msgid="3417662926640357176" name="abc_searchview_description_search">"தேடும்"</string><string msgid="1486535517437947103" name="abc_searchview_description_submit">"வினவலைச் சமர்ப்பிக்கும்"</string><string msgid="2293578557972875415" name="abc_searchview_description_voice">"குரல் தேடல்"</string><string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"இதில் பகிர்"</string><string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"<ns1:g id="APPLICATION_NAME">%s</ns1:g> மூலம் பகிர்"</string><string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"சுருக்கும்"</string><string msgid="6264217191555673260" name="search_menu_title">"தேடல்"</string></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/5efe111fb39d3b328ea0b546310bdd34/transformed/appcompat-1.3.0/res/values-v23/values-v23.xml" qualifiers="v23"><style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Menu" parent="android:TextAppearance.Material.Widget.UserActionBar.Menu"/><style name="Base.TextAppearance.AppCompat.Widget.Button.Inverse" parent="android:TextAppearance.Material.Widget.Button.Inverse"/><style name="Base.Theme.AppCompat" parent="Base.V23.Theme.AppCompat"/><style name="Base.Theme.AppCompat.Light" parent="Base.V23.Theme.AppCompat.Light"/><style name="Base.V23.Theme.AppCompat" parent="Base.V22.Theme.AppCompat">
         
         <item name="ratingBarStyleIndicator">?android:attr/ratingBarStyleIndicator</item>
         <item name="ratingBarStyleSmall">?android:attr/ratingBarStyleSmall</item>
@@ -3041,7 +3041,7 @@
     <item name="windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
   </style><style name="Base.Theme.MaterialComponents.DialogWhenLarge" parent="Theme.MaterialComponents"/><style name="Base.Theme.MaterialComponents.Light" parent="Base.V14.Theme.MaterialComponents.Light"/><style name="Base.Theme.MaterialComponents.Light.Bridge" parent="Base.V14.Theme.MaterialComponents.Light.Bridge"/><style name="Base.Theme.MaterialComponents.Light.DarkActionBar" parent="Base.Theme.MaterialComponents.Light">
     <item name="actionBarWidgetTheme">@null</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.UserActionBar</item>
 
     
     <item name="listChoiceBackgroundIndicator">@drawable/abc_list_selector_holo_dark</item>
@@ -3075,8 +3075,8 @@
     
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Surface</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.ActionBar.Surface</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.UserActionBar.Surface</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.UserActionBar.Surface</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     
@@ -3187,8 +3187,8 @@
     
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Surface</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.ActionBar.Surface</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.UserActionBar.Surface</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.UserActionBar.Surface</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     
@@ -3291,7 +3291,7 @@
     
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.UserActionBar.Solid</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     
@@ -3450,7 +3450,7 @@
     
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.UserActionBar.Solid</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     
@@ -3943,14 +3943,14 @@
   </style><style name="Theme.MaterialComponents.NoActionBar.Bridge" parent="Theme.MaterialComponents.Bridge">
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
-  </style><style name="ThemeOverlay.Design.TextInputEditText" parent=""/><style name="ThemeOverlay.MaterialComponents" parent="ThemeOverlay.AppCompat"/><style name="ThemeOverlay.MaterialComponents.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar"/><style name="ThemeOverlay.MaterialComponents.ActionBar.Primary" parent="">
+  </style><style name="ThemeOverlay.Design.TextInputEditText" parent=""/><style name="ThemeOverlay.MaterialComponents" parent="ThemeOverlay.AppCompat"/><style name="ThemeOverlay.MaterialComponents.UserActionBar" parent="ThemeOverlay.AppCompat.UserActionBar"/><style name="ThemeOverlay.MaterialComponents.UserActionBar.Primary" parent="">
     <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     <item name="android:textColorSecondary">@color/material_on_primary_emphasis_medium</item>
     <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
     <item name="colorControlNormal">?attr/colorOnPrimary</item>
     
     <item name="android:colorBackground">?attr/colorPrimary</item>
-  </style><style name="ThemeOverlay.MaterialComponents.ActionBar.Surface" parent="">
+  </style><style name="ThemeOverlay.MaterialComponents.UserActionBar.Surface" parent="">
     <item name="android:textColorPrimary">@color/material_on_surface_emphasis_high_type</item>
     <item name="android:textColorSecondary">@color/material_on_surface_emphasis_medium</item>
     <item name="actionMenuTextColor">@color/material_on_surface_emphasis_medium</item>
@@ -3996,7 +3996,7 @@
     <item name="colorOnSurface">@color/design_dark_default_color_on_surface</item>
     <item name="colorError">@color/design_dark_default_color_error</item>
     <item name="colorOnError">@color/design_dark_default_color_on_error</item>
-  </style><style name="ThemeOverlay.MaterialComponents.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/><style name="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Light.BottomSheetDialog"/><style name="ThemeOverlay.MaterialComponents.Dialog" parent="Base.ThemeOverlay.MaterialComponents.Dialog"/><style name="ThemeOverlay.MaterialComponents.Dialog.Alert" parent="Base.ThemeOverlay.MaterialComponents.Dialog.Alert"/><style name="ThemeOverlay.MaterialComponents.Light" parent="ThemeOverlay.AppCompat.Light">
+  </style><style name="ThemeOverlay.MaterialComponents.Dark.UserActionBar" parent="ThemeOverlay.AppCompat.Dark.UserActionBar"/><style name="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Light.BottomSheetDialog"/><style name="ThemeOverlay.MaterialComponents.Dialog" parent="Base.ThemeOverlay.MaterialComponents.Dialog"/><style name="ThemeOverlay.MaterialComponents.Dialog.Alert" parent="Base.ThemeOverlay.MaterialComponents.Dialog.Alert"/><style name="ThemeOverlay.MaterialComponents.Light" parent="ThemeOverlay.AppCompat.Light">
     <item name="android:colorBackground">@color/design_default_color_background</item>
     <item name="colorOnBackground">@color/design_default_color_on_background</item>
     <item name="colorSurface">@color/design_default_color_surface</item>
@@ -4154,16 +4154,16 @@
 
     <item name="shapeAppearance">@null</item>
     <item name="shapeAppearanceOverlay">@null</item>
-  </style><style name="Widget.MaterialComponents.ActionBar.Primary" parent="Widget.AppCompat.ActionBar.Solid">
+  </style><style name="Widget.MaterialComponents.UserActionBar.Primary" parent="Widget.AppCompat.UserActionBar.Solid">
     <item name="background">?attr/colorPrimary</item>
     <item name="elevation">@dimen/design_appbar_elevation</item>
-  </style><style name="Widget.MaterialComponents.ActionBar.PrimarySurface" parent="Widget.MaterialComponents.ActionBar.Primary"/><style name="Widget.MaterialComponents.ActionBar.Solid" parent="Widget.AppCompat.ActionBar.Solid">
+  </style><style name="Widget.MaterialComponents.UserActionBar.PrimarySurface" parent="Widget.MaterialComponents.UserActionBar.Primary"/><style name="Widget.MaterialComponents.UserActionBar.Solid" parent="Widget.AppCompat.UserActionBar.Solid">
     <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
     <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
     
     <item name="android:minHeight">@dimen/mtrl_toolbar_default_height</item>
     <item name="maxButtonHeight">@dimen/mtrl_toolbar_default_height</item>
-  </style><style name="Widget.MaterialComponents.ActionBar.Surface" parent="Widget.AppCompat.Light.ActionBar.Solid">
+  </style><style name="Widget.MaterialComponents.UserActionBar.Surface" parent="Widget.AppCompat.Light.UserActionBar.Solid">
     <item name="background">?attr/colorSurface</item>
     <item name="elevation">0dp</item>
   </style><style name="Widget.MaterialComponents.AppBarLayout.Primary" parent="Widget.Design.AppBarLayout"/><style name="Widget.MaterialComponents.AppBarLayout.PrimarySurface" parent="Widget.MaterialComponents.AppBarLayout.Primary"/><style name="Widget.MaterialComponents.AppBarLayout.Surface" parent="Widget.Design.AppBarLayout">
@@ -4403,7 +4403,7 @@
     <item name="shapeAppearanceOverlay">
       @style/ShapeAppearanceOverlay.MaterialComponents.FloatingActionButton
     </item>
-  </style><style name="Widget.MaterialComponents.Light.ActionBar.Solid" parent="Widget.AppCompat.Light.ActionBar.Solid">
+  </style><style name="Widget.MaterialComponents.Light.UserActionBar.Solid" parent="Widget.AppCompat.Light.UserActionBar.Solid">
     <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
     <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
     
@@ -5553,7 +5553,7 @@
   </style><style name="Widget.MaterialComponents.PopupMenu.ListPopupWindow" parent="Base.Widget.MaterialComponents.PopupMenu.ListPopupWindow">
     <item name="android:popupBackground">?attr/popupMenuBackground</item>
     <item name="android:popupElevation">8dp</item>
-  </style></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-w360dp-port-v13/values-w360dp-port-v13.xml" qualifiers="w360dp-port-v13"><dimen name="mtrl_calendar_bottom_padding">4dp</dimen><dimen name="mtrl_calendar_day_corner">18dp</dimen><dimen name="mtrl_calendar_day_height">40dp</dimen><dimen name="mtrl_calendar_day_horizontal_padding">2dp</dimen><dimen name="mtrl_calendar_day_vertical_padding">2dp</dimen><dimen name="mtrl_calendar_day_width">40dp</dimen><dimen name="mtrl_calendar_days_of_week_height">40dp</dimen><dimen name="mtrl_calendar_month_horizontal_padding">4dp</dimen></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-night-v8/values-night-v8.xml" qualifiers="night-v8"><style name="Theme.MaterialComponents.DayNight" parent="Theme.MaterialComponents"/><style name="Theme.MaterialComponents.DayNight.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog"/><style name="Theme.MaterialComponents.DayNight.Bridge" parent="Theme.MaterialComponents.Bridge"/><style name="Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents"/><style name="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge" parent="Theme.MaterialComponents.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog" parent="Theme.MaterialComponents.Dialog"/><style name="Theme.MaterialComponents.DayNight.Dialog.Alert" parent="Theme.MaterialComponents.Dialog.Alert"/><style name="Theme.MaterialComponents.DayNight.Dialog.Alert.Bridge" parent="Theme.MaterialComponents.Dialog.Alert.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.Bridge" parent="Theme.MaterialComponents.Dialog.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize" parent="Theme.MaterialComponents.Dialog.FixedSize"/><style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize.Bridge" parent="Theme.MaterialComponents.Dialog.FixedSize.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth" parent="Theme.MaterialComponents.Dialog.MinWidth"/><style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth.Bridge" parent="Theme.MaterialComponents.Dialog.MinWidth.Bridge"/><style name="Theme.MaterialComponents.DayNight.DialogWhenLarge" parent="Theme.MaterialComponents.DialogWhenLarge"/><style name="Theme.MaterialComponents.DayNight.NoActionBar" parent="Theme.MaterialComponents.NoActionBar"/><style name="Theme.MaterialComponents.DayNight.NoActionBar.Bridge" parent="Theme.MaterialComponents.NoActionBar.Bridge"/><style name="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog"/><style name="Widget.MaterialComponents.ActionBar.PrimarySurface" parent="Widget.MaterialComponents.ActionBar.Surface"/><style name="Widget.MaterialComponents.AppBarLayout.PrimarySurface" parent="Widget.MaterialComponents.AppBarLayout.Surface"/><style name="Widget.MaterialComponents.BottomAppBar.PrimarySurface" parent="Widget.MaterialComponents.BottomAppBar"/><style name="Widget.MaterialComponents.BottomNavigationView.PrimarySurface" parent="Widget.MaterialComponents.BottomNavigationView"/><style name="Widget.MaterialComponents.TabLayout.PrimarySurface" parent="Widget.MaterialComponents.TabLayout"/><style name="Widget.MaterialComponents.Toolbar.PrimarySurface" parent="Widget.MaterialComponents.Toolbar.Surface"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-h360dp-land-v13/values-h360dp-land-v13.xml" qualifiers="h360dp-land-v13"><dimen name="mtrl_calendar_bottom_padding">4dp</dimen><dimen name="mtrl_calendar_day_corner">18dp</dimen><dimen name="mtrl_calendar_day_height">40dp</dimen><dimen name="mtrl_calendar_day_horizontal_padding">2dp</dimen><dimen name="mtrl_calendar_day_vertical_padding">2dp</dimen><dimen name="mtrl_calendar_day_width">40dp</dimen><dimen name="mtrl_calendar_days_of_week_height">20dp</dimen><dimen name="mtrl_calendar_landscape_header_width">128dp</dimen><dimen name="mtrl_calendar_month_horizontal_padding">4dp</dimen></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="com.facebook.fresco:drawee:2.5.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="com.facebook.fresco:drawee:2.5.0" from-dependency="true" generated-set="com.facebook.fresco:drawee:2.5.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res"><file path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res/values/values.xml" qualifiers=""><declare-styleable name="GenericDraweeHierarchy">
+  </style></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-w360dp-port-v13/values-w360dp-port-v13.xml" qualifiers="w360dp-port-v13"><dimen name="mtrl_calendar_bottom_padding">4dp</dimen><dimen name="mtrl_calendar_day_corner">18dp</dimen><dimen name="mtrl_calendar_day_height">40dp</dimen><dimen name="mtrl_calendar_day_horizontal_padding">2dp</dimen><dimen name="mtrl_calendar_day_vertical_padding">2dp</dimen><dimen name="mtrl_calendar_day_width">40dp</dimen><dimen name="mtrl_calendar_days_of_week_height">40dp</dimen><dimen name="mtrl_calendar_month_horizontal_padding">4dp</dimen></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-night-v8/values-night-v8.xml" qualifiers="night-v8"><style name="Theme.MaterialComponents.DayNight" parent="Theme.MaterialComponents"/><style name="Theme.MaterialComponents.DayNight.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog"/><style name="Theme.MaterialComponents.DayNight.Bridge" parent="Theme.MaterialComponents.Bridge"/><style name="Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents"/><style name="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge" parent="Theme.MaterialComponents.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog" parent="Theme.MaterialComponents.Dialog"/><style name="Theme.MaterialComponents.DayNight.Dialog.Alert" parent="Theme.MaterialComponents.Dialog.Alert"/><style name="Theme.MaterialComponents.DayNight.Dialog.Alert.Bridge" parent="Theme.MaterialComponents.Dialog.Alert.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.Bridge" parent="Theme.MaterialComponents.Dialog.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize" parent="Theme.MaterialComponents.Dialog.FixedSize"/><style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize.Bridge" parent="Theme.MaterialComponents.Dialog.FixedSize.Bridge"/><style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth" parent="Theme.MaterialComponents.Dialog.MinWidth"/><style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth.Bridge" parent="Theme.MaterialComponents.Dialog.MinWidth.Bridge"/><style name="Theme.MaterialComponents.DayNight.DialogWhenLarge" parent="Theme.MaterialComponents.DialogWhenLarge"/><style name="Theme.MaterialComponents.DayNight.NoActionBar" parent="Theme.MaterialComponents.NoActionBar"/><style name="Theme.MaterialComponents.DayNight.NoActionBar.Bridge" parent="Theme.MaterialComponents.NoActionBar.Bridge"/><style name="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog"/><style name="Widget.MaterialComponents.UserActionBar.PrimarySurface" parent="Widget.MaterialComponents.UserActionBar.Surface"/><style name="Widget.MaterialComponents.AppBarLayout.PrimarySurface" parent="Widget.MaterialComponents.AppBarLayout.Surface"/><style name="Widget.MaterialComponents.BottomAppBar.PrimarySurface" parent="Widget.MaterialComponents.BottomAppBar"/><style name="Widget.MaterialComponents.BottomNavigationView.PrimarySurface" parent="Widget.MaterialComponents.BottomNavigationView"/><style name="Widget.MaterialComponents.TabLayout.PrimarySurface" parent="Widget.MaterialComponents.TabLayout"/><style name="Widget.MaterialComponents.Toolbar.PrimarySurface" parent="Widget.MaterialComponents.Toolbar.Surface"/></file><file path="/Users/noahcorona/.gradle/caches/transforms-3/866511df68e462d405d27170975a360c/transformed/material-1.1.0/res/values-h360dp-land-v13/values-h360dp-land-v13.xml" qualifiers="h360dp-land-v13"><dimen name="mtrl_calendar_bottom_padding">4dp</dimen><dimen name="mtrl_calendar_day_corner">18dp</dimen><dimen name="mtrl_calendar_day_height">40dp</dimen><dimen name="mtrl_calendar_day_horizontal_padding">2dp</dimen><dimen name="mtrl_calendar_day_vertical_padding">2dp</dimen><dimen name="mtrl_calendar_day_width">40dp</dimen><dimen name="mtrl_calendar_days_of_week_height">20dp</dimen><dimen name="mtrl_calendar_landscape_header_width">128dp</dimen><dimen name="mtrl_calendar_month_horizontal_padding">4dp</dimen></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="com.facebook.fresco:drawee:2.5.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="com.facebook.fresco:drawee:2.5.0" from-dependency="true" generated-set="com.facebook.fresco:drawee:2.5.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res"><file path="/Users/noahcorona/.gradle/caches/transforms-3/6dea7a3a4b10332dc841bf7d67f96427/transformed/jetified-drawee-2.5.0/res/values/values.xml" qualifiers=""><declare-styleable name="GenericDraweeHierarchy">
 
     
     <eat-comment/>
@@ -6893,7 +6893,7 @@
       
       <enum name="screen" value="15"/>
     </attr>
-  </declare-styleable><declare-styleable name="ActionBar">
+  </declare-styleable><declare-styleable name="UserActionBar">
         
         <attr name="navigationMode">
             

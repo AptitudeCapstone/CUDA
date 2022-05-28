@@ -1036,28 +1036,28 @@
     <style name="Base.TextAppearance.AppCompat.Tooltip">
         <item name="android:textSize">14sp</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Menu" parent="TextAppearance.AppCompat.Button">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Menu" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">?attr/actionMenuTextColor</item>
         <item name="textAllCaps">@bool/abc_config_actionMenuItemAllCaps</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="TextAppearance.AppCompat.Subhead">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:textSize">@dimen/abc_text_size_subtitle_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="TextAppearance.AppCompat.Subhead.Inverse">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="TextAppearance.AppCompat.Subhead.Inverse">
         <item name="android:textSize">@dimen/abc_text_size_subtitle_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" parent="TextAppearance.AppCompat.Title">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="TextAppearance.AppCompat.Title.Inverse">
+    <style name="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="TextAppearance.AppCompat.Title.Inverse">
         <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
-    <style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+    <style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle"/>
+    <style name="Base.TextAppearance.AppCompat.Widget.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.UserActionBar.Title"/>
     <style name="Base.TextAppearance.AppCompat.Widget.Button" parent="TextAppearance.AppCompat.Button"/>
     <style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="Base.TextAppearance.AppCompat.Widget.Button">
         <item name="android:textColor">@color/abc_btn_colored_borderless_text_material</item>
@@ -1119,9 +1119,9 @@
     <style name="Base.TextAppearance.Widget.AppCompat.ExpandedMenu.Item" parent="android:TextAppearance.Medium">
         <item name="android:textColor">?android:attr/textColorPrimaryDisableOnly</item>
     </style>
-    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle" parent="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle">
     </style>
-    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title" parent="TextAppearance.AppCompat.Widget.UserActionBar.Title">
     </style>
     <style name="Base.Theme.AppCompat" parent="Base.V7.Theme.AppCompat">
     </style>
@@ -1151,7 +1151,7 @@
     <style name="Base.Theme.AppCompat.Light.DarkActionBar" parent="Base.Theme.AppCompat.Light">
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.UserActionBar</item>
         <item name="actionModeTheme">?attr/actionBarTheme</item>
 
         <!-- Panel attributes -->
@@ -1204,7 +1204,7 @@
     <style name="Base.Theme.MaterialComponents.Light.Bridge" parent="Base.V14.Theme.MaterialComponents.Light.Bridge"/>
     <style name="Base.Theme.MaterialComponents.Light.DarkActionBar" parent="Base.Theme.MaterialComponents.Light">
     <item name="actionBarWidgetTheme">@null</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.UserActionBar</item>
 
     <!-- Panel attributes -->
     <item name="listChoiceBackgroundIndicator">@drawable/abc_list_selector_holo_dark</item>
@@ -1231,9 +1231,9 @@
   </style>
     <style name="Base.Theme.MaterialComponents.Light.DialogWhenLarge" parent="Theme.MaterialComponents.Light"/>
     <style name="Base.ThemeOverlay.AppCompat" parent="Platform.ThemeOverlay.AppCompat"/>
-    <style name="Base.ThemeOverlay.AppCompat.ActionBar">
+    <style name="Base.ThemeOverlay.AppCompat.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
     </style>
     <style name="Base.ThemeOverlay.AppCompat.Dark" parent="Platform.ThemeOverlay.AppCompat.Dark">
         <item name="android:windowBackground">@color/background_material_dark</item>
@@ -1262,9 +1262,9 @@
         <!-- Used by MediaRouter -->
         <item name="isLightTheme">false</item>
     </style>
-    <style name="Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="Base.ThemeOverlay.AppCompat.Dark.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
     </style>
     <style name="Base.ThemeOverlay.AppCompat.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog"/>
     <style name="Base.ThemeOverlay.AppCompat.Dialog.Alert">
@@ -1318,8 +1318,8 @@
     <!-- Action bar -->
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Surface</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.ActionBar.Surface</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.UserActionBar.Surface</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.UserActionBar.Surface</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     <!-- Widget styles -->
@@ -1432,8 +1432,8 @@
     <!-- Action bar -->
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Surface</item>
-    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.ActionBar.Surface</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.UserActionBar.Surface</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.UserActionBar.Surface</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     <!-- Widget styles -->
@@ -1538,7 +1538,7 @@
     <!-- Action bar -->
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.UserActionBar.Solid</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     <!-- Widget styles -->
@@ -1700,7 +1700,7 @@
     <!-- Action bar -->
     <item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>
     <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
-    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+    <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.UserActionBar.Solid</item>
     <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
 
     <!-- Widget styles -->
@@ -1830,24 +1830,24 @@
         <item name="dividerHorizontal">@drawable/abc_list_divider_mtrl_alpha</item>
 
         <!-- Action Bar Styles -->
-        <item name="actionBarTabStyle">@style/Widget.AppCompat.ActionBar.TabView</item>
-        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.ActionBar.TabBar</item>
-        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.ActionBar.TabText</item>
+        <item name="actionBarTabStyle">@style/Widget.AppCompat.UserActionBar.TabView</item>
+        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.UserActionBar.TabBar</item>
+        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.UserActionBar.TabText</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.ActionButton.Overflow</item>
         <item name="actionOverflowMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
-        <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.UserActionBar.Solid</item>
         <item name="actionBarSplitStyle">?attr/actionBarStyle</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.UserActionBar</item>
         <item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
         <item name="actionBarDivider">?attr/dividerVertical</item>
         <item name="actionBarItemBackground">?attr/selectableItemBackgroundBorderless</item>
-        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.UserActionBar.Menu</item>
         <item name="actionMenuTextColor">?android:attr/textColorPrimaryDisableOnly</item>
 
         <!-- Dropdown Spinner Attributes -->
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.UserActionBar</item>
 
         <!-- Action Mode -->
         <item name="actionModeTheme">?attr/actionBarTheme</item>
@@ -2028,20 +2028,20 @@
         <item name="dividerHorizontal">@drawable/abc_list_divider_mtrl_alpha</item>
 
         <!-- Action Bar Styles -->
-        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.ActionBar.TabView</item>
-        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.ActionBar.TabBar</item>
-        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.ActionBar.TabText</item>
+        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.UserActionBar.TabView</item>
+        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.UserActionBar.TabBar</item>
+        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.UserActionBar.TabText</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.Light.ActionButton.Overflow</item>
         <item name="actionOverflowMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
-        <item name="actionBarStyle">@style/Widget.AppCompat.Light.ActionBar.Solid</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.Light.UserActionBar.Solid</item>
         <item name="actionBarSplitStyle">?attr/actionBarStyle</item>
         <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.UserActionBar</item>
         <item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
         <item name="actionBarDivider">?attr/dividerVertical</item>
         <item name="actionBarItemBackground">?attr/selectableItemBackgroundBorderless</item>
-        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.UserActionBar.Menu</item>
         <item name="actionMenuTextColor">?android:attr/textColorPrimaryDisableOnly</item>
 
         <!-- Action Mode -->
@@ -2060,7 +2060,7 @@
         <item name="actionModeShareDrawable">@drawable/abc_ic_menu_share_mtrl_alpha</item>
 
         <!-- Dropdown Spinner Attributes -->
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.UserActionBar</item>
 
         <!-- Panel attributes -->
         <item name="panelMenuListWidth">@dimen/abc_panel_menu_list_width</item>
@@ -2266,13 +2266,13 @@
         <item name="android:paddingRight">@dimen/abc_action_bar_default_padding_end_material</item>
         <item name="android:paddingEnd">@dimen/abc_action_bar_default_padding_end_material</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar" parent="">
+    <style name="Base.Widget.AppCompat.UserActionBar" parent="">
         <item name="displayOptions">showTitle</item>
         <item name="divider">?attr/dividerVertical</item>
         <item name="height">?attr/actionBarSize</item>
 
-        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
-        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
+        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.UserActionBar.Title</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.UserActionBar.Subtitle</item>
 
         <item name="background">@null</item>
         <item name="backgroundStacked">@null</item>
@@ -2288,17 +2288,17 @@
         <item name="elevation">@dimen/abc_action_bar_elevation_material</item>
         <item name="popupTheme">?attr/actionBarPopupTheme</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.Solid">
+    <style name="Base.Widget.AppCompat.UserActionBar.Solid">
         <item name="background">?attr/colorPrimary</item>
         <item name="backgroundStacked">?attr/colorPrimary</item>
         <item name="backgroundSplit">?attr/colorPrimary</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.TabBar" parent="">
+    <style name="Base.Widget.AppCompat.UserActionBar.TabBar" parent="">
         <item name="divider">?attr/actionBarDivider</item>
         <item name="showDividers">middle</item>
         <item name="dividerPadding">8dip</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.TabText" parent="">
+    <style name="Base.Widget.AppCompat.UserActionBar.TabText" parent="">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">12sp</item>
@@ -2308,7 +2308,7 @@
         <item name="android:maxWidth">180dp</item>
         <item name="textAllCaps">true</item>
     </style>
-    <style name="Base.Widget.AppCompat.ActionBar.TabView" parent="">
+    <style name="Base.Widget.AppCompat.UserActionBar.TabView" parent="">
         <item name="android:background">@drawable/abc_tab_indicator_material</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:paddingLeft">16dip</item>
@@ -2437,23 +2437,23 @@
     <style name="Base.Widget.AppCompat.ImageButton" parent="android:Widget.ImageButton">
         <item name="android:background">@drawable/abc_btn_default_mtrl_shape</item>
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar" parent="Base.Widget.AppCompat.ActionBar">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar" parent="Base.Widget.AppCompat.UserActionBar">
         <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>
         <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.Light.ActionButton.Overflow</item>
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.Solid">
         <item name="background">?attr/colorPrimary</item>
         <item name="backgroundStacked">?attr/colorPrimary</item>
         <item name="backgroundSplit">?attr/colorPrimary</item>
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabBar" parent="Base.Widget.AppCompat.ActionBar.TabBar">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabBar" parent="Base.Widget.AppCompat.UserActionBar.TabBar">
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabText" parent="Base.Widget.AppCompat.ActionBar.TabText">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabText" parent="Base.Widget.AppCompat.UserActionBar.TabText">
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium.Inverse</item>
     </style>
-    <style name="Base.Widget.AppCompat.Light.ActionBar.TabView" parent="Base.Widget.AppCompat.ActionBar.TabView">
+    <style name="Base.Widget.AppCompat.Light.UserActionBar.TabView" parent="Base.Widget.AppCompat.UserActionBar.TabView">
         <item name="android:background">@drawable/abc_tab_indicator_material</item>
     </style>
     <style name="Base.Widget.AppCompat.Light.PopupMenu" parent="@style/Widget.AppCompat.ListPopupWindow">
@@ -2526,7 +2526,7 @@
         <item name="commitIcon">@drawable/abc_ic_commit_search_api_mtrl_alpha</item>
         <item name="suggestionRowLayout">@layout/abc_search_dropdown_item_icons_2line</item>
     </style>
-    <style name="Base.Widget.AppCompat.SearchView.ActionBar">
+    <style name="Base.Widget.AppCompat.SearchView.UserActionBar">
         <item name="queryBackground">@null</item>
         <item name="submitBackground">@null</item>
         <item name="searchHintIcon">@null</item>
@@ -2916,7 +2916,7 @@
     <style name="Platform.ThemeOverlay.AppCompat.Dark">
         <!-- Action Bar styles -->
         <item name="actionBarItemBackground">@drawable/abc_item_background_holo_dark</item>
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.UserActionBar</item>
         <item name="selectableItemBackground">@drawable/abc_item_background_holo_dark</item>
 
         <!-- SearchView styles -->
@@ -2925,7 +2925,7 @@
     </style>
     <style name="Platform.ThemeOverlay.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/abc_item_background_holo_light</item>
-        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Light.Spinner.DropDown.UserActionBar</item>
         <item name="selectableItemBackground">@drawable/abc_item_background_holo_light</item>
 
         <!-- SearchView attributes -->
@@ -2935,7 +2935,7 @@
     <style name="Platform.Widget.AppCompat.Spinner" parent="android:Widget.Holo.Spinner"/>
     <style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
     </style>
-    <style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
+    <style name="RtlOverlay.Widget.AppCompat.UserActionBar.TitleItem" parent="android:Widget">
         <item name="android:layout_gravity">center_vertical|left</item>
         <item name="android:paddingRight">8dp</item>
     </style>
@@ -3138,13 +3138,13 @@
     <style name="TextAppearance.AppCompat.Title" parent="Base.TextAppearance.AppCompat.Title"/>
     <style name="TextAppearance.AppCompat.Title.Inverse" parent="Base.TextAppearance.AppCompat.Title.Inverse"/>
     <style name="TextAppearance.AppCompat.Tooltip" parent="Base.TextAppearance.AppCompat.Tooltip"/>
-    <style name="TextAppearance.AppCompat.Widget.ActionBar.Menu" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Menu">
+    <style name="TextAppearance.AppCompat.Widget.UserActionBar.Menu" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Menu">
     </style>
-    <style name="TextAppearance.AppCompat.Widget.ActionBar.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
-    <style name="TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse">
+    <style name="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle"/>
+    <style name="TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Subtitle.Inverse">
     </style>
-    <style name="TextAppearance.AppCompat.Widget.ActionBar.Title" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title"/>
-    <style name="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+    <style name="TextAppearance.AppCompat.Widget.UserActionBar.Title" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title"/>
+    <style name="TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse" parent="Base.TextAppearance.AppCompat.Widget.UserActionBar.Title.Inverse">
     </style>
     <style name="TextAppearance.AppCompat.Widget.ActionMode.Subtitle" parent="Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
     </style>
@@ -3502,21 +3502,21 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
     <style name="ThemeOverlay.AppCompat" parent="Base.ThemeOverlay.AppCompat"/>
-    <style name="ThemeOverlay.AppCompat.ActionBar" parent="Base.ThemeOverlay.AppCompat.ActionBar"/>
+    <style name="ThemeOverlay.AppCompat.UserActionBar" parent="Base.ThemeOverlay.AppCompat.UserActionBar"/>
     <style name="ThemeOverlay.AppCompat.Dark" parent="Base.ThemeOverlay.AppCompat.Dark"/>
-    <style name="ThemeOverlay.AppCompat.Dark.ActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="ThemeOverlay.AppCompat.Dark.UserActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.UserActionBar"/>
     <style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Light"/>
-    <style name="ThemeOverlay.AppCompat.DayNight.ActionBar">
+    <style name="ThemeOverlay.AppCompat.DayNight.UserActionBar">
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.UserActionBar</item>
     </style>
     <style name="ThemeOverlay.AppCompat.Dialog" parent="Base.ThemeOverlay.AppCompat.Dialog"/>
     <style name="ThemeOverlay.AppCompat.Dialog.Alert" parent="Base.ThemeOverlay.AppCompat.Dialog.Alert"/>
     <style name="ThemeOverlay.AppCompat.Light" parent="Base.ThemeOverlay.AppCompat.Light"/>
     <style name="ThemeOverlay.Design.TextInputEditText" parent=""/>
     <style name="ThemeOverlay.MaterialComponents" parent="ThemeOverlay.AppCompat"/>
-    <style name="ThemeOverlay.MaterialComponents.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar"/>
-    <style name="ThemeOverlay.MaterialComponents.ActionBar.Primary" parent="">
+    <style name="ThemeOverlay.MaterialComponents.UserActionBar" parent="ThemeOverlay.AppCompat.UserActionBar"/>
+    <style name="ThemeOverlay.MaterialComponents.UserActionBar.Primary" parent="">
     <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     <item name="android:textColorSecondary">@color/material_on_primary_emphasis_medium</item>
     <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
@@ -3524,7 +3524,7 @@
     <!-- Used to tint the ActionMode background and preserve the underline. -->
     <item name="android:colorBackground">?attr/colorPrimary</item>
   </style>
-    <style name="ThemeOverlay.MaterialComponents.ActionBar.Surface" parent="">
+    <style name="ThemeOverlay.MaterialComponents.UserActionBar.Surface" parent="">
     <item name="android:textColorPrimary">@color/material_on_surface_emphasis_high_type</item>
     <item name="android:textColorSecondary">@color/material_on_surface_emphasis_medium</item>
     <item name="actionMenuTextColor">@color/material_on_surface_emphasis_medium</item>
@@ -3580,7 +3580,7 @@
     <item name="colorError">@color/design_dark_default_color_error</item>
     <item name="colorOnError">@color/design_dark_default_color_on_error</item>
   </style>
-    <style name="ThemeOverlay.MaterialComponents.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="ThemeOverlay.MaterialComponents.Dark.UserActionBar" parent="ThemeOverlay.AppCompat.Dark.UserActionBar"/>
     <style name="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Light.BottomSheetDialog"/>
     <style name="ThemeOverlay.MaterialComponents.Dialog" parent="Base.ThemeOverlay.MaterialComponents.Dialog"/>
     <style name="ThemeOverlay.MaterialComponents.Dialog.Alert" parent="Base.ThemeOverlay.MaterialComponents.Dialog.Alert"/>
@@ -3663,15 +3663,15 @@
     <item name="colorControlNormal">@color/material_on_surface_emphasis_medium</item>
     <item name="actionMenuTextColor">@color/material_on_surface_emphasis_medium</item>
   </style>
-    <style name="Widget.AppCompat.ActionBar" parent="Base.Widget.AppCompat.ActionBar">
+    <style name="Widget.AppCompat.UserActionBar" parent="Base.Widget.AppCompat.UserActionBar">
     </style>
-    <style name="Widget.AppCompat.ActionBar.Solid" parent="Base.Widget.AppCompat.ActionBar.Solid">
+    <style name="Widget.AppCompat.UserActionBar.Solid" parent="Base.Widget.AppCompat.UserActionBar.Solid">
     </style>
-    <style name="Widget.AppCompat.ActionBar.TabBar" parent="Base.Widget.AppCompat.ActionBar.TabBar">
+    <style name="Widget.AppCompat.UserActionBar.TabBar" parent="Base.Widget.AppCompat.UserActionBar.TabBar">
     </style>
-    <style name="Widget.AppCompat.ActionBar.TabText" parent="Base.Widget.AppCompat.ActionBar.TabText">
+    <style name="Widget.AppCompat.UserActionBar.TabText" parent="Base.Widget.AppCompat.UserActionBar.TabText">
     </style>
-    <style name="Widget.AppCompat.ActionBar.TabView" parent="Base.Widget.AppCompat.ActionBar.TabView">
+    <style name="Widget.AppCompat.UserActionBar.TabView" parent="Base.Widget.AppCompat.UserActionBar.TabView">
     </style>
     <style name="Widget.AppCompat.ActionButton" parent="Base.Widget.AppCompat.ActionButton"/>
     <style name="Widget.AppCompat.ActionButton.CloseMode" parent="Base.Widget.AppCompat.ActionButton.CloseMode"/>
@@ -3699,21 +3699,21 @@
     <style name="Widget.AppCompat.DropDownItem.Spinner" parent="RtlOverlay.Widget.AppCompat.Search.DropDown.Text"/>
     <style name="Widget.AppCompat.EditText" parent="Base.Widget.AppCompat.EditText"/>
     <style name="Widget.AppCompat.ImageButton" parent="Base.Widget.AppCompat.ImageButton"/>
-    <style name="Widget.AppCompat.Light.ActionBar" parent="Base.Widget.AppCompat.Light.ActionBar">
+    <style name="Widget.AppCompat.Light.UserActionBar" parent="Base.Widget.AppCompat.Light.UserActionBar">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.Solid" parent="Base.Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="Widget.AppCompat.Light.UserActionBar.Solid" parent="Base.Widget.AppCompat.Light.UserActionBar.Solid">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.Solid.Inverse"/>
-    <style name="Widget.AppCompat.Light.ActionBar.TabBar" parent="Base.Widget.AppCompat.Light.ActionBar.TabBar">
+    <style name="Widget.AppCompat.Light.UserActionBar.Solid.Inverse"/>
+    <style name="Widget.AppCompat.Light.UserActionBar.TabBar" parent="Base.Widget.AppCompat.Light.UserActionBar.TabBar">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.TabBar.Inverse"/>
-    <style name="Widget.AppCompat.Light.ActionBar.TabText" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
+    <style name="Widget.AppCompat.Light.UserActionBar.TabBar.Inverse"/>
+    <style name="Widget.AppCompat.Light.UserActionBar.TabText" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.ActionBar.TabText.Inverse">
+    <style name="Widget.AppCompat.Light.UserActionBar.TabText.Inverse" parent="Base.Widget.AppCompat.Light.UserActionBar.TabText.Inverse">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.TabView" parent="Base.Widget.AppCompat.Light.ActionBar.TabView">
+    <style name="Widget.AppCompat.Light.UserActionBar.TabView" parent="Base.Widget.AppCompat.Light.UserActionBar.TabView">
     </style>
-    <style name="Widget.AppCompat.Light.ActionBar.TabView.Inverse"/>
+    <style name="Widget.AppCompat.Light.UserActionBar.TabView.Inverse"/>
     <style name="Widget.AppCompat.Light.ActionButton" parent="Widget.AppCompat.ActionButton"/>
     <style name="Widget.AppCompat.Light.ActionButton.CloseMode" parent="Widget.AppCompat.ActionButton.CloseMode"/>
     <style name="Widget.AppCompat.Light.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow"/>
@@ -3727,7 +3727,7 @@
     <style name="Widget.AppCompat.Light.PopupMenu.Overflow" parent="Base.Widget.AppCompat.Light.PopupMenu.Overflow">
     </style>
     <style name="Widget.AppCompat.Light.SearchView" parent="Widget.AppCompat.SearchView"/>
-    <style name="Widget.AppCompat.Light.Spinner.DropDown.ActionBar" parent="Widget.AppCompat.Spinner.DropDown.ActionBar"/>
+    <style name="Widget.AppCompat.Light.Spinner.DropDown.UserActionBar" parent="Widget.AppCompat.Spinner.DropDown.UserActionBar"/>
     <style name="Widget.AppCompat.ListMenuView" parent="Base.Widget.AppCompat.ListMenuView"/>
     <style name="Widget.AppCompat.ListPopupWindow" parent="Base.Widget.AppCompat.ListPopupWindow">
     </style>
@@ -3747,12 +3747,12 @@
     <style name="Widget.AppCompat.RatingBar.Indicator" parent="Base.Widget.AppCompat.RatingBar.Indicator"/>
     <style name="Widget.AppCompat.RatingBar.Small" parent="Base.Widget.AppCompat.RatingBar.Small"/>
     <style name="Widget.AppCompat.SearchView" parent="Base.Widget.AppCompat.SearchView"/>
-    <style name="Widget.AppCompat.SearchView.ActionBar" parent="Base.Widget.AppCompat.SearchView.ActionBar"/>
+    <style name="Widget.AppCompat.SearchView.UserActionBar" parent="Base.Widget.AppCompat.SearchView.UserActionBar"/>
     <style name="Widget.AppCompat.SeekBar" parent="Base.Widget.AppCompat.SeekBar"/>
     <style name="Widget.AppCompat.SeekBar.Discrete" parent="Base.Widget.AppCompat.SeekBar.Discrete"/>
     <style name="Widget.AppCompat.Spinner" parent="Base.Widget.AppCompat.Spinner"/>
     <style name="Widget.AppCompat.Spinner.DropDown"/>
-    <style name="Widget.AppCompat.Spinner.DropDown.ActionBar"/>
+    <style name="Widget.AppCompat.Spinner.DropDown.UserActionBar"/>
     <style name="Widget.AppCompat.Spinner.Underlined" parent="Base.Widget.AppCompat.Spinner.Underlined"/>
     <style name="Widget.AppCompat.TextView" parent="Base.Widget.AppCompat.TextView"/>
     <style name="Widget.AppCompat.TextView.SpinnerItem" parent="Base.Widget.AppCompat.TextView.SpinnerItem"/>
@@ -3906,19 +3906,19 @@
     <item name="shapeAppearance">@null</item>
     <item name="shapeAppearanceOverlay">@null</item>
   </style>
-    <style name="Widget.MaterialComponents.ActionBar.Primary" parent="Widget.AppCompat.ActionBar.Solid">
+    <style name="Widget.MaterialComponents.UserActionBar.Primary" parent="Widget.AppCompat.UserActionBar.Solid">
     <item name="background">?attr/colorPrimary</item>
     <item name="elevation">@dimen/design_appbar_elevation</item>
   </style>
-    <style name="Widget.MaterialComponents.ActionBar.PrimarySurface" parent="Widget.MaterialComponents.ActionBar.Primary"/>
-    <style name="Widget.MaterialComponents.ActionBar.Solid" parent="Widget.AppCompat.ActionBar.Solid">
+    <style name="Widget.MaterialComponents.UserActionBar.PrimarySurface" parent="Widget.MaterialComponents.UserActionBar.Primary"/>
+    <style name="Widget.MaterialComponents.UserActionBar.Solid" parent="Widget.AppCompat.UserActionBar.Solid">
     <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
     <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
     <!-- Overrides minimum height in landscape to avoid headline6 and subtitle1 height concerns. -->
     <item name="android:minHeight">@dimen/mtrl_toolbar_default_height</item>
     <item name="maxButtonHeight">@dimen/mtrl_toolbar_default_height</item>
   </style>
-    <style name="Widget.MaterialComponents.ActionBar.Surface" parent="Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="Widget.MaterialComponents.UserActionBar.Surface" parent="Widget.AppCompat.Light.UserActionBar.Solid">
     <item name="background">?attr/colorSurface</item>
     <item name="elevation">0dp</item>
   </style>
@@ -4200,7 +4200,7 @@
       @style/ShapeAppearanceOverlay.MaterialComponents.FloatingActionButton
     </item>
   </style>
-    <style name="Widget.MaterialComponents.Light.ActionBar.Solid" parent="Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="Widget.MaterialComponents.Light.UserActionBar.Solid" parent="Widget.AppCompat.Light.UserActionBar.Solid">
     <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
     <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
     <!-- Overrides minimum height in landscape to avoid headline6 and subtitle1 height concerns. -->
@@ -4482,7 +4482,7 @@
     <item name="android:textColor">#dddddd</item>
     <item name="android:textSize">14sp</item>
   </style>
-    <declare-styleable name="ActionBar">
+    <declare-styleable name="UserActionBar">
         <!-- The type of navigation to use. -->
         <attr name="navigationMode">
             <!-- Normal static title text -->
@@ -5043,7 +5043,7 @@
         <!-- =================== -->
         <eat-comment/>
 
-        <!-- Default ActionBar dropdown style. -->
+        <!-- Default UserActionBar dropdown style. -->
         <attr format="reference" name="actionDropDownStyle"/>
         <!-- The preferred item height for dropdown lists. -->
         <attr format="dimension" name="dropdownListPreferredItemHeight"/>
