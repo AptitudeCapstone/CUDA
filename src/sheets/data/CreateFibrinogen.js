@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
+import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
@@ -203,26 +203,21 @@ export const CreateFibrinogen = ({modalRef}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}>
-                <Text style={fonts.heading}>Patient Info</Text>
-                <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
-                <Text> </Text>
+            <ScrollView>
+                <Text style={[fonts.smallText, {paddingBottom: 20}]}>
+                    All fields are optional and can be edited after creation
+                </Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Name'
-                        placeholderTextColor='#bbb'
+                        placeholderTextColor='#aaa'
                         keyboardType='default'
                         onChangeText={(patientName) => setPatientName(patientName)}
                         numberOfLines={1}
                         multiline={false}
-                        style={{padding: 25, color: '#fff'}}
+                        style={format.textBox}
                         blurOnSubmit={false}/>
                 </View>
                 <Text style={fonts.subheadingSpaced}>Blood Type</Text>
@@ -234,12 +229,12 @@ export const CreateFibrinogen = ({modalRef}) => {
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Weight (lb.)'
-                        placeholderTextColor='#bbb'
+                        placeholderTextColor='#aaa'
                         keyboardType='numeric'
                         onChangeText={(patientWeight) => setPatientWeight(patientWeight + ' lb.')}
                         numberOfLines={1}
                         multiline={false}
-                        style={{padding: 25, color: '#fff'}}
+                        style={format.textBox}
                         blurOnSubmit={false}/>
                 </View>
                 <Text style={fonts.subheadingSpaced}>Age</Text>
@@ -253,7 +248,7 @@ export const CreateFibrinogen = ({modalRef}) => {
                         <Text style={buttons.submitButtonText}>Create Patient</Text>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAwareScrollView>
+            </ScrollView>
         </RBSheet>
     );
 }

@@ -26,17 +26,16 @@ import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimen
 import QRScanSheet from "../sheets/QRScanSheet";
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import {FloatingAction} from "react-native-floating-action";
-import {AccountSheet} from "../sheets/user/AccountSheet";
-import {CreateOrganization} from "../sheets/user/CreateOrganization";
+import {Account} from "../sheets/user/Account";
+import {Organization} from "../sheets/user/Organization";
 import {CreateCOVID} from "../sheets/data/CreateCOVID";
 import {EditCOVID} from "../sheets/data/EditCOVID";
 import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
 import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
-import ConnectOrganization from "../sheets/user/ConnectOrganization";
-import {disconnectFromOrganization} from "../auth/Auth";
 import SignInSignUp from "../sheets/user/SignInSignUp";
+import EditAccount from "../sheets/user/EditAccount";
 
-const Data = ({navigation}) => {
+const Data = () => {
     const isFocused = useIsFocused(),
         [selectedTest, setSelectedTest] = useState('covid'),
         [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
@@ -61,15 +60,14 @@ const Data = ({navigation}) => {
             : '/users/' + auth?.uid + '/patients/'),
         patientsRef = database().ref(patientsPath),
         accountSlideUpRef = useRef(null),
-        createOrganizationSlideUpRef = useRef(null),
-        connectOrganizationSlideUpRef = useRef(null),
+        editAccountSlideUpRef = useRef(null),
+        organizationSlideUpRef = useRef(null),
         scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
         editCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null),
         editFibrinogenSlideUpRef = useRef(null),
-        signInSignUpSlideUpRef = useRef(null),
-        userAccountSheetSlideUpRef = useRef(null);
+        signInSignUpSlideUpRef = useRef(null);
 
     useEffect(() => {
         if (!auth) {
@@ -200,27 +198,13 @@ const Data = ({navigation}) => {
     useEffect(() => {
         let organizationButtons = [];
 
-        if(userInfo.user?.organization) {
+        if(userInfo.loginStatus === 'registered') {
             organizationButtons = [{
                 ...fabPropsCommon,
-                text: "Leave my organization",
-                name: "disconnect_organization",
+                text: "My organization",
+                name: "organization",
                 icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
             }];
-        } else if(userInfo.loginStatus === 'registered') {
-            organizationButtons = [
-                {
-                    ...fabPropsCommon,
-                    text: "Sync with an organization",
-                    name: "connect_organization",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                },
-                {
-                    ...fabPropsCommon,
-                    text: "Create a new organization",
-                    name: "create_organization",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                }];
         }
 
         switch(userInfo.loginStatus) {
@@ -254,18 +238,13 @@ const Data = ({navigation}) => {
             case 'account':
                 accountSlideUpRef.current?.open();
                 break;
-            case 'create_organization':
-                createOrganizationSlideUpRef.current?.open();
+            case 'organization':
+                organizationSlideUpRef.current?.open();
                 break;
-            case 'connect_organization':
-                connectOrganizationSlideUpRef.current?.open();
-                break;
-            case 'disconnect_organization':
-                disconnectFromOrganization(userInfo);
             case 'create_patient':
                 Alert.alert(
                     'Create a new patient',
-                    'Which type of tests will you be running for this patient?',
+                    'Select the category of patient',
                     [
                         {
                             text: 'COVID',
@@ -314,8 +293,7 @@ const Data = ({navigation}) => {
                         setCOVIDPatientModalVisible(true);
                     } else if (selectedTest === 'fibrinogen') {
                         setFibrinogenPatientModalVisible(true);
-                    }
-            }}>
+                    }}}>
                 <Text style={patientSelect.text}>Select</Text>
                 <IconFA name='user' size={24} style={patientSelect.icon}/>
             </TouchableOpacity>
@@ -531,21 +509,19 @@ const Data = ({navigation}) => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar} />
 
-            <AccountSheet navigation={navigation}
-                          modalRef={accountSlideUpRef} />
-
-            <CreateOrganization navigation={navigation}
-                                modalRef={createOrganizationSlideUpRef} />
-
-            <ConnectOrganization modalRef={connectOrganizationSlideUpRef} />
+            <SignInSignUp modalRef={signInSignUpSlideUpRef} />
+            <Account modalRef={accountSlideUpRef}
+                     editModalRef={editAccountSlideUpRef} />
+            <EditAccount modalRef={editAccountSlideUpRef}
+                         accountRef={accountSlideUpRef} />
+            <Organization modalRef={organizationSlideUpRef} />
 
             <CreateCOVID modalRef={createCOVIDSlideUpRef} />
-            <EditCOVID modalRef={editCOVIDSlideUpRef} patientKey={patientKeyCOVID} />
             <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
-            <EditFibrinogen modalRef={editFibrinogenSlideUpRef} patientKey={patientKeyFibrinogen} />
-
-            <SignInSignUp modalRef={signInSignUpSlideUpRef} />
-            <AccountSheet modalRef={userAccountSheetSlideUpRef} />
+            <EditCOVID modalRef={editCOVIDSlideUpRef}
+                       patientKey={patientKeyCOVID} />
+            <EditFibrinogen modalRef={editFibrinogenSlideUpRef}
+                            patientKey={patientKeyFibrinogen} />
 
             <QRScanSheet scanSheetRef={scanSheetRef} />
         </SafeAreaView>

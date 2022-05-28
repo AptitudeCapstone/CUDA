@@ -126,12 +126,12 @@ const QRCodes = ({navigation}) => {
                             <TextInput
                                 underlineColorAndroid='transparent'
                                 placeholder='Enter number'
-                                placeholderTextColor='#bbb'
+                                placeholderTextColor='#aaa'
                                 keyboardType='numeric'
                                 onChangeText={(numCodes) => setNumberOfCodes(numCodes)}
                                 numberOfLines={1}
                                 multiline={false}
-                                style={{padding: 25, color: '#fff'}}
+                                style={format.textBox}
                                 blurOnSubmit={false}
                             />
                         </View>

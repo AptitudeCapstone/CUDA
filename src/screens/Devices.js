@@ -32,7 +32,7 @@ import IconFA from "react-native-vector-icons/FontAwesome5";
 import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
-import {AccountSheet} from "../sheets/user/AccountSheet";
+import {Account} from "../sheets/user/Account";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -499,7 +499,7 @@ const Devices = ({navigation}) => {
             floatingIcon={<MainFabIcon />}
             onPressItem={name => fabActionHandler(name)}/>
 
-        <AccountSheet navigation={navigation} modalRef={accountSlideUpRef} />
+        <Account navigation={navigation} modalRef={accountSlideUpRef} />
     </SafeAreaView>;
 }
 

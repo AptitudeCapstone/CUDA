@@ -262,7 +262,9 @@ export const format = StyleSheet.create({
         marginBottom: 20,
         borderColor: '#888',
         borderWidth: 1,
-        borderRadius: 10
+        borderRadius: 10,
+        padding: 25,
+        color: '#777'
     },
     selectPatientBarContainer: {
         marginVertical: 10,
@@ -316,6 +318,10 @@ export const format = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-between'
     },
+    fieldName: {
+        alignSelf: 'flex-start',
+        marginHorizontal: 42,
+        marginBottom: 7}
 });
 
 export const iconButton = {
@@ -356,8 +362,8 @@ export const testSelect = {
         },
         flex: 1,
         marginHorizontal: 15,
-        paddingHorizontal: 26,
-        paddingVertical: 13,
+        paddingHorizontal: 22,
+        paddingVertical: 10,
         borderRadius: 999,
         borderWidth: 1,
         borderColor: '#999'
@@ -520,43 +526,35 @@ export const icons = StyleSheet.create({
 });
 
 export const buttons = StyleSheet.create({
-    submitButtonContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     submitButton: {
+        flexGrow: 0.5,
         backgroundColor: '#2cab5c',
+        height: 40,
+        width: 220,
         paddingHorizontal: 30,
-        paddingVertical: 15,
-        borderRadius: 10,
-        marginTop: 20,
-        marginBottom: 60,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        marginVertical: 10,
     },
     submitButtonText: {
-        fontSize: 24,
+        fontSize: 16,
         color: lightText,
         textAlign: 'center',
-        fontWeight: 'bold'
-    },
-    forgotPasswordContainer: {
+        alignSelf: 'center',
         justifyContent: 'center',
-        alignItems: 'center',
+        fontWeight: 'bold'
     },
     forgotPasswordButton: {
-        backgroundColor: '#348ceb',
-        paddingLeft: 40,
-        paddingRight: 40,
-        paddingTop: 20,
-        paddingBottom: 20,
-        borderRadius: 50,
-        marginTop: 40,
-        marginBottom: 20,
+        marginTop: 10, marginBottom: 30,
     },
     forgotPasswordText: {
-        fontSize: 20,
+        fontSize: 16,
         color: darkText,
+        textDecorationLine: 'underline',
+        fontStyle: 'italic',
         textAlign: 'center',
-        fontWeight: 'bold'
+        alignSelf: 'center',
     },
     bloodTypeSelectButton: {
         padding: 16,

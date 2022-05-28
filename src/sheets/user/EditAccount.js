@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
 
-const EditAccount = ({modalRef}) => {
+const EditAccount = ({modalRef, accountRef}) => {
     const userInfo = useAuth(),
         [name, setName] = useState(null),
         [newPassword, setNewPassword] = useState(null),
@@ -15,7 +14,7 @@ const EditAccount = ({modalRef}) => {
 
     useEffect(() => {
         JSON.stringify(userInfo, null, 2);
-        setShowEmailPass(userInfo.userAuth.providerData[0].providerId !== 'google.com');
+        setShowEmailPass(userInfo.userAuth.providerData[0].providerId === 'password');
     }, []);
 
     const handleEditUser = async () => {
@@ -24,8 +23,11 @@ const EditAccount = ({modalRef}) => {
             await editUser();
             Alert.alert('Success', 'Your information has been updated');
             modalRef.current?.close();
+            accountRef.current?.open();
         } catch (error) {
             Alert.alert('Error', error.message);
+            modalRef.current?.close();
+            accountRef.current?.open();
         }
     }
 
@@ -45,13 +47,13 @@ const EditAccount = ({modalRef}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40,}}>
+            <ScrollView>
                 <Text style={fonts.heading}>Update Name</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='New Name'
-                        placeholderTextColor='#bbb'
+                        placeholderTextColor='#aaa'
                         keyboardType='default'
                         onChangeText={(name) => setName(name)}
                         numberOfLines={1}
@@ -68,7 +70,7 @@ const EditAccount = ({modalRef}) => {
                                     <TextInput
                                         underlineColorAndroid='transparent'
                                         placeholder='New Email address'
-                                        placeholderTextColor='#bbb'
+                                        placeholderTextColor='#aaa'
                                         keyboardType='email-address'
                                         onChangeText={(email) => setNewEmail(email)}
                                         numberOfLines={1}
@@ -82,7 +84,7 @@ const EditAccount = ({modalRef}) => {
                                     <TextInput
                                         underlineColorAndroid='transparent'
                                         placeholder='New Password'
-                                        placeholderTextColor='#bbb'
+                                        placeholderTextColor='#aaa'
                                         onChangeText={(password) => setNewPassword(password)}
                                         numberOfLines={1}
                                         multiline={false}
@@ -101,7 +103,7 @@ const EditAccount = ({modalRef}) => {
                         <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAwareScrollView>
+            </ScrollView>
         </RBSheet>
     );
 }
