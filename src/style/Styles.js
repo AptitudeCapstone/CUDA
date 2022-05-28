@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 
 /*
     Named hex colors
@@ -27,6 +27,30 @@ export const fabColor = lightPurple;
 export const buttonBorderColor = '#666';
 export const tabBarActiveTextColor = '#666';
 export const tabBarInactiveTextColor = '#777';
+
+/*
+    Camera styles
+ */
+
+const camSize = Dimensions.get('window').width - 40;
+
+export const camera = {
+    iOS: StyleSheet.create({
+        alignItems: 'center',
+        width: camSize,
+        height: camSize,
+        overflow:'hidden',
+        borderRadius: 15,
+        backgroundColor: backgroundColor,
+    }),
+    android: StyleSheet.create({
+        width: camSize,
+        height: camSize,
+        overflow:'hidden',
+        borderRadius: 15,
+        backgroundColor: backgroundColor
+    })
+}
 
 /*
     Tab navigator styles
@@ -82,7 +106,7 @@ export const rbSheetStyle = {
     container: {
         borderTopRightRadius: 25,
         borderTopLeftRadius: 25,
-        padding: 15,
+        padding: 10,
         backgroundColor: backgroundColor,
         borderTopColor: buttonBorderColor,
         borderLeftColor: buttonBorderColor,
@@ -91,7 +115,7 @@ export const rbSheetStyle = {
         borderLeftWidth: 1,
         borderRightWidth: 1,
         alignSelf: 'center',
-        width: '90%'
+        width: '100%'
     }
 };
 

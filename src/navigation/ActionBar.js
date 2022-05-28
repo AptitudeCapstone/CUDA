@@ -1,17 +1,22 @@
 import React, {useRef} from 'react';
-import {backgroundColor, device, rbCameraSheetStyle} from '../style/Styles';
+import {backgroundColor, device, fonts, rbCameraSheetStyle, rbSheetStyle} from '../style/Styles';
 import { FloatingAction } from "react-native-floating-action";
 import IconMCI from "react-native-vector-icons/MaterialCommunityIcons";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
 import IconF from "react-native-vector-icons/Foundation";
 import IconFA from "react-native-vector-icons/FontAwesome5";
-import {UserSheet} from "../components/UserSheet";
-import {PatientSheet} from "../components/PatientSheet";
-import {View} from "react-native";
+import {UserSheet} from "../sheets/UserSheet";
+import {PatientSheet} from "../sheets/PatientSheet";
+import {SafeAreaView, Text, useWindowDimensions, View} from "react-native";
+import RBSheet from "react-native-raw-bottom-sheet";
+import QRCodeScanner from "react-native-qrcode-scanner";
+import {RNCamera} from "react-native-camera";
+import QRScanSheet from "../sheets/QRScanSheet";
 
 const ActionBar = ({navigation}) => {
     const userSheetRef = useRef(null);
     const patientSheetRef = useRef(null);
+    const scanSheetRef = useRef(null);
 
     const actions = [
         {
@@ -40,6 +45,8 @@ const ActionBar = ({navigation}) => {
         },
     ];
 
+    const dimensions = useWindowDimensions();
+
     return (
         <View>
             <FloatingAction
@@ -58,13 +65,14 @@ const ActionBar = ({navigation}) => {
                     } else if(name === 'patients') {
                         patientSheetRef.current?.open();
                     } else if (name === 'qr') {
-                        navigation.navigate('User Stack', { screen: 'QR Scan'});
+                        scanSheetRef.current?.open();
                     }
                 }}
             />
             <View>
                 <UserSheet navigation={navigation} modalRef={userSheetRef} />
                 <PatientSheet navigation={navigation} modalRef={patientSheetRef} />
+                <QRScanSheet scanSheetRef={scanSheetRef} />
             </View>
         </View>
     );

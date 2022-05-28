@@ -24,9 +24,6 @@ import {LineChart} from 'react-native-chart-kit';
 import ActionBar from "../navigation/ActionBar";
 import useAuth from "../auth/UserContext";
 import {useIsFocused} from '@react-navigation/native';
-import QRCodeScanner from "react-native-qrcode-scanner";
-import {RNCamera} from "react-native-camera";
-import RBSheet from "react-native-raw-bottom-sheet";
 import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions";
 
 const Data = ({navigation}) => {
@@ -392,21 +389,6 @@ const Data = ({navigation}) => {
                     }
                 </ScrollView>
             </View>
-            <RBSheet
-                ref={modalRef} height={dimensions.height * 0.75} customStyles={rbCameraSheetStyle}>
-                <QRCodeScanner
-                    onRead={(e) => {
-                        Alert.alert('Scanned data: ', e.data);
-                        modalRef.current?.close();
-                    }}
-                    flashMode={RNCamera.Constants.FlashMode.auto}
-                    topContent={
-                        <Text style={[device.statusText, {color: '#888', textAlign: 'center'}]}>
-                            Place QR code into the frame
-                        </Text>
-                    }
-                />
-            </RBSheet>
             <ActionBar navigation={navigation}/>
         </SafeAreaView>
     );

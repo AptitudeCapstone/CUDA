@@ -1333,11 +1333,6 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-14.11.0.tgz#0e91750a15ebc65ab2af50ebc47360c8f8a0e418"
   integrity sha512-fD+OYvJjhDhDJmbARzKOZPcsmc3sAExZzKzYijscTDHwhmVM1hgddoTQZMQr40jIQVY5uO2PPx7BiKOz5dZssg==
 
-"@react-native-firebase/ml@^14.11.0":
-  version "14.11.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/ml/-/ml-14.11.0.tgz#008c9bfea836fb5f3f5d8564be109f737961054f"
-  integrity sha512-Xuq4NtcvdLwFFYfaZd5f5wJCf0u6bL2vNK8d+En95kYUboMaKKY+8HWfLkP5tQKsMm+bMhbgLaJeU5U20ZLYkg==
-
 "@react-native-google-signin/google-signin@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-7.2.2.tgz#29e416d5c8484b52de3dc97f982f04b0083f27fe"
@@ -6224,7 +6219,7 @@ react-native-permissions@^3.1.0:
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.3.1.tgz#8a359d9c0531afcde2f642a459b48c4c1e3e8f2d"
   integrity sha512-Ap9nVWBWJ7lyU6Ye3Qltm2V+Ut6XjDcs+6ZBmK1UUxcCoSSGx/mQg2GbMJLjlnoVtUgVHR3IhyZ0mN9DlMPRFQ==
 
-react-native-qrcode-scanner@^1.5.4:
+react-native-qrcode-scanner@^1.5.5:
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.5.5.tgz#0d20101712715da108742a2bbbd0397569031b01"
   integrity sha512-il79uStkFqUvofqXJQfOL30qgQyU17MUKxj7IGHv6oT2OxIY/vutTwuPPDbsivtv0yTMHP4dGx/79oys4eAuNw==
