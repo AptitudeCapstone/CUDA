@@ -6,11 +6,11 @@ import useAuth from "../auth/UserContext";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import {RNCamera} from "react-native-camera";
 
-const QRScanSheet = ({scanSheetRef}) => {
+const QRScanSheet = ({modalRef}) => {
     const dimensions = useWindowDimensions();
     const userInfo = useAuth();
 
-    return <RBSheet ref={scanSheetRef} height={dimensions.height * 0.55} customStyles={rbSheetStyle}>
+    return <RBSheet ref={modalRef} height={dimensions.height * 0.55} customStyles={rbSheetStyle}>
         <SafeAreaView style={[{flexGrow: 1, backgroundColor: backgroundColor}]}>
             <View style={{flex: 1, alignContent: 'flex-start'}}>
                 <QRCodeScanner

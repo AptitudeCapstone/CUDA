@@ -65,13 +65,29 @@ export const UserProvider: React.FC = ({children}) => {
                             ref: userDataRef
                         });
                     } else {
-                        console.log('User database entry not found: creating one');
+                        console.log('User database entry not found (creating one)');
+
                         let update = {displayName: ''};
-                        if (userAuth.displayName) {
+
+                        if (userAuth.displayName)
                             update = {displayName: userAuth.displayName}
-                        } else if (userAuth.providerData[0] && userAuth.providerData[0].displayName) {
-                            update = {displayName: userAuth.providerData[0]['displayName']}
-                        }
+
+                        userAuth.providerData.forEach((user) => {
+                            switch(user.providerId) {
+                                case 'apple.com':
+                                    console.log('User signed in with apple');
+                                    console.log(user);
+                                    if(user.displayName)
+                                        update = {displayName: user.displayName};
+                                    break;
+                                case 'google.com':
+                                    console.log('User signed in with google');
+                                    console.log(user);
+                                    if(user.displayName)
+                                        update = {displayName: user.displayName};
+                                    break;
+                            }
+                        });
 
                         userDataRef.update(update).then(() => {
                             setUserData({

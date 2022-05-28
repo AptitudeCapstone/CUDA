@@ -7,7 +7,7 @@ import {disconnectFromOrganization} from "../../auth/Auth";
 import useAuth from "../../auth/UserContext";
 import database from "@react-native-firebase/database";
 
-export const Organization = ({modalRef}) => {
+export const Organization = ({modalRef, generateQRRef}) => {
     const userInfo = useAuth(),
         organization = userInfo.user?.organization,
         dimensions = useWindowDimensions(),
@@ -24,13 +24,8 @@ export const Organization = ({modalRef}) => {
         [country, setCountry] = useState(''),
         [zip, setZip] = useState(0);
 
-    const editAccount = () => {
-        modalRef.current.close();
-    }
-
     const disconnect = async () => {
         let name = 'organization';
-
         await database().ref('organizations/' + organization)
             .once('value')
             .then((organizationSnapshot) => {
@@ -127,166 +122,142 @@ export const Organization = ({modalRef}) => {
                                     using an add code, or create one with just a small amount of information.
                                 </Text>
                             </View>
-                            <View>
-                                <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
-                                    <Text style={fonts.subheading}>
-                                        Sync to existing
-                                    </Text>
-                                </View>
-                                <Text style={[fonts.mediumText, format.fieldName]}>Organization add code *</Text>
-                                <TextInput style={format.textBox}
-                                           underlineColorAndroid='transparent'
-                                           placeholder='At least 4 digits'
-                                           placeholderTextColor='#aaa'
-                                           keyboardType='numeric'
-                                           onChangeText={(code) => setConnectAddCode(code)}
-                                           numberOfLines={1}
-                                           multiline={false}
-                                           maxLength={8}
-                                           blurOnSubmit={false}/>
+                            <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
+                                <Text style={fonts.mediumText}>Sync to existing</Text>
                             </View>
+                            <Text style={[fonts.mediumText, format.fieldName]}>Organization add code *</Text>
+                            <TextInput style={format.textBox}
+                                       underlineColorAndroid='transparent'
+                                       placeholder='At least 4 digits'
+                                       placeholderTextColor='#aaa'
+                                       keyboardType='numeric'
+                                       onChangeText={(code) => setConnectAddCode(code)}
+                                       numberOfLines={1}
+                                       multiline={false}
+                                       maxLength={8}
+                                       blurOnSubmit={false}/>
                             <TouchableOpacity style={buttons.submitButton}
                                               onPress={() => handleConnectOrganization()}>
                                 <Text style={buttons.submitButtonText}>Connect and Sync</Text>
                             </TouchableOpacity>
                             <View>
                                 <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
-                                    <Text style={fonts.subheading}>
+                                    <Text style={[fonts.mediumText, format.fieldName]}>
                                         Create new and sync
                                     </Text>
                                 </View>
-                                <Text style={fonts.subheading}>Name *</Text>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Name *'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newName) => setName(newName)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
+                                <Text style={[fonts.mediumText, format.fieldName]}>Name *</Text>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Name *'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newName) => setName(newName)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
                             <View>
-                                <Text style={fonts.subheading}>Add Code *</Text>
+                                <Text style={[fonts.mediumText, format.fieldName]}>Add Code *</Text>
                                 <Text style={fonts.smallText}>This unique code is used for apps to connect to this
                                     organization</Text>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='4+ digits *'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='numeric'
-                                               onChangeText={(code) => setAddCode(code)}
-                                               numberOfLines={1}
-                                               maxLength={8}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='4+ digits *'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='numeric'
+                                           onChangeText={(code) => setAddCode(code)}
+                                           numberOfLines={1}
+                                           maxLength={8}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
                             <View>
-                                <Text style={fonts.subheading}>Recovery Email(s)</Text>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Email address 1 *'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='email-address'
-                                               onChangeText={(ownerEmail) => setOwnerEmail1(ownerEmail)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Email address 2'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='email-address'
-                                               onChangeText={(ownerEmail) => setOwnerEmail2(ownerEmail)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Email address 3'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='email-address'
-                                               onChangeText={(ownerEmail) => setOwnerEmail3(ownerEmail)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
+                                <Text style={[fonts.mediumText, format.fieldName]}>Recovery Email(s)</Text>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Email address 1 *'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(ownerEmail) => setOwnerEmail1(ownerEmail)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Email address 2'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(ownerEmail) => setOwnerEmail2(ownerEmail)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Email address 3'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(ownerEmail) => setOwnerEmail3(ownerEmail)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
                             <View>
-                                <Text style={fonts.subheading}>Address</Text>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Address line 1'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newStreetAddress1) => setStreetAddress1(newStreetAddress1)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Address line 2 (e.g. Apt. #1)'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newStreetAddress2) => setStreetAddress2(newStreetAddress2)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='City'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newCity) => setCity(newCity)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='State'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newState) => setState(newState)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Country'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='default'
-                                               onChangeText={(newCountry) => setCountry(newCountry)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='5-digit zip code'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='numeric'
-                                               onChangeText={(newZip) => setZip(newZip)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
+                                <Text style={[fonts.mediumText, format.fieldName]}>Address</Text>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Address line 1'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newStreetAddress1) => setStreetAddress1(newStreetAddress1)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Address line 2 (e.g. Apt. #1)'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newStreetAddress2) => setStreetAddress2(newStreetAddress2)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='City'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newCity) => setCity(newCity)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='State'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newState) => setState(newState)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Country'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(newCountry) => setCountry(newCountry)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='5-digit zip code'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='numeric'
+                                           onChangeText={(newZip) => setZip(newZip)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
                             <TouchableOpacity style={buttons.submitButton}
                                               onPress={() => registerOrganization()}>
@@ -297,12 +268,15 @@ export const Organization = ({modalRef}) => {
 
                         </>
                 }
-
                 {
                     (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => editAccount()}>
-                                <Text style={fonts.mediumText}>Edit my account</Text>
+                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
+                                              onPress={() => {
+                                                  modalRef.current?.close();
+                                                  generateQRRef.current?.open();
+                                              }}>
+                                <Text style={fonts.mediumText}>Generate QR codes</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => disconnect()}>
                                 <Text style={fonts.mediumText}>Disconnect from organization</Text>
@@ -311,7 +285,7 @@ export const Organization = ({modalRef}) => {
                 }
                 {
                     (userInfo.loginStatus === 'loading' || userInfo.loginStatus === 'signed-out')
-                        ? <ActivityIndicator style={{padding: 15}} size={'large'}/>
+                        ? <ActivityIndicator style={{padding: 15}} size={'large'} />
                         : null
                 }
             </ScrollView>

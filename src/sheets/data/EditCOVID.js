@@ -49,7 +49,7 @@ export const EditCOVID = ({modalRef, patientKey}) => {
             <ScrollView>
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can always be edited</Text>
-                <Text style={fonts.subheading}>Name</Text>
+                <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
                 <View style={format.textBox}>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Name'
@@ -61,7 +61,7 @@ export const EditCOVID = ({modalRef, patientKey}) => {
                                style={format.textBox}
                                blurOnSubmit={false}/>
                 </View>
-                <Text style={fonts.subheading}>Email</Text>
+                <Text style={[fonts.mediumText, format.fieldName]}>Email</Text>
                 <View style={format.textBox}>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Email address'
@@ -73,7 +73,7 @@ export const EditCOVID = ({modalRef, patientKey}) => {
                                style={format.textBox}
                                blurOnSubmit={false}/>
                 </View>
-                <Text style={fonts.subheading}>Phone</Text>
+                <Text style={[fonts.mediumText, format.fieldName]}>Phone</Text>
                 <View style={format.textBox}>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Phone number'

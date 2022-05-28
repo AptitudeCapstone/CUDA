@@ -14,7 +14,9 @@ const EditAccount = ({modalRef, accountRef}) => {
 
     useEffect(() => {
         JSON.stringify(userInfo, null, 2);
-        setShowEmailPass(userInfo.userAuth.providerData[0].providerId === 'password');
+        const isEmailPassAccount = userInfo.userAuth.providerId === 'password' ||
+            (userInfo.userAuth.providerData[0] && userInfo.userAuth.providerData[0].providerId === 'password');
+        setShowEmailPass(isEmailPassAccount);
     }, []);
 
     const handleEditUser = async () => {
@@ -32,77 +34,64 @@ const EditAccount = ({modalRef, accountRef}) => {
     }
 
     const editUser = async () => {
-        if (newPassword != null) {
-            await userInfo.userAuth.updatePassword(newPassword);
-        }
+        if (newPassword != null) await userInfo.userAuth.updatePassword(newPassword);
 
-        if (newEmail != null) {
-            await userInfo.userAuth.updateEmail(newEmail);
-        }
+        if (newEmail != null) await userInfo.userAuth.updateEmail(newEmail);
 
-        if (name != null) {
-            await userInfo.userData.ref.update({displayName: name});
-        }
+        if (name != null) await userInfo.userData.ref.update({displayName: name});
     }
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
             <ScrollView>
-                <Text style={fonts.heading}>Update Name</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='New Name'
-                        placeholderTextColor='#aaa'
-                        keyboardType='default'
-                        onChangeText={(name) => setName(name)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 20, color: '#fff'}}
-                        blurOnSubmit={false}/>
-                </View>
+                <Text style={fonts.heading}>
+                    Update Name
+                </Text>
+                <TextInput underlineColorAndroid='transparent'
+                           placeholder='New Name'
+                           placeholderTextColor='#aaa'
+                           keyboardType='default'
+                           onChangeText={(name) => setName(name)}
+                           numberOfLines={1}
+                           multiline={false}
+                           style={format.textBox}
+                           blurOnSubmit={false}/>
                 {
                     showEmailPass
                         ? (
                             <>
-                                <Text style={fonts.heading}>Update Email Address</Text>
-                                <View style={format.textBox}>
-                                    <TextInput
-                                        underlineColorAndroid='transparent'
-                                        placeholder='New Email address'
-                                        placeholderTextColor='#aaa'
-                                        keyboardType='email-address'
-                                        onChangeText={(email) => setNewEmail(email)}
-                                        numberOfLines={1}
-                                        multiline={false}
-                                        style={{padding: 20, color: '#fff'}}
-                                        blurOnSubmit={false}
-                                    />
+                                <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
+                                    <Text style={[fonts.mediumText, format.fieldName]}>
+                                        Update Email Address
+                                    </Text>
                                 </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='New Email address'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(email) => setNewEmail(email)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                                 <Text style={fonts.heading}>Update Password</Text>
-                                <View style={format.textBox}>
-                                    <TextInput
-                                        underlineColorAndroid='transparent'
-                                        placeholder='New Password'
-                                        placeholderTextColor='#aaa'
-                                        onChangeText={(password) => setNewPassword(password)}
-                                        numberOfLines={1}
-                                        multiline={false}
-                                        style={{padding: 20, color: '#fff'}}
-                                        blurOnSubmit={false}
-                                    />
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='New Password'
+                                           placeholderTextColor='#aaa'
+                                           onChangeText={(password) => setNewPassword(password)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </>
-                        ) : null
+                            ) : null
                 }
 
-                <View style={buttons.submitButtonContainer}>
-                    <TouchableOpacity
-                        style={buttons.submitButton}
-                        onPress={() => handleEditUser()}>
-                        <Text style={buttons.submitButtonText}>Apply Changes</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={buttons.submitButton} onPress={() => handleEditUser()}>
+                    <Text style={buttons.submitButtonText}>
+                        Apply Changes
+                    </Text>
+                </TouchableOpacity>
             </ScrollView>
         </RBSheet>
     );

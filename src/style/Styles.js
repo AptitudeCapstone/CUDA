@@ -321,7 +321,9 @@ export const format = StyleSheet.create({
     fieldName: {
         alignSelf: 'flex-start',
         marginHorizontal: 42,
-        marginBottom: 7}
+        marginBottom: 7,
+        fontWeight: 'normal'
+    }
 });
 
 export const iconButton = {

@@ -122,16 +122,12 @@ const SignInSignUp = ({modalRef}) => {
             requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
         });
 
-        if (!appleAuthRequestResponse.identityToken) {
+        if (!appleAuthRequestResponse.identityToken)
             throw new Error('Apple sign-in failed. Try another method. ');
-        }
 
         const { identityToken, nonce } = appleAuthRequestResponse;
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-        userInfo.userAuth.linkWithCredential(appleCredential)
-            .catch(() => {
-                auth().signInWithCredential(appleCredential);
-            });
+        await auth().signInWithCredential(appleCredential);
     }
 
     //      if an account with this credential exists, link them
@@ -198,30 +194,25 @@ const SignInSignUp = ({modalRef}) => {
                                     <GoogleSocialButton buttonViewStyle={{width: dimensions.width - 80}} onPress={async () => await handleLogInGoogle()} />
                                 </View>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Email Address</Text>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Email address'
-                                               placeholderTextColor='#aaa'
-                                               keyboardType='email-address'
-                                               onChangeText={(email) => setEmail(email)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Email address'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(email) => setEmail(email)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Password</Text>
-                                <View style={format.textBox}>
-                                    <TextInput underlineColorAndroid='transparent'
-                                               placeholder='Password'
-                                               placeholderTextColor='#aaa'
-                                               onChangeText={(password) => setPassword(password)}
-                                               numberOfLines={1}
-                                               multiline={false}
-                                               style={format.textBox}
-                                               blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Password'
+                                           placeholderTextColor='#aaa'
+                                           onChangeText={(password) => setPassword(password)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
-
                             <TouchableOpacity style={buttons.submitButton}
                                               onPress={async () => await handleLogIn()}>
                                 <Text style={[buttons.submitButtonText, ]}>Sign in</Text>
@@ -231,52 +222,42 @@ const SignInSignUp = ({modalRef}) => {
                                 <Text style={buttons.forgotPasswordText}>Forgot your password?</Text>
                             </TouchableOpacity>
                             <View>
-                                <View style={{alignItems: 'center', paddingTop: 30,
-                                                paddingBottom: 10, paddingHorizontal: 40,}}>
-                                    <Text style={fonts.subheading}>
+                                <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
+                                    <Text style={[fonts.mediumText, format.fieldName]}>
                                         Register with email
                                     </Text>
                                 </View>
                                 <Text style={[fonts.mediumText, format.fieldName]}>
                                     Name
                                 </Text>
-                                <View style={format.textBox}>
-                                    <TextInput
-                                        underlineColorAndroid='transparent'
-                                        placeholder='Name'
-                                        placeholderTextColor='#aaa'
-                                        keyboardType='default'
-                                        onChangeText={(name) => setCreateName(name)}
-                                        numberOfLines={1}
-                                        multiline={false}
-                                        style={format.textBox}
-                                        blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Name'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='default'
+                                           onChangeText={(name) => setCreateName(name)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Email Address</Text>
-                                <View style={format.textBox}>
-                                    <TextInput
-                                        underlineColorAndroid='transparent'
-                                        placeholder='Email address'
-                                        placeholderTextColor='#aaa'
-                                        keyboardType='email-address'
-                                        onChangeText={(email) => setCreateEmail(email)}
-                                        numberOfLines={1}
-                                        multiline={false}
-                                        style={format.textBox}
-                                        blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Email address'
+                                           placeholderTextColor='#aaa'
+                                           keyboardType='email-address'
+                                           onChangeText={(email) => setCreateEmail(email)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Password</Text>
-                                <View style={format.textBox}>
-                                    <TextInput
-                                        underlineColorAndroid='transparent'
-                                        placeholder='Password (at least 6 characters)'
-                                        placeholderTextColor='#aaa'
-                                        onChangeText={(password) => setCreatePassword(password)}
-                                        numberOfLines={1}
-                                        multiline={false}
-                                        style={format.textBox}
-                                        blurOnSubmit={false}/>
-                                </View>
+                                <TextInput underlineColorAndroid='transparent'
+                                           placeholder='Password (at least 6 characters)'
+                                           placeholderTextColor='#aaa'
+                                           onChangeText={(password) => setCreatePassword(password)}
+                                           numberOfLines={1}
+                                           multiline={false}
+                                           style={format.textBox}
+                                           blurOnSubmit={false}/>
                             </View>
                             <TouchableOpacity style={buttons.submitButton} onPress={async () => await handleSignUp()}>
                                 <Text style={buttons.submitButtonText}>Create Account</Text>

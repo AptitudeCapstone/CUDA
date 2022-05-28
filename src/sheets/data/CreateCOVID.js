@@ -75,20 +75,17 @@ export const CreateCOVID = ({modalRef}) => {
                 <Text style={[fonts.smallText, {paddingBottom: 20}]}>
                     All fields are optional and can be edited after the patient is created
                 </Text>
-                <Text style={fonts.subheading}>Name</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Name'
-                        placeholderTextColor='#aaa'
-                        keyboardType='default'
-                        onChangeText={(patientName) => setPatientName(patientName)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={format.textBox}
-                        blurOnSubmit={false}/>
-                </View>
-                <Text style={fonts.subheading}>Contact</Text>
+                <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
+                    <TextInput underlineColorAndroid='transparent'
+                               placeholder='Name'
+                               placeholderTextColor='#aaa'
+                               keyboardType='default'
+                               onChangeText={(patientName) => setPatientName(patientName)}
+                               numberOfLines={1}
+                               multiline={false}
+                               style={format.textBox}
+                               blurOnSubmit={false}/>
+                <Text style={[fonts.mediumText, format.fieldName]}>Contact</Text>
                 <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
