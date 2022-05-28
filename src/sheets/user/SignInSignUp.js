@@ -114,9 +114,35 @@ const SignInSignUp = ({modalRef}) => {
             });
     }
 
-    const handleLogInGoogle = async (userInfo) => {
+    const handleLogInApple = async () => {
         try {
-            await logInGoogle(userInfo);
+            await logInApple();
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
+    }
+
+    async function logInApple() {
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+
+        if (!appleAuthRequestResponse.identityToken) {
+            throw new Error('Apple sign-in failed. Try another method. ');
+        }
+
+        const { identityToken, nonce } = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+        userInfo.userAuth.linkWithCredential(appleCredential)
+            .catch(() => {
+                auth().signInWithCredential(appleCredential);
+            });
+    }
+
+    const handleLogInGoogle = async () => {
+        try {
+            await logInGoogle();
         } catch (error) {
             Alert.alert('Error', error.message);
         }
@@ -131,10 +157,10 @@ const SignInSignUp = ({modalRef}) => {
             await GoogleSignin.hasPlayServices();
             const {idToken} = await GoogleSignin.signIn();
             modalRef.current?.close();
-            const credential = auth.GoogleAuthProvider.credential(idToken);
-            userInfo.userAuth.linkWithCredential(credential)
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+            userInfo.userAuth.linkWithCredential(googleCredential)
                 .catch(() => {
-                    auth().signInWithCredential(credential);
+                    auth().signInWithCredential(googleCredential);
                 });
             return true;
         } catch (error) {
@@ -170,8 +196,8 @@ const SignInSignUp = ({modalRef}) => {
                             ? <>
                                 <View>
                                     <View style={{marginBottom: 20, alignItems: 'center'}}>
-                                        <AppleSocialButton buttonViewStyle={{margin: 10}} onPress={() => Alert.alert("Hello")} />
-                                        <GoogleSocialButton buttonViewStyle={{margin: 10, padding: 10}} onPress={() => handleLogInGoogle()} />
+                                        <AppleSocialButton buttonViewStyle={{margin: 10}} onPress={async () => await handleLogInApple()} />
+                                        <GoogleSocialButton buttonViewStyle={{margin: 10, padding: 10}} onPress={async () => await handleLogInGoogle()} />
                                     </View>
                                     <Text style={fonts.heading}>Sign in with email</Text>
                                     <View style={format.textBox}>
