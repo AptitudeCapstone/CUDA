@@ -7,7 +7,7 @@ import {disconnectFromOrganization} from "../../auth/Auth";
 import useAuth from "../../auth/UserContext";
 import database from "@react-native-firebase/database";
 
-export const Organization = ({modalRef, generateQRRef}) => {
+export const Organization = ({modalRef}) => {
     const userInfo = useAuth(),
         organization = userInfo.user?.organization,
         dimensions = useWindowDimensions(),
@@ -24,8 +24,13 @@ export const Organization = ({modalRef, generateQRRef}) => {
         [country, setCountry] = useState(''),
         [zip, setZip] = useState(0);
 
+    const editAccount = () => {
+        modalRef.current.close();
+    }
+
     const disconnect = async () => {
         let name = 'organization';
+
         await database().ref('organizations/' + organization)
             .once('value')
             .then((organizationSnapshot) => {
@@ -268,15 +273,12 @@ export const Organization = ({modalRef, generateQRRef}) => {
 
                         </>
                 }
+
                 {
                     (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]}
-                                              onPress={() => {
-                                                  modalRef.current?.close();
-                                                  generateQRRef.current?.open();
-                                              }}>
-                                <Text style={fonts.mediumText}>Generate QR codes</Text>
+                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => editAccount()}>
+                                <Text style={fonts.mediumText}>Edit my account</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => disconnect()}>
                                 <Text style={fonts.mediumText}>Disconnect from organization</Text>
@@ -285,7 +287,7 @@ export const Organization = ({modalRef, generateQRRef}) => {
                 }
                 {
                     (userInfo.loginStatus === 'loading' || userInfo.loginStatus === 'signed-out')
-                        ? <ActivityIndicator style={{padding: 15}} size={'large'} />
+                        ? <ActivityIndicator style={{padding: 15}} size={'large'}/>
                         : null
                 }
             </ScrollView>

@@ -1,29 +1,33 @@
 import React, {useState} from 'react';
-import RBSheet from "react-native-raw-bottom-sheet";
-import {Alert, Keyboard, Modal, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View} from 'react-native';
+import {
+    Keyboard,
+    Modal,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 import IconF from 'react-native-vector-icons/Feather';
 import Pdf from 'react-native-pdf';
 import RNQRGenerator from 'rn-qr-generator';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNShareFile from 'react-native-share-pdf';
-import {fonts, format, rbSheetStyle} from "./style/Styles";
 
-const QRCodes = ({modalRef}) => {
-    const [numberOfCodes, setNumberOfCodes] = useState(0),
-        [pdfSource, setPDFSource] = useState(''),
-        [shareSource, setShareSource] = useState(null),
-        [imageUris, setImageUris] = useState([]),
-        [modalVisible, setModalVisible] = useState(false),
-        dimensions = useWindowDimensions();
+const QRCodes = ({navigation}) => {
+    const [numberOfCodes, setNumberOfCodes] = useState(0);
+    const [pdfSource, setPDFSource] = useState('');
+    const [shareSource, setShareSource] = useState(null);
+    const [imageUris, setImageUris] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
     // sharing menu functions
     async function loadAndSharePDF() {
-        try {
-            console.log(RNShareFile.sharePDF);
-            await RNShareFile.sharePDF(shareSource.document, shareSource.filename);
-        } catch (error) {
-            Alert.alert('PDF Error', error);
-        }
+        console.log(RNShareFile.sharePDF);
+        const showError = await RNShareFile.sharePDF(shareSource.document, shareSource.filename);
+        if (showError) console.log(showError);
     }
 
     // qr generating functions
@@ -40,26 +44,24 @@ const QRCodes = ({modalRef}) => {
                 backgroundColor: 'white',
                 color: 'black',
                 correctionLevel: 'M',
-            }).then((response) => {
-                //console.log('Response:', response);
-                let temp = imageUris;
-                temp.push(response.base64);
-                setImageUris(temp);
-            }).catch((err) => console.log('Cannot create QR code', err));
+            })
+                .then((response) => {
+                    //console.log('Response:', response);
+                    let temp = imageUris;
+                    temp.push(response.base64);
+                    setImageUris(temp);
+                })
+                .catch((err) => console.log('Cannot create QR code', err));
         }
 
-        generatePDF().then(() => {
-            showPDF();
-        }).catch((error) => {
-            Alert.alert('PDF Error', error);
-        });
+        await generatePDF();
+        await showPDF();
     };
 
     const generatePDF = async () => {
         // start page
-        let html = '';
+        let html = ''; // within page, make a grid
 
-        // within page, make a grid
         for (let i = 0; i <= imageUris.length / 12; ++i) {
             // add page container
             html += '<div style="height: ' + (712 + Math.floor(i)).toString() + 'pt;">';
@@ -68,7 +70,7 @@ const QRCodes = ({modalRef}) => {
             // add grid of QR codes to page
             let j = 0;
             while ((i * 12) + j < imageUris.length && j < 12) {
-                html += '<img alt="0" style="margin-left:40pt;margin-top:50pt;width:100pt;height:100pt;" src="data:image/jpeg;base64, ' + imageUris[12 * i + j] + '"/>';
+                html += '<img style="margin-left:40pt;margin-top:50pt;width:100pt;height:100pt;" src="data:image/jpeg;base64, ' + imageUris[12 * i + j] + '"/>';
                 ++j;
             }
 
@@ -90,6 +92,7 @@ const QRCodes = ({modalRef}) => {
     };
 
     const showPDF = async () => {
+        await generatePDF();
         setModalVisible(true);
     };
 
@@ -102,63 +105,96 @@ const QRCodes = ({modalRef}) => {
     }
 
     return (
-        <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} style={styles.page}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#222'}}>
+            <TouchableWithoutFeedback
+                onPress={() => Keyboard.dismiss()}
+                style={styles.page}
+            >
                 <View style={{alignItems: 'center', backgroundColor: '#222'}}>
                     <View style={styles.section}>
-                        <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
-                            <TextInput underlineColorAndroid='transparent'
-                                       placeholder='Enter number'
-                                       placeholderTextColor='#aaa'
-                                       keyboardType='numeric'
-                                       onChangeText={(numCodes) => setNumberOfCodes(numCodes)}
-                                       numberOfLines={1}
-                                       multiline={false}
-                                       style={format.textBox}
-                                       blurOnSubmit={false}/>
+                        <Text style={styles.headingText}>Number of Codes</Text>
+                        <View
+                            style={{
+                                marginLeft: 35,
+                                marginRight: 35,
+                                marginTop: 10,
+                                marginBottom: 20,
+                                borderColor: '#eee',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }}>
+                            <TextInput
+                                underlineColorAndroid='transparent'
+                                placeholder='Enter number'
+                                placeholderTextColor='#aaa'
+                                keyboardType='numeric'
+                                onChangeText={(numCodes) => setNumberOfCodes(numCodes)}
+                                numberOfLines={1}
+                                multiline={false}
+                                style={format.textBox}
+                                blurOnSubmit={false}
+                            />
+                        </View>
                     </View>
                     <View style={styles.section}>
-                        <TouchableOpacity onPress={() => generateQR} style={styles.testButton}>
+                        <TouchableOpacity
+                            onPress={generateQR}
+                            style={styles.testButton}
+                        >
                             <Text style={styles.testButtonText}>Generate PDF</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-            {
-                modalVisible ? (
-                    <Modal transparent={true}
-                           visible={modalVisible}
-                           onRequestClose={() => hidePDF}>
-                        <View style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource === '') ? 0 : 1, marginTop: 40}}>
-                            <Pdf source={pdfSource}
-                                 onError={(error) => {Alert.alert('Error reading PDF', error)}}
-                                 style={styles.pdf}/>
-                            <View>
-                                <View style={styles.testButtonContainer}>
-                                    <TouchableOpacity onPress={() => loadAndSharePDF} style={styles.testButton}>
-                                        <Text style={styles.testButtonText}>Share</Text>
-                                        <Text style={{textAlign: 'right'}}>
-                                            <IconF name='share' size={30} color='#fff'/>
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.testButtonContainer}>
-                                    <TouchableOpacity onPress={() => hidePDF} style={styles.cancelButton}>
-                                        <Text style={styles.cancelButtonText}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
+            {modalVisible ? (
+                <Modal
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => hidePDF}
+                >
+                    <View
+                        style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', flex: (pdfSource == '') ? 0 : 1, marginTop: 40}}>
+                        <Pdf
+                            source={pdfSource}
+                            onError={(error) => {
+                                console.log(error)
+                            }}
+                            style={styles.pdf}/>
+                        <View>
+                            <View style={styles.testButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={loadAndSharePDF}
+                                    style={styles.testButton}
+                                >
+                                    <Text style={styles.testButtonText}>Share</Text>
+                                    <Text style={{textAlign: 'right'}}>
+                                        <IconF name='share' size={30} color='#fff'/>
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.testButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={hidePDF}
+                                    style={styles.cancelButton}
+                                >
+                                    <Text style={styles.cancelButtonText}>Close</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </Modal>
-                ) : null
-            }
-        </RBSheet>
+                    </View>
+                </Modal>
+            ) : (
+                <View></View>
+            )}
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     page: {
+        backgroundColor: '#222',
         flex: 1,
+        justifyContent: 'space-between'
     },
     section: {
         flexDirection: 'column',

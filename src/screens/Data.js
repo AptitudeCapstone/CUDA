@@ -34,7 +34,6 @@ import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
 import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
 import SignInSignUp from "../sheets/user/SignInSignUp";
 import EditAccount from "../sheets/user/EditAccount";
-import QRCodes from "../QRCodes";
 
 const Data = () => {
     const isFocused = useIsFocused(),
@@ -63,8 +62,7 @@ const Data = () => {
         accountSlideUpRef = useRef(null),
         editAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
-        qrScanSlideUpRef = useRef(null),
-        qrGenerateSlideUpRef = useRef(null),
+        scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
         editCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null),
@@ -191,7 +189,7 @@ const Data = () => {
             ...fabPropsCommon,
             text: "Scan patient QR",
             icon: <IconMCI name='qrcode-scan' color={backgroundColor} size={30}/>,
-            name: "qr_scan",
+            name: "qr",
         },
     ];
 
@@ -267,11 +265,9 @@ const Data = () => {
             case 'sign_in_sign_up':
                 signInSignUpSlideUpRef.current?.open();
                 break;
-            case 'qr_scan':
-                qrScanSlideUpRef.current?.open();
+            case 'qr':
+                scanSheetRef.current?.open();
                 break;
-            case 'qr_generate':
-                qrGenerateSlideUpRef.current?.open();
         }
     }
 
@@ -518,8 +514,7 @@ const Data = () => {
                      editModalRef={editAccountSlideUpRef} />
             <EditAccount modalRef={editAccountSlideUpRef}
                          accountRef={accountSlideUpRef} />
-            <Organization modalRef={organizationSlideUpRef}
-                          generateQRRef={qrGenerateSlideUpRef} />
+            <Organization modalRef={organizationSlideUpRef} />
 
             <CreateCOVID modalRef={createCOVIDSlideUpRef} />
             <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
@@ -528,9 +523,7 @@ const Data = () => {
             <EditFibrinogen modalRef={editFibrinogenSlideUpRef}
                             patientKey={patientKeyFibrinogen} />
 
-            <QRScanSheet scanSheetRef={qrScanSlideUpRef} />
-            <QRCodes modalRef={qrGenerateSlideUpRef} />
-
+            <QRScanSheet scanSheetRef={scanSheetRef} />
         </SafeAreaView>
     );
 };

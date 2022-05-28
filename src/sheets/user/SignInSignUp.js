@@ -122,12 +122,16 @@ const SignInSignUp = ({modalRef}) => {
             requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
         });
 
-        if (!appleAuthRequestResponse.identityToken)
+        if (!appleAuthRequestResponse.identityToken) {
             throw new Error('Apple sign-in failed. Try another method. ');
+        }
 
         const { identityToken, nonce } = appleAuthRequestResponse;
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-        await auth().signInWithCredential(appleCredential);
+        userInfo.userAuth.linkWithCredential(appleCredential)
+            .catch(() => {
+                auth().signInWithCredential(appleCredential);
+            });
     }
 
     //      if an account with this credential exists, link them
@@ -230,25 +234,27 @@ const SignInSignUp = ({modalRef}) => {
                                 <Text style={[fonts.mediumText, format.fieldName]}>
                                     Name
                                 </Text>
-                                <TextInput underlineColorAndroid='transparent'
-                                           placeholder='Name'
-                                           placeholderTextColor='#aaa'
-                                           keyboardType='default'
-                                           onChangeText={(name) => setCreateName(name)}
-                                           numberOfLines={1}
-                                           multiline={false}
-                                           style={format.textBox}
-                                           blurOnSubmit={false}/>
+                                <TextInput
+                                    underlineColorAndroid='transparent'
+                                    placeholder='Name'
+                                    placeholderTextColor='#aaa'
+                                    keyboardType='default'
+                                    onChangeText={(name) => setCreateName(name)}
+                                    numberOfLines={1}
+                                    multiline={false}
+                                    style={format.textBox}
+                                    blurOnSubmit={false}/>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Email Address</Text>
-                                <TextInput underlineColorAndroid='transparent'
-                                           placeholder='Email address'
-                                           placeholderTextColor='#aaa'
-                                           keyboardType='email-address'
-                                           onChangeText={(email) => setCreateEmail(email)}
-                                           numberOfLines={1}
-                                           multiline={false}
-                                           style={format.textBox}
-                                           blurOnSubmit={false}/>
+                                <TextInput
+                                    underlineColorAndroid='transparent'
+                                    placeholder='Email address'
+                                    placeholderTextColor='#aaa'
+                                    keyboardType='email-address'
+                                    onChangeText={(email) => setCreateEmail(email)}
+                                    numberOfLines={1}
+                                    multiline={false}
+                                    style={format.textBox}
+                                    blurOnSubmit={false}/>
                                 <Text style={[fonts.mediumText, format.fieldName]}>Password</Text>
                                 <TextInput underlineColorAndroid='transparent'
                                            placeholder='Password (at least 6 characters)'
