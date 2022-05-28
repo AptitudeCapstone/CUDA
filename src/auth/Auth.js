@@ -56,6 +56,6 @@ export const disconnectFromOrganization = (userInfo) => {
         .then(() => {
             Alert.alert('Disconnect Successful', 'Data is no longer being synced');
         }).catch(() => {
-        Alert.alert('Error', 'A problem was encountered while disconnecting');
-    });
+            Alert.alert('Error', 'A problem was encountered while disconnecting');
+        });
 }

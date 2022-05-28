@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
-import {Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import RBSheet from "react-native-raw-bottom-sheet";
+import {Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {buttons, fonts, format} from '../../style/Styles';
+import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
 import database from "@react-native-firebase/database";
 
-const ConnectOrganization = ({navigation}) => {
-    const userInfo = useAuth();
-    const [addCode, setAddCode] = useState(-1);
+const ConnectOrganization = ({modalRef}) => {
+    const userInfo = useAuth(),
+        [addCode, setAddCode] = useState(-1),
+        dimensions = useWindowDimensions();
 
     const handleConnectOrganization = async () => {
         try {
@@ -31,7 +33,7 @@ const ConnectOrganization = ({navigation}) => {
                                     organization: organization.key
                                 }).then(() => {
                                     Alert.alert('Success', 'Synced with ' + organization.val().name)
-                                    navigation.goBack();
+                                    modalRef.current?.close();
                                 });
                             })
                         } else {
@@ -46,14 +48,8 @@ const ConnectOrganization = ({navigation}) => {
     };
 
     return (
-        <SafeAreaView style={format.page}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}
-            >
+        <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
+            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40}}>
                 <View>
                     <Text style={fonts.heading}>Sync Account with Organization</Text>
                     <Text style={fonts.smallText}>Enter the organization's add code *</Text>
@@ -68,20 +64,18 @@ const ConnectOrganization = ({navigation}) => {
                             multiline={false}
                             maxLength={8}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                 </View>
                 <View style={buttons.submitButtonContainer}>
                     <TouchableOpacity
                         style={buttons.submitButton}
-                        onPress={handleConnectOrganization}
-                    >
+                        onPress={() => handleConnectOrganization()}>
                         <Text style={buttons.submitButtonText}>Connect and Sync</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView>
+        </RBSheet>
     );
 }
 

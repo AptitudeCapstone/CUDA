@@ -3,17 +3,16 @@ import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import ModalSelector from 'react-native-modal-selector';
 import IconA from 'react-native-vector-icons/AntDesign';
-import IconE from 'react-native-vector-icons/Entypo';
-import IconF from 'react-native-vector-icons/Feather';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     backgroundColor,
     chart,
     chartConfig,
     chartContainer,
+    MainFabIcon,
     fabColor,
     fonts,
-    format, MainFabIcon,
+    format,
     modal,
     patientSelect,
     testSelect
@@ -27,12 +26,14 @@ import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimen
 import QRScanSheet from "../sheets/QRScanSheet";
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import {FloatingAction} from "react-native-floating-action";
-import {UserSheet} from "../sheets/UserSheet";
-import {OrganizationSheet} from "../sheets/OrganizationSheet";
-import {CreateCOVID} from "./data_sheets/CreateCOVID";
-import {EditCOVID} from "./data_sheets/EditCOVID";
-import {CreateFibrinogen} from "./data_sheets/CreateFibrinogen";
-import {EditFibrinogen} from "./data_sheets/EditFibrinogen";
+import {UserAccountSheet} from "../sheets/user/UserAccountSheet";
+import {CreateOrganization} from "../sheets/user/CreateOrganization";
+import {CreateCOVID} from "../sheets/data/CreateCOVID";
+import {EditCOVID} from "../sheets/data/EditCOVID";
+import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
+import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
+import ConnectOrganization from "../sheets/user/ConnectOrganization";
+import {disconnectFromOrganization} from "../auth/Auth";
 
 const Data = ({navigation}) => {
     const isFocused = useIsFocused(),
@@ -59,12 +60,14 @@ const Data = ({navigation}) => {
             : '/users/' + auth?.uid + '/patients/'),
         patientsRef = database().ref(patientsPath),
         accountSlideUpRef = useRef(null),
-        organizationSlideUpRef = useRef(null),
+        createOrganizationSlideUpRef = useRef(null),
+        connectOrganizationSlideUpRef = useRef(null),
         scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
         editCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null),
         editFibrinogenSlideUpRef = useRef(null);
+
 
     useEffect(() => {
         if (!auth) {
@@ -169,10 +172,10 @@ const Data = ({navigation}) => {
 
 
     const fabPropsCommon = {
-            buttonSize: 60,
-            color:'#8d67a8',
-            position: 3,
-            textStyle: {fontSize: 16}
+        buttonSize: 60,
+        color:'#8d67a8',
+        position: 3,
+        textStyle: {fontSize: 16}
     };
 
     const fabActionsDefault = [
@@ -199,7 +202,7 @@ const Data = ({navigation}) => {
             organizationButtons = [{
                 ...fabPropsCommon,
                 text: "Leave my organization",
-                name: "leave_organization",
+                name: "disconnect_organization",
                 icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
             }];
         } else if(userInfo.loginStatus === 'registered') {
@@ -222,7 +225,7 @@ const Data = ({navigation}) => {
             case 'registered':
                 const registeredButtons = [{
                     ...fabPropsCommon,
-                    text: "Edit my account",
+                    text: "My account",
                     name: "account",
                     icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
                 }]
@@ -243,9 +246,14 @@ const Data = ({navigation}) => {
             case 'account':
                 accountSlideUpRef.current?.open();
                 break;
-            case 'organization':
-                organizationSlideUpRef.current?.open();
+            case 'create_organization':
+                createOrganizationSlideUpRef.current?.open();
                 break;
+            case 'connect_organization':
+                connectOrganizationSlideUpRef.current?.open();
+                break;
+            case 'disconnect_organization':
+                disconnectFromOrganization(userInfo);
             case 'create_patient':
                 Alert.alert(
                     'Create a new patient',
@@ -512,11 +520,13 @@ const Data = ({navigation}) => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar} />
 
-            <UserSheet navigation={navigation}
-                       modalRef={accountSlideUpRef} />
+            <UserAccountSheet navigation={navigation}
+                              modalRef={accountSlideUpRef} />
 
-            <OrganizationSheet navigation={navigation}
-                               modalRef={organizationSlideUpRef} />
+            <CreateOrganization navigation={navigation}
+                                modalRef={createOrganizationSlideUpRef} />
+
+            <ConnectOrganization modalRef={connectOrganizationSlideUpRef} />
 
             <CreateCOVID modalRef={createCOVIDSlideUpRef} />
             <EditCOVID modalRef={editCOVIDSlideUpRef} patientKey={patientKeyCOVID} />

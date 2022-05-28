@@ -40,69 +40,54 @@ export const EditCOVID = ({modalRef, patientKey}) => {
         }).then(() => {
             Alert.alert('Success', 'Changes have been applied')
             modalRef.current?.close();
-        });
+        }).catch((error) => Alert.alert('Error', error));
     }
 
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}
-            >
+            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40}}>
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can always be edited</Text>
-                <Text> </Text>
                 <Text style={fonts.subheading}>Name</Text>
                 <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Name'
-                        placeholderTextColor='#bbb'
-                        keyboardType='default'
-                        onChangeText={(patientName) => setPatientName(patientName)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
+                    <TextInput underlineColorAndroid='transparent'
+                               placeholder='Name'
+                               placeholderTextColor='#bbb'
+                               keyboardType='default'
+                               onChangeText={(patientName) => setPatientName(patientName)}
+                               numberOfLines={1}
+                               multiline={false}
+                               style={{padding: 25, color: '#fff'}}
+                               blurOnSubmit={false}/>
                 </View>
                 <Text style={fonts.subheading}>Email</Text>
                 <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Email address'
-                        placeholderTextColor='#bbb'
-                        keyboardType='email-address'
-                        onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
+                    <TextInput underlineColorAndroid='transparent'
+                               placeholder='Email address'
+                               placeholderTextColor='#bbb'
+                               keyboardType='email-address'
+                               onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
+                               numberOfLines={1}
+                               multiline={false}
+                               style={{padding: 25, color: '#fff'}}
+                               blurOnSubmit={false}/>
                 </View>
                 <Text style={fonts.subheading}>Phone</Text>
                 <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Phone number'
-                        placeholderTextColor='#bbb'
-                        keyboardType='numeric'
-                        onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={{padding: 25, color: '#fff'}}
-                        blurOnSubmit={false}
-                    />
+                    <TextInput underlineColorAndroid='transparent'
+                               placeholder='Phone number'
+                               placeholderTextColor='#bbb'
+                               keyboardType='numeric'
+                               onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
+                               numberOfLines={1}
+                               multiline={false}
+                               style={{padding: 25, color: '#fff'}}
+                               blurOnSubmit={false}/>
                 </View>
                 <View style={buttons.submitButtonContainer}>
-                    <TouchableOpacity
-                        style={buttons.submitButton}
-                        onPress={() => updatePatient()}
-                    >
+                    <TouchableOpacity style={buttons.submitButton}
+                                      onPress={() => updatePatient()}>
                         <Text style={buttons.submitButtonText}>Apply Changes</Text>
                     </TouchableOpacity>
                 </View>

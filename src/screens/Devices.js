@@ -32,8 +32,7 @@ import IconFA from "react-native-vector-icons/FontAwesome5";
 import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
-import {UserSheet} from "../sheets/UserSheet";
-import {OrganizationSheet} from "../sheets/OrganizationSheet";
+import {UserAccountSheet} from "../sheets/user/UserAccountSheet";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -445,8 +444,8 @@ const Devices = ({navigation}) => {
                     color={fabColor}
                     floatingIcon={<MainFabIcon />}
                     onPressItem={name => fabActionHandler(name)}/>
-            <UserSheet navigation={navigation} modalRef={accountSlideUpRef} />
-            <OrganizationSheet navigation={navigation} modalRef={organizationSlideUpRef} />
+            <UserAccountSheet navigation={navigation} modalRef={accountSlideUpRef} />
+
         </>
     );
 

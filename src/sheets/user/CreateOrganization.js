@@ -1,10 +1,11 @@
-import React, {Alert, useState} from 'react';
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import RBSheet from "react-native-raw-bottom-sheet";
+import {Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from '@react-native-firebase/database';
-import {buttons, fonts, format} from '../../style/Styles';
+import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 
-const CreateOrganization = ({navigation}) => {
+export const CreateOrganization = ({modalRef}) => {
     const [name, setName] = useState('');
     const [addCode, setAddCode] = useState(-1);
     const [ownerEmail1, setOwnerEmail1] = useState('');
@@ -16,8 +17,9 @@ const CreateOrganization = ({navigation}) => {
     const [state, setState] = useState('');
     const [country, setCountry] = useState('');
     const [zip, setZip] = useState(0);
+    const dimensions = useWindowDimensions();
 
-    const register_organization = () => {
+    const registerOrganization = () => {
         if (name !== '' && (addCode === 0 || addCode >= 1000) && ownerEmail1 !== '') {
             const newReference = database().ref('/organizations').push();
             const orgID = newReference.key;
@@ -35,8 +37,7 @@ const CreateOrganization = ({navigation}) => {
                     state: state,
                     country: country,
                     zip: zip
-                })
-                .then(() => {
+                }).then(() => {
                     console.log('Set /organizations/' + orgID +
                         ' to name: ' + name +
                         ', addCode: ' + addCode +
@@ -49,18 +50,15 @@ const CreateOrganization = ({navigation}) => {
                         ', state: ' + state +
                         ', country: ' + country +
                         ', zip: ' + zip);
-                    navigation.goBack();
+                    modalRef.current?.close();
                 });
         } else
             Alert.alert('Error', 'Please complete the required fields');
     };
 
     return (
-        <SafeAreaView style={format.page}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{paddingTop: 40, paddingBottom: 40}}
-            >
+        <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
+            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40}}>
                 <View>
                     <Text style={fonts.heading}>New Organization</Text>
                     <Text style={fonts.subheading}>Name *</Text>
@@ -74,8 +72,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                 </View>
                 <View>
@@ -93,8 +90,7 @@ const CreateOrganization = ({navigation}) => {
                             maxLength={8}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                 </View>
                 <View>
@@ -109,8 +105,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -122,8 +117,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -135,8 +129,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                 </View>
                 <View>
@@ -151,8 +144,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -164,8 +156,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -177,8 +168,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -190,8 +180,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -203,8 +192,7 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                     <View style={format.textBox}>
                         <TextInput
@@ -216,21 +204,16 @@ const CreateOrganization = ({navigation}) => {
                             numberOfLines={1}
                             multiline={false}
                             style={{padding: 25, color: '#fff'}}
-                            blurOnSubmit={false}
-                        />
+                            blurOnSubmit={false}/>
                     </View>
                 </View>
                 <View style={buttons.submitButtonContainer}>
-                    <TouchableOpacity
-                        style={buttons.submitButton}
-                        onPress={register_organization}
-                    >
+                    <TouchableOpacity style={buttons.submitButton}
+                                      onPress={() => registerOrganization()}>
                         <Text style={buttons.submitButtonText}>Create Organization</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView>
+        </RBSheet>
     );
 }
-
-export default CreateOrganization;

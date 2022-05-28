@@ -62,16 +62,16 @@ export const CreateCOVID = ({modalRef}) => {
                     }).catch((error) => {
                         Alert.alert('Error', error);
                     });
-                }).then(() => modalRef.current?.close());
+                }).then(() =>
+                    modalRef.current?.close())
+                .catch((error) => Alert.alert('Error', error));;
         }
     }
 
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{paddingTop: 40, paddingBottom: 40}}>
+            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40}}>
                 <Text style={fonts.heading}>Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text style={fonts.subheading}>Name</Text>

@@ -1,13 +1,13 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import DevicesStack from './stacks/DevicesStack'
-import DataStack from './stacks/DataStack';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconMI from 'react-native-vector-icons/MaterialIcons'
 import {backgroundColor, mediumPurple, tabNavigatorStyle} from '../style/Styles';
 import {AnimatedTabBarNavigator,} from 'react-native-animated-nav-tab-bar'
 import {createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import Devices from "../screens/Devices";
+import Data from "../screens/Data";
 
 export const Stack = createStackNavigator();
 export const Tab = createBottomTabNavigator();
@@ -32,7 +32,7 @@ const Navigator = () => (
             }}>
             <Tabs.Screen
                 name='MonitorTab'
-                component={DevicesStack}
+                component={Devices}
                 options={{
                     title: 'Devices',
                     headerShown: false,
@@ -43,7 +43,7 @@ const Navigator = () => (
             />
             <Tabs.Screen
                 name='ViewDataTab'
-                component={DataStack}
+                component={Data}
                 options={{
                     title: 'Records',
                     headerShown: false,

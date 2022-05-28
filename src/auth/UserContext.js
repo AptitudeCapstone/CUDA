@@ -16,14 +16,12 @@ export const UserProvider: React.FC = ({children}) => {
     const [userAuth, setUserAuth] = useState(() => auth().currentUser);
     const [userData, setUserData] = useState({loginStatus: 'loading'});
     const [initializing, setInitializing] = useState(userAuth === null);
-    const [userCOVIDPatients, setUserCOVIDPatients] = useState([]);
-    const [userFibrinogenPatients, setUserFibrinogenPatients] = useState([]);
-    const [subscriptions, setSubscriptions] = useState([]);
+    const [subscriptions, setSubscriptions] = useState(() => []);
 
     /*
         - this useEffect subscribes to firebase auth 'on auth state changed' hook
         so that when auth change happens, userAuth updates accordingly
-        - we make a copy of all subscriptions so we can be sure
+        - we make a copy of all subscriptions so that we can be sure
         to avoid memory leaks on previous realtime database subscriptions
      */
     useEffect(() => auth().onAuthStateChanged((user) => {
@@ -41,7 +39,6 @@ export const UserProvider: React.FC = ({children}) => {
     useEffect(() => {
         updateUserInfo().catch((error) => console.log('Unsubscribe error:', error));
     }, [userAuth]);
-
 
     const updateUserInfo = async () => {
         if (userAuth === null || auth().currentUser === null) {
@@ -94,37 +91,6 @@ export const UserProvider: React.FC = ({children}) => {
                 }));
         }
     }
-
-    useEffect(() => {
-        if (userAuth === null || auth().currentUser === null) {
-            setUserCOVIDPatients([]);
-            setUserFibrinogenPatients([]);
-            return;
-        }
-
-        const patientsPath = ((userData?.organization === undefined ?
-                '/users/' + auth?.uid :
-                '/organizations/' + organization) + '/patients/'),
-            patientsRef = database().ref(patientsPath);
-
-        patientsRef.on('value',
-            (patientsSnapshot) => {
-                if (patientsSnapshot.exists()) {
-                    const p = patientsSnapshot.toJSON();
-                    const c = Object.keys(p['covid']).map((k) => [k, p['covid'][k]]);
-                    setUserCOVIDPatients(c);
-                    const f = Object.keys(p['fibrinogen']).map((k) => [k, p['fibrinogen'][k]]);
-                    setUserFibrinogenPatients(f);
-                } else {
-                    setUserCOVIDPatients([]);
-                    setUserFibrinogenPatients([]);
-                }
-            },
-            (error) => console.error('Error fetching database updates:', error)
-        );
-
-        return () => patientsRef.off();
-    }, [userAuth, userData?.organization]);
 
     return (
         <userAuthContext.Provider

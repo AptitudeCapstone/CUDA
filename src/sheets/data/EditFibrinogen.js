@@ -186,13 +186,7 @@ export const EditFibrinogen = ({modalRef, patientKey}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <KeyboardAwareScrollView
-                extraScrollHeight={150}
-                style={{
-                    paddingTop: 40,
-                    paddingBottom: 40
-                }}
-            >
+            <KeyboardAwareScrollView extraScrollHeight={150} style={{paddingTop: 40, paddingBottom: 40}}>
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
