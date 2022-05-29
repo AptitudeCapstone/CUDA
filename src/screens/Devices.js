@@ -64,7 +64,8 @@ const Devices = ({navigation}) => {
         patientsRef = database().ref(patientsPath),
         isLandscape = (dimensions.width > dimensions.height),
         accountSlideUpRef = useRef(null),
-        organizationSlideUpRef = useRef(null);
+        organizationSlideUpRef = useRef(null),
+        qrCodeGeneratorRef = useRef(null);
 
     // this useEffect is the base of the patient database routine
     useEffect(() => {
@@ -237,7 +238,7 @@ const Devices = ({navigation}) => {
                 });
                 break;
             case 'dataProcess.fibrinogen.finishedTest':
-                const result = parseFloat(data).toFixed(2);
+                const result = parseFloat(data);
                 updateReaderCards({
                     name: device.name, id: device.id,
                     isConnected: true, color: 'green', selectedPatient: name,
@@ -422,6 +423,14 @@ const Devices = ({navigation}) => {
             color:'#8d67a8',
             position: 2
         },
+        {
+            text: 'Generate patient QR codes',
+            icon: <IconO name='organization' color={backgroundColor} size={30}/>,
+            name: 'generate_qr',
+            buttonSize: 60,
+            color:'#8d67a8',
+            position: 2
+        },
     ];
 
     const fabActionHandler = (actionName) => {
@@ -429,6 +438,8 @@ const Devices = ({navigation}) => {
             accountSlideUpRef.current?.open();
         } else if(actionName === 'patients') {
             organizationSlideUpRef.current?.open();
+        } else if(actionName === 'generate_qr') {
+
         }
     }
 
@@ -478,12 +489,15 @@ const Devices = ({navigation}) => {
                 data={readersArray}
                 keyExtractor={(item) => item.id}
                 renderItem={({item}) => {
-                    if (item.isConnected) return <ConnectedReaderMemo id={item.id} name={item.name}
-                                                                      color={item.color}
-                                                                      utilityBar={item.utilityBar}
-                                                                      statusText={item.statusText}
-                                                                      selectedPatient={item.selectedPatient}/>
-                    else return <DiscoveredReaderMemo id={item.id} name={item.name}
+                    if (item.isConnected)
+                        return <ConnectedReaderMemo id={item.id}
+                                                    name={item.name}
+                                                    color={item.color}
+                                                    utilityBar={item.utilityBar}
+                                                    statusText={item.statusText}
+                                                    selectedPatient={item.selectedPatient}/>
+                    else
+                        return <DiscoveredReaderMemo id={item.id} name={item.name}
                                                       statusText={item.statusText}/>
                 }}/>
         </View>
@@ -499,7 +513,7 @@ const Devices = ({navigation}) => {
             floatingIcon={<MainFabIcon />}
             onPressItem={name => fabActionHandler(name)}/>
 
-        <Account navigation={navigation} modalRef={accountSlideUpRef} />
+        <Account modalRef={accountSlideUpRef} />
     </SafeAreaView>;
 }
 

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
 import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
@@ -190,49 +189,36 @@ export const EditFibrinogen = ({modalRef, patientKey}) => {
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Name'
-                        placeholderTextColor='#aaa'
-                        keyboardType='default'
-                        onChangeText={(patientName) => setPatientName(patientName)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={format.textBox}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                    <TextInput underlineColorAndroid='transparent'
+                               placeholder='Name'
+                               placeholderTextColor='#aaa'
+                               keyboardType='default'
+                               onChangeText={(patientName) => setPatientName(patientName)}
+                               numberOfLines={1}
+                               multiline={false}
+                               style={format.textBox}
+                               blurOnSubmit={false} />
                 <Text style={fonts.subheadingSpaced}>Blood Type</Text>
                 <BloodTypeSelector/>
                 <Text style={fonts.subheadingSpaced}>Sex</Text>
                 <SexSelector/>
                 <Text style={fonts.subheadingSpaced}>Weight</Text>
-                <View style={format.textBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Weight (lb.)'
-                        placeholderTextColor='#aaa'
-                        keyboardType='numeric'
-                        onChangeText={(patientWeight) => setPatientWeight(patientWeight + ' lb.')}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={format.textBox}
-                        blurOnSubmit={false}
-                    />
-                </View>
+                <TextInput underlineColorAndroid='transparent'
+                           placeholder='Weight (lb.)'
+                           placeholderTextColor='#aaa'
+                           keyboardType='numeric'
+                           onChangeText={(patientWeight) => setPatientWeight(patientWeight + ' lb.')}
+                           numberOfLines={1}
+                           multiline={false}
+                           style={format.textBox}
+                           blurOnSubmit={false} />
                 <Text style={fonts.subheadingSpaced}>Age</Text>
                 <AgeSelector/>
                 <Text style={fonts.subheadingSpaced}>Height</Text>
                 <HeightSelector/>
-                <View style={buttons.submitButtonContainer}>
-                    <TouchableOpacity
-                        style={buttons.submitButton}
-                        onPress={() => updatePatient()}
-                    >
-                        <Text style={buttons.submitButtonText}>Apply Changes</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={buttons.submitButton} onPress={() => updatePatient()}>
+                    <Text style={buttons.submitButtonText}>Apply Changes</Text>
+                </TouchableOpacity>
             </ScrollView>
         </RBSheet>
     );

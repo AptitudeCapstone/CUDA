@@ -1,6 +1,6 @@
 import React from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {backgroundColor, fonts, format, rbSheetStyle} from "../style/Styles";
+import {backgroundColor, rbSheetStyle} from "../style/Styles";
 import {SafeAreaView, useWindowDimensions, View} from "react-native";
 import useAuth from "../auth/UserContext";
 import QRCodeScanner from "react-native-qrcode-scanner";

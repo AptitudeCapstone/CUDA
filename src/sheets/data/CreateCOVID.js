@@ -86,7 +86,6 @@ export const CreateCOVID = ({modalRef}) => {
                                style={format.textBox}
                                blurOnSubmit={false}/>
                 <Text style={[fonts.mediumText, format.fieldName]}>Contact</Text>
-                <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Email address'
@@ -97,8 +96,6 @@ export const CreateCOVID = ({modalRef}) => {
                         multiline={false}
                         style={format.textBox}
                         blurOnSubmit={false}/>
-                </View>
-                <View style={format.textBox}>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Phone number'
@@ -109,7 +106,6 @@ export const CreateCOVID = ({modalRef}) => {
                         multiline={false}
                         style={format.textBox}
                         blurOnSubmit={false}/>
-                </View>
                 <TouchableOpacity
                     style={buttons.submitButton}
                     onPress={() => registerPatient()}>

@@ -50,7 +50,8 @@ const Data = () => {
         [covidPatientModalVisible, setCOVIDPatientModalVisible] = useState(() => false),
         [fibrinogenPatientModalVisible, setFibrinogenPatientModalVisible] = useState(() => false),
         dimensions = useWindowDimensions(),
-        [chartData, setChartData] = useState({labels: ['0'], datasets: [{data: [0]}]}),
+        emptyChart = {labels: ['0'], datasets: [{data: [0]}]},
+        [chartData, setChartData] = useState(emptyChart),
         userInfo = useAuth(),
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
@@ -123,7 +124,7 @@ const Data = () => {
                 for (const fibTest of tempTests) {
                     //tempLabels.push(dateFormat(parseISO(fibTest.time), 'MMM d'));
                     const hoursAgo = Math.abs(new Date() - parseISO(fibTest.time)) / 36e5;
-                    tempLabels.push(hoursAgo.toFixed(2));
+                    tempLabels.push(hoursAgo.toString());
                     tempDatasets.push(fibTest.result);
                 }
 
@@ -135,17 +136,14 @@ const Data = () => {
                 })
             } else {
                 setPatientFibrinogenTests([]);
-                setChartData([]);
             }
         }
     }
 
     const COVIDTest = ({item}) => (
         <View style={{backgroundColor: '#2a2a2a', borderRadius: 15, flex: 1}}>
-            <View style={{
-                backgroundColor: '#353535', padding: 20, paddingBottom: 10,
-                flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15
-            }}>
+            <View style={{backgroundColor: '#353535', padding: 20, paddingBottom: 10,
+                flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
                 <Text style={fonts.mediumText}>
                     {parseISO(item.time).toLocaleString()}
                 </Text>
@@ -409,17 +407,17 @@ const Data = () => {
                                             <View style={format.section}>
                                                 <View style={[chartContainer]}>
                                                     <Text style={fonts.fieldName}>Last 24 hours</Text>
+                                                    {/*
                                                     <LineChart
-                                                        data={(chartData.labels.length === 0) ? [] : chartData}
+                                                        data={(chartData.labels.length === 0) ? emptyChart : chartData}
                                                         width={dimensions.width} // from react-native
                                                         height={250}
                                                         chartConfig={chartConfig}
                                                         style={chart}
                                                         withInnerLines={false}
                                                         withOuterLines={false}
-                                                        formatYLabel={(yLabel) => parseInt(yLabel)}
-                                                        yLabelsOffset={30} //10
-                                                    />
+                                                        yLabelsOffset={30} />
+                                                        */}
                                                 </View>
                                                 {
                                                     patientFibrinogenTests.map(test => <FibrinogenTest key={test.time}

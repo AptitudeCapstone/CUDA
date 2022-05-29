@@ -756,6 +756,11 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@chartiful/react-native-line-graph@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@chartiful/react-native-line-graph/-/react-native-line-graph-0.1.2.tgz#bd50cc4f19a804734ad39cabe06173a05d475efc"
+  integrity sha512-IMM92nzcNXE/C/54/2aXx9rDKlbvwiCwWVf9YJXRRFtcYGd1jKZf99KQcQ/RXX+VqDhEsJ0og9IKO8z/n3277w==
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"

@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/plugin-syntax-flow": "^7.17.12",
     "@babel/plugin-transform-react-jsx": "^7.17.12",
+    "@chartiful/react-native-line-graph": "^0.1.2",
     "@invertase/react-native-apple-authentication": "^2.2.0",
     "@react-native-firebase/app": "^14.2.2",
     "@react-native-firebase/auth": "^14.2.2",
