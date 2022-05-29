@@ -69,11 +69,9 @@ export const UserProvider: React.FC = ({children}) => {
                         let update = {displayName: ''};
                         if (userAuth.displayName) {
                             update = {displayName: userAuth.displayName}
-                                    if(user.displayName)
-                                        update = {displayName: user.displayName};
-                                    break;
-                            }
-                        });
+                        } else if (userAuth.providerData[0] && userAuth.providerData[0].displayName) {
+                            update = {displayName: userAuth.providerData[0]['displayName']}
+                        }
 
                         userDataRef.update(update).then(() => {
                             setUserData({
