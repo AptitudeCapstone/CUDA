@@ -567,8 +567,7 @@ const Data = () => {
             <SignInSignUp modalRef={signInSignUpSlideUpRef} />
             <Account modalRef={accountSlideUpRef}
                      editModalRef={editAccountSlideUpRef} />
-            <EditAccount modalRef={editAccountSlideUpRef}
-                         accountRef={accountSlideUpRef} />
+            <EditAccount modalRef={editAccountSlideUpRef} />
             <Organization modalRef={organizationSlideUpRef} />
 
             <CreateCOVID modalRef={createCOVIDSlideUpRef} />

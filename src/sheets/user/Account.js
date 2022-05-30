@@ -10,12 +10,7 @@ export const Account = ({modalRef, editModalRef}) => {
     const userInfo = useAuth(),
         dimensions = useWindowDimensions();
 
-    const editAccount = () => {
-        modalRef.current.close();
-        editModalRef.current.open();
-    }
-
-    const handleLogOut = () => logOut().then(() => modalRef.current.close());
+    const handleLogOut = () => logOut().then(() => modalRef.current?.close());
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
@@ -23,10 +18,8 @@ export const Account = ({modalRef, editModalRef}) => {
                     {
                         (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => editAccount()}>
-                                <Text style={fonts.mediumText}>Edit my account</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => handleLogOut()}>
+                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]}
+                                              onPress={() => handleLogOut()}>
                                 <Text style={fonts.mediumText}>Logout</Text>
                             </TouchableOpacity>
                         </View> : null

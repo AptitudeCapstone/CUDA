@@ -4,7 +4,7 @@ import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimension
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
 
-const EditAccount = ({modalRef, accountRef}) => {
+const EditAccount = ({modalRef}) => {
     const userInfo = useAuth(),
         [name, setName] = useState(null),
         [newPassword, setNewPassword] = useState(null),
@@ -25,11 +25,9 @@ const EditAccount = ({modalRef, accountRef}) => {
             await editUser();
             Alert.alert('Success', 'Your information has been updated');
             modalRef.current?.close();
-            accountRef.current?.open();
         } catch (error) {
             Alert.alert('Error', error.message);
             modalRef.current?.close();
-            accountRef.current?.open();
         }
     }
 
