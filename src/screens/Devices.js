@@ -33,6 +33,13 @@ import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
 import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
 import {Account} from "../sheets/user/Account";
+import SignInSignUp from "../sheets/user/SignInSignUp";
+import EditAccount from "../sheets/user/EditAccount";
+import {Organization} from "../sheets/user/Organization";
+import {CreateCOVID} from "../sheets/data/CreateCOVID";
+import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
+import {EditCOVID} from "../sheets/data/EditCOVID";
+import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -64,8 +71,14 @@ const Devices = ({navigation}) => {
         patientsRef = database().ref(patientsPath),
         isLandscape = (dimensions.width > dimensions.height),
         accountSlideUpRef = useRef(null),
+        editAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
-        qrCodeGeneratorRef = useRef(null);
+        scanSheetRef = useRef(null),
+        createCOVIDSlideUpRef = useRef(null),
+        editCOVIDSlideUpRef = useRef(null),
+        createFibrinogenSlideUpRef = useRef(null),
+        editFibrinogenSlideUpRef = useRef(null),
+        signInSignUpSlideUpRef = useRef(null);
 
     // this useEffect is the base of the patient database routine
     useEffect(() => {
@@ -407,40 +420,93 @@ const Devices = ({navigation}) => {
 
     const ConnectedReaderMemo = React.memo(ConnectedReader);
 
-    const fabActions = [
+    const fabPropsCommon = {
+        buttonSize: 60,
+        color:'#8d67a8',
+        position: 3,
+        textStyle: {fontSize: 16}
+    };
+
+    const fabActionsDefault = [
         {
-            text: "My Account",
-            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-            name: "account",
-            buttonSize: 60,
-            color:'#8d67a8',
-            position: 1
-        },
-        {
-            text: "My Organization",
-            icon: <IconO name='organization' color={backgroundColor} size={30}/>,
-            name: "organization",
-            buttonSize: 60,
-            color:'#8d67a8',
-            position: 2
-        },
-        {
-            text: 'Generate patient QR codes',
-            icon: <IconO name='organization' color={backgroundColor} size={30}/>,
-            name: 'generate_qr',
-            buttonSize: 60,
-            color:'#8d67a8',
-            position: 2
+            ...fabPropsCommon,
+            text: "Create new patient",
+            icon: <IconFA name='user-plus' color={backgroundColor} size={30}/>,
+            name: "create_patient",
         },
     ];
 
-    const fabActionHandler = (actionName) => {
-        if(actionName === 'account') {
-            accountSlideUpRef.current?.open();
-        } else if(actionName === 'patients') {
-            organizationSlideUpRef.current?.open();
-        } else if(actionName === 'generate_qr') {
+    const [fabActions, setFabActions] = useState(fabActionsDefault);
 
+    useEffect(() => {
+        let organizationButtons = [];
+
+        if(userInfo.loginStatus === 'registered') {
+            organizationButtons = [{
+                ...fabPropsCommon,
+                text: "My organization",
+                name: "organization",
+                icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+            }];
+        }
+
+        switch(userInfo.loginStatus) {
+            case 'registered':
+                const registeredButtons = [{
+                    ...fabPropsCommon,
+                    text: "My account",
+                    name: "account",
+                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+                }]
+                setFabActions(registeredButtons.concat(organizationButtons).concat(fabActionsDefault));
+                break;
+            case 'Patient not selected':
+                // sign in button
+                const signInSignUpButton = [{
+                    ...fabPropsCommon,
+                    text: "Sign in or create an account",
+                    name: "sign_in_sign_up",
+                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+                }]
+                setFabActions(signInSignUpButton.concat(organizationButtons).concat(fabActionsDefault));
+                break;
+            default:
+                setFabActions(organizationButtons.concat(fabActionsDefault));
+        }
+    }, [isFocused, userInfo]);
+
+    const fabActionHandler = (actionName) => {
+        switch(actionName) {
+            case 'account':
+                accountSlideUpRef.current?.open();
+                break;
+            case 'organization':
+                organizationSlideUpRef.current?.open();
+                break;
+            case 'create_patient':
+                Alert.alert(
+                    'Create a new patient',
+                    'Select the category of patient',
+                    [
+                        {
+                            text: 'COVID',
+                            onPress: () => createCOVIDSlideUpRef.current?.open()
+                        },
+                        {
+                            text: 'Fibrinogen',
+                            onPress: () => createFibrinogenSlideUpRef.current?.open()
+                        },
+                        {
+                            text: 'Cancel',
+                            onPress: () => null,
+                            style: 'cancel'
+                        }
+                    ]
+                );
+                break;
+            case 'sign_in_sign_up':
+                signInSignUpSlideUpRef.current?.open();
+                break;
         }
     }
 
@@ -514,7 +580,16 @@ const Devices = ({navigation}) => {
             floatingIcon={<MainFabIcon />}
             onPressItem={name => fabActionHandler(name)}/>
 
-        <Account modalRef={accountSlideUpRef} />
+        <SignInSignUp modalRef={signInSignUpSlideUpRef} />
+        <Account modalRef={accountSlideUpRef}
+                 editModalRef={editAccountSlideUpRef} />
+        <EditAccount modalRef={editAccountSlideUpRef}
+                     accountRef={accountSlideUpRef} />
+        <Organization modalRef={organizationSlideUpRef} />
+
+        <CreateCOVID modalRef={createCOVIDSlideUpRef} />
+        <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
+
     </SafeAreaView>;
 }
 
