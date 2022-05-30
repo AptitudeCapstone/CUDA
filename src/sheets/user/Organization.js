@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {buttons, fonts, format, rbSheetStyle} from "../../style/Styles";
+import {buttons, device, fonts, format, rbSheetStyle} from "../../style/Styles";
 import {ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
 import {disconnectFromOrganization} from "../../auth/Auth";
@@ -277,11 +277,8 @@ export const Organization = ({modalRef}) => {
                 {
                     (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => editAccount()}>
-                                <Text style={fonts.mediumText}>Edit my account</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => disconnect()}>
-                                <Text style={fonts.mediumText}>Disconnect from organization</Text>
+                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => disconnect()}>
+                                <Text style={[fonts.mediumText]}>Disconnect from organization</Text>
                             </TouchableOpacity>
                         </View> : null
                 }

@@ -472,7 +472,7 @@ export const fonts = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#eee',
+        color: darkText,
         padding: 15,
         paddingTop: 40,
         paddingBottom: 30
@@ -569,7 +569,7 @@ export const buttons = StyleSheet.create({
         padding: 16,
         paddingTop: 8,
         paddingBottom: 8,
-        backgroundColor: '#333',
+        backgroundColor: '#eee',
         marginLeft: 10,
         marginRight: 10,
         borderRadius: 50,

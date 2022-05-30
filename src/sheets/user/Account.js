@@ -1,6 +1,6 @@
 import React from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {fonts, format, rbSheetStyle} from "../../style/Styles";
+import {device, fonts, format, rbSheetStyle} from "../../style/Styles";
 import {ActivityIndicator, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
 import {logOut} from "../../auth/Auth";
@@ -23,10 +23,10 @@ export const Account = ({modalRef, editModalRef}) => {
                     {
                         (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => editAccount()}>
+                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => editAccount()}>
                                 <Text style={fonts.mediumText}>Edit my account</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[format.iconButton, {marginBottom: 10}]} onPress={() => handleLogOut()}>
+                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => handleLogOut()}>
                                 <Text style={fonts.mediumText}>Logout</Text>
                             </TouchableOpacity>
                         </View> : null
