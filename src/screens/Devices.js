@@ -111,7 +111,7 @@ const Devices = ({navigation}) => {
                                     updateReaderCards({
                                         id: device.id, name: device.name, color: 'default',
                                         statusText: 'Discovered', isConnected: false,
-                                        selectedPatient: 'Not selected'
+                                        selectedPatient: 'Patient not selected'
                                     });
                             } catch (err) {
                                 console.log('Device connection error: ' + err)
@@ -134,7 +134,7 @@ const Devices = ({navigation}) => {
             .then((device) => updateReaderCards({
                 name: device.name, id: id, color: 'default',
                 statusText: 'Discovered', isConnected: false,
-                selectedPatient: 'Not selected'
+                selectedPatient: 'Patient not selected'
             }));
 
     const getJSON = (bytes) => JSON.parse(new Buffer(bytes, 'base64').toString('ascii'));
@@ -142,7 +142,7 @@ const Devices = ({navigation}) => {
     const subscribe = (device) => {
         updateReaderCards({
             name: device.name, id: device.id, color: 'default',
-            statusText: 'Device is idle', isConnected: true, selectedPatient: 'Not selected'
+            statusText: 'Device is idle', isConnected: true, selectedPatient: 'Patient not selected'
         });
         device.monitorCharacteristicForService(serviceUUID, actionCharUUID, async (bleError) => {
             const isConnected = await manager.isDeviceConnected(device.id);
@@ -161,7 +161,7 @@ const Devices = ({navigation}) => {
         let covidDBRef, fibrinogenDBRef;
 
         let name = selectedPatient?.name
-        if (!name) name = 'Not selected'
+        if (!name) name = 'Patient not selected'
 
         if (selectedPatient) {
             covidDBRef = database().ref(patientsPath + 'covid-patients/' + selectedPatient.id + '/results/');
@@ -175,7 +175,7 @@ const Devices = ({navigation}) => {
             case 'measurement.covid.beginningTest':
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid', statusText: 'Starting new test',
+                    utilityBar: 'covid', statusText: 'Starting COVID test',
                     selectedPatient: name
                 });
                 break;
@@ -189,7 +189,7 @@ const Devices = ({navigation}) => {
             case 'measurement.covid.testStartedSuccessfully':
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid', statusText: 'Running test',
+                    utilityBar: 'covid', statusText: 'Running COVID test',
                     selectedPatient: name
                 });
                 break;
@@ -211,7 +211,7 @@ const Devices = ({navigation}) => {
                 const covidResult = {result: data, time: new Date()};
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'covid', statusText: 'Result: ' + data,
+                    utilityBar: 'covid', statusText: data + ' for COVID',
                     selectedPatient: name
                 });
                 Alert.alert('Uploading COVID result', JSON.stringify(covidResult, null, 4));
@@ -226,28 +226,29 @@ const Devices = ({navigation}) => {
             case 'measurement.fibrinogen.beginningTest':
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen', statusText: 'Starting new test',
+                    utilityBar: 'fibrinogen', statusText: 'Starting fibrinogen test',
                     selectedPatient: name
                 });
                 break;
             case 'measurement.fibrinogen.testStartedSuccessfully':
                 updateReaderCards({
                     name: device.name, id: device.id, isConnected: true, color: 'green',
-                    utilityBar: 'fibrinogen', statusText: 'Running test',
+                    utilityBar: 'fibrinogen', statusText: 'Running fibrinogen test',
                     selectedPatient: name
                 });
                 break;
             case 'dataProcess.fibrinogen.finishedTest':
-                const result = parseFloat(data);
+                // fibrinogen result is received in mg/dL
+                const result = parseFloat(data).toFixed(2);
                 updateReaderCards({
                     name: device.name, id: device.id,
                     isConnected: true, color: 'green', selectedPatient: name,
-                    utilityBar: 'fibrinogen', statusText: 'Result: ' + result
+                    utilityBar: 'fibrinogen', statusText: 'Result: ' + result + ' mg/dL'
                 });
                 const fibrinogenResult = {result: result, time: new Date().toISOString()};
                 const newTestRef = fibrinogenDBRef.push();
                 newTestRef.set(fibrinogenResult)
-                    .then(() => Alert.alert('Uploaded result', 'Result: ' + result))
+                    .then(() => Alert.alert('Uploaded result', 'Result: ' + result + 'mg/dL'))
                     .catch((error) => Alert.alert('Error uploading result', 'Error: ' + error))
                 break;
             case 'measurement.fibrinogen.testError':
@@ -325,7 +326,7 @@ const Devices = ({navigation}) => {
                     <View style={{flexDirection: 'row'}}>
                         <View style={{width: 30}}>
                             {
-                                (selectedPatient !== 'Not selected')
+                                (selectedPatient !== 'Patient not selected')
                                     ? <IconF name='user-check' color='#ddd' size={24}/>
                                     : <IconF name='user' color='#ddd' size={24}/>
                             }

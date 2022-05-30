@@ -147,7 +147,7 @@ export const Organization = ({modalRef}) => {
                             </TouchableOpacity>
                             <View>
                                 <View style={{alignItems: 'center', paddingTop: 30, paddingBottom: 10, paddingHorizontal: 40,}}>
-                                    <Text style={[fonts.mediumText, format.fieldName]}>
+                                    <Text style={[fonts.mediumText]}>
                                         Create new and sync
                                     </Text>
                                 </View>

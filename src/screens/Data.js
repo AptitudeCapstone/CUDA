@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
+import { format as dateFormat } from "date-fns";
 import ModalSelector from 'react-native-modal-selector';
 import IconA from 'react-native-vector-icons/AntDesign';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,11 +16,10 @@ import {
     format,
     modal,
     patientSelect,
-    testSelect
+    testSelect, darkText
 } from '../style/Styles';
 import database from '@react-native-firebase/database';
 import {parseISO} from 'date-fns';
-import {LineChart} from 'react-native-chart-kit';
 import useAuth from "../auth/UserContext";
 import {useIsFocused} from '@react-navigation/native';
 import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions";
@@ -34,6 +34,7 @@ import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
 import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
 import SignInSignUp from "../sheets/user/SignInSignUp";
 import EditAccount from "../sheets/user/EditAccount";
+import {LineChart} from 'react-native-chart-kit';
 
 const Data = () => {
     const isFocused = useIsFocused(),
@@ -50,8 +51,16 @@ const Data = () => {
         [covidPatientModalVisible, setCOVIDPatientModalVisible] = useState(() => false),
         [fibrinogenPatientModalVisible, setFibrinogenPatientModalVisible] = useState(() => false),
         dimensions = useWindowDimensions(),
-        emptyChart = {labels: ['0'], datasets: [{data: [0]}]},
-        [chartData, setChartData] = useState(emptyChart),
+        emptyChartData = {
+            labels: ['0'],
+            datasets: [
+                {
+                    data: [0]
+                }
+            ]
+        },
+        [chartData, setChartData] = useState(() => emptyChartData),
+        [chartTimeAxis, setChartTimeAxis] = useState('today'),
         userInfo = useAuth(),
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
@@ -115,25 +124,52 @@ const Data = () => {
         } else if (selectedTest === 'fibrinogen') {
             setPatientDataFibrinogen(patients['fibrinogen-patients'][patientKey]);
             setPatientKeyFibrinogen(patientKey);
-            const patientResults = patients['fibrinogen-patients'][patientKey]['results'];
+            let patientResults = patients['fibrinogen-patients'][patientKey]['results'];
             if (patientResults) {
-                const tempTests = Array.from(Object.values(patientResults));
+                patientResults = Object.values(patientResults);
+                console.log('not sorted:', JSON.stringify(patientResults, null, 4));
+                const sorted = patientResults.sort((a,b) => parseISO(a.time) - parseISO(b.time));
+                console.log('sorted:', JSON.stringify(sorted, null, 4));
+                const tempTests = Array.from(sorted);
+                console.log(tempTests);
+                let tempChartData = [];
+                let tempLabels = [];
+
+                tempTests.forEach((item) => {
+                    /*
+                    const now = new Date().getTime();
+                    const testTime = parseISO(item.time).getTime();
+                    const secondsAgo = Math.abs(now - testTime) / 10e3;
+
+                    if(chartTimeAxis === 'last hour') {
+                        tempLabels.push((secondsAgo).toFixed(1));
+                    } else if(chartTimeAxis === 'today') {
+                        tempLabels.push((secondsAgo / 60 / 60).toFixed(1));
+                    } else if(chartTimeAxis === 'this week') {
+                        tempLabels.push((secondsAgo / 60 / 60 / 24).toFixed(1));
+                    }
+                    */
+
+
+
+                    tempLabels.push(dateFormat(parseISO(item.time), 'H:mm'));
+                    tempChartData.push(parseFloat(item.result));
+                });
+
+                tempLabels.sort(function(a, b){
+                    return tempChartData.indexOf(a) - tempChartData.indexOf(b);
+                });
+
+                console.log(tempLabels);
+                console.log(tempChartData);
+
                 setPatientFibrinogenTests(tempTests.reverse());
-
-                let tempLabels = [], tempDatasets = [];
-                for (const fibTest of tempTests) {
-                    //tempLabels.push(dateFormat(parseISO(fibTest.time), 'MMM d'));
-                    const hoursAgo = Math.abs(new Date() - parseISO(fibTest.time)) / 36e5;
-                    tempLabels.push(hoursAgo.toString());
-                    tempDatasets.push(fibTest.result);
-                }
-
                 setChartData({
-                    labels: tempLabels,
+                    labels: tempLabels,//tempLabels,
                     datasets: [{
-                        data: tempDatasets
-                    }]
-                })
+                            data: tempChartData
+                        }]
+                });
             } else {
                 setPatientFibrinogenTests([]);
             }
@@ -155,11 +191,8 @@ const Data = () => {
     );
 
     const FibrinogenTest = ({item}) => (
-        <View style={{flexDirection: 'row', backgroundColor: '#eee', borderRadius: 15, flex: 1, marginVertical: 10}}>
-            <View style={{
-                backgroundColor: '#ddd', padding: 20, paddingBottom: 10,
-                flex: 1, borderTopLeftRadius: 15, borderBottomLeftRadius: 15
-            }}>
+        <View style={{backgroundColor: '#eee', borderRadius: 15, flex: 1, marginVertical: 10}}>
+            <View style={{backgroundColor: '#ddd', padding: 20, paddingBottom: 10, flex: 1, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
                 <Text style={fonts.mediumText}>
                     {parseISO(item.time).toLocaleString()}
                 </Text>
@@ -215,7 +248,7 @@ const Data = () => {
                 }]
                 setFabActions(registeredButtons.concat(organizationButtons).concat(fabActionsDefault));
                 break;
-            case 'guest':
+            case 'Patient not selected':
                 // sign in button
                 const signInSignUpButton = [{
                     ...fabPropsCommon,
@@ -229,7 +262,6 @@ const Data = () => {
                 setFabActions(organizationButtons.concat(fabActionsDefault));
         }
     }, [isFocused, userInfo]);
-
 
     const fabActionHandler = (actionName) => {
         switch(actionName) {
@@ -274,38 +306,38 @@ const Data = () => {
 
     return (
         <SafeAreaView style={[format.safeArea]}>
-            <View style={testSelect.container}>
-                <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                                  style={[testSelect.button,
-                                      selectedTest === 'covid' && {backgroundColor: testSelect.covidColor}]}>
-                    <Text style={testSelect.text}>COVID</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                                  style={[testSelect.button,
-                                      selectedTest === 'fibrinogen' && {backgroundColor: testSelect.fibrinogenColor}]}>
-                    <Text style={testSelect.text}>Fibrinogen</Text>
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={patientSelect.container} onPress={() => {
+            <View style={[{backgroundColor: '#fff'} ,
+                {marginHorizontal: 20, borderRadius: 20, borderColor: '#ccc', borderWidth: 1}]}>
+                <View style={testSelect.container}>
+                    <TouchableOpacity onPress={() => setSelectedTest('covid')}
+                                      style={[testSelect.button, selectedTest === 'covid' ? {backgroundColor: '#9fa3c5'} : {backgroundColor: '#eeeeee'}]}>
+                        <Text style={[testSelect.text, selectedTest === 'covid' ? {} : {color: '#aaa'}]}>COVID</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
+                                      style={[testSelect.button, selectedTest === 'fibrinogen' ? {backgroundColor: '#c57f7f'} : {backgroundColor: '#eeeeee'}]}>
+                        <Text style={[testSelect.text, selectedTest === 'fibrinogen' ? {} : {color: '#aaa'}]}>Fibrinogen</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={[patientSelect.container, selectedTest === 'covid' ? {backgroundColor: '#9fa3c5'} : {backgroundColor: '#c57f7f'}]} onPress={() => {
                     if (selectedTest === 'covid') {
                         setCOVIDPatientModalVisible(true);
                     } else if (selectedTest === 'fibrinogen') {
                         setFibrinogenPatientModalVisible(true);
                     }}}>
-                <Text style={patientSelect.text}>Select</Text>
-                <IconFA name='user' size={24} style={patientSelect.icon}/>
-            </TouchableOpacity>
+                    <Text style={patientSelect.text}>Select</Text>
+                    <IconFA name='user' size={24} style={patientSelect.icon}/>
+                </TouchableOpacity>
+            </View>
             <View style={[format.page]}>
-                <ScrollView>
+                <ScrollView style={{marginHorizontal: 25, padding: 15, paddingTop: 0, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff', borderRadius: 20, marginTop: 20, marginBottom: 175, }}>
                     {
                         (isCOVIDTest)
                             ? <>
                                 <View style={format.utilityPatientBarContainer}>
-                                    <Text style={fonts.sectionText}>{patientDataCOVID.name}</Text>
+                                    <Text style={[fonts.sectionText, {paddingLeft: 8}]}>{patientDataCOVID.name}</Text>
                                     <TouchableOpacity style={format.utilityBarButton}
                                                       onPress={() => editCOVIDSlideUpRef.current?.open()}>
-                                        <Text style={patientSelect.text}>Edit</Text>
-                                        <IconA name='edit' size={20} style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                        <Text style={fonts.mediumText}>Edit</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={format.section}>
@@ -349,21 +381,19 @@ const Data = () => {
                         (isFibrinogenTest)
                             ? <>
                                 <View style={format.utilityPatientBarContainer}>
-                                    <Text style={[fonts.sectionText, {alignSelf: 'center', paddingLeft: 15}]}>
+                                    <Text style={[fonts.sectionText, {paddingLeft: 8}]}>
                                         {patientDataFibrinogen.name}
                                     </Text>
                                     <TouchableOpacity style={format.utilityBarButton}
                                                       onPress={() => editFibrinogenSlideUpRef.current?.open()}>
-                                        <Text style={patientSelect.text}>Edit</Text>
-                                        <IconA name='edit' size={20}
-                                               style={{color: '#555', alignSelf: 'center', marginLeft: 8}}/>
+                                        <Text style={fonts.mediumText}>Edit</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={format.section}>
+                                <View>
                                     {
                                         (patientDataFibrinogen.bloodType)
-                                            ? <View style={format.field}>
-                                                <Text style={fonts.fieldName}>Blood Type</Text>
+                                            ? <View style={[format.field, {paddingVertical: 3}]}>
+                                                <Text style={fonts.mediumText}>Blood Type</Text>
                                                 <Text style={fonts.mediumText}>{patientDataFibrinogen.bloodType}</Text>
                                             </View>
                                             : null
@@ -371,7 +401,7 @@ const Data = () => {
                                     {
                                         (patientDataFibrinogen.sex)
                                             ? <View style={format.field}>
-                                                <Text style={fonts.fieldName}>Sex</Text>
+                                                <Text style={fonts.mediumText}>Sex</Text>
                                                 <Text style={fonts.mediumText}>{patientDataFibrinogen.sex}</Text>
                                             </View>
                                             : null
@@ -379,7 +409,7 @@ const Data = () => {
                                     {
                                         (patientDataFibrinogen.age)
                                             ? <View style={format.field}>
-                                                <Text style={fonts.fieldName}>Age</Text>
+                                                <Text style={fonts.mediumText}>Age</Text>
                                                 <Text style={fonts.mediumText}>{patientDataFibrinogen.age}</Text>
                                             </View>
                                             : null
@@ -387,7 +417,7 @@ const Data = () => {
                                     {
                                         (patientDataFibrinogen.weight)
                                             ? <View style={format.field}>
-                                                <Text style={fonts.fieldName}>Weight</Text>
+                                                <Text style={fonts.mediumText}>Weight</Text>
                                                 <Text style={fonts.mediumText}>{patientDataFibrinogen.weight}</Text>
                                             </View>
                                             : null
@@ -395,7 +425,7 @@ const Data = () => {
                                     {
                                         (patientDataFibrinogen.height)
                                             ? <View style={format.field}>
-                                                <Text style={fonts.fieldName}>Height</Text>
+                                                <Text style={fonts.mediumText}>Height</Text>
                                                 <Text style={fonts.mediumText}>{patientDataFibrinogen.height}</Text>
                                             </View>
                                             : null
@@ -404,21 +434,48 @@ const Data = () => {
                                 {
                                     (patientFibrinogenTests.length > 0)
                                         ? <>
-                                            <View style={format.section}>
+                                            <View>
                                                 <View style={[chartContainer]}>
-                                                    <Text style={fonts.fieldName}>Last 24 hours</Text>
-                                                    {/*
+                                                    <Text style={[fonts.fieldName, {alignSelf: 'center', marginTop: 20, marginBottom: 10}]}>Recent results (mg/dL)</Text>
                                                     <LineChart
-                                                        data={(chartData.labels.length === 0) ? emptyChart : chartData}
-                                                        width={dimensions.width} // from react-native
-                                                        height={250}
-                                                        chartConfig={chartConfig}
-                                                        style={chart}
+                                                        verticalLabelRotation={-70}
+                                                        xLabelsOffset={22}
+                                                        data={chartData}
+                                                        width={280}
+                                                        height={300}
                                                         withInnerLines={false}
-                                                        withOuterLines={false}
-                                                        yLabelsOffset={30} />
-                                                        */}
+                                                        withShadow={false}
+                                                        yAxisInterval={1}
+                                                        chartConfig={{
+                                                            backgroundColor: "#eaeaea",
+                                                            backgroundGradientFrom: "#ffffff",
+                                                            backgroundGradientTo: "#ffffff",
+                                                            propsForLabels: {
+                                                                fontSize: "14",
+                                                            },
+                                                            decimalPlaces: 2, // optional, defaults to 2dp
+                                                            color: (opacity = 1) => `rgba(39, 74, 130, ${opacity})`,
+                                                            labelColor: (opacity = 1) => `rgba(39, 74, 130, ${opacity})`,
+                                                            style: {
+                                                                borderRadius: 16
+                                                            },
+                                                            propsForDots: {
+                                                                r: "6",
+                                                                strokeWidth: "2",
+                                                                stroke: "#274a82"
+                                                            }
+                                                        }}
+                                                        style={{
+                                                            marginTop: 8,
+                                                            marginBottom: -45,
+                                                            borderRadius: 16,
+                                                            alignSelf: 'center'
+                                                        }}
+                                                    />
                                                 </View>
+                                            </View>
+                                            <Text style={[fonts.fieldName, {paddingLeft: 12, alignSelf: 'flex-start', marginTop: 70, marginBottom: 10}]}>All results</Text>
+                                            <View>
                                                 {
                                                     patientFibrinogenTests.map(test => <FibrinogenTest key={test.time}
                                                                                                        item={test}/>)
@@ -494,7 +551,7 @@ const Data = () => {
                     setFibrinogenPatientModalVisible(false);
                 }}
                 keyExtractor={patient => patient[0]}
-                labelExtractor={patient => patient[1]['name']}
+                labelExtractor={patient => patient[1]['name'] ? patient[1]['name'] : patient[0].toString()}
                 renderItem={<View/>}
                 customSelector={<View/>}
                 cancelText={'Cancel'}

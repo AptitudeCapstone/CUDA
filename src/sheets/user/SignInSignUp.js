@@ -38,7 +38,7 @@ const SignInSignUp = ({modalRef}) => {
         //  * we assume this page is reached by an anonymous account *
         //  * this is because we create a guest account when         *
         //  * the user has not create an account or logged in        *
-        if (userStatus !== 'guest') {
+        if (userStatus !== 'Patient not selected') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 
@@ -79,7 +79,7 @@ const SignInSignUp = ({modalRef}) => {
     //      if an account with this credential exists, link them
     //      else, log in
     const logIn = async (email, password) => {
-        if (userStatus !== 'guest') {
+        if (userStatus !== 'Patient not selected') {
             throw new Error("No anonymous sign in detected - this should not happen");
         }
 
@@ -128,10 +128,7 @@ const SignInSignUp = ({modalRef}) => {
 
         const { identityToken, nonce } = appleAuthRequestResponse;
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-        userInfo.userAuth.linkWithCredential(appleCredential)
-            .catch(() => {
-                auth().signInWithCredential(appleCredential);
-            });
+        await auth().signInWithCredential(appleCredential);
     }
 
     //      if an account with this credential exists, link them
@@ -190,7 +187,7 @@ const SignInSignUp = ({modalRef}) => {
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
             <ScrollView extraScrollHeight={200} style={{paddingTop: 20, paddingBottom: 60}}>
                 {
-                    (userInfo.loginStatus === 'guest')
+                    (userInfo.loginStatus === 'Patient not selected')
                         ? <>
                             <View>
                                 <View style={{alignItems: 'center', marginBottom: 30}}>

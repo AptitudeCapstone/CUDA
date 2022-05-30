@@ -291,32 +291,35 @@ export const format = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 15,
-        marginHorizontal: 10
     },
     utilityBarButton: {
         flexDirection: 'row',
-        borderColor: '#888',
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderRadius: 100,
+        borderColor: '#aaa',
+        borderBottomWidth: 1,
+        borderRadius: 10,
         alignItems: 'center',
-        paddingVertical: 8,
+        paddingVertical: 4,
+        marginBottom: 3,
         paddingHorizontal: 10,
     },
     section: {
         backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: '#999',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        borderWidth: 1,
+        borderRadius: 15,
+        borderColor: '#ccc',
+        padding: 10,
         marginVertical: 10,
+        marginHorizontal: 20,
         flex: 1,
     },
     field: {
         flexDirection: 'row',
         flex: 1,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        padding: 4,
+        paddingHorizontal: 14,
+        borderBottomColor: '#ccc'
     },
     fieldName: {
         alignSelf: 'flex-start',
@@ -346,33 +349,26 @@ export const iconButton = {
 }
 
 export const testSelect = {
-    covidColor: '#5461ba',
-    fibrinogenColor: '#d9584a',
     container: {
         flexDirection: 'row',
         justifyContent: 'center',
+        marginHorizontal: 10,
         marginVertical: 10,
+        padding: 5,
     },
     button: {
-        backgroundColor: '#aaa',
-        shadowColor: 'rgba(0, 0, 0, 0.4)',
-        shadowOpacity: 0.6,
-        textElevation: 6,
-        shadowOffset: {
-            width: 0,
-            height: 6
-        },
-        flex: 1,
-        marginHorizontal: 15,
+        backgroundColor: '#ddd',
+        flexGrow: 1,
+        marginHorizontal: 5,
         paddingHorizontal: 22,
-        paddingVertical: 10,
-        borderRadius: 999,
+        paddingVertical: 9,
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#999'
+        borderColor: '#bbb'
     },
     text: {
         color: lightText,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         alignSelf: 'center'
     },
@@ -383,13 +379,13 @@ export const patientSelect = {
         backgroundColor: '#fff',
         borderColor: '#aaa',
         borderWidth: 1,
-        borderRadius: 15,
-        margin: 20,
+        borderRadius: 10,
+        marginHorizontal: 20,
+        marginBottom: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 8,
-        paddingVertical: 10
     },
     text: {
         paddingVertical: 15,
@@ -399,10 +395,10 @@ export const patientSelect = {
         fontWeight: 'bold',
         alignSelf: 'center',
         textAlign: 'center',
-        color: darkText,
+        color: lightText,
     },
     icon: {
-        color: '#555',
+        color: lightText,
         paddingLeft: 10,
         paddingRight: 20,
         alignItems: 'center',
@@ -679,7 +675,7 @@ export const device = StyleSheet.create({
         backgroundColor: '#ddd',
     },
     buttonText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
         padding: 8,
@@ -688,20 +684,20 @@ export const device = StyleSheet.create({
         color: darkText,
     },
     statusText: {
-        fontSize: 24,
+        fontSize: 20,
         textAlign: 'left',
         fontWeight: 'bold',
         color: '#ddd',
     },
     nameText: {
-        fontSize: 30,
+        fontSize: 26,
         paddingBottom: 4,
         textAlign: 'left',
         fontWeight: 'bold',
         color: lightText
     },
     patientText: {
-        fontSize: 24,
+        fontSize: 20,
         textAlign: 'left',
         fontWeight: 'bold',
         color: '#ddd',
@@ -714,11 +710,6 @@ export const device = StyleSheet.create({
     }
 });
 
-export const chart = {
-    marginTop: 15,
-    marginLeft: 0,
-    marginRight: 0
-}
 
 export const chartContainer = {
     marginVertical: 15,
@@ -726,21 +717,21 @@ export const chartContainer = {
 };
 
 export const chartConfig = {
-    backgroundColor: `rgba(255, 255, 255, 0)`,
-    backgroundGradientFrom: `rgba(255, 255, 255, 0)`,
-    backgroundGradientTo: `rgba(255, 255, 255, 0)`,
-    fillShadowGradientFromOpacity: 0,
-    fillShadowGradientToOpacity: 0,
-    decimalPlaces: 2,
-    color: (opacity = 1) => '#aaa',
-    labelColor: (opacity = 1) => '#777',
-    style: {
-        marginVertical: 15,
+    hasYAxisBackgroundLines: false,
+    xAxisLabelStyle: {
+        rotation: 0,
+        fontSize: 12,
+        width: 70,
+        yOffset: 4,
+        xOffset: -15
     },
-    propsForDots: {
-        r: '6',
-        strokeWidth: '2',
-        stroke: "#999"
-    },
-    useShadowColorFromDataset: false
+    yAxisLabelStyle: {
+        rotation: 30,
+        fontSize: 13,
+        prefix: '$',
+        position: 'bottom',
+        xOffset: 15,
+        decimals: 2,
+        height: 100
+    }
 };

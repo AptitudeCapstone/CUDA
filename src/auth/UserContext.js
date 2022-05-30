@@ -58,7 +58,7 @@ export const UserProvider: React.FC = ({children}) => {
                 (snapshot) => {
                     if (snapshot.exists()) {
                         setUserData({
-                            loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered'),
+                            loginStatus: (userAuth.isAnonymous ? 'Patient not selected' : 'registered'),
                             get user() {
                                 return snapshot.val()
                             },
@@ -75,7 +75,7 @@ export const UserProvider: React.FC = ({children}) => {
 
                         userDataRef.update(update).then(() => {
                             setUserData({
-                                loginStatus: (userAuth.isAnonymous ? 'guest' : 'registered'),
+                                loginStatus: (userAuth.isAnonymous ? 'Patient not selected' : 'registered'),
                                 get user() {
                                     return snapshot.val()
                                 },
