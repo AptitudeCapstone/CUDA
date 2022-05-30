@@ -557,7 +557,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CUDA/Info.plist;
@@ -594,7 +594,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = F5W4SYMX4K;
 				INFOPLIST_FILE = CUDA/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
