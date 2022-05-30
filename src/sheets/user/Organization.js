@@ -51,7 +51,6 @@ export const Organization = ({modalRef}) => {
                     if (organizationSnapshot.exists())
                         name = organizationSnapshot.val()['name'];
                 });
-            Alert.alert('Success', 'You are now disconnected to ' + name);
         } catch (error) {
             Alert.alert('Error', error.message);
         }
