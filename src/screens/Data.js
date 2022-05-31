@@ -73,7 +73,6 @@ const Data = ({navigation}) => {
                 if(patientsSnapshot && patientsSnapshot.exists()) {
                     const p = patientsSnapshot.val();
                     console.log('setting patients', p);
-                    setPatients(p);
                     if (p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
                         setCovidPatients(c);
@@ -88,7 +87,7 @@ const Data = ({navigation}) => {
             },
             (error) => console.error('Error fetching database updates:', error)
         );
-    }, [auth, organization, loginStatus, selectedTest, isFocused]);
+    }, [auth, organization, loginStatus]);
 
     const selectedPatientChanged = (patientKey) => {
         if (selectedTest === 'covid') {
@@ -257,15 +256,63 @@ const Data = ({navigation}) => {
                         <Text style={[testSelect.text, selectedTest === 'fibrinogen' ? {} : {color: '#aaa'}]}>Fibrinogen</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={[patientSelect.container, selectedTest === 'covid' ? {backgroundColor: '#9fa3c5'} : {backgroundColor: '#c57f7f'}]} onPress={() => {
-                    if (selectedTest === 'covid') {
-                        setCOVIDPatientModalVisible(true);
-                    } else if (selectedTest === 'fibrinogen') {
-                        setFibrinogenPatientModalVisible(true);
-                    }}}>
-                    <Text style={patientSelect.text}>Select</Text>
-                    <IconFA name='user' size={24} style={patientSelect.icon}/>
-                </TouchableOpacity>
+                <ModalSelector
+                    visible={covidPatientModalVisible}
+                    data={covidPatients}
+                    onModalClose={(option) => {
+                        if (option[0])
+                            selectedPatientChanged(option[0]);
+                        setCOVIDPatientModalVisible(false);
+                    }}
+                    keyExtractor={patient => patient[0]}
+                    labelExtractor={patient => patient[1]['name']}
+                    cancelText={'Cancel'}
+                    searchText={'Search patient by name'}
+                    overlayStyle={modal.overlay}
+                    optionContainerStyle={modal.container}
+                    optionTextStyle={modal.optionText}
+                    optionStyle={modal.option}
+                    cancelStyle={modal.cancelOption}
+                    cancelTextStyle={modal.cancelText}
+                    searchStyle={modal.searchBar}>
+                    {
+                        selectedTest === 'covid'
+                        ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#9fa3c5'} ]}
+                                            onPress={() => {setCOVIDPatientModalVisible(true)}}>
+                                <Text style={patientSelect.text}>Select</Text>
+                                <IconFA name='user' size={24} style={patientSelect.icon}/>
+                            </TouchableOpacity> : <View />
+                    }
+                </ModalSelector>
+
+                <ModalSelector
+                    visible={fibrinogenPatientModalVisible}
+                    data={fibrinogenPatients}
+                    onModalClose={(option) => {
+                        if (option[0])
+                            selectedPatientChanged(option[0]);
+                        setFibrinogenPatientModalVisible(false);
+                    }}
+                    keyExtractor={patient => patient[0]}
+                    labelExtractor={patient => patient[1]['name'] ? patient[1]['name'] : patient[0].toString()}
+                    cancelText={'Cancel'}
+                    searchText={'Search patient by name'}
+                    overlayStyle={modal.overlay}
+                    optionContainerStyle={modal.container}
+                    optionTextStyle={modal.optionText}
+                    optionStyle={modal.option}
+                    cancelStyle={modal.cancelOption}
+                    cancelTextStyle={modal.cancelText}
+                    searchStyle={modal.searchBar}>
+                    {
+                        selectedTest !== 'covid'
+                            ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#c57f7f'}]}
+                                                onPress={() => {setFibrinogenPatientModalVisible(true)}}>
+                                <Text style={patientSelect.text}>Select</Text>
+                                <IconFA name='user' size={24} style={patientSelect.icon}/>
+                            </TouchableOpacity> : <View />
+                    }
+                </ModalSelector>
             </View>
             <View style={[format.page]}>
                 <ScrollView style={{marginHorizontal: 25, padding: 15, paddingTop: 0, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff', borderRadius: 20, marginTop: 20, marginBottom: 175, }}>
@@ -457,50 +504,6 @@ const Data = ({navigation}) => {
                 color={fabColor}
                 floatingIcon={<MainFabIcon />}
                 onPressItem={(name) => fabActionHandler(name)} />
-
-            <ModalSelector
-                visible={covidPatientModalVisible}
-                data={covidPatients}
-                onModalClose={(option) => {
-                    if (option[0])
-                        selectedPatientChanged(option[0]);
-                    setCOVIDPatientModalVisible(false);
-                }}
-                keyExtractor={patient => patient[0]}
-                labelExtractor={patient => patient[1]['name']}
-                renderItem={<View/>}
-                customSelector={<View/>}
-                cancelText={'Cancel'}
-                searchText={'Search patient by name'}
-                overlayStyle={modal.overlay}
-                optionContainerStyle={modal.container}
-                optionTextStyle={modal.optionText}
-                optionStyle={modal.option}
-                cancelStyle={modal.cancelOption}
-                cancelTextStyle={modal.cancelText}
-                searchStyle={modal.searchBar} />
-
-            <ModalSelector
-                visible={fibrinogenPatientModalVisible}
-                data={fibrinogenPatients}
-                onModalClose={(option) => {
-                    if (option[0])
-                        selectedPatientChanged(option[0]);
-                    setFibrinogenPatientModalVisible(false);
-                }}
-                keyExtractor={patient => patient[0]}
-                labelExtractor={patient => patient[1]['name'] ? patient[1]['name'] : patient[0].toString()}
-                renderItem={<View/>}
-                customSelector={<View/>}
-                cancelText={'Cancel'}
-                searchText={'Search patient by name'}
-                overlayStyle={modal.overlay}
-                optionContainerStyle={modal.container}
-                optionTextStyle={modal.optionText}
-                optionStyle={modal.option}
-                cancelStyle={modal.cancelOption}
-                cancelTextStyle={modal.cancelText}
-                searchStyle={modal.searchBar} />
 
             <Account navigation={navigation}
                      modalRef={organizationSlideUpRef}

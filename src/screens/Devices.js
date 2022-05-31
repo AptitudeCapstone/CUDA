@@ -65,12 +65,10 @@ const Devices = ({navigation}) => {
         createFibrinogenSlideUpRef = useRef(null);
 
     useEffect(() => {
-        console.log('user ref path from user context: ', patientsRef);
         return patientsRef.on('value',
             (patientsSnapshot) => {
                 if(patientsSnapshot && patientsSnapshot.exists()) {
                     const p = patientsSnapshot.val();
-                    console.log('setting patients', p);
                     if (p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
                         setCovidPatients(c);
@@ -79,13 +77,11 @@ const Devices = ({navigation}) => {
                         const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
                         setFibrinogenPatients(f)
                     }
-                } else {
-                    console.log('no patients to display');
                 }
             },
             (error) => console.error('Error fetching database updates:', error)
         );
-    }, [auth, organization, loginStatus, isFocused]);
+    }, [auth, organization, loginStatus]);
 
     // this useEffect is base of the BLE routine
     useEffect(() => {
@@ -94,7 +90,7 @@ const Devices = ({navigation}) => {
                 manager.startDeviceScan(null, null,
                     async (bleError, device) => {
                         if (bleError || !device || !device?.name) {
-                            if (bleError) console.log('BLE Error: ' + bleError);
+                            if (bleError) Alert.alert('Bluetooth error', bleError);
                         } else if (device.name.includes('AMS-')) {
                             try {
                                 if (!readersMap.get(device.id) && autoConnectByName.current)
@@ -106,7 +102,7 @@ const Devices = ({navigation}) => {
                                         selectedPatient: 'Patient not selected'
                                     });
                             } catch (err) {
-                                console.log('Device connection error: ' + err)
+                                console.log('Device connection error: ' + err);
                             }
                         }
                     });
@@ -156,11 +152,11 @@ const Devices = ({navigation}) => {
         if (!name) name = 'Patient not selected'
 
         if (selectedPatient) {
-            covidDBRef = database().ref(userInfo.userRefPath + 'covid-patients/' + selectedPatient.id + '/results/');
-            fibrinogenDBRef = database().ref(userInfo.userRefPath + '/fibrinogen-patients/' + selectedPatient.id + '/results/');
+            covidDBRef = database().ref(userInfo.patientsRefPath + 'covid-patients/' + selectedPatient.id + '/results/');
+            fibrinogenDBRef = database().ref(userInfo.patientsRefPath + '/fibrinogen-patients/' + selectedPatient.id + '/results/');
         } else {
-            covidDBRef = database().ref(userInfo.userRefPath + 'guest-results/covid/results/');
-            fibrinogenDBRef = database().ref(userInfo.userRefPath + '/guest-results/fibrinogen/results/');
+            covidDBRef = database().ref(userInfo.patientsRefPath + 'guest-results/covid/results/');
+            fibrinogenDBRef = database().ref(userInfo.patientsRefPath + '/guest-results/fibrinogen/results/');
         }
 
         switch (action) {
@@ -343,7 +339,7 @@ const Devices = ({navigation}) => {
             <View style={device.body}>
                 <View style={device.patientSelect}>
                     <View style={{flexGrow: 1, textAlign: 'center'}}>
-                        <TouchableOpacity style={[device.button]} onPress={() => {setLastTappedDeviceForPatientSelect(id)}}>
+                        <TouchableOpacity style={[device.button]} onPress={setLastTappedDeviceForPatientSelect(id)}>
                             <Text style={[device.buttonText]}>Scan patient QR</Text>
                             <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
                         </TouchableOpacity>
@@ -368,7 +364,7 @@ const Devices = ({navigation}) => {
                     >
                         {(utilityBar === 'covid') ?
                             <TouchableOpacity style={[device.button]}
-                                              onPress={() => {setLastTappedDeviceForPatientSelect(id);}}>
+                                              onPress={setLastTappedDeviceForPatientSelect(id)}>
                                 <Text style={[device.buttonText]}>Select patient from list</Text>
                                 <IconE name='list' size={24} style={iconButton.icon}/>
                             </TouchableOpacity> : <View />}
@@ -393,7 +389,7 @@ const Devices = ({navigation}) => {
                     >
                         {(utilityBar === 'fibrinogen') ?
                         <TouchableOpacity style={[device.button]}
-                                          onPress={() => {setLastTappedDeviceForPatientSelect(id)}}>
+                                          onPress={setLastTappedDeviceForPatientSelect(id)}>
                             <Text style={[device.buttonText]}>Select patient from list</Text>
                             <IconE name='list' size={24} style={iconButton.icon}/>
                         </TouchableOpacity> : <View />}
