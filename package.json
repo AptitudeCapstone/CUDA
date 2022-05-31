@@ -36,6 +36,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-chart-kit": "^6.11.0",
     "react-native-countdown-circle-timer": "^3.0.9",
+    "react-native-device-info": "^8.7.1",
     "react-native-dropdown-picker": "^5.4.0",
     "react-native-floating-action": "^1.22.0",
     "react-native-gesture-handler": "^2.4.2",

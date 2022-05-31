@@ -14,16 +14,7 @@ export const Account = ({navigation, modalRef}) => {
         dimensions = useWindowDimensions(),
         [addCode, setAddCode] = useState(-1),
         [connectAddCode, setConnectAddCode] = useState(-1),
-        [name, setName] = useState(''),
-        [ownerEmail1, setOwnerEmail1] = useState(''),
-        [ownerEmail2, setOwnerEmail2] = useState(''),
-        [ownerEmail3, setOwnerEmail3] = useState(''),
-        [streetAddress1, setStreetAddress1] = useState(''),
-        [streetAddress2, setStreetAddress2] = useState(''),
-        [city, setCity] = useState(''),
-        [state, setState] = useState(''),
-        [country, setCountry] = useState(''),
-        [zip, setZip] = useState(0);
+        [name, setName] = useState('');
 
     const disconnect = async () => {
         let name = 'organization';
@@ -82,25 +73,16 @@ export const Account = ({navigation, modalRef}) => {
     };
 
     const registerOrganization = () => {
-        if (name !== '' && (addCode === 0 || addCode >= 1000) && ownerEmail1 !== '') {
+        if (name !== '' && addCode.toString().length >= 4) {
             const newOrganization = database().ref('/organizations').push();
             newOrganization.set({
                 name: name,
-                addCode: addCode,
-                ownerEmail1: ownerEmail1,
-                ownerEmail2: ownerEmail2,
-                ownerEmail3: ownerEmail3,
-                streetAddress1: streetAddress1,
-                streetAddress2: streetAddress2,
-                city: city,
-                state: state,
-                country: country,
-                zip: zip
+                addCode: addCode
             }).then(() => {
                 database().ref(userInfo.userRefPath).update({
                     organization: organization.key
                 }).then(() => {
-                    Alert.alert('Success', 'Synced with ' + organization.val().name)
+                    Alert.alert('Registration complete', 'Now syncing with ' + organization.val().name)
                     modalRef.current?.close();
                 }).catch((error) => {
                     Alert.alert('Error', error.message);
@@ -108,7 +90,7 @@ export const Account = ({navigation, modalRef}) => {
             }).catch((error) => {
                 Alert.alert('Error', error.message);
             });
-        } else Alert.alert('Error', 'Please complete the required fields');
+        } else Alert.alert('Error', 'Please enter both an organization name and an add code');
     };
 
     const handleLogOut = () => logOut(navigation).then(() => modalRef.current?.close());
@@ -126,7 +108,7 @@ export const Account = ({navigation, modalRef}) => {
                         </View> : null
                 }
                 {
-                    (userInfo.loginStatus === 'offline')
+                    (userInfo.loginStatus === 'guest')
                         ? <View>
                             <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]}
                                               onPress={() => navigation.navigate('SignIn')}>
@@ -135,7 +117,7 @@ export const Account = ({navigation, modalRef}) => {
                         </View> : null
                 }
                 {
-                    (!organization)
+                    (!organization && userInfo.loginStatus === 'registered')
                         ? <>
                             <View style={{paddingTop: 20}}>
                                 <Text style={fonts.smallText}>

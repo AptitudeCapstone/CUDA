@@ -547,7 +547,7 @@ export const buttons = StyleSheet.create({
         padding: 16,
         paddingTop: 8,
         paddingBottom: 8,
-        backgroundColor: '#9c3a2f',
+        backgroundColor: '#e1978d',
         marginLeft: 10,
         marginRight: 10,
         borderRadius: 50,
@@ -633,7 +633,6 @@ export const device = StyleSheet.create({
         borderBottomRightRadius: 15,
     },
     patientSelect: {
-        flexDirection: 'row',
         paddingHorizontal: 15,
     },
     buttonContainerLandscape: {

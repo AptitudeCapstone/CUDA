@@ -11,61 +11,17 @@ export const CreateCOVID = ({modalRef}) => {
         [patientEmail, setPatientEmail] = useState(''),
         [patientPhone, setPatientPhone] = useState(0),
         userInfo = useAuth(),
-        auth = userInfo.userAuth,
-        organization = userInfo.user?.organization,
+        patientsRef = database().ref(userInfo.patientsRefPath + '/covid-patients/'),
         dimensions = useWindowDimensions();
 
     const registerPatient = () => {
-        if (!organization) {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth.uid + '/patients/covid-patients/')
-                .orderByChild('qrId')
-                .once('value', (snapshot) => {
-                    let qrId = 1;
-                    if (snapshot.val()) {
-                        let takenQRs = [];
-                        snapshot.forEach((data) => {takenQRs.push(data.val().qrId)});
-                        while (takenQRs.includes(qrId))
-                            qrId += 1;
-                    }
-
-                    const patientReference = database().ref('/users/' + auth.uid + '/patients/covid-patients/').push();
-                    patientReference.update({
-                        name: patientName,
-                        qrId: qrId,
-                        email: patientEmail,
-                        phone: patientPhone
-                    }).then(() => console.log('Added entry for /users/' + auth.uid + '/patients/covid-patients/' + patientReference.key)
-                    ).catch((error) => Alert.alert('Error', error));
-                }).then(() => modalRef.current?.close());
-        } else {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + organization + '/patients/covid-patients/')
-                .orderByChild('qrId')
-                .once('value', (snapshot) => {
-                    let qrId = 1;
-                    if (snapshot.val()) {
-                        let takenQRs = [];
-                        snapshot.forEach((data) => {takenQRs.push(data.val().qrId)});
-                        while (takenQRs.includes(qrId))
-                            qrId += 1;
-                    }
-
-                    const newPatient = database().ref('/organizations/' + organization + '/patients/covid-patients/').push();
-                    newPatient.update({
-                        name: patientName,
-                        qrId: qrId,
-                        email: patientEmail,
-                        phone: patientPhone,
-                    }).then(() => {
-                        console.log('Added entry for /organizations/' + organization + '/patients/covid-patients/' + newPatient.key);
-                    }).catch((error) => {
-                        Alert.alert('Error', error);
-                    });
-                }).then(() =>
-                    modalRef.current?.close())
-                .catch((error) => Alert.alert('Error', error));;
-        }
+        const patientReference = patientsRef.push();
+        patientReference.update({
+            name: patientName,
+            email: patientEmail,
+            phone: patientPhone
+        }).then(() => modalRef.current?.close())
+        .catch((error) => Alert.alert('Error', error));
     }
 
 
@@ -76,36 +32,36 @@ export const CreateCOVID = ({modalRef}) => {
                     All fields are optional and can be edited after the patient is created
                 </Text>
                 <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
-                    <TextInput underlineColorAndroid='transparent'
-                               placeholder='Name'
-                               placeholderTextColor='#aaa'
-                               keyboardType='default'
-                               onChangeText={(patientName) => setPatientName(patientName)}
-                               numberOfLines={1}
-                               multiline={false}
-                               style={format.textBox}
-                               blurOnSubmit={false}/>
+                <TextInput underlineColorAndroid='transparent'
+                           placeholder='Name'
+                           placeholderTextColor='#aaa'
+                           keyboardType='default'
+                           onChangeText={(patientName) => setPatientName(patientName)}
+                           numberOfLines={1}
+                           multiline={false}
+                           style={format.textBox}
+                           blurOnSubmit={false}/>
                 <Text style={[fonts.mediumText, format.fieldName]}>Contact</Text>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Email address'
-                        placeholderTextColor='#aaa'
-                        keyboardType='email-address'
-                        onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={format.textBox}
-                        blurOnSubmit={false}/>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Phone number'
-                        placeholderTextColor='#aaa'
-                        keyboardType='numeric'
-                        onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
-                        numberOfLines={1}
-                        multiline={false}
-                        style={format.textBox}
-                        blurOnSubmit={false}/>
+                <TextInput
+                    underlineColorAndroid='transparent'
+                    placeholder='Email address'
+                    placeholderTextColor='#aaa'
+                    keyboardType='email-address'
+                    onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
+                    numberOfLines={1}
+                    multiline={false}
+                    style={format.textBox}
+                    blurOnSubmit={false}/>
+                <TextInput
+                    underlineColorAndroid='transparent'
+                    placeholder='Phone number'
+                    placeholderTextColor='#aaa'
+                    keyboardType='numeric'
+                    onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
+                    numberOfLines={1}
+                    multiline={false}
+                    style={format.textBox}
+                    blurOnSubmit={false}/>
                 <TouchableOpacity
                     style={buttons.submitButton}
                     onPress={() => registerPatient()}>

@@ -12,7 +12,7 @@ export const logOut = async (navigation) => {
                 .catch(() => {
                     console.error('Error signing out');
                 });
-        }).catch(err => {
+        }).catch(() => {
         auth().signOut()
             .then(() => {
                 navigation.navigate('SignIn');

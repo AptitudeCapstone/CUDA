@@ -77,7 +77,7 @@ export const SignIn = ({navigation}) => {
     const handleLogInApple = async () => {
         try {
             await logInApple();
-            Alert.alert('Success', 'You have been signed in');
+            Alert.alert('Welcome', 'You have been signed in');
             navigation.navigate('Tabs');
         } catch (error) {
             Alert.alert('Error', error.message);
@@ -125,7 +125,7 @@ export const SignIn = ({navigation}) => {
             } else if (error.code === statusCodes.IN_PROGRESS) {
                 return true;
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                throw new Error('Google play services are unavailable, try another login method.');
+                throw new Error('Google play services are unavailable, try another login method');
             }
         }
     }
@@ -158,14 +158,14 @@ export const SignIn = ({navigation}) => {
                 [
                     {
                         text: "Sign in or sign up", onPress: () => {
-
+                            console.debug('User chose to sign in')
                         },
                         style: "cancel"
                     },
                     {
                         text: "Continue as guest",
                         onPress: () => {
-
+                            navigation.navigate('Tabs');
                         },
                     }
                 ]

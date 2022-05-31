@@ -1,86 +1,64 @@
 import auth from '@react-native-firebase/auth';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import database from "@react-native-firebase/database";
+import DeviceInfo from 'react-native-device-info';
 
 const userAuthContext = createContext({
-    user: undefined,                // the current user's data
-    dataInfo: {loginStatus: 'loading'},  // more information about the current user's data
-    loginStatus: 'loading',          // the status of fetching the current user's data
-    userRefPath: '/users/offline',
-    initializing: true,             // the status of checking the user's auth session
-    userAuth: undefined             // the current user object
+    user: undefined,                                // the current user's data
+    dataInfo: {loginStatus: 'loading'},             // any data stored in userRefPath of database
+    loginStatus: 'loading',                         // user login status ('registered', 'offline')
+    userRefPath: '/users/offline',                  // current path to user in database
+    patientsRefPath: '/users/offline/patients',     // current path to patients in database
+    initializing: true,                             // status of auth session
+    userAuth: undefined                             // the current user auth (from firebase auth)
 });
 
 export const useAuth = () => useContext(userAuthContext);
 
 export const UserProvider: React.FC = ({children}) => {
     const [userAuth, setUserAuth] = useState(() => auth().currentUser);
-    const [userData, setUserData] = useState({loginStatus: 'offline'});
+    const [userData, setUserData] = useState({loginStatus: 'guest'});
     const [userRefPath, setUserRefPath] = useState(() => '/users/offline');
+    const [patientsRefPath, setPatientsRefPath] = useState(() => '/users/offline/patients');
     const [initializing, setInitializing] = useState(userAuth === null);
-    const [subscriptions, setSubscriptions] = useState(() => []);
 
     useEffect(() => auth().onAuthStateChanged((user) => {
         if(!user) {
-            database()
-                .goOffline()
-                .then(() => {
-                    let subs = subscriptions;
-                    subs.forEach(sub => {
-                        sub.off();
-                        subs.pop();
-                    });
-                    setSubscriptions(subs);
-
-                    setUserAuth(null);
-                    setUserRefPath('/users/offline');
-                    setUserData({
-                        loginStatus: 'offline',
-                        user: null
-                    });
-                })
-                .then(() => {
-                    console.log('User entered offline mode');
+                const UID = DeviceInfo.getUniqueId();
+                setUserAuth(null);
+                setUserRefPath('/users/' + UID);
+                setPatientsRefPath('/users/' + UID + '/patients');
+                setUserData({
+                    loginStatus: 'guest',
+                    user: null
                 });
         } else {
-            database()
-                .goOnline()
-                .then(() => {
-                    console.log('User entering online mode');
-                })
-                .then(() => {
-                    const userPath = '/users/' + user.uid;
-                    const userDataRef = database().ref(userPath);
+                const userPath = '/users/' + user.uid;
+                const userRef = database().ref(userPath);
+                setUserAuth(user);
+                setUserRefPath(userPath);
 
-                    userDataRef.once('value', (snapshot) => {
-                        console.log('user org:', snapshot.val().organization);
-                        let orgID = snapshot.val().organization;
-                        if(orgID) {
-                            setUserRefPath('/organizations/' + orgID)
-                        } else {
-                            setUserRefPath(userPath);
-                        }
-                    }). then(() => {
-                        // append this subscription to current subscriptions
-                        let prevSubs = subscriptions;
-                        prevSubs.push(userDataRef);
-                        setSubscriptions(prevSubs);
-
-                        setUserAuth(user);
-                        return userDataRef.on('value',
-                            (snapshot) => {
-                                setUserData({
-                                    loginStatus: 'registered',
-                                    get user() {
-                                        return snapshot.val()
-                                    }
-                                });
-                            },
-                            (error) => setUserData({
-                                loginStatus: 'error',
-                                user: null
-                            }));
-                    })
+                userRef.once('value', (snapshot) => {
+                    let orgID = snapshot.val().organization;
+                    if(orgID) {
+                        setPatientsRefPath('/organizations/' + orgID + '/patients');
+                    } else {
+                        setPatientsRefPath('/users/' + user.uid);
+                    }
+                }).then(() => {
+                    return userRef.on('value',
+                        (snapshot) => {
+                            setUserData({
+                                loginStatus: 'registered',
+                                get user() {
+                                    return snapshot.val()
+                                }
+                            });
+                        },
+                        (error) => setUserData({
+                            loginStatus: 'error',
+                            user: null
+                        }));
                 })
         }
 
@@ -97,6 +75,7 @@ export const UserProvider: React.FC = ({children}) => {
                 loginStatus: userData.loginStatus,
                 userAuth: userAuth,
                 userRefPath: userRefPath,
+                patientsRefPath: patientsRefPath,
                 initializing,
             }}
         >

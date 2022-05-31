@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import RBSheet from "react-native-raw-bottom-sheet";
-import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
+import {Alert, Text, TextInput, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import database from "@react-native-firebase/database";
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
@@ -15,68 +15,22 @@ export const CreateFibrinogen = ({modalRef}) => {
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null),
         userInfo = useAuth(),
-        auth = userInfo.userAuth,
-        organization = userInfo.user?.organization,
+        patientsRef = database().ref(userInfo.patientsRefPath + '/fibrinogen-patients/'),
         dimensions = useWindowDimensions();
 
-    const registerPatient = () => {
-        if (!organization) {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/')
-                .orderByChild('qrId')
-                .once('value', (snapshot) => {
-                    let qrId = 1;
-                    if (snapshot.val()) {
-                        let takenQRs = [];
-                        snapshot.forEach((data) => takenQRs.push(data.val().qrId));
-                        while (takenQRs.includes(qrId))
-                            qrId += 1;
-                    }
-
-                    const newPatient = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/').push();
-                    newPatient.update({
-                        qrId: qrId,
-                        name: patientName,
-                        bloodType: patientBloodType,
-                        sex: patientSex,
-                        age: patientAge,
-                        height: patientHeight,
-                        weight: patientWeight
-                    }).then(() => {
-                        console.log('Added entry for /users/' + auth.uid + '/patients/fibrinogen-patients/' + newPatient.key);
-                    }).catch((error) => {
-                        Alert.alert('Error', error);
-                    });
-                }).then(() => modalRef.current?.close());
-        } else {
-            // find the next available QR ID and use that for the next patient
-            database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/')
-                .orderByChild('qrId')
-                .once('value', (snapshot) => {
-                    let qrId = 1;
-                    if (snapshot.val()) {
-                        let takenQRs = [];
-                        snapshot.forEach((data) => takenQRs.push(data.val().qrId));
-                        while (takenQRs.includes(qrId))
-                            qrId += 1;
-                    }
-
-                    const newPatient = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/').push();
-                    newPatient.update({
-                        qrId: qrId,
-                        name: patientName,
-                        bloodType: patientBloodType,
-                        sex: patientSex,
-                        age: patientAge,
-                        height: patientHeight,
-                        weight: patientWeight
-                    }).then(() => {
-                        console.log('Added entry for /organizations/' + organization + '/patients/fibrinogen-patients/' + newPatient.key);
-                    }).catch((error) => {
-                        Alert.alert('Error', error);
-                    });
-                }).then(() => modalRef.current?.close());
-        }
+    async function registerPatient() {
+        const newPatient = patientsRef.push();
+        newPatient.update({
+            name: patientName,
+            bloodType: patientBloodType,
+            sex: patientSex,
+            age: patientAge,
+            height: patientHeight,
+            weight: patientWeight
+        }).then(() => modalRef.current?.close())
+            .catch((error) => {
+                Alert.alert('Error', error);
+            });
     }
 
     const BloodTypeSelector = () => (

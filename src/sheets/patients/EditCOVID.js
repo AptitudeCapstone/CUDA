@@ -11,19 +11,12 @@ export const EditCOVID = ({modalRef, patientKey}) => {
         [patientEmail, setPatientEmail] = useState(''),
         [patientPhone, setPatientPhone] = useState(0),
         userInfo = useAuth(),
-        auth = userInfo.userAuth,
-        organization = userInfo.user?.organization,
+        patientRef = database().ref(userInfo.patientsRefPath + '/covid-patients/' + patientKey),
         dimensions = useWindowDimensions();
 
     const updatePatient = () => {
         let patient = null;
-        patient = (organization)
-            ? patient = database().ref('/organizations/' + organization + '/patients/covid-patients/' + patientKey)
-            : database().ref('/users/' + auth.uid + '/patients/covid-patients/' + patientKey);
-
-        // first get current patient info
-        // if not empty, and not equal to current value, update the value
-        patient.once('value', (patientSnapshot) => {
+        patientRef.once('value', (patientSnapshot) => {
             if (patientSnapshot.val()) {
                 if (patientName !== patientSnapshot.val().name && patientName !== '') {
                     patient.update({name: patientName});

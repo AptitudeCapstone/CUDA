@@ -57,7 +57,7 @@ const Data = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsRef = database().ref(userInfo.userRefPath + '/patients/'),
+        patientsRef = database().ref(userInfo.patientsRefPath),
         accountAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
         scanSheetRef = useRef(null),
@@ -68,29 +68,26 @@ const Data = ({navigation}) => {
 
     useEffect(() => {
         console.log('user ref path from user context: ', patientsRef);
-        patientsRef.on('value',
+        return patientsRef.on('value',
             (patientsSnapshot) => {
-                if (patientsSnapshot.exists()) {
-                    const p = patientsSnapshot.toJSON();
+                if(patientsSnapshot && patientsSnapshot.exists()) {
+                    const p = patientsSnapshot.val();
                     console.log('setting patients', p);
                     setPatients(p);
-                    if (p && p['covid-patients']) {
+                    if (p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
                         setCovidPatients(c);
                     }
-                    if (p && p['fibrinogen-patients']) {
+                    if (p['fibrinogen-patients']) {
                         const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
                         setFibrinogenPatients(f)
                     }
                 } else {
-                    setCovidPatients([]);
-                    setFibrinogenPatients([]);
+                    console.log('no patients to display');
                 }
             },
             (error) => console.error('Error fetching database updates:', error)
         );
-
-        return () => patientsRef.off();
     }, [auth, organization, loginStatus, selectedTest, isFocused]);
 
     const selectedPatientChanged = (patientKey) => {
@@ -148,8 +145,8 @@ const Data = ({navigation}) => {
                 setChartData({
                     labels: tempLabels,
                     datasets: [{
-                            data: tempChartData
-                        }]
+                        data: tempChartData
+                    }]
                 });
             } else {
                 setPatientFibrinogenTests([]);
@@ -190,7 +187,13 @@ const Data = ({navigation}) => {
         textStyle: {fontSize: 16}
     };
 
-    const fabActionsDefault = [
+    const fabActions = [
+        {
+            ...fabPropsCommon,
+            text: "My account",
+            name: "account",
+            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+        },
         {
             ...fabPropsCommon,
             text: "Create new patient",
@@ -204,24 +207,6 @@ const Data = ({navigation}) => {
             name: "qr",
         },
     ];
-
-    const [fabActions, setFabActions] = useState(fabActionsDefault);
-
-    useEffect(() => {
-        switch(userInfo.loginStatus) {
-            case 'registered':
-                const registeredButtons = [{
-                    ...fabPropsCommon,
-                    text: "My account",
-                    name: "account",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                }]
-                setFabActions(registeredButtons.concat(fabActionsDefault));
-                break;
-            default:
-                setFabActions(fabActionsDefault);
-        }
-    }, [isFocused, userInfo]);
 
     const fabActionHandler = (actionName) => {
         switch(actionName) {

@@ -15,45 +15,34 @@ export const EditFibrinogen = ({modalRef, patientKey}) => {
         [patientHeight, setPatientHeight] = useState(null),
         [patientWeight, setPatientWeight] = useState(null),
         userInfo = useAuth(),
-        auth = userInfo.userAuth,
-        organization = userInfo.user?.organization,
+        patientRef = database().ref(userInfo.patientsRefPath + '/fibrinogen-patients/' + patientKey),
         dimensions = useWindowDimensions();
 
     const updatePatient = () => {
-        let patient = null;
-        if (!organization) {
-            patient = database().ref('/users/' + auth.uid + '/patients/fibrinogen-patients/' + patientKey);
-        } else {
-            patient = database().ref('/organizations/' + organization + '/patients/fibrinogen-patients/' + patientKey);
-        }
-
-        // first get current patient info
-        // if not empty, and not equal to current value, update the value
-        patient.once('value', function (patientSnapshot) {
-            console.log(patientSnapshot.val());
+        patientRef.once('value', async function (patientSnapshot) {
             if (patientSnapshot.val()) {
                 if (patientName !== patientSnapshot.val().name && patientName !== null) {
-                    patient.update({name: patientName});
+                    await patientRef.update({name: patientName});
                 }
 
                 if (patientBloodType !== patientSnapshot.val().bloodType && patientBloodType !== null) {
-                    patient.update({bloodType: patientBloodType});
+                    await patientRef.update({bloodType: patientBloodType});
                 }
 
                 if (patientSex !== patientSnapshot.val().sex && patientSex !== null) {
-                    patient.update({sex: patientSex});
+                    await patientRef.update({sex: patientSex});
                 }
 
                 if (patientAge !== patientSnapshot.val().age && patientAge !== null) {
-                    patient.update({age: patientAge});
+                    await patientRef.update({age: patientAge});
                 }
 
                 if (patientWeight !== patientSnapshot.val().weight && patientWeight !== null) {
-                    patient.update({weight: patientWeight});
+                    await patientRef.update({weight: patientWeight});
                 }
 
                 if (patientHeight !== patientSnapshot.val().height && patientHeight !== null) {
-                    patient.update({height: patientHeight});
+                    await patientRef.update({height: patientHeight});
                 }
             }
         }).then(() => {
@@ -190,15 +179,15 @@ export const EditFibrinogen = ({modalRef, patientKey}) => {
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can be edited after creation</Text>
                 <Text style={fonts.subheadingSpaced}>Name</Text>
-                    <TextInput underlineColorAndroid='transparent'
-                               placeholder='Name'
-                               placeholderTextColor='#aaa'
-                               keyboardType='default'
-                               onChangeText={(patientName) => setPatientName(patientName)}
-                               numberOfLines={1}
-                               multiline={false}
-                               style={format.textBox}
-                               blurOnSubmit={false} />
+                <TextInput underlineColorAndroid='transparent'
+                           placeholder='Name'
+                           placeholderTextColor='#aaa'
+                           keyboardType='default'
+                           onChangeText={(patientName) => setPatientName(patientName)}
+                           numberOfLines={1}
+                           multiline={false}
+                           style={format.textBox}
+                           blurOnSubmit={false} />
                 <Text style={fonts.subheadingSpaced}>Blood Type</Text>
                 <BloodTypeSelector/>
                 <Text style={fonts.subheadingSpaced}>Sex</Text>

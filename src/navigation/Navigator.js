@@ -30,54 +30,49 @@ const Navigator = () => (
                     component={TabsNavigator}
                     options={{headerShown: false}}
                 />
-                <Stack.Screen
-                    name='Offline'
-                    component={Devices}
-                    options={{headerShown: false}}
-                />
             </Stack.Navigator>
         </NavigationContainer>
     </UserProvider>
 );
 
 const TabsNavigator = () => (
-            <Tabs.Navigator
-                initialRouteName='MonitorTab'
-                screenOptions={tabNavigatorStyle}
-                tabBarOptions={{
-                    activeTintColor: mediumPurple,
-                    inactiveTintColor: mediumPurple,
-                    activeBackgroundColor: backgroundColor,
-                    inactiveBackgroundColor: backgroundColor
-                }}
-                appearance={{
-                    floating: true,
-                    activeColors: [mediumPurple, mediumPurple],
-                    activeTabBackgrounds: [backgroundColor, backgroundColor]
-                }}>
-                <Tabs.Screen
-                    name='MonitorTab'
-                    component={Devices}
-                    options={{
-                        title: 'Devices',
-                        headerShown: false,
-                        tabBarIcon: ({ focused, color, size }) => (
-                            <IconMI name='device-hub' color={color} size={size}/>
-                        ),
-                    }}
-                />
-                <Tabs.Screen
-                    name='ViewDataTab'
-                    component={Data}
-                    options={{
-                        title: 'Records',
-                        headerShown: false,
-                        tabBarIcon: ({ focused, color, size }) => (
-                            <IconE name='area-graph' color={color} size={size}/>
-                        ),
-                    }}
-                />
-            </Tabs.Navigator>
+    <Tabs.Navigator
+        initialRouteName='MonitorTab'
+        screenOptions={tabNavigatorStyle}
+        tabBarOptions={{
+            activeTintColor: mediumPurple,
+            inactiveTintColor: mediumPurple,
+            activeBackgroundColor: backgroundColor,
+            inactiveBackgroundColor: backgroundColor
+        }}
+        appearance={{
+            floating: true,
+            activeColors: [mediumPurple, mediumPurple],
+            activeTabBackgrounds: [backgroundColor, backgroundColor]
+        }}>
+        <Tabs.Screen
+            name='MonitorTab'
+            component={Devices}
+            options={{
+                title: 'Devices',
+                headerShown: false,
+                tabBarIcon: ({ focused, color, size }) => (
+                    <IconMI name='device-hub' color={color} size={size}/>
+                ),
+            }}
+        />
+        <Tabs.Screen
+            name='ViewDataTab'
+            component={Data}
+            options={{
+                title: 'Records',
+                headerShown: false,
+                tabBarIcon: ({ focused, color, size }) => (
+                    <IconE name='area-graph' color={color} size={size}/>
+                ),
+            }}
+        />
+    </Tabs.Navigator>
 )
 
 

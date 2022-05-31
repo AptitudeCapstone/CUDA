@@ -49,7 +49,6 @@ const Devices = ({navigation}) => {
         autoConnectByName = useRef(false),
         dimensions = useWindowDimensions(),
         isFocused = useIsFocused(),
-        [patients, setPatients] = useState(() => new Map()),
         [covidPatients, setCovidPatients] = useState([]),
         [fibrinogenPatients, setFibrinogenPatients] = useState([]),
         [viewCOVIDPatientModalVisible, setViewCOVIDPatientModalVisible] = useState(false),
@@ -58,40 +57,34 @@ const Devices = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsRef = database().ref(userInfo.userRefPath),
+        patientsRef = database().ref(userInfo.patientsRefPath),
         isLandscape = (dimensions.width > dimensions.height),
-        editAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
-        scanSheetRef = useRef(null),
+        //scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null);
 
-    // this useEffect is the base of the patient database routine
     useEffect(() => {
-            if (auth) {
-                patientsRef.on('value', (patientsSnapshot) => {
-                    if (patientsSnapshot.exists()) {
-                        const p = patientsSnapshot.toJSON();
-                        setPatients(p);
-                        if (p && p['covid-patients']) {
-                            const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
-                            setCovidPatients(c);
-                        } else setCovidPatients([]);
-                        if (p['fibrinogen-patients']) {
-                            const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
-                            setFibrinogenPatients(f);
-                        } else setFibrinogenPatients([]);
-                    } else {
-                        setCovidPatients([]);
-                        setFibrinogenPatients([]);
+        console.log('user ref path from user context: ', patientsRef);
+        return patientsRef.on('value',
+            (patientsSnapshot) => {
+                if(patientsSnapshot && patientsSnapshot.exists()) {
+                    const p = patientsSnapshot.val();
+                    console.log('setting patients', p);
+                    if (p['covid-patients']) {
+                        const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
+                        setCovidPatients(c);
                     }
-                }, (error) => console.error('Error fetching database updates:', error));
-                return () => patientsRef.off();
-            } else {
-                setCovidPatients([]);
-                setFibrinogenPatients([]);
-                return () => console.debug('User is logged off');
-            }
+                    if (p['fibrinogen-patients']) {
+                        const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
+                        setFibrinogenPatients(f)
+                    }
+                } else {
+                    console.log('no patients to display');
+                }
+            },
+            (error) => console.error('Error fetching database updates:', error)
+        );
     }, [auth, organization, loginStatus, isFocused]);
 
     // this useEffect is base of the BLE routine
@@ -302,9 +295,7 @@ const Devices = ({navigation}) => {
                 isLandscape ? device.buttonContainerLandscape : device.buttonContainer,
                 isLandscape ? {borderBottomLeftRadius: 0} : {borderBottomLeftRadius: 15}
             ]}>
-                <TouchableOpacity style={[device.button]} onPress={async () => {
-                    await connect(id)
-                }}>
+                <TouchableOpacity style={[device.button]} onPress={async () => {await connect(id)}}>
                     <Text style={[device.buttonText]}>Connect</Text>
                     <IconMCI name='bluetooth-connect' size={24} style={iconButton.icon}/>
                 </TouchableOpacity>
@@ -350,54 +341,72 @@ const Devices = ({navigation}) => {
                 <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
             </View>
             <View style={device.body}>
-                    <View style={device.patientSelect}>
-                        <View style={{flexGrow: 1, textAlign: 'center'}}>
-                            <TouchableOpacity style={[device.button]} onPress={() => {
-                                // set device to modify to the tapped device
-                                setLastTappedDeviceForPatientSelect(id);
-
-                                // navigate to QR page
-
-                                // wait until back
-
-                                // use scanned QR value
-
-                            }}>
-                                <Text style={[device.buttonText]}>Scan patient QR</Text>
-                                <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
-                            </TouchableOpacity>
-                        </View>
-                        {
-                            (utilityBar === 'covid') ?
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={() => {
-                                                  setLastTappedDeviceForPatientSelect(id);
-                                                  setViewCOVIDPatientModalVisible(true);
-                                              }}>
-                                <Text style={[device.buttonText]}>Select patient from list</Text>
-                                <IconE name='list' size={24} style={iconButton.icon}/>
-                            </TouchableOpacity> : null
-                        }
-                        {
-                            (utilityBar === 'fibrinogen') ?
-                            <TouchableOpacity style={[device.button]}
-                                              onPress={() => {
-                                                  setLastTappedDeviceForPatientSelect(id);
-                                                  setViewFibrinogenPatientModalVisible(true);
-                                              }}>
-                                <Text style={[device.buttonText]}>Select patient from list</Text>
-                                <IconE name='list' size={24} style={iconButton.icon}/>
-                            </TouchableOpacity> : null
-                        }
+                <View style={device.patientSelect}>
+                    <View style={{flexGrow: 1, textAlign: 'center'}}>
+                        <TouchableOpacity style={[device.button]} onPress={() => {setLastTappedDeviceForPatientSelect(id)}}>
+                            <Text style={[device.buttonText]}>Scan patient QR</Text>
+                            <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
+                        </TouchableOpacity>
                     </View>
+                    <ModalSelector
+                        onChange={(option) => {
+                            setViewCOVIDPatientModalVisible(false);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
+                        }}
+                        visible={viewCOVIDPatientModalVisible}
+                        data={covidPatients}
+                        keyExtractor={patient => patient[0]}
+                        labelExtractor={patient => patient[1]['name']}
+                        onCancel={() => setViewCOVIDPatientModalVisible(false)}
+                        cancelText={'Cancel'}
+                        overlayStyle={modal.overlay}
+                        optionContainerStyle={modal.container}
+                        optionTextStyle={modal.optionText}
+                        optionStyle={modal.option}
+                        cancelStyle={modal.cancelOption}
+                        cancelTextStyle={modal.cancelText}
+                    >
+                        {(utilityBar === 'covid') ?
+                            <TouchableOpacity style={[device.button]}
+                                              onPress={() => {setLastTappedDeviceForPatientSelect(id);}}>
+                                <Text style={[device.buttonText]}>Select patient from list</Text>
+                                <IconE name='list' size={24} style={iconButton.icon}/>
+                            </TouchableOpacity> : <View />}
+                    </ModalSelector>
+                    <ModalSelector
+                        onChange={(option) => {
+                            setViewFibrinogenPatientModalVisible(false);
+                            updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
+                        }}
+                        visible={viewFibrinogenPatientModalVisible}
+                        data={fibrinogenPatients}
+                        keyExtractor={patient => patient[0]}
+                        labelExtractor={patient => patient[1]['name']}
+                        onCancel={() => setViewFibrinogenPatientModalVisible(false)}
+                        cancelText={'Cancel'}
+                        overlayStyle={modal.overlay}
+                        optionContainerStyle={modal.container}
+                        optionTextStyle={modal.optionText}
+                        optionStyle={modal.option}
+                        cancelStyle={modal.cancelOption}
+                        cancelTextStyle={modal.cancelText}
+                    >
+                        {(utilityBar === 'fibrinogen') ?
+                        <TouchableOpacity style={[device.button]}
+                                          onPress={() => {setLastTappedDeviceForPatientSelect(id)}}>
+                            <Text style={[device.buttonText]}>Select patient from list</Text>
+                            <IconE name='list' size={24} style={iconButton.icon}/>
+                        </TouchableOpacity> : <View />}
+                    </ModalSelector>
+                </View>
                 <View style={device.buttonContainer}>
                     {
                         (color === 'default') ?
-                        <TouchableOpacity style={[device.button]}
-                                          onPress={async () => await disconnectFromDevice(id)}>
-                            <Text style={[device.buttonText]}>Disconnect</Text>
-                            <IconA name='disconnect' size={24} style={iconButton.icon}/>
-                        </TouchableOpacity> : null
+                            <TouchableOpacity style={[device.button]}
+                                              onPress={async () => await disconnectFromDevice(id)}>
+                                <Text style={[device.buttonText]}>Disconnect</Text>
+                                <IconA name='disconnect' size={24} style={iconButton.icon}/>
+                            </TouchableOpacity> : null
                     }
                 </View>
             </View>
@@ -413,7 +422,13 @@ const Devices = ({navigation}) => {
         textStyle: {fontSize: 16}
     };
 
-    const fabActionsDefault = [
+    const fabActions = [
+        {
+            ...fabPropsCommon,
+            text: "My account",
+            name: "account",
+            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+        },
         {
             ...fabPropsCommon,
             text: "Create new patient",
@@ -421,24 +436,6 @@ const Devices = ({navigation}) => {
             name: "create_patient",
         },
     ];
-
-    const [fabActions, setFabActions] = useState(fabActionsDefault);
-
-    useEffect(() => {
-        switch(userInfo.loginStatus) {
-            case 'registered':
-                const registeredButtons = [{
-                    ...fabPropsCommon,
-                    text: "My account",
-                    name: "account",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                }]
-                setFabActions(registeredButtons.concat(fabActionsDefault));
-                break;
-            default:
-                setFabActions(fabActionsDefault);
-        }
-    }, [isFocused, userInfo]);
 
     const fabActionHandler = (actionName) => {
         switch(actionName) {
@@ -471,46 +468,6 @@ const Devices = ({navigation}) => {
 
     return <SafeAreaView style={format.safeArea}>
         <View style={[format.page, {padding: 15}]}>
-            <ModalSelector
-                onChange={(option) => {
-                    setViewCOVIDPatientModalVisible(false);
-                    updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
-                }}
-                renderItem={<View/>}
-                customSelector={<View/>}
-                visible={viewCOVIDPatientModalVisible}
-                data={covidPatients}
-                keyExtractor={patient => patient[0]}
-                labelExtractor={patient => patient[1]['name']}
-                onCancel={() => setViewCOVIDPatientModalVisible(false)}
-                cancelText={'Cancel'}
-                overlayStyle={modal.overlay}
-                optionContainerStyle={modal.container}
-                optionTextStyle={modal.optionText}
-                optionStyle={modal.option}
-                cancelStyle={modal.cancelOption}
-                cancelTextStyle={modal.cancelText}
-            />
-            <ModalSelector
-                onChange={(option) => {
-                    setViewFibrinogenPatientModalVisible(false);
-                    updatePatientForDevice(lastTappedDeviceForPatientSelect, option[0], option[1]['name']);
-                }}
-                renderItem={<View/>}
-                customSelector={<View/>}
-                visible={viewFibrinogenPatientModalVisible}
-                data={fibrinogenPatients}
-                keyExtractor={patient => patient[0]}
-                labelExtractor={patient => patient[1]['name']}
-                onCancel={() => setViewFibrinogenPatientModalVisible(false)}
-                cancelText={'Cancel'}
-                overlayStyle={modal.overlay}
-                optionContainerStyle={modal.container}
-                optionTextStyle={modal.optionText}
-                optionStyle={modal.option}
-                cancelStyle={modal.cancelOption}
-                cancelTextStyle={modal.cancelText}
-            />
             <FlatList
                 data={readersArray}
                 keyExtractor={(item) => item.id}
@@ -524,27 +481,23 @@ const Devices = ({navigation}) => {
                                                     selectedPatient={item.selectedPatient}/>
                     else
                         return <DiscoveredReaderMemo id={item.id} name={item.name}
-                                                      statusText={item.statusText}/>
+                                                     statusText={item.statusText}/>
                 }}/>
         </View>
-
-                    <FloatingAction
-                        actions={fabActions}
-                        distanceToEdge={{vertical: 120, horizontal: 20}}
-                        iconWidth={20}
-                        iconHeight={20}
-                        buttonSize={68}
-                        overlayColor='rgba(0, 0, 0, 0.3)'
-                        color={fabColor}
-                        floatingIcon={<MainFabIcon/>}
-                        onPressItem={name => fabActionHandler(name)}/>
-
-                    <Account navigation={navigation}
-                             modalRef={organizationSlideUpRef}
-                             editModalRef={editAccountSlideUpRef} />
-
-                    <CreateCOVID modalRef={createCOVIDSlideUpRef} />
-                    <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
+        <FloatingAction
+            actions={fabActions}
+            distanceToEdge={{vertical: 120, horizontal: 20}}
+            iconWidth={20}
+            iconHeight={20}
+            buttonSize={68}
+            overlayColor='rgba(0, 0, 0, 0.3)'
+            color={fabColor}
+            floatingIcon={<MainFabIcon/>}
+            onPressItem={name => fabActionHandler(name)}/>
+        <Account navigation={navigation}
+                 modalRef={organizationSlideUpRef} />
+        <CreateCOVID modalRef={createCOVIDSlideUpRef} />
+        <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
     </SafeAreaView>;
 }
 

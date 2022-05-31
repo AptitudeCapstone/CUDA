@@ -430,6 +430,8 @@ PODS:
     - React-Core
   - RNCPicker (2.4.1):
     - React-Core
+  - RNDeviceInfo (8.7.1):
+    - React-Core
   - RNFBApp (14.11.0):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
@@ -528,6 +530,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
@@ -652,6 +655,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@invertase/react-native-apple-authentication"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -743,6 +748,7 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNAppleAuthentication: cbe1ab5c0f398ce07a215e6b247048092bf4feb3
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
+  RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNFBApp: b1b5a80a676a07dea17e778bda7c1e8b69b2f5ec
   RNFBAuth: e28fb7cd1b956086e68233b9ea19fb97c428f86b
   RNFBDatabase: 465033505f231fb2cb760f227a1b6df052f6ea8f
