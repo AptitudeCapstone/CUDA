@@ -71,7 +71,7 @@ export const CreateCOVID = ({modalRef}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <ScrollView>
+            <KeyboardAwareScrollView extraScrollHeight={200} style={{paddingTop: 20}}>
                 <Text style={[fonts.smallText, {paddingBottom: 20}]}>
                     All fields are optional and can be edited after the patient is created
                 </Text>
@@ -111,7 +111,7 @@ export const CreateCOVID = ({modalRef}) => {
                     onPress={() => registerPatient()}>
                     <Text style={buttons.submitButtonText}>Create Patient</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </RBSheet>
     );
 }

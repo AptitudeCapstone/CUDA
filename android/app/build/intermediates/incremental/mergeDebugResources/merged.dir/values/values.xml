@@ -719,7 +719,7 @@
     <string name="catalyst_hot_reloading_stop" project="catalyst" translatable="false">Disable Fast Refresh</string>
     <string name="catalyst_inspector" project="catalyst" translatable="false">Show Element Inspector</string>
     <string name="catalyst_inspector_stop" project="catalyst" translatable="false">Hide Element Inspector</string>
-    <string name="catalyst_loading_from_url" project="catalyst" translatable="false">Loading from %1$s…</string>
+    <string name="catalyst_loading_from_url" project="catalyst" translatable="false">SignIn from %1$s…</string>
     <string name="catalyst_open_flipper_error" project="catalyst" translatable="false">Failed to open Flipper. Please check that Metro is running.</string>
     <string name="catalyst_perf_monitor" project="catalyst" translatable="false">Show Perf Devices</string>
     <string name="catalyst_perf_monitor_stop" project="catalyst" translatable="false">Hide Perf Devices</string>

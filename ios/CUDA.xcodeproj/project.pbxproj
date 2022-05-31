@@ -572,7 +572,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.capstone.CUDA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.capstone.CUDA;
 				PRODUCT_NAME = CUDA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -608,7 +608,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.capstone.CUDA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.capstone.CUDA;
 				PRODUCT_NAME = CUDA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

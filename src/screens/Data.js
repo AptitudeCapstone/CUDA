@@ -3,12 +3,9 @@ import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import { format as dateFormat } from "date-fns";
 import ModalSelector from 'react-native-modal-selector';
-import IconA from 'react-native-vector-icons/AntDesign';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     backgroundColor,
-    chart,
-    chartConfig,
     chartContainer,
     MainFabIcon,
     fabColor,
@@ -16,27 +13,23 @@ import {
     format,
     modal,
     patientSelect,
-    testSelect, darkText
+    testSelect,
 } from '../style/Styles';
 import database from '@react-native-firebase/database';
 import {parseISO} from 'date-fns';
 import useAuth from "../auth/UserContext";
 import {useIsFocused} from '@react-navigation/native';
-import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions";
 import QRScanSheet from "../sheets/QRScanSheet";
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import {FloatingAction} from "react-native-floating-action";
-import {Account} from "../sheets/user/Account";
-import {Organization} from "../sheets/user/Organization";
-import {CreateCOVID} from "../sheets/data/CreateCOVID";
-import {EditCOVID} from "../sheets/data/EditCOVID";
-import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
-import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
-import SignInSignUp from "../sheets/user/SignInSignUp";
-import EditAccount from "../sheets/user/EditAccount";
+import {Account} from "../sheets/Account";
+import {CreateCOVID} from "../sheets/patients/CreateCOVID";
+import {EditCOVID} from "../sheets/patients/EditCOVID";
+import {CreateFibrinogen} from "../sheets/patients/CreateFibrinogen";
+import {EditFibrinogen} from "../sheets/patients/EditFibrinogen";
 import {LineChart} from 'react-native-chart-kit';
 
-const Data = () => {
+const Data = ({navigation}) => {
     const isFocused = useIsFocused(),
         [selectedTest, setSelectedTest] = useState('covid'),
         [patientKeyCOVID, setPatientKeyCOVID] = useState(null),
@@ -50,7 +43,6 @@ const Data = () => {
         [patientFibrinogenTests, setPatientFibrinogenTests] = useState([]),
         [covidPatientModalVisible, setCOVIDPatientModalVisible] = useState(() => false),
         [fibrinogenPatientModalVisible, setFibrinogenPatientModalVisible] = useState(() => false),
-        dimensions = useWindowDimensions(),
         emptyChartData = {
             labels: ['0'],
             datasets: [
@@ -65,31 +57,22 @@ const Data = () => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = (organization
-            ? '/organizations/' + organization + '/patients/'
-            : '/users/' + auth?.uid + '/patients/'),
-        patientsRef = database().ref(patientsPath),
-        accountSlideUpRef = useRef(null),
-        editAccountSlideUpRef = useRef(null),
+        patientsRef = database().ref(userInfo.userRefPath + '/patients/'),
+        accountAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
         scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
         editCOVIDSlideUpRef = useRef(null),
         createFibrinogenSlideUpRef = useRef(null),
-        editFibrinogenSlideUpRef = useRef(null),
-        signInSignUpSlideUpRef = useRef(null);
+        editFibrinogenSlideUpRef = useRef(null);
 
     useEffect(() => {
-        if (!auth) {
-            setCovidPatients([]);
-            setFibrinogenPatients([]);
-            return;
-        }
-
+        console.log('user ref path from user context: ', patientsRef);
         patientsRef.on('value',
             (patientsSnapshot) => {
                 if (patientsSnapshot.exists()) {
                     const p = patientsSnapshot.toJSON();
+                    console.log('setting patients', p);
                     setPatients(p);
                     if (p && p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
@@ -150,8 +133,6 @@ const Data = () => {
                     }
                     */
 
-
-
                     tempLabels.push(dateFormat(parseISO(item.time), 'H:mm'));
                     tempChartData.push(parseFloat(item.result));
                 });
@@ -165,7 +146,7 @@ const Data = () => {
 
                 setPatientFibrinogenTests(tempTests.reverse());
                 setChartData({
-                    labels: tempLabels,//tempLabels,
+                    labels: tempLabels,
                     datasets: [{
                             data: tempChartData
                         }]
@@ -227,17 +208,6 @@ const Data = () => {
     const [fabActions, setFabActions] = useState(fabActionsDefault);
 
     useEffect(() => {
-        let organizationButtons = [];
-
-        if(userInfo.loginStatus === 'registered') {
-            organizationButtons = [{
-                ...fabPropsCommon,
-                text: "My organization",
-                name: "organization",
-                icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-            }];
-        }
-
         switch(userInfo.loginStatus) {
             case 'registered':
                 const registeredButtons = [{
@@ -246,29 +216,16 @@ const Data = () => {
                     name: "account",
                     icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
                 }]
-                setFabActions(registeredButtons.concat(organizationButtons).concat(fabActionsDefault));
-                break;
-            case 'Patient not selected':
-                // sign in button
-                const signInSignUpButton = [{
-                    ...fabPropsCommon,
-                    text: "Sign in or create an account",
-                    name: "sign_in_sign_up",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                }]
-                setFabActions(signInSignUpButton.concat(organizationButtons).concat(fabActionsDefault));
+                setFabActions(registeredButtons.concat(fabActionsDefault));
                 break;
             default:
-                setFabActions(organizationButtons.concat(fabActionsDefault));
+                setFabActions(fabActionsDefault);
         }
     }, [isFocused, userInfo]);
 
     const fabActionHandler = (actionName) => {
         switch(actionName) {
             case 'account':
-                accountSlideUpRef.current?.open();
-                break;
-            case 'organization':
                 organizationSlideUpRef.current?.open();
                 break;
             case 'create_patient':
@@ -291,9 +248,6 @@ const Data = () => {
                         }
                     ]
                 );
-                break;
-            case 'sign_in_sign_up':
-                signInSignUpSlideUpRef.current?.open();
                 break;
             case 'qr':
                 scanSheetRef.current?.open();
@@ -445,7 +399,6 @@ const Data = () => {
                                                         height={300}
                                                         withInnerLines={false}
                                                         withShadow={false}
-                                                        yAxisInterval={1}
                                                         chartConfig={{
                                                             backgroundColor: "#eaeaea",
                                                             backgroundGradientFrom: "#ffffff",
@@ -564,11 +517,9 @@ const Data = () => {
                 cancelTextStyle={modal.cancelText}
                 searchStyle={modal.searchBar} />
 
-            <SignInSignUp modalRef={signInSignUpSlideUpRef} />
-            <Account modalRef={accountSlideUpRef}
-                     editModalRef={editAccountSlideUpRef} />
-            <EditAccount modalRef={editAccountSlideUpRef} />
-            <Organization modalRef={organizationSlideUpRef} />
+            <Account navigation={navigation}
+                     modalRef={organizationSlideUpRef}
+                     editModalRef={accountAccountSlideUpRef} />
 
             <CreateCOVID modalRef={createCOVIDSlideUpRef} />
             <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />

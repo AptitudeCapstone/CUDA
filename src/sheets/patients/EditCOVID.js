@@ -4,6 +4,7 @@ import {buttons, fonts, format, rbSheetStyle} from "../../style/Styles";
 import {Alert, ScrollView, Text, TextInput, TouchableOpacity, useWindowDimensions} from "react-native";
 import useAuth from "../../auth/UserContext";
 import database from "@react-native-firebase/database";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export const EditCOVID = ({modalRef, patientKey}) => {
     const [patientName, setPatientName] = useState(''),
@@ -45,7 +46,7 @@ export const EditCOVID = ({modalRef, patientKey}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <ScrollView>
+            <KeyboardAwareScrollView extraScrollHeight={200} style={{paddingTop: 20}}>
                 <Text style={fonts.heading}>Edit Patient Info</Text>
                 <Text style={fonts.smallText}>All fields are optional and can always be edited</Text>
                 <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
@@ -82,6 +83,6 @@ export const EditCOVID = ({modalRef, patientKey}) => {
                                   onPress={() => updatePatient()}>
                     <Text style={buttons.submitButtonText}>Apply Changes</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </RBSheet>);
 }

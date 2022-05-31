@@ -83,17 +83,6 @@ export const tabNavigatorStyle = {
     },
 };
 
-export const userScreenOptions = {
-    title: '',
-    headerStyle: {
-        backgroundColor: '#fff',
-    },
-    headerTintColor: '#222',
-    headerTitleStyle: {
-        fontWeight: 'bold',
-    },
-};
-
 /*
     Sliding sheet styles
  */

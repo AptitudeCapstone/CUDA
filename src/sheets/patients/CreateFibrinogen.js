@@ -5,6 +5,7 @@ import database from "@react-native-firebase/database";
 import {buttons, fonts, format, rbSheetStyle} from '../../style/Styles';
 import {useAuth} from "../../auth/UserContext";
 import {Picker} from "@react-native-picker/picker";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export const CreateFibrinogen = ({modalRef}) => {
     const [patientName, setPatientName] = useState(null),
@@ -202,7 +203,7 @@ export const CreateFibrinogen = ({modalRef}) => {
 
     return (
         <RBSheet ref={modalRef} height={dimensions.height * 0.75} customStyles={rbSheetStyle}>
-            <ScrollView>
+            <KeyboardAwareScrollView extraScrollHeight={200} style={{paddingTop: 20}}>
                 <Text style={[fonts.smallText, {paddingBottom: 20}]}>
                     All fields are optional and can be edited after creation
                 </Text>
@@ -238,7 +239,7 @@ export const CreateFibrinogen = ({modalRef}) => {
                                   onPress={() => registerPatient()}>
                     <Text style={buttons.submitButtonText}>Create Patient</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </RBSheet>
     );
 }

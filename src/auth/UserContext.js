@@ -6,6 +6,7 @@ const userAuthContext = createContext({
     user: undefined,                // the current user's data
     dataInfo: {loginStatus: 'loading'},  // more information about the current user's data
     loginStatus: 'loading',          // the status of fetching the current user's data
+    userRefPath: '/users/offline',
     initializing: true,             // the status of checking the user's auth session
     userAuth: undefined             // the current user object
 });
@@ -14,93 +15,88 @@ export const useAuth = () => useContext(userAuthContext);
 
 export const UserProvider: React.FC = ({children}) => {
     const [userAuth, setUserAuth] = useState(() => auth().currentUser);
-    const [userData, setUserData] = useState({loginStatus: 'loading'});
+    const [userData, setUserData] = useState({loginStatus: 'offline'});
+    const [userRefPath, setUserRefPath] = useState(() => '/users/offline');
     const [initializing, setInitializing] = useState(userAuth === null);
     const [subscriptions, setSubscriptions] = useState(() => []);
 
-    /*
-        - this useEffect subscribes to firebase auth 'on auth state changed' hook
-        so that when auth change happens, userAuth updates accordingly
-        - we make a copy of all subscriptions so that we can be sure
-        to avoid memory leaks on previous realtime database subscriptions
-     */
     useEffect(() => auth().onAuthStateChanged((user) => {
-        let subs = subscriptions;
-        subs.forEach(sub => {
-            sub.off();
-            subs.pop();
-        });
-        setSubscriptions(subs);
-        setUserAuth(user);
+        if(!user) {
+            database()
+                .goOffline()
+                .then(() => {
+                    let subs = subscriptions;
+                    subs.forEach(sub => {
+                        sub.off();
+                        subs.pop();
+                    });
+                    setSubscriptions(subs);
+
+                    setUserAuth(null);
+                    setUserRefPath('/users/offline');
+                    setUserData({
+                        loginStatus: 'offline',
+                        user: null
+                    });
+                })
+                .then(() => {
+                    console.log('User entered offline mode');
+                });
+        } else {
+            database()
+                .goOnline()
+                .then(() => {
+                    console.log('User entering online mode');
+                })
+                .then(() => {
+                    const userPath = '/users/' + user.uid;
+                    const userDataRef = database().ref(userPath);
+
+                    userDataRef.once('value', (snapshot) => {
+                        console.log('user org:', snapshot.val().organization);
+                        let orgID = snapshot.val().organization;
+                        if(orgID) {
+                            setUserRefPath('/organizations/' + orgID)
+                        } else {
+                            setUserRefPath(userPath);
+                        }
+                    }). then(() => {
+                        // append this subscription to current subscriptions
+                        let prevSubs = subscriptions;
+                        prevSubs.push(userDataRef);
+                        setSubscriptions(prevSubs);
+
+                        setUserAuth(user);
+                        return userDataRef.on('value',
+                            (snapshot) => {
+                                setUserData({
+                                    loginStatus: 'registered',
+                                    get user() {
+                                        return snapshot.val()
+                                    }
+                                });
+                            },
+                            (error) => setUserData({
+                                loginStatus: 'error',
+                                user: null
+                            }));
+                    })
+                })
+        }
+
         if (initializing) setInitializing(false);
     }), []);
-
-    // unsubscribe from update on previous user, subscribe to new user updates
-    useEffect(() => {
-        updateUserInfo().catch((error) => console.log('Unsubscribe error:', error));
-    }, [userAuth]);
-
-    const updateUserInfo = async () => {
-        if (userAuth === null || auth().currentUser === null) {
-            setUserData({loginStatus: 'signed-out', user: null});
-            await auth().signInAnonymously();
-            return console.log('Signed out');
-        } else {
-            const userPath = '/users/' + userAuth.uid;
-            const userDataRef = database().ref(userPath);
-
-            // append this subscription to current subscriptions
-            let prevSubs = subscriptions;
-            prevSubs.push(userDataRef);
-            setSubscriptions(prevSubs);
-
-            return userDataRef.on('value',
-                (snapshot) => {
-                    if (snapshot.exists()) {
-                        setUserData({
-                            loginStatus: (userAuth.isAnonymous ? 'Patient not selected' : 'registered'),
-                            get user() {
-                                return snapshot.val()
-                            },
-                            ref: userDataRef
-                        });
-                    } else {
-                        console.log('User database entry not found: creating one');
-                        let update = {displayName: ''};
-                        if (userAuth.displayName) {
-                            update = {displayName: userAuth.displayName}
-                        } else if (userAuth.providerData[0] && userAuth.providerData[0].displayName) {
-                            update = {displayName: userAuth.providerData[0]['displayName']}
-                        }
-
-                        userDataRef.update(update).then(() => {
-                            setUserData({
-                                loginStatus: (userAuth.isAnonymous ? 'Patient not selected' : 'registered'),
-                                get user() {
-                                    return snapshot.val()
-                                },
-                                ref: userDataRef
-                            });
-                        });
-                    }
-                },
-                (error) => setUserData({
-                    loginStatus: 'error',
-                    user: null,
-                    error
-                }));
-        }
-    }
 
     return (
         <userAuthContext.Provider
             value={{
                 get user() {
                     return userData.user
-                },  // convenience function
+                },
                 userData: userData,
-                loginStatus: userData.loginStatus,  // convenience function
+                loginStatus: userData.loginStatus,
                 userAuth: userAuth,
+                userRefPath: userRefPath,
                 initializing,
             }}
         >

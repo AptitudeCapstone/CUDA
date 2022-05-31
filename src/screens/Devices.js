@@ -29,17 +29,10 @@ import {
     modal
 } from '../style/Styles';
 import IconFA from "react-native-vector-icons/FontAwesome5";
-import IconO from "react-native-vector-icons/Octicons";
 import {FloatingAction} from "react-native-floating-action";
-import IconMI from "react-native-vector-icons/MaterialCommunityIcons";
-import {Account} from "../sheets/user/Account";
-import SignInSignUp from "../sheets/user/SignInSignUp";
-import EditAccount from "../sheets/user/EditAccount";
-import {Organization} from "../sheets/user/Organization";
-import {CreateCOVID} from "../sheets/data/CreateCOVID";
-import {CreateFibrinogen} from "../sheets/data/CreateFibrinogen";
-import {EditCOVID} from "../sheets/data/EditCOVID";
-import {EditFibrinogen} from "../sheets/data/EditFibrinogen";
+import {Account} from "../sheets/Account";
+import {CreateCOVID} from "../sheets/patients/CreateCOVID";
+import {CreateFibrinogen} from "../sheets/patients/CreateFibrinogen";
 
 const Buffer = require("buffer").Buffer;
 export const manager = new BleManager();
@@ -65,47 +58,40 @@ const Devices = ({navigation}) => {
         auth = userInfo.userAuth,
         loginStatus = userInfo.loginStatus,
         organization = userInfo.user?.organization,
-        patientsPath = (organization
-            ? '/organizations/' + organization + '/patients/'
-            : '/users/' + auth?.uid + '/patients/'),
-        patientsRef = database().ref(patientsPath),
+        patientsRef = database().ref(userInfo.userRefPath),
         isLandscape = (dimensions.width > dimensions.height),
-        accountSlideUpRef = useRef(null),
         editAccountSlideUpRef = useRef(null),
         organizationSlideUpRef = useRef(null),
         scanSheetRef = useRef(null),
         createCOVIDSlideUpRef = useRef(null),
-        editCOVIDSlideUpRef = useRef(null),
-        createFibrinogenSlideUpRef = useRef(null),
-        editFibrinogenSlideUpRef = useRef(null),
-        signInSignUpSlideUpRef = useRef(null);
+        createFibrinogenSlideUpRef = useRef(null);
 
     // this useEffect is the base of the patient database routine
     useEffect(() => {
-        if (auth) {
-            patientsRef.on('value', (patientsSnapshot) => {
-                if (patientsSnapshot.exists()) {
-                    const p = patientsSnapshot.toJSON();
-                    setPatients(p);
-                    if (p && p['covid-patients']) {
-                        const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
-                        setCovidPatients(c);
-                    } else setCovidPatients([]);
-                    if (p['fibrinogen-patients']) {
-                        const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
-                        setFibrinogenPatients(f);
-                    } else setFibrinogenPatients([]);
-                } else {
-                    setCovidPatients([]);
-                    setFibrinogenPatients([]);
-                }
-            }, (error) => console.error('Error fetching database updates:', error));
-            return () => patientsRef.off();
-        } else {
-            setCovidPatients([]);
-            setFibrinogenPatients([]);
-            return () => console.debug('User is logged off');
-        }
+            if (auth) {
+                patientsRef.on('value', (patientsSnapshot) => {
+                    if (patientsSnapshot.exists()) {
+                        const p = patientsSnapshot.toJSON();
+                        setPatients(p);
+                        if (p && p['covid-patients']) {
+                            const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
+                            setCovidPatients(c);
+                        } else setCovidPatients([]);
+                        if (p['fibrinogen-patients']) {
+                            const f = Object.keys(p['fibrinogen-patients']).map((k) => [k, p['fibrinogen-patients'][k]]);
+                            setFibrinogenPatients(f);
+                        } else setFibrinogenPatients([]);
+                    } else {
+                        setCovidPatients([]);
+                        setFibrinogenPatients([]);
+                    }
+                }, (error) => console.error('Error fetching database updates:', error));
+                return () => patientsRef.off();
+            } else {
+                setCovidPatients([]);
+                setFibrinogenPatients([]);
+                return () => console.debug('User is logged off');
+            }
     }, [auth, organization, loginStatus, isFocused]);
 
     // this useEffect is base of the BLE routine
@@ -177,11 +163,11 @@ const Devices = ({navigation}) => {
         if (!name) name = 'Patient not selected'
 
         if (selectedPatient) {
-            covidDBRef = database().ref(patientsPath + 'covid-patients/' + selectedPatient.id + '/results/');
-            fibrinogenDBRef = database().ref(patientsPath + '/fibrinogen-patients/' + selectedPatient.id + '/results/');
+            covidDBRef = database().ref(userInfo.userRefPath + 'covid-patients/' + selectedPatient.id + '/results/');
+            fibrinogenDBRef = database().ref(userInfo.userRefPath + '/fibrinogen-patients/' + selectedPatient.id + '/results/');
         } else {
-            covidDBRef = database().ref(patientsPath + 'guest-results/covid/results/');
-            fibrinogenDBRef = database().ref(patientsPath + '/guest-results/fibrinogen/results/');
+            covidDBRef = database().ref(userInfo.userRefPath + 'guest-results/covid/results/');
+            fibrinogenDBRef = database().ref(userInfo.userRefPath + '/guest-results/fibrinogen/results/');
         }
 
         switch (action) {
@@ -364,54 +350,54 @@ const Devices = ({navigation}) => {
                 <IconA name='checkcircleo' size={34} style={device.connectedIcon}/>
             </View>
             <View style={device.body}>
-                <View style={device.patientSelect}>
-                    <View style={{flexGrow: 1, textAlign: 'center'}}>
-                        <TouchableOpacity style={[device.button]} onPress={() => {
-                            // set device to modify to the tapped device
-                            setLastTappedDeviceForPatientSelect(id);
+                    <View style={device.patientSelect}>
+                        <View style={{flexGrow: 1, textAlign: 'center'}}>
+                            <TouchableOpacity style={[device.button]} onPress={() => {
+                                // set device to modify to the tapped device
+                                setLastTappedDeviceForPatientSelect(id);
 
-                            // navigate to QR page
+                                // navigate to QR page
 
-                            // wait until back
+                                // wait until back
 
-                            // use scanned QR value
+                                // use scanned QR value
 
-                        }}>
-                            <Text style={[device.buttonText]}>Scan patient QR</Text>
-                            <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
-                        </TouchableOpacity>
+                            }}>
+                                <Text style={[device.buttonText]}>Scan patient QR</Text>
+                                <IconMCI name='qrcode-scan' size={24} style={iconButton.icon}/>
+                            </TouchableOpacity>
+                        </View>
+                        {
+                            (utilityBar === 'covid') ?
+                            <TouchableOpacity style={[device.button]}
+                                              onPress={() => {
+                                                  setLastTappedDeviceForPatientSelect(id);
+                                                  setViewCOVIDPatientModalVisible(true);
+                                              }}>
+                                <Text style={[device.buttonText]}>Select patient from list</Text>
+                                <IconE name='list' size={24} style={iconButton.icon}/>
+                            </TouchableOpacity> : null
+                        }
+                        {
+                            (utilityBar === 'fibrinogen') ?
+                            <TouchableOpacity style={[device.button]}
+                                              onPress={() => {
+                                                  setLastTappedDeviceForPatientSelect(id);
+                                                  setViewFibrinogenPatientModalVisible(true);
+                                              }}>
+                                <Text style={[device.buttonText]}>Select patient from list</Text>
+                                <IconE name='list' size={24} style={iconButton.icon}/>
+                            </TouchableOpacity> : null
+                        }
                     </View>
-                </View>
                 <View style={device.buttonContainer}>
                     {
-                        (color === 'default') &&
+                        (color === 'default') ?
                         <TouchableOpacity style={[device.button]}
                                           onPress={async () => await disconnectFromDevice(id)}>
                             <Text style={[device.buttonText]}>Disconnect</Text>
                             <IconA name='disconnect' size={24} style={iconButton.icon}/>
-                        </TouchableOpacity>
-                    }
-                    {
-                        (utilityBar === 'covid') &&
-                        <TouchableOpacity style={[device.button]}
-                                          onPress={() => {
-                                              setLastTappedDeviceForPatientSelect(id);
-                                              setViewCOVIDPatientModalVisible(true);
-                                          }}>
-                            <Text style={[device.buttonText]}>Select patient from list</Text>
-                            <IconE name='list' size={24} style={iconButton.icon}/>
-                        </TouchableOpacity>
-                    }
-                    {
-                        (utilityBar === 'fibrinogen') &&
-                        <TouchableOpacity style={[device.button]}
-                                          onPress={() => {
-                                              setLastTappedDeviceForPatientSelect(id);
-                                              setViewFibrinogenPatientModalVisible(true);
-                                          }}>
-                            <Text style={[device.buttonText]}>Select patient from list</Text>
-                            <IconE name='list' size={24} style={iconButton.icon}/>
-                        </TouchableOpacity>
+                        </TouchableOpacity> : null
                     }
                 </View>
             </View>
@@ -439,17 +425,6 @@ const Devices = ({navigation}) => {
     const [fabActions, setFabActions] = useState(fabActionsDefault);
 
     useEffect(() => {
-        let organizationButtons = [];
-
-        if(userInfo.loginStatus === 'registered') {
-            organizationButtons = [{
-                ...fabPropsCommon,
-                text: "My organization",
-                name: "organization",
-                icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-            }];
-        }
-
         switch(userInfo.loginStatus) {
             case 'registered':
                 const registeredButtons = [{
@@ -458,29 +433,16 @@ const Devices = ({navigation}) => {
                     name: "account",
                     icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
                 }]
-                setFabActions(registeredButtons.concat(organizationButtons).concat(fabActionsDefault));
-                break;
-            case 'Patient not selected':
-                // sign in button
-                const signInSignUpButton = [{
-                    ...fabPropsCommon,
-                    text: "Sign in or create an account",
-                    name: "sign_in_sign_up",
-                    icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
-                }]
-                setFabActions(signInSignUpButton.concat(organizationButtons).concat(fabActionsDefault));
+                setFabActions(registeredButtons.concat(fabActionsDefault));
                 break;
             default:
-                setFabActions(organizationButtons.concat(fabActionsDefault));
+                setFabActions(fabActionsDefault);
         }
     }, [isFocused, userInfo]);
 
     const fabActionHandler = (actionName) => {
         switch(actionName) {
             case 'account':
-                accountSlideUpRef.current?.open();
-                break;
-            case 'organization':
                 organizationSlideUpRef.current?.open();
                 break;
             case 'create_patient':
@@ -503,9 +465,6 @@ const Devices = ({navigation}) => {
                         }
                     ]
                 );
-                break;
-            case 'sign_in_sign_up':
-                signInSignUpSlideUpRef.current?.open();
                 break;
         }
     }
@@ -569,26 +528,23 @@ const Devices = ({navigation}) => {
                 }}/>
         </View>
 
-        <FloatingAction
-            actions={fabActions}
-            distanceToEdge={{ vertical: 120, horizontal: 20 }}
-            iconWidth={20}
-            iconHeight={20}
-            buttonSize={68}
-            overlayColor='rgba(0, 0, 0, 0.3)'
-            color={fabColor}
-            floatingIcon={<MainFabIcon />}
-            onPressItem={name => fabActionHandler(name)}/>
+                    <FloatingAction
+                        actions={fabActions}
+                        distanceToEdge={{vertical: 120, horizontal: 20}}
+                        iconWidth={20}
+                        iconHeight={20}
+                        buttonSize={68}
+                        overlayColor='rgba(0, 0, 0, 0.3)'
+                        color={fabColor}
+                        floatingIcon={<MainFabIcon/>}
+                        onPressItem={name => fabActionHandler(name)}/>
 
-        <SignInSignUp modalRef={signInSignUpSlideUpRef} />
-        <Account modalRef={accountSlideUpRef}
-                 editModalRef={editAccountSlideUpRef} />
-        <EditAccount modalRef={editAccountSlideUpRef} />
-        <Organization modalRef={organizationSlideUpRef} />
+                    <Account navigation={navigation}
+                             modalRef={organizationSlideUpRef}
+                             editModalRef={editAccountSlideUpRef} />
 
-        <CreateCOVID modalRef={createCOVIDSlideUpRef} />
-        <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
-
+                    <CreateCOVID modalRef={createCOVIDSlideUpRef} />
+                    <CreateFibrinogen modalRef={createFibrinogenSlideUpRef} />
     </SafeAreaView>;
 }
 
