@@ -13,7 +13,7 @@ import {
     format,
     modal,
     patientSelect,
-    testSelect,
+    testSelect, lightText,
 } from '../style/Styles';
 import database from '@react-native-firebase/database';
 import {parseISO} from 'date-fns';
@@ -73,6 +73,7 @@ const Data = ({navigation}) => {
                 if(patientsSnapshot && patientsSnapshot.exists()) {
                     const p = patientsSnapshot.val();
                     console.log('setting patients', p);
+                    setPatients(p);
                     if (p['covid-patients']) {
                         const c = Object.keys(p['covid-patients']).map((k) => [k, p['covid-patients'][k]]);
                         setCovidPatients(c);
@@ -181,7 +182,7 @@ const Data = ({navigation}) => {
 
     const fabPropsCommon = {
         buttonSize: 60,
-        color:'#8d67a8',
+        color:'#fff',
         position: 3,
         textStyle: {fontSize: 16}
     };
@@ -191,18 +192,18 @@ const Data = ({navigation}) => {
             ...fabPropsCommon,
             text: "My account",
             name: "account",
-            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+            icon: <IconFA name='user-md' color={'#777'} size={30}/>,
         },
         {
             ...fabPropsCommon,
             text: "Create new patient",
-            icon: <IconFA name='user-plus' color={backgroundColor} size={30}/>,
+            icon: <IconFA name='user-plus' color={'#777'} size={30}/>,
             name: "create_patient",
         },
         {
             ...fabPropsCommon,
             text: "Scan patient QR",
-            icon: <IconMCI name='qrcode-scan' color={backgroundColor} size={30}/>,
+            icon: <IconMCI name='qrcode-scan' color={'#777'} size={30}/>,
             name: "qr",
         },
     ];
@@ -248,11 +249,11 @@ const Data = ({navigation}) => {
                 {marginHorizontal: 20, borderRadius: 20, borderColor: '#ccc', borderWidth: 1}]}>
                 <View style={testSelect.container}>
                     <TouchableOpacity onPress={() => setSelectedTest('covid')}
-                                      style={[testSelect.button, selectedTest === 'covid' ? {backgroundColor: '#9fa3c5'} : {backgroundColor: '#eeeeee'}]}>
+                                      style={[testSelect.button, selectedTest === 'covid' ? {backgroundColor: '#7d85c9'} : {backgroundColor: '#eeeeee'}]}>
                         <Text style={[testSelect.text, selectedTest === 'covid' ? {} : {color: '#aaa'}]}>COVID</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setSelectedTest('fibrinogen')}
-                                      style={[testSelect.button, selectedTest === 'fibrinogen' ? {backgroundColor: '#c57f7f'} : {backgroundColor: '#eeeeee'}]}>
+                                      style={[testSelect.button, selectedTest === 'fibrinogen' ? {backgroundColor: '#cb4e4e'} : {backgroundColor: '#eeeeee'}]}>
                         <Text style={[testSelect.text, selectedTest === 'fibrinogen' ? {} : {color: '#aaa'}]}>Fibrinogen</Text>
                     </TouchableOpacity>
                 </View>
@@ -277,7 +278,7 @@ const Data = ({navigation}) => {
                     searchStyle={modal.searchBar}>
                     {
                         selectedTest === 'covid'
-                        ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#9fa3c5'} ]}
+                        ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#7d85c9'} ]}
                                             onPress={() => {setCOVIDPatientModalVisible(true)}}>
                                 <Text style={patientSelect.text}>Select</Text>
                                 <IconFA name='user' size={24} style={patientSelect.icon}/>
@@ -306,7 +307,7 @@ const Data = ({navigation}) => {
                     searchStyle={modal.searchBar}>
                     {
                         selectedTest !== 'covid'
-                            ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#c57f7f'}]}
+                            ? <TouchableOpacity style={[patientSelect.container, {backgroundColor: '#cb4e4e'}]}
                                                 onPress={() => {setFibrinogenPatientModalVisible(true)}}>
                                 <Text style={patientSelect.text}>Select</Text>
                                 <IconFA name='user' size={24} style={patientSelect.icon}/>
@@ -315,7 +316,7 @@ const Data = ({navigation}) => {
                 </ModalSelector>
             </View>
             <View style={[format.page]}>
-                <ScrollView style={{marginHorizontal: 25, padding: 15, paddingTop: 0, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff', borderRadius: 20, marginTop: 20, marginBottom: 175, }}>
+                <ScrollView style={{marginHorizontal: 25, padding: 15, paddingTop: 15, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff', borderRadius: 20, marginTop: 20, marginBottom: 175, }}>
                     {
                         (isCOVIDTest)
                             ? <>

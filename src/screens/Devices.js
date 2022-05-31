@@ -26,7 +26,7 @@ import {
     MainFabIcon,
     format,
     iconButton,
-    modal
+    modal, lightText
 } from '../style/Styles';
 import IconFA from "react-native-vector-icons/FontAwesome5";
 import {FloatingAction} from "react-native-floating-action";
@@ -413,7 +413,7 @@ const Devices = ({navigation}) => {
 
     const fabPropsCommon = {
         buttonSize: 60,
-        color:'#8d67a8',
+        color:'#fff',
         position: 3,
         textStyle: {fontSize: 16}
     };
@@ -423,12 +423,12 @@ const Devices = ({navigation}) => {
             ...fabPropsCommon,
             text: "My account",
             name: "account",
-            icon: <IconFA name='user-md' color={backgroundColor} size={30}/>,
+            icon: <IconFA name='user-md' color={'#777'} size={30}/>,
         },
         {
             ...fabPropsCommon,
             text: "Create new patient",
-            icon: <IconFA name='user-plus' color={backgroundColor} size={30}/>,
+            icon: <IconFA name='user-plus' color={'#777'} size={30}/>,
             name: "create_patient",
         },
     ];

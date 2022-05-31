@@ -19,23 +19,27 @@ export const CreateFibrinogen = ({modalRef}) => {
         dimensions = useWindowDimensions();
 
     async function registerPatient() {
-        const newPatient = patientsRef.push();
-        newPatient.update({
-            name: patientName,
-            bloodType: patientBloodType,
-            sex: patientSex,
-            age: patientAge,
-            height: patientHeight,
-            weight: patientWeight
-        }).then(() => modalRef.current?.close())
-            .catch((error) => {
-                Alert.alert('Error', error);
-            });
+        if((inch && !feet) || (feet && !inch)) {
+            Alert.alert('Please enter both a feet and inches value');
+        } else {
+            const newPatient = patientsRef.push();
+            newPatient.update({
+                name: patientName,
+                bloodType: patientBloodType,
+                sex: patientSex,
+                age: patientAge,
+                height: patientHeight,
+                weight: patientWeight
+            }).then(() => modalRef.current?.close())
+                .catch((error) => {
+                    Alert.alert('Error', error);
+                });
+        }
     }
 
     const BloodTypeSelector = () => (
         <View>
-            <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center'}}>
+            <View style={{flexDirection: 'row', padding: 10, justifyContent: 'center', paddingHorizontal: 80}}>
                 <TouchableOpacity style={(patientBloodType === 'A+') ? buttons.bloodTypeSelectButton : buttons.unselectedBloodTypeButton}
                                   onPress={() => setPatientBloodType('A+')}>
                     <Text style={fonts.selectButtonText}>A+</Text>
@@ -186,7 +190,15 @@ export const CreateFibrinogen = ({modalRef}) => {
                            style={format.textBox}
                            blurOnSubmit={false}/>
                 <Text style={fonts.subheadingSpaced}>Age</Text>
-                <AgeSelector/>
+                <TextInput underlineColorAndroid='transparent'
+                           placeholder='Weight (lb.)'
+                           placeholderTextColor='#aaa'
+                           keyboardType='numeric'
+                           onChangeText={(patientAge) => setPatientAge(patientAge)}
+                           numberOfLines={1}
+                           multiline={false}
+                           style={format.textBox}
+                           blurOnSubmit={false}/>
                 <Text style={fonts.subheadingSpaced}>Height</Text>
                 <HeightSelector/>
                 <TouchableOpacity style={buttons.submitButton}

@@ -101,7 +101,17 @@ export const Account = ({navigation, modalRef}) => {
                 {
                     (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]}
+                            <TouchableOpacity style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginVertical: 10,
+                                marginHorizontal: 20,
+                                borderRadius: 5,
+                                paddingVertical: 10,
+                                paddingHorizontal: 15,
+                                backgroundColor: '#fff',
+                            }}
                                               onPress={() => handleLogOut()}>
                                 <Text style={fonts.mediumText}>Logout</Text>
                             </TouchableOpacity>
@@ -110,7 +120,17 @@ export const Account = ({navigation, modalRef}) => {
                 {
                     (userInfo.loginStatus === 'guest')
                         ? <View>
-                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]}
+                            <TouchableOpacity style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginVertical: 10,
+                                marginHorizontal: 20,
+                                borderRadius: 5,
+                                paddingVertical: 10,
+                                paddingHorizontal: 15,
+                                backgroundColor: '#fff',
+                            }}
                                               onPress={() => navigation.navigate('SignIn')}>
                                 <Text style={fonts.mediumText}>Return to sign in</Text>
                             </TouchableOpacity>
@@ -184,7 +204,17 @@ export const Account = ({navigation, modalRef}) => {
                 {
                     (userInfo.loginStatus === 'registered')
                         ? <View>
-                            <TouchableOpacity style={[device.button, {paddingVertical: 10, marginHorizontal: 20, justifyContent: 'center'}]} onPress={() => disconnect()}>
+                            <TouchableOpacity style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginVertical: 10,
+                                marginHorizontal: 20,
+                                borderRadius: 5,
+                                paddingVertical: 10,
+                                paddingHorizontal: 15,
+                                backgroundColor: '#fff',
+                            }} onPress={() => disconnect()}>
                                 <Text style={[fonts.mediumText]}>Disconnect from organization</Text>
                             </TouchableOpacity>
                         </View> : null

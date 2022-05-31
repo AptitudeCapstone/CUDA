@@ -177,7 +177,10 @@ export const SignIn = ({navigation}) => {
     return (
         <SafeAreaView>
             <KeyboardAwareScrollView extraScrollHeight={200} style={{paddingTop: 20}}>
-                <View style={{alignItems: 'center', marginTop: 20, marginBottom: 50}}>
+                <View style={{alignItems: 'center', paddingTop: 20, paddingBottom: 10, paddingHorizontal: 40,}}>
+                    <Text style={[fonts.mediumText]}>Sign in with existing account</Text>
+                </View>
+                <View style={{alignItems: 'center', marginTop: 20, marginBottom: 20}}>
                     <AppleSocialButton buttonViewStyle={{width: dimensions.width - 80, marginBottom: 15}} onPress={async () => await handleLogInApple()} />
                     <GoogleSocialButton buttonViewStyle={{width: dimensions.width - 80}} onPress={async () => await handleLogInGoogle()} />
                 </View>
@@ -185,7 +188,6 @@ export const SignIn = ({navigation}) => {
                     <View style={{alignItems: 'center', paddingTop: 20, paddingBottom: 10, paddingHorizontal: 40,}}>
                         <Text style={[fonts.mediumText]}>Sign in with email</Text>
                     </View>
-                    <Text style={[fonts.mediumText, format.fieldName]}>Email Address</Text>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Email address'
                                placeholderTextColor='#aaa'
@@ -195,7 +197,6 @@ export const SignIn = ({navigation}) => {
                                multiline={false}
                                style={format.textBox}
                                blurOnSubmit={false}/>
-                    <Text style={[fonts.mediumText, format.fieldName]}>Password</Text>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Password'
                                placeholderTextColor='#aaa'
@@ -217,7 +218,6 @@ export const SignIn = ({navigation}) => {
                     <View style={{alignItems: 'center', paddingTop: 20, paddingBottom: 10, paddingHorizontal: 40,}}>
                         <Text style={[fonts.mediumText]}>Register with email</Text>
                     </View>
-                    <Text style={[fonts.mediumText, format.fieldName]}>Email Address</Text>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Email address'
@@ -228,7 +228,6 @@ export const SignIn = ({navigation}) => {
                         multiline={false}
                         style={format.textBox}
                         blurOnSubmit={false}/>
-                    <Text style={[fonts.mediumText, format.fieldName]}>Password</Text>
                     <TextInput underlineColorAndroid='transparent'
                                placeholder='Password (at least 6 characters)'
                                placeholderTextColor='#aaa'

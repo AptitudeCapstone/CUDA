@@ -9,7 +9,6 @@ import database from "@react-native-firebase/database";
 export const CreateCOVID = ({modalRef}) => {
     const [patientName, setPatientName] = useState(''),
         [patientEmail, setPatientEmail] = useState(''),
-        [patientPhone, setPatientPhone] = useState(0),
         userInfo = useAuth(),
         patientsRef = database().ref(userInfo.patientsRefPath + '/covid-patients/'),
         dimensions = useWindowDimensions();
@@ -18,8 +17,7 @@ export const CreateCOVID = ({modalRef}) => {
         const patientReference = patientsRef.push();
         patientReference.update({
             name: patientName,
-            email: patientEmail,
-            phone: patientPhone
+            email: patientEmail
         }).then(() => modalRef.current?.close())
         .catch((error) => Alert.alert('Error', error));
     }
@@ -31,7 +29,7 @@ export const CreateCOVID = ({modalRef}) => {
                 <Text style={[fonts.smallText, {paddingBottom: 20}]}>
                     All fields are optional and can be edited after the patient is created
                 </Text>
-                <Text style={[fonts.mediumText, format.fieldName]}>Name</Text>
+                <Text style={[fonts.mediumText, {paddingBottom: 10}]}>Name</Text>
                 <TextInput underlineColorAndroid='transparent'
                            placeholder='Name'
                            placeholderTextColor='#aaa'
@@ -41,23 +39,13 @@ export const CreateCOVID = ({modalRef}) => {
                            multiline={false}
                            style={format.textBox}
                            blurOnSubmit={false}/>
-                <Text style={[fonts.mediumText, format.fieldName]}>Contact</Text>
+                <Text style={[fonts.mediumText, {paddingBottom: 10}]}>Contact Info</Text>
                 <TextInput
                     underlineColorAndroid='transparent'
                     placeholder='Email address'
                     placeholderTextColor='#aaa'
                     keyboardType='email-address'
                     onChangeText={(patientEmail) => setPatientEmail(patientEmail)}
-                    numberOfLines={1}
-                    multiline={false}
-                    style={format.textBox}
-                    blurOnSubmit={false}/>
-                <TextInput
-                    underlineColorAndroid='transparent'
-                    placeholder='Phone number'
-                    placeholderTextColor='#aaa'
-                    keyboardType='numeric'
-                    onChangeText={(patientPhone) => setPatientPhone(patientPhone)}
                     numberOfLines={1}
                     multiline={false}
                     style={format.textBox}
